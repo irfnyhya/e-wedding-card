@@ -1,0 +1,89 @@
+/* ===== majalah ===== */
+.inv .cv-majalah{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
+.inv .majalah-floor{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 42%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 62%,color-mix(in srgb,var(--ground) 80%,#000))}
+.inv .majalah-floor::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/280px;mix-blend-mode:soft-light;opacity:.45}
+.inv .majalah-stage{position:absolute;left:50%;top:8%;width:min(86%,340px);aspect-ratio:.74;transform:translateX(-50%);perspective:1800px;container-type:size;z-index:2}
+.inv .majalah-under{position:absolute;inset:0;visibility:hidden;background:var(--sheet);color:var(--ink);padding:5cqi 5.5cqi 4cqi;display:flex;flex-direction:column;text-align:left;overflow:hidden;box-shadow:0 2px 2px rgba(0,0,0,.12),0 26px 40px -14px rgba(0,0,0,.5),inset 10px 0 14px -10px rgba(0,0,0,.2)}
+.inv .majalah-cov{position:absolute;inset:0;transform-origin:0 50%;transform-style:preserve-3d;transition:transform 1.3s cubic-bezier(.6,.04,.3,1)}
+.inv .majalah-face{position:absolute;inset:0;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.inv .majalah-face.front{background:var(--accent);box-shadow:0 2px 2px rgba(0,0,0,.15)}
+.inv .majalah-face.front::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4%;z-index:6;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.12) 55%,rgba(0,0,0,.08) 70%,transparent)}
+.inv .majalah-face.back{transform:rotateY(180deg);background:linear-gradient(90deg,color-mix(in srgb,var(--sheet) 92%,#000),var(--sheet) 30%)}
+.inv .majalah-shade{position:absolute;inset:0;z-index:7;background:linear-gradient(90deg,rgba(0,0,0,.05),rgba(0,0,0,.35));opacity:0;transition:opacity 1.2s}
+.inv .majalah-art{position:absolute;inset:0;display:block;background:url(assets/paper.jpg) 0 0/240px,var(--accent);background-blend-mode:multiply}
+.inv .majalah-sun{position:absolute;left:38cqw;top:21cqh;width:68cqw;aspect-ratio:1;border-radius:50%;z-index:1;background:url(assets/paper.jpg) 0 0/240px,radial-gradient(circle at 38% 34%,color-mix(in srgb,var(--gold) 70%,#fff),var(--gold) 58%,color-mix(in srgb,var(--gold) 82%,#000));background-blend-mode:multiply}
+.inv .majalah-ring{position:absolute;left:33cqw;top:17.6cqh;width:78cqw;aspect-ratio:1;border-radius:50%;z-index:1;border:1px solid color-mix(in srgb,var(--mast) 60%,transparent)}
+.inv .majalah-ring::after{content:"";position:absolute;inset:3.5cqw;border-radius:50%;border:.6px solid color-mix(in srgb,var(--mast) 35%,transparent)}
+.inv .majalah-arch{position:absolute;left:5cqw;bottom:0;width:48cqw;height:62cqh;border-radius:999px 999px 0 0;z-index:1;background:url(assets/paper.jpg) 0 0/240px,var(--art2);background-blend-mode:multiply}
+.inv .majalah-art .majalah-eng{z-index:3;opacity:.94}
+.inv .majalah-grain{display:none}
+.inv .majalah-pre{position:absolute;top:2.6cqh;left:5cqw;right:5cqw;z-index:5;margin:0;display:flex;justify-content:space-between;font-family:"Jost",sans-serif;font-size:2.2cqw;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--mast)}
+.inv .majalah-mast{position:absolute;top:5cqh;left:0;right:0;z-index:2;margin:0;text-align:center;font-family:"Abril Fatface","Bodoni Moda",serif;font-size:17.2cqw;line-height:.95;letter-spacing:0;color:var(--mast)}
+.inv .majalah-cl{position:absolute;left:5cqw;width:42cqw;z-index:5;margin:0;display:flex;flex-direction:column;gap:.6cqw;color:var(--mast);text-align:left;text-shadow:0 0 12px var(--accent)}
+.inv .majalah-cl small,.inv .majalah-main small{font-family:"Jost",sans-serif;font-size:2.3cqw;font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:.85}
+.inv .majalah-cl em{font-family:"Bodoni Moda",serif;font-style:italic;font-size:5.6cqw;line-height:1.05}
+.inv .majalah-cl b{font-family:"Jost",sans-serif;font-weight:500;font-size:7.6cqw;line-height:1;letter-spacing:-.01em}
+.inv .majalah-cl.a{top:27cqh}.inv .majalah-cl.b{top:42cqh}.inv .majalah-cl.c{top:54cqh;width:36cqw}
+.inv .majalah-main{position:absolute;left:5cqw;right:6cqw;bottom:10.5cqh;z-index:5;margin:0;display:flex;flex-direction:column;gap:1cqw;color:var(--mast);text-align:left}
+.inv .majalah-main em{font-family:"Bodoni Moda",serif;font-style:italic;font-size:11.6cqw;line-height:.98;letter-spacing:-.01em;text-shadow:0 0 14px var(--accent),0 0 28px var(--accent),0 1px 2px color-mix(in srgb,var(--accent) 60%,#000)}
+.inv .majalah-main em span{font-size:.6em}
+.inv .majalah-bc{position:absolute;right:4.5cqw;bottom:3cqh;z-index:5;width:17cqw;background:#fff;padding:1.2cqw 1.4cqw .6cqw;display:flex;flex-direction:column;align-items:center}
+.inv .majalah-bc svg{display:block;width:100%;height:5.5cqh;fill:#111}
+.inv .majalah-bc i{font-family:"Jost",sans-serif;font-style:normal;font-size:1.9cqw;letter-spacing:.12em;color:#111}
+.inv .majalah-price{position:absolute;left:5cqw;bottom:3.6cqh;z-index:5;font-family:"Jost",sans-serif;font-size:2.1cqw;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--mast);opacity:.85}
+.inv .majalah-tap{position:absolute;inset:0;z-index:9;border:0;padding:0;margin:0;background:none;cursor:pointer}
+.inv .majalah-foot{position:absolute;left:0;right:0;bottom:9%;z-index:3;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;gap:10px;align-items:center;transition:opacity .4s}
+.inv .majalah-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column;gap:2px;margin:0}
+.inv .majalah-to b{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;font-size:21px}
+.inv .majalah-hint{font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.6;margin:0}
+.inv.opening .majalah-cov{transform:rotateY(-172deg)}
+.inv.opening .majalah-shade{opacity:1}
+.inv.opening .majalah-under{visibility:visible}
+.inv.opening .majalah-foot{opacity:0}
+.inv.opening .majalah-tap{pointer-events:none}
+.inv.opening .cv-majalah{opacity:0}
+/* contents page (front page, and under the cover) */
+.inv .pg-majalah{background:var(--ground);padding:16px 10px 26px}
+.inv .majalah-pg{position:relative;width:100%;max-width:372px;background:var(--sheet);color:var(--ink);padding:5cqi 5cqi 4cqi;display:flex;flex-direction:column;text-align:left;box-shadow:0 2px 3px rgba(0,0,0,.12),0 24px 40px -16px rgba(0,0,0,.45)}
+.inv .majalah-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:1.6cqi;font-family:"Jost",sans-serif;font-size:2.2cqi;font-weight:500;letter-spacing:.22em;text-transform:uppercase}
+.inv .majalah-top span:first-child{font-family:"Abril Fatface","Bodoni Moda",serif;font-weight:400;font-size:4.6cqi;letter-spacing:.02em}
+.inv .majalah-ttl{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:0 8px;margin:3cqi 0 3cqi}
+.inv .majalah-ttl h2{margin:0;font-family:"Bodoni Moda",serif;font-weight:400;font-size:11.4cqi;line-height:.9;letter-spacing:-.02em;color:var(--ink);text-transform:none}
+.inv .majalah-ttl span{font-family:"Bodoni Moda",serif;font-style:italic;font-size:3.5cqi;white-space:nowrap}
+.inv .majalah-feat{display:grid;grid-template-columns:38% 1fr;gap:4cqi;align-items:end;padding-bottom:3.4cqi;border-bottom:1px solid var(--ink)}
+.inv .majalah-thumb{position:relative;aspect-ratio:.74;container-type:size;box-shadow:0 6px 12px -6px rgba(0,0,0,.4)}
+.inv .majalah-thumb .majalah-art{overflow:hidden}
+.inv .majalah-cap{position:absolute;left:0;right:0;bottom:-1px;transform:translateY(100%);padding-top:4px;font-family:"Jost",sans-serif;font-size:7px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+.inv .majalah-who{display:flex;flex-direction:column;gap:1.4cqi;padding-bottom:1cqi}
+.inv .majalah-who small{font-family:"Jost",sans-serif;font-size:2.2cqi;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--art2)}
+.inv .majalah-who .names{font-family:"Bodoni Moda",serif;font-style:italic;font-size:10.4cqi;line-height:.95;color:var(--ink);display:flex;flex-direction:column;letter-spacing:-.01em}
+.inv .majalah-who .names span{font-size:.55em;color:var(--art2);margin:.5cqi 0}
+.inv .majalah-who p{margin:0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:3.6cqi;line-height:1.3}
+.inv .majalah-list{list-style:none;margin:1cqi 0 0;padding:0}
+.inv .majalah-list li{display:grid;grid-template-columns:13cqi 1fr;gap:2cqi;padding:2.3cqi 0 2cqi;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent);align-items:start}
+.inv .majalah-list b{font-family:"Bodoni Moda",serif;font-weight:400;font-size:8.6cqi;line-height:.85;color:var(--art2);letter-spacing:-.02em}
+.inv .majalah-list span{display:flex;flex-direction:column;gap:.5cqi;min-width:0}
+.inv .majalah-list small{font-family:"Jost",sans-serif;font-size:2.1cqi;font-weight:500;letter-spacing:.24em;text-transform:uppercase;opacity:.7}
+.inv .majalah-list em{font-family:"Bodoni Moda",serif;font-style:normal;font-size:4.5cqi;line-height:1.15}
+.inv .majalah-list i{font-family:"Cormorant Garamond",serif;font-size:3.4cqi;line-height:1.25;opacity:.75}
+.inv .majalah-folio{margin-top:auto;padding-top:2cqi;display:flex;justify-content:space-between;font-family:"Jost",sans-serif;font-size:2.1cqi;font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:.7}
+.inv .majalah-pg .majalah-folio{margin-top:3cqi;border-top:1px solid var(--ink);opacity:1}
+/* skin: section tabs with editorial numbers, Didone italic headings, folios */
+.fam-majalah .scroller{background:var(--ground)}
+.fam-majalah.cardsecs .sec{background:var(--sheet);padding:66px 24px 54px;box-shadow:0 2px 3px rgba(0,0,0,.1),0 16px 30px -14px rgba(0,0,0,.4)}
+.fam-majalah .majalah-tab{position:absolute;top:0;left:0;right:0;display:flex;align-items:stretch;border-bottom:1px solid var(--ink);text-align:left}
+.fam-majalah .majalah-tab b{background:var(--ink);color:var(--sheet);font-family:"Bodoni Moda",serif;font-weight:400;font-size:24px;line-height:1;padding:8px 12px 6px}
+.fam-majalah .majalah-tab i{display:flex;align-items:center;padding:0 12px;font-family:"Jost",sans-serif;font-style:normal;font-weight:500;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink)}
+.fam-majalah .sec h2{align-self:stretch;text-align:left;font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;font-size:30px;line-height:1;letter-spacing:-.01em;text-transform:none;color:var(--ink);padding-bottom:10px;border-bottom:1px solid color-mix(in srgb,var(--ink) 25%,transparent)}
+.fam-majalah .sec .rule{width:56px;height:3px;background:var(--art2,var(--ink));margin:0;align-self:flex-start}
+.fam-majalah .sec .rule::before,.fam-majalah .sec .rule::after,.fam-majalah .sec .rule i{display:none}
+.fam-majalah .majalah-fol{position:absolute;left:24px;right:24px;bottom:16px;display:flex;justify-content:space-between;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--ink) 22%,transparent);font-family:"Jost",sans-serif;font-size:8px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;opacity:.65}
+.fam-majalah .info,.fam-majalah .info > div{border-color:color-mix(in srgb,var(--ink) 25%,transparent)}
+.fam-majalah .info span,.fam-majalah .count span,.fam-majalah label{font-family:"Jost",sans-serif;letter-spacing:.22em}
+.fam-majalah .info b{font-family:"Bodoni Moda",serif}
+.fam-majalah .count b{font-family:"Bodoni Moda",serif;color:var(--ink);font-size:34px}
+.fam-majalah .timeline b{font-family:"Jost",sans-serif;font-weight:500;color:var(--ink)}
+.fam-majalah .submit{background:var(--ink);font-family:"Jost",sans-serif;letter-spacing:.3em}
+.fam-majalah .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.fam-majalah .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .majalah-cov,.inv .cv-majalah,.inv .majalah-shade{transition:none}}

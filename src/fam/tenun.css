@@ -1,0 +1,95 @@
+/* ===== tenun (Pua Kumbu) ===== */
+.inv .cv-tenun{background:transparent;overflow:hidden;transition:opacity .55s 1.05s}
+.inv .tn-bg{position:absolute;inset:0;background:radial-gradient(ellipse 85% 55% at 50% 50%,color-mix(in srgb,var(--ground) 86%,#fff) 0%,var(--ground) 62%,color-mix(in srgb,var(--ground) 80%,#000) 100%)}
+.inv .tn-bg::before{content:"";position:absolute;inset:0;background:var(--lat) 0 0/46px 56px;opacity:.09}
+.inv .tn-bg::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+.inv .tn-frame{position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);pointer-events:none;transition:opacity .4s}
+.inv .tn-frame::before{content:"";position:absolute;inset:5px;border:.6px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.inv .tn-frame i{position:absolute;width:34px;height:34px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--corn) center/contain no-repeat;mask:var(--corn) center/contain no-repeat}
+.inv .tn-frame .tl{left:-1px;top:-1px}.inv .tn-frame .tr{right:-1px;top:-1px;transform:scaleX(-1)}.inv .tn-frame .bl{left:-1px;bottom:-1px;transform:scaleY(-1)}.inv .tn-frame .br{right:-1px;bottom:-1px;transform:scale(-1)}
+.inv .tn-head{position:absolute;top:8.5%;left:10%;right:10%;text-align:center;z-index:2;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:7px;transition:opacity .35s}
+.inv .tn-k{font-family:var(--d);font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:var(--gold)}
+.inv .tn-n{font-family:var(--s);font-size:clamp(34px,10.6cqi,44px);line-height:1.08;display:flex;flex-direction:column;align-items:center}
+.inv .tn-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold);line-height:1.2}
+.inv .tn-d{font-family:var(--d);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.85;padding:0 22px;position:relative}
+.inv .tn-d::before,.inv .tn-d::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-4px;border:1px solid var(--gold);transform:rotate(45deg)}
+.inv .tn-d::before{left:0}.inv .tn-d::after{right:0}
+/* the folded cloth: a middle panel and two flaps folded over it */
+.inv .tn-pack{position:absolute;left:5%;right:5%;top:53%;aspect-ratio:300/180;transform:translateY(-50%);border:0;padding:0;margin:0;background:none;cursor:pointer;z-index:3;display:block;font:inherit}
+.inv .tn-p{position:absolute;left:0;right:0;height:100%;display:block;transform-style:preserve-3d}
+.inv .tn-p .f,.inv .tn-p .b{position:absolute;inset:0;display:block;background:var(--cloth) 0 0/100% 300% no-repeat;-webkit-backface-visibility:hidden;backface-visibility:hidden;overflow:hidden}
+.inv .tn-p .f::after,.inv .tn-p .b::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/160px;mix-blend-mode:multiply;opacity:.45}
+.inv .tn-p.mid{top:0;box-shadow:0 -2px 0 color-mix(in srgb,var(--accent) 55%,#000),0 2px 0 color-mix(in srgb,var(--accent) 55%,#000),0 -3.5px 0 color-mix(in srgb,var(--accent) 30%,#000),0 3.5px 0 color-mix(in srgb,var(--accent) 30%,#000),0 18px 30px rgba(0,0,0,.42),0 4px 8px rgba(0,0,0,.3)}
+.inv .tn-p.mid .f{background-position:0 50%}
+.inv .tn-p.top{bottom:100%;transform-origin:50% 100%;transform:perspective(1100px) rotateX(-180deg);transition:transform .8s .5s cubic-bezier(.45,0,.2,1)}
+.inv .tn-p.top .f{background-position:0 0}
+.inv .tn-p.bot{top:100%;transform-origin:50% 0;transform:perspective(1100px) rotateX(180deg);transition:transform .8s .2s cubic-bezier(.45,0,.2,1)}
+.inv .tn-p.bot .f{background-position:0 100%}
+/* reverse side of the cloth: same ikat, a little duller, with a soft fold at the edge */
+.inv .tn-p .b{transform:rotateX(180deg);filter:saturate(.8) brightness(.93)}
+.inv .tn-p.top .b{background-position:0 0}.inv .tn-p.bot .b{background-position:0 100%}
+.inv .tn-p .b::before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 9%,transparent 88%,rgba(0,0,0,.28))}
+.inv .tn-p.top .b::before{background:linear-gradient(0deg,rgba(255,255,255,.14),transparent 9%,transparent 88%,rgba(0,0,0,.3))}
+.inv .tn-p .f::before{content:"";position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .8s .3s}
+.inv .tn-p.top .f::before{background:linear-gradient(0deg,rgba(0,0,0,.35),transparent 30%)}
+.inv .tn-p.bot .f::before{background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 30%)}
+/* paper belly band with a lozenge tag */
+.inv .tn-band{position:absolute;left:-3.5%;right:-3.5%;top:36%;height:28%;z-index:4;display:block;background:var(--sheet);box-shadow:0 6px 12px rgba(0,0,0,.3),inset 0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent);transition:opacity .35s,transform .45s cubic-bezier(.5,0,.3,1)}
+.inv .tn-band::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.8}
+.inv .tn-band::after{content:"";position:absolute;left:0;right:0;top:5px;bottom:5px;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);box-shadow:inset 0 3px 0 -2px color-mix(in srgb,var(--gold) 50%,transparent),inset 0 -3px 0 -2px color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .tn-tag{position:absolute;left:50%;top:50%;width:min(35%,124px);aspect-ratio:1;transform:translate(-50%,-50%);z-index:2;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.inv .tn-tag::before{content:"";position:absolute;inset:0;background:var(--sheet);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.inv .tn-tag::after{content:"";position:absolute;inset:0;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--emb) center/100% 100% no-repeat;mask:var(--emb) center/100% 100% no-repeat;opacity:.95}
+.inv .tn-mono{position:absolute;inset:26%;z-index:3;display:flex;align-items:center;justify-content:center;font-family:var(--s);font-size:clamp(19px,6cqi,25px);color:var(--accent);background:var(--sheet);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);white-space:nowrap}
+.inv .tn-mono em{font-family:"Cormorant Garamond",serif;font-size:.6em;color:var(--gold);margin:0 1px}
+.inv .tn-foot{position:absolute;left:10%;right:10%;bottom:8%;text-align:center;z-index:2;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .35s}
+.inv .tn-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column;gap:2px}
+.inv .tn-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:26px;line-height:1.2}
+.inv .tn-hint{font-family:var(--d);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.inv.opening .tn-p.top,.inv.opening .tn-p.bot{transform:perspective(1100px) rotateX(0)}
+.inv.opening .tn-p .f::before{opacity:1}
+.inv.opening .tn-band{opacity:0;transform:translateY(16%) scale(.98)}
+.inv.opening .tn-head,.inv.opening .tn-foot,.inv.opening .tn-frame{opacity:0}
+.inv.opening .cv-tenun{opacity:0}
+/* page: a cream card with ikat end bands and fringe */
+.inv .pg-tenun{background:var(--ground);padding:14px 14px 68px;align-items:stretch}
+.inv .pg-tenun::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+.inv .tn-card{position:relative;flex:1;background:var(--sheet);box-shadow:0 14px 34px rgba(0,0,0,.35);overflow:hidden;display:flex}
+.inv .tn-b{position:absolute;left:0;right:0;height:74px;background:var(--band) 0 0/120px 66px repeat-x;z-index:1}
+.inv .tn-b::after{content:"";position:absolute;left:0;right:0;height:14px;background:repeating-linear-gradient(90deg,var(--dye,#1b120e) 0 1px,transparent 1px 3px,color-mix(in srgb,var(--accent) 80%,#000) 3px 4px,transparent 4px 6px);-webkit-mask:linear-gradient(var(--fd,180deg),#000,transparent);mask:linear-gradient(var(--fd,180deg),#000,transparent);opacity:.75}
+.inv .tn-b.t{top:0}.inv .tn-b.t::after{top:66px}
+.inv .tn-b.b{bottom:0;transform:scaleY(-1)}.inv .tn-b.b::after{top:66px}
+.inv .tn-sel{position:absolute;top:84px;bottom:84px;width:7px;z-index:1;background:linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 3px,color-mix(in srgb,var(--ink) 85%,transparent) 3px 4px,transparent 4px 5px,var(--gold) 5px 6px)}
+.inv .tn-sel.l{left:12px}.inv .tn-sel.r{right:12px;transform:scaleX(-1)}
+.inv .tn-in{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:96px 34px;text-align:center}
+.inv .tn-in::before{content:"";position:absolute;left:32px;right:32px;top:100px;bottom:100px;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);outline:.6px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-5px;pointer-events:none}
+.inv .tn-wm{position:absolute;left:50%;top:50%;width:84%;aspect-ratio:1;transform:translate(-50%,-50%);background:var(--gold);opacity:.13;-webkit-mask:var(--emb) center/contain no-repeat;mask:var(--emb) center/contain no-repeat;pointer-events:none}
+.inv .tn-ic{position:absolute;width:26px;height:26px;z-index:3;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--corn) center/contain no-repeat;mask:var(--corn) center/contain no-repeat}
+.inv .tn-ic.tl{left:29px;top:97px}.inv .tn-ic.tr{right:29px;top:97px;transform:scaleX(-1)}.inv .tn-ic.bl{left:29px;bottom:97px;transform:scaleY(-1)}.inv .tn-ic.br{right:29px;bottom:97px;transform:scale(-1)}
+.inv .tn-emb{display:block;width:62px;height:62px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--emb) center/contain no-repeat;mask:var(--emb) center/contain no-repeat}
+.inv .pg-tenun .kicker{color:var(--ink);opacity:.8;letter-spacing:.36em}
+.inv .pg-tenun .names{font-size:clamp(42px,13.4cqi,56px);color:var(--accent)}
+.inv .pg-tenun .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold)}
+.inv .tn-rule{display:flex;align-items:center;gap:6px;width:150px}
+.inv .tn-rule i{flex:1;height:5px;background:linear-gradient(var(--gold),var(--gold)) 0 50%/100% 1px no-repeat,repeating-linear-gradient(90deg,transparent 0 5px,var(--gold) 5px 6px,transparent 6px 8px) 0 0/100% 100%;opacity:.8}
+.inv .tn-rule b{width:9px;height:9px;transform:rotate(45deg);border:1px solid var(--accent);box-shadow:inset 0 0 0 2px var(--sheet),inset 0 0 0 4px var(--accent)}
+.inv .pg-tenun .caps{color:var(--ink)}
+.inv .tn-v{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--ink);opacity:.85}
+/* skin: woven-edge cards, an ikat strip on top, a lozenge on each heading */
+.fam-tenun .scroller{background:var(--ground)}
+.fam-tenun .scroller::before{content:"";position:fixed;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+.fam-tenun.cardsecs .sec{background:var(--sheet);padding-top:70px;box-shadow:0 10px 24px rgba(0,0,0,.28);overflow:hidden}
+.fam-tenun.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.6;pointer-events:none;z-index:-1}
+.fam-tenun .tn-strip{position:absolute;left:0;right:0;top:0;height:42px;background:var(--band) 0 0/64px 34px repeat-x}
+.fam-tenun .tn-strip::after{content:"";position:absolute;left:0;right:0;top:34px;height:8px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--ink) 80%,transparent) 0 1px,transparent 1px 3px,var(--accent) 3px 4px,transparent 4px 6px);-webkit-mask:linear-gradient(#000,transparent);mask:linear-gradient(#000,transparent);opacity:.7}
+.fam-tenun .tn-fr{position:absolute;inset:50px 10px 10px;pointer-events:none}
+.fam-tenun .tn-fr::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 3px,color-mix(in srgb,var(--ink) 80%,transparent) 3px 4px,transparent 4px 5px,var(--gold) 5px 6px,transparent 6px) left/7px 100% no-repeat,linear-gradient(270deg,var(--accent) 0 2px,transparent 2px 3px,color-mix(in srgb,var(--ink) 80%,transparent) 3px 4px,transparent 4px 5px,var(--gold) 5px 6px,transparent 6px) right/7px 100% no-repeat;opacity:.75}
+.fam-tenun .tn-fr::after{content:"";position:absolute;left:4px;right:4px;bottom:0;border-bottom:1px solid color-mix(in srgb,var(--gold) 70%,transparent)}
+.fam-tenun .sec h2{font-family:var(--d);letter-spacing:.3em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:10px}
+.fam-tenun .tn-h{display:block;width:30px;height:30px;background:url(assets/foil.jpg) 0 0/180px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--emb) center/contain no-repeat;mask:var(--emb) center/contain no-repeat}
+.fam-tenun .sec .rule{width:150px}
+.fam-tenun .sec .rule i{background:var(--accent)}
+.fam-tenun .info,.fam-tenun .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-tenun .submit,.fam-tenun .seg button[aria-pressed="true"]{background:var(--accent)}
+.fam-tenun .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .tn-p,.inv .tn-band,.inv .cv-tenun{transition:none}}

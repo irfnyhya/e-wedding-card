@@ -1,0 +1,73 @@
+/* ===== bungaraya (hibiscus) ===== */
+.inv .br-paper{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 55%,color-mix(in srgb,var(--ground) 88%,#fff),var(--ground) 70%,color-mix(in srgb,var(--ground) 90%,#000))}
+.inv .br-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.55}
+.inv .br-fr{position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--gold) 75%,transparent);pointer-events:none}
+.inv .br-fr::before{content:"";position:absolute;inset:4px;border:.6px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.inv .br-fr::after{content:"";position:absolute;left:50%;top:-5px;width:9px;height:9px;margin-left:-5px;transform:rotate(45deg);background:var(--ground);border:1px solid var(--gold)}
+.inv .cv-bungaraya{background:transparent;overflow:hidden;transition:opacity .6s .55s}
+.inv .cv-bungaraya .br-paper,.inv .cv-bungaraya .br-fr{transition:opacity .7s .25s}
+.inv .br-head{position:absolute;top:7%;left:8%;right:8%;z-index:4;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .35s}
+.inv .br-k{font-family:var(--d);font-size:9.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.inv .br-n{font-family:var(--s);font-size:clamp(36px,11cqi,46px);line-height:1.1;color:var(--pagefg)}
+.inv .br-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .br-d{font-family:var(--d);font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.8;display:flex;align-items:center;gap:10px}
+.inv .br-d::before,.inv .br-d::after{content:"";width:22px;height:1px;background:var(--gold)}
+.inv .br-stage{position:absolute;left:50%;top:55%;width:min(92%,400px);aspect-ratio:1;transform:translate(-50%,-50%);z-index:3}
+.inv .br-lv{position:absolute;inset:-20%;background:url(assets/foil.jpg) 0 0/220px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--leaves) center/contain no-repeat;mask:var(--leaves) center/contain no-repeat;opacity:.95;transition:opacity .5s .1s,transform 1.2s cubic-bezier(.3,0,.2,1)}
+.inv .br-bloom{position:absolute;inset:0;display:block;border:0;padding:0;margin:0;background:none;cursor:pointer;font:inherit}
+.inv .br-bloom > i{position:absolute;inset:0;display:block;pointer-events:none}
+.inv .br-bloom svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.inv .br-pet{filter:drop-shadow(0 2px 3px rgba(40,0,0,.28)) drop-shadow(0 8px 10px rgba(0,0,0,.12));transition:transform 1.15s var(--dl) cubic-bezier(.33,0,.2,1),opacity .8s calc(var(--dl) + .3s)}
+.inv .br-eye{transition:opacity .5s .1s}
+.inv .br-sta{filter:drop-shadow(-2px 4px 3px rgba(0,0,0,.3));transition:transform 1s cubic-bezier(.4,0,.2,1),opacity .5s .15s}
+.inv .br-bloom.big .br-sta{animation:brSway 7s ease-in-out infinite;transform-origin:50% 50%}
+@keyframes brSway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+.inv .br-foot{position:absolute;left:8%;right:8%;bottom:6%;z-index:4;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .35s}
+.inv .br-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column;gap:1px}
+.inv .br-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:28px;line-height:1.2}
+.inv .br-hint{font-family:var(--d);font-size:9px;letter-spacing:.32em;text-transform:uppercase;opacity:.65}
+.inv.opening .br-bloom.big .br-pet{transform:translate(var(--tx),var(--ty)) rotate(var(--rt)) scale(1.18);opacity:0}
+.inv.opening .br-bloom.big .br-sta{animation:none;transform:scale(1.5) rotate(8deg);opacity:0}
+.inv.opening .br-bloom.big .br-eye{opacity:0}
+.inv.opening .br-lv{opacity:0;transform:scale(1.12)}
+.inv.opening .br-head,.inv.opening .br-foot{opacity:0}
+.inv.opening .cv-bungaraya .br-paper,.inv.opening .cv-bungaraya .br-fr{opacity:0}
+.inv.opening .cv-bungaraya{opacity:0}
+/* page: sprigs framing the names */
+.inv .pg-bungaraya{background:var(--ground);padding:60px 40px 90px}
+.inv .pg-bungaraya .br-fr{inset:14px 14px 70px}
+.inv .pg-bungaraya .br-fr::after{display:none}
+.inv .br-spr{position:absolute;width:62%;aspect-ratio:1;z-index:2;pointer-events:none}
+.inv .br-spr.tl{left:-4%;top:3%}
+.inv .br-spr.br{right:-8%;bottom:6%;transform:rotate(180deg)}
+.inv .br-spr .br-gl{position:absolute;inset:0;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--sprig) center/contain no-repeat;mask:var(--sprig) center/contain no-repeat;transform:translate(26%,22%) scale(1.25)}
+.inv .br-bloom.mini{inset:auto;width:66%;aspect-ratio:1;left:4%;top:4%;z-index:2;pointer-events:none}
+.inv .br-bloom.mini .br-pet{filter:drop-shadow(0 2px 3px rgba(40,0,0,.25))}
+.inv .br-txt{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg)}
+.inv .pg-bungaraya .kicker{color:var(--gold);letter-spacing:.4em}
+.inv .pg-bungaraya .names{font-size:clamp(46px,14.5cqi,60px);color:var(--pagefg)}
+.inv .pg-bungaraya .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold)}
+.inv .br-rule{display:flex;align-items:center;gap:8px;width:160px}
+.inv .br-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.inv .br-rule i:last-child{background:linear-gradient(270deg,transparent,var(--gold))}
+.inv .br-rule b{width:12px;height:14px;background:var(--accent);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -64 80 66'%3E%3Cpath d='M0 0C-6 -9 -32 -18 -36 -38C-39 -50 -30 -60 -20 -61Q-14 -66 -8 -62Q-2 -67 4 -62Q10 -66 16 -61C28 -60 38 -50 36 -38C32 -18 6 -9 0 0Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -64 80 66'%3E%3Cpath d='M0 0C-6 -9 -32 -18 -36 -38C-39 -50 -30 -60 -20 -61Q-14 -66 -8 -62Q-2 -67 4 -62Q10 -66 16 -61C28 -60 38 -50 36 -38C32 -18 6 -9 0 0Z'/%3E%3C/svg%3E") center/contain no-repeat}
+.inv .pg-bungaraya .caps{color:var(--pagefg)}
+.inv .br-v{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;opacity:.85}
+/* skin: paper cards, a petal badge on every heading, leaf sprigs in two corners */
+.fam-bungaraya .scroller{background:var(--ground)}
+.fam-bungaraya.cardsecs .sec{background:var(--sheet);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 55%,transparent),0 12px 26px rgba(0,0,0,.16);overflow:hidden;padding-top:50px}
+.fam-bungaraya.cardsecs .sec::before{content:"";position:absolute;inset:7px;border:.6px solid color-mix(in srgb,var(--gold) 50%,transparent);pointer-events:none}
+.fam-bungaraya.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.5;pointer-events:none;z-index:-1}
+.fam-bungaraya .br-cs{position:absolute;width:96px;height:96px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--sprig) center/contain no-repeat;mask:var(--sprig) center/contain no-repeat;opacity:.75;pointer-events:none}
+.fam-bungaraya .br-cs.a{left:-6px;bottom:-6px}
+.fam-bungaraya .br-cs.b{right:-6px;top:-6px;transform:rotate(180deg)}
+.fam-bungaraya .sec h2{font-family:var(--d);letter-spacing:.3em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:10px}
+.fam-bungaraya .br-bd{position:relative;display:block;width:58px;height:48px}
+.fam-bungaraya .br-bd i{position:absolute;left:50%;bottom:4px;width:28px;height:26px;margin-left:-14px;background:var(--badge) center bottom/contain no-repeat;transform-origin:50% 100%;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+.fam-bungaraya .br-bd i:nth-child(1){transform:rotate(-46deg)}.fam-bungaraya .br-bd i:nth-child(3){transform:rotate(46deg)}
+.fam-bungaraya .br-bd i:nth-child(2){width:32px;height:32px;margin-left:-16px;z-index:2}
+.fam-bungaraya .br-bd::after{content:"";position:absolute;left:50%;bottom:0;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--sheet)}
+.fam-bungaraya .sec .rule{width:150px}
+.fam-bungaraya .info,.fam-bungaraya .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-bungaraya .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .br-pet,.inv .br-sta,.inv .br-lv,.inv .cv-bungaraya{transition:none}.inv .br-bloom.big .br-sta{animation:none}}

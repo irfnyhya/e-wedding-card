@@ -1,0 +1,54 @@
+/* ===== azulejo ===== */
+.inv .cv-azulejo{background:var(--az-tbg);overflow:hidden;transition:opacity .5s ease 1s}
+.inv .az-wall{position:absolute;inset:-4%;background:var(--az-tile) 50% 50%/64px 64px;transition:transform 1.4s cubic-bezier(.4,0,.2,1)}
+.inv .az-wall::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.08)),url(assets/crackle.png) 0 0/256px;mix-blend-mode:multiply;opacity:.1}
+.inv .az-sheen{position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.5) 48%,rgba(255,255,250,.75) 50%,rgba(255,255,255,.5) 52%,transparent 62%) 0 0/320% 100% no-repeat;background-position:105% 0;opacity:0;mix-blend-mode:screen}
+.inv .az-panel{position:absolute;left:7%;right:7%;top:11%;aspect-ratio:300/400;border:0;padding:0;margin:0;background:none;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;transition:transform 1.4s cubic-bezier(.4,0,.2,1)}
+.inv .az-panel > svg{position:absolute;inset:0;width:100%;height:100%}
+.inv .az-panel::after{content:"";position:absolute;inset:3% 4.6% 12.5%;background:url(assets/crackle.png) 0 0/220px;mix-blend-mode:multiply;opacity:.05;pointer-events:none}
+.inv .az-in{position:absolute;left:15%;right:15%;top:27%;bottom:20%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--az-txt2)}
+.inv .az-k{font-family:var(--d);font-size:10px;letter-spacing:.34em;text-transform:uppercase;font-weight:600;color:var(--az-txt)}
+.inv .az-n{font-family:var(--s);font-size:clamp(38px,11.6cqi,48px);line-height:1;color:var(--az-txt);display:flex;flex-direction:column}
+.inv .az-n i{font-family:"Cormorant Garamond",serif;font-size:.45em;margin:2px 0;opacity:.8}
+.inv .az-d{font-family:var(--d);font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--az-txt) 50%,transparent)}
+.inv .az-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12.5px;margin-top:6px}
+.inv .az-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:22px;line-height:1.1;color:var(--az-txt)}
+.inv .az-spr{position:absolute;pointer-events:none;z-index:3;overflow:visible}
+.inv .az-spr.top{left:-5%;top:1%;width:88%;transition:transform 1.4s cubic-bezier(.4,0,.2,1),opacity .6s .5s}
+.inv .az-spr.bot{right:-7%;bottom:8%;width:64%;transition:transform 1.4s cubic-bezier(.4,0,.2,1),opacity .6s .5s}
+.inv .az-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;white-space:nowrap;font-family:var(--d);font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--az-txt);background:var(--az-tbg);padding:7px 14px;box-shadow:0 0 0 1px var(--az-ink),inset 0 0 0 3px var(--az-tbg),inset 0 0 0 3.6px color-mix(in srgb,var(--az-ink) 60%,transparent);transition:opacity .4s}
+.inv.opening .az-sheen{opacity:1;background-position:-5% 0;transition:background-position 1.3s cubic-bezier(.4,0,.3,1),opacity .25s}
+.inv.opening .az-wall{transform:scale(1.05)}
+.inv.opening .az-panel{transform:scale(1.04)}
+.inv.opening .az-spr.top{transform:translate(-3%,-3%) scale(1.06)}
+.inv.opening .az-hint{opacity:0}
+.inv.opening .cv-azulejo{opacity:0}
+/* page */
+.inv .pg-azulejo{background:var(--az-tbg);padding:0 0 56px}
+.inv .az-field{position:absolute;inset:0 0 56px;background:linear-gradient(90deg,color-mix(in srgb,var(--az-ink) 18%,transparent) 0 1px,transparent 1px) 50% 0/64px 64px,linear-gradient(180deg,color-mix(in srgb,var(--az-ink) 18%,transparent) 0 1px,transparent 1px) 0 50%/64px 64px}
+.inv .az-field::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.25),transparent 45%);mix-blend-mode:multiply;opacity:.3}
+.inv .az-border{position:absolute;inset:12px 12px 68px;border:16px solid transparent;background:var(--az-fh) 50% 0/32px 16px repeat-x border-box,var(--az-fh) 50% 100%/32px 16px repeat-x border-box,var(--az-fv) 0 50%/16px 32px repeat-y border-box,var(--az-fv) 100% 50%/16px 32px repeat-y border-box;box-shadow:0 0 0 1px var(--az-ink),inset 0 0 0 1px var(--az-ink)}
+.inv .az-border::after{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--az-ink) 50%,transparent)}
+.inv .pg-azulejo .az-spr.a{left:-7%;top:-1%;width:90%}
+.inv .pg-azulejo .az-spr.b{right:-6%;bottom:96px;width:66%}
+.inv .az-ptxt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px;padding:0 18%;text-align:center;color:var(--az-txt2);margin-top:6%}
+.inv .pg-azulejo .kicker{font-size:10px;letter-spacing:.34em;font-weight:600;color:var(--az-txt)}
+.inv .pg-azulejo .names{font-size:clamp(46px,14cqi,58px);color:var(--az-txt)}
+.inv .pg-azulejo .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--az-txt2);opacity:.8}
+.inv .az-rule{display:flex;align-items:center;gap:8px;width:130px}
+.inv .az-rule i{flex:1;height:1px;background:var(--az-txt);opacity:.6}
+.inv .az-rule svg{width:16px;height:16px}
+.inv .pg-azulejo .caps{font-size:11.5px;letter-spacing:.22em;font-weight:600}
+.inv .pg-azulejo .small{font-size:15px}
+/* skin: white tile cards with quarter-rosette corner tiles and a lemon sprig on each heading */
+.fam-azulejo .scroller{background:linear-gradient(color-mix(in srgb,var(--az-tbg) 45%,transparent),color-mix(in srgb,var(--az-tbg) 45%,transparent)),var(--az-tile) 50% 0/64px 64px}
+.fam-azulejo.cardsecs .sec{background:linear-gradient(160deg,rgba(255,255,255,.6),transparent 40%),var(--sheet);padding:50px 30px 42px;box-shadow:0 0 0 1px var(--az-ink),0 0 0 5px var(--sheet),0 0 0 6px var(--az-ink),0 14px 24px rgba(0,0,0,.22)}
+.fam-azulejo.cardsecs .sec::before{content:"";position:absolute;inset:10px;border:1px solid color-mix(in srgb,var(--az-ink) 40%,transparent);pointer-events:none}
+.fam-azulejo .az-cn{position:absolute;width:46px;height:46px;background:var(--az-corner) 0 0/100% 100% no-repeat;z-index:1}
+.fam-azulejo .az-cn.tl{left:4px;top:4px}.fam-azulejo .az-cn.tr{right:4px;top:4px;transform:scaleX(-1)}.fam-azulejo .az-cn.bl{left:4px;bottom:4px;transform:scaleY(-1)}.fam-azulejo .az-cn.br{right:4px;bottom:4px;transform:scale(-1,-1)}
+.fam-azulejo .sec h2.az-h2{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:13px;color:var(--accent);letter-spacing:.3em}
+.fam-azulejo .az-hl{display:block;width:66px;height:30px;background:var(--az-lemon) center/contain no-repeat}
+.fam-azulejo .sec .rule{color:var(--accent)}
+.fam-azulejo .info,.fam-azulejo .info > div,.fam-azulejo .timeline li,.fam-azulejo .ibtn,.fam-azulejo .giftcard{border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.fam-azulejo .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .az-wall,.inv .az-panel,.inv .az-sheen,.inv .az-spr,.inv .cv-azulejo{transition:none}}

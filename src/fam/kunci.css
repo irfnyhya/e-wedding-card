@@ -1,0 +1,58 @@
+/* ===== kunci ===== */
+.inv .kc-door{position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.05),transparent 40%,rgba(0,0,0,.12)),var(--ground);isolation:isolate}
+.inv .kc-door::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.45;z-index:2;pointer-events:none}
+.inv .kc-pan{position:absolute;inset:16px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset 2px 2px 0 1px rgba(255,255,255,.12),inset -2px -2px 0 1px rgba(0,0,0,.25),inset 0 0 0 9px color-mix(in srgb,var(--ground) 94%,#fff),inset 0 0 0 10px rgba(0,0,0,.18)}
+.inv .kc-pan::before{content:"";position:absolute;inset:18px;box-shadow:inset -2px -2px 0 rgba(255,255,255,.1),inset 2px 2px 0 rgba(0,0,0,.28),inset 0 0 26px rgba(0,0,0,.12);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.inv .kc-pan::after{content:"";position:absolute;inset:24px;border:.6px solid color-mix(in srgb,var(--gold) 30%,transparent)}
+/* cover */
+.inv .cv-kunci{overflow:hidden;color:var(--pagefg);transition:opacity .5s 1s}
+.inv .kc-head{position:absolute;top:58px;left:10%;right:10%;text-align:center;display:flex;flex-direction:column;gap:5px;z-index:3}
+.inv .kc-k{margin:0;font-family:var(--d);font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:color-mix(in srgb,var(--gold) 70%,var(--pagefg))}
+.inv .kc-n{margin:0;font-family:var(--s);font-size:clamp(30px,9.6cqi,38px);line-height:1.12;color:var(--pagefg)}
+.inv .kc-n span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .kc-lock{position:absolute;left:50%;top:16.5%;width:29.5%;aspect-ratio:100/220;transform:translateX(-50%);border:0;padding:0;background:none;cursor:pointer;z-index:3;transition:opacity .5s .95s;-webkit-tap-highlight-color:transparent}
+.inv .kc-lock > span{position:absolute;display:block}
+.inv .kc-lock svg{display:block;width:100%;height:auto;overflow:visible}
+.inv .kc-pw{inset:0;z-index:1}
+.inv .kc-kw{left:0;width:100%;top:53.6%;z-index:3;transform-origin:50% 0;transform:perspective(600px) rotateY(0deg);transition:transform 1s cubic-bezier(.45,0,.25,1);filter:drop-shadow(2px 4px 3px rgba(0,0,0,.45))}
+.inv .kc-fw{left:14%;width:72%;top:144%;z-index:2;transform-origin:50% 0;transform:rotate(-5deg)}
+.inv .kc-fw .kc-ring{position:absolute;width:30%;left:35%;top:-9%;z-index:2}
+.inv .kc-fob{filter:drop-shadow(1px 3px 3px rgba(0,0,0,.35))}
+.inv .kc-lock:focus-visible{outline:1px solid var(--gold);outline-offset:8px}
+.inv .kc-foot{position:absolute;left:10%;right:10%;bottom:50px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;z-index:3}
+.inv .kc-to{margin:0;display:flex;flex-direction:column;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px}
+.inv .kc-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:25px;line-height:1.2}
+.inv .kc-hint{margin:0;font-family:var(--d);font-size:9px;letter-spacing:.28em;text-transform:uppercase;opacity:.62}
+.inv .cv-kunci .kc-fade{transition:opacity .4s}
+.inv.opening .cv-kunci .kc-fade{opacity:0}
+.inv.opening .kc-kw{transform:perspective(600px) rotateY(-80deg)}
+.inv.opening .kc-lock{opacity:0}
+.inv.opening .cv-kunci{opacity:0}
+/* page */
+.inv .pg-kunci{color:var(--pagefg);padding:50px 34px 48px;gap:8px}
+.inv .pg-kunci > :not(.kc-door){position:relative;z-index:3}
+.inv .kc-pplate{width:min(24%,96px);margin-bottom:6px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.inv .kc-pplate svg{display:block;width:100%;height:auto}
+.inv .pg-kunci .kc-k{margin-top:4px}
+.inv .pg-kunci .names{font-size:clamp(42px,13cqi,54px);color:var(--pagefg)}
+.inv .pg-kunci .names .amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.42em;color:var(--gold)}
+.inv .kc-rule{display:flex;align-items:center;gap:10px;width:160px;margin:4px 0}
+.inv .kc-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.inv .kc-rule i:last-child{background:linear-gradient(-90deg,transparent,var(--gold))}
+.inv .kc-rule b{width:9px;height:12px;background:var(--gold);clip-path:polygon(50% 0,100% 30%,100% 45%,70% 50%,85% 100%,15% 100%,30% 50%,0 45%,0 30%);border-radius:50% 50% 0 0}
+.inv .kc-date{margin:0;font-family:var(--d);font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.inv .kc-hj{margin:-2px 0 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--gold)}
+.inv .kc-ven{margin:4px 0 0;font-family:'Cormorant Garamond',serif;font-size:18px}
+.inv .kc-ven i{font-style:normal;color:var(--gold)}
+/* skin: raised door-panel cards, headings on brass key tags with a string */
+.fam-kunci .scroller{background:linear-gradient(100deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.1)) local,var(--ground)}
+.fam-kunci.cardsecs .sec{margin:0 14px 18px;background:var(--sheet);box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 55%,transparent),inset 2px 2px 0 10px rgba(255,255,255,.5),inset -2px -2px 0 10px rgba(0,0,0,.05),0 1px 0 1px rgba(0,0,0,.08),0 14px 24px rgba(0,0,0,.28);isolation:isolate;padding-top:52px}
+.fam-kunci.cardsecs .sec:first-child{margin-top:18px}
+.fam-kunci .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4;pointer-events:none;z-index:-1}
+.fam-kunci .sec h2{display:flex;justify-content:center}
+.fam-kunci .kc-tag{position:relative;display:inline-flex;align-items:center;gap:10px;padding:9px 20px 9px 30px;background:linear-gradient(160deg,var(--gold),color-mix(in srgb,var(--gold) 70%,#000) 55%,var(--gold));color:var(--sheet);clip-path:polygon(16px 0,100% 0,100% 100%,16px 100%,0 50%);font-family:var(--d);font-size:12px;letter-spacing:.24em;text-shadow:0 1px 0 rgba(0,0,0,.25);filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.fam-kunci .kc-tag::after{content:"";position:absolute;inset:3px 3px 3px 5px;border:.6px solid rgba(255,255,255,.45);clip-path:polygon(13px 0,100% 0,100% 100%,13px 100%,0 50%);pointer-events:none}
+.fam-kunci .kc-tag i{position:absolute;left:12px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--sheet);box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+.fam-kunci .info,.fam-kunci .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-kunci .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .kc-kw,.inv .kc-lock,.inv .cv-kunci{transition:none}}

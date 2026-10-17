@@ -1,0 +1,64 @@
+/* ===== garis ===== */
+.inv .cv-garis{background:transparent;overflow:hidden;transition:opacity .65s 1s}
+.inv .gr-table{position:absolute;inset:0;background:var(--ground)}
+.inv .gr-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.6}
+.inv .gr-card{position:absolute;inset:16px;background:var(--sheet);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:40px 30px 26px;text-align:center;
+  box-shadow:0 1px 1px rgba(0,0,0,.12),0 3px 6px rgba(0,0,0,.08),0 22px 40px -18px rgba(0,0,0,.45)}
+.inv .gr-card::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.45;pointer-events:none}
+.inv .gr-card::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/180px;mix-blend-mode:soft-light;opacity:.35;pointer-events:none}
+.inv .gr-card > *{position:relative;z-index:1}
+.inv .gr-deb{position:absolute!important;inset:13px;z-index:0;pointer-events:none;box-shadow:inset 1.5px 1.5px 2px rgba(0,0,0,.2),inset -1px -1px 0 var(--press),1px 1px 0 var(--press),-.5px -.5px 0 rgba(0,0,0,.14)}
+.inv .gr-deb::after{content:"";position:absolute;inset:6px;box-shadow:inset .5px .5px 0 rgba(0,0,0,.1),.5px .5px 0 var(--press)}
+.inv .gr-top{display:flex;flex-direction:column;align-items:center;gap:10px}
+.inv .gr-mono{display:flex;align-items:center;gap:7px;font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(17px,5.6cqi,23px);letter-spacing:.06em;color:var(--gold);background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.inv .gr-mono i{width:4px;height:4px;transform:rotate(45deg);background:var(--gold)}
+.inv .gr-k{margin:0;font-family:"Jost",sans-serif;font-weight:300;font-size:clamp(8px,2.5cqi,10px);letter-spacing:.44em;text-transform:uppercase;color:var(--accent);text-shadow:0 1px 0 var(--press)}
+.inv .gr-draw{display:block;border:0;padding:0;background:none;cursor:pointer;width:min(64%,260px);aspect-ratio:148/240;margin:4px 0 2px}
+.inv .gr-art{display:block;width:100%;height:100%;overflow:visible}
+.inv .gr-line{filter:drop-shadow(0 .6px 0 var(--press))}
+.inv .cv-garis .gr-line{stroke-dasharray:1 1;stroke-dashoffset:.15;transition:stroke-dashoffset 1.05s cubic-bezier(.45,0,.35,1)}
+.inv.opening .cv-garis .gr-line{stroke-dashoffset:0}
+.inv.opening .cv-garis{opacity:0}
+.inv .cv-garis .gr-nm{margin:0;font-family:"Mrs Saint Delafield",cursive;font-size:clamp(34px,12.5cqi,52px);line-height:1.05;color:var(--ink);text-shadow:0 1px 0 var(--press)}
+.inv .cv-garis .gr-nm span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--accent);margin:0 .15em}
+.inv .gr-d{margin:2px 0 0;font-family:"Jost",sans-serif;font-weight:400;font-size:clamp(8.5px,2.7cqi,10.5px);letter-spacing:.3em;text-transform:uppercase;text-shadow:0 1px 0 var(--press)}
+.inv .gr-v{margin:0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(13px,4cqi,16px);opacity:.85}
+.inv .gr-h{margin:0;font-family:"Cormorant Garamond",serif;font-size:13px;opacity:.7}
+.inv .gr-to{margin:8px 0 0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(12px,3.6cqi,14px);opacity:.9}
+.inv .gr-to b{display:block;font-style:normal;font-family:"Jost",sans-serif;font-weight:400;font-size:clamp(10px,3cqi,12px);letter-spacing:.22em;text-transform:uppercase;margin-top:3px}
+.inv .gr-hint{margin:12px 0 0;font-family:"Jost",sans-serif;font-weight:300;font-size:clamp(7px,2.2cqi,8.5px);letter-spacing:.3em;text-transform:uppercase;opacity:.6}
+/* page */
+.inv .pg-garis{background:var(--ground);padding:56px 16px 76px;align-items:stretch}
+.inv .pg-garis::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.6}
+.inv .pg-garis .gr-card{position:relative;inset:auto;flex:1;gap:8px;padding:30px 28px}
+.inv .gr-pa{width:min(40%,170px);aspect-ratio:148/240}
+.inv .pg-garis .gr-nm{font-family:"Mrs Saint Delafield",cursive;color:var(--ink);font-size:clamp(42px,15cqi,62px);line-height:1;text-shadow:0 1px 0 var(--press);margin:2px 0}
+.inv .pg-garis .gr-nm .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.36em;color:var(--accent);margin:.1em 0}
+.inv .gr-fl{display:block;width:150px;height:15px;overflow:visible}
+/* skin: debossed cotton cards, one-line flourish under each heading */
+.fam-garis .scroller{background:var(--ground)}
+.fam-garis.cardsecs .sec{background:var(--sheet);color:var(--ink);padding:42px 24px 36px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 16px 28px -16px rgba(0,0,0,.4),inset 0 0 0 12px var(--sheet),inset 1px 1px 1px 12px rgba(0,0,0,.08),inset -1px -1px 0 12px var(--press)}
+.fam-garis.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4;pointer-events:none}
+.fam-garis .sec > *{position:relative;z-index:1}
+.fam-garis .sec h2{font-family:"Jost",sans-serif;font-weight:300;font-size:12.5px;letter-spacing:.42em;color:var(--ink);text-shadow:0 1px 0 var(--press)}
+.fam-garis .sec .gr-fl{width:150px;margin-top:-6px;opacity:.85}
+.fam-garis .sec .orn,.fam-garis .sec .rule{display:none}
+.fam-garis .person{font-family:"Mrs Saint Delafield",cursive;text-transform:none;letter-spacing:0;font-size:34px;line-height:1.1}
+.fam-garis .info span{font-family:"Jost",sans-serif;font-weight:300;letter-spacing:.3em}
+.fam-garis .ibtn{border-color:var(--line);font-family:"Cormorant Garamond",serif;font-size:15px;border-radius:99px}
+.fam-garis .count b{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:40px;color:var(--ink)}
+.fam-garis .count span{font-family:"Jost",sans-serif;font-weight:300}
+.fam-garis .timeline b{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;color:var(--accent)}
+.fam-garis form label{font-family:"Jost",sans-serif;font-weight:300;letter-spacing:.26em}
+.fam-garis form input,.fam-garis form select,.fam-garis form textarea{font-family:"Cormorant Garamond",serif;font-size:17px;color:var(--ink)}
+.fam-garis form select option{background:var(--sheet);color:var(--ink)}
+.fam-garis .seg button{font-family:"Cormorant Garamond",serif;font-size:16px;color:var(--ink);border-radius:99px}
+.fam-garis .seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.fam-garis .submit{background:var(--ink);color:var(--sheet);font-family:"Jost",sans-serif;font-weight:400;letter-spacing:.36em;border-radius:99px}
+.fam-garis .wish b{font-family:"Jost",sans-serif;font-weight:400;color:var(--accent)}
+.fam-garis .giftcard{border-color:var(--line);outline-color:var(--line)}
+.fam-garis .giftcard .acc{font-family:"Cormorant Garamond",serif}
+.fam-garis .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent)}
+.fam-garis .dock button{font-family:"Jost",sans-serif;font-weight:300;color:var(--ink)}
+.fam-garis .foot{color:var(--pagefg);font-family:"Jost",sans-serif;font-weight:300}
+@media (prefers-reduced-motion: reduce){.inv .cv-garis,.inv .cv-garis .gr-line{transition:none}}

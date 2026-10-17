@@ -14,3 +14,8 @@ out/
 *.pem
 .DS_Store
 __pycache__/
+
+# screenshot QA output
+qa/
+qa-*.html
+.build-*/

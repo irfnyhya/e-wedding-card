@@ -1,0 +1,67 @@
+/* ===== komik ===== */
+.inv .cv-komik{background:transparent;overflow:hidden;perspective:1700px}
+.inv .km-desk{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 40%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground));transition:opacity .5s .7s}
+.inv .km-desk::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,color-mix(in srgb,var(--pagefg) 18%,transparent) 0 1.2px,transparent 1.6px) 0 0/9px 9px;opacity:.5}
+.inv .km-pg{position:absolute;left:50%;top:50%;height:min(95%,calc(94cqi * 560 / 300));aspect-ratio:300/560;transform:translate(-50%,-50%);transform-origin:0 50%;transform-style:preserve-3d;transition:transform 1.2s cubic-bezier(.5,0,.25,1)}
+.inv .km-front,.inv .km-back{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--sheet);box-shadow:0 1px 1px rgba(0,0,0,.25),0 16px 30px -10px rgba(0,0,0,.55)}
+.inv .km-back{transform:rotateY(180deg);background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 30%),radial-gradient(circle,color-mix(in srgb,var(--ink) 9%,transparent) 0 1.4px,transparent 1.8px) 0 0/5px 5px,var(--sheet)}
+.inv .km-art{position:absolute;inset:0;width:100%;height:100%;display:block}
+.inv .km-art text{font-family:"Comic Neue",cursive}
+.inv .km-art .km-t{font-family:"Bangers",cursive;letter-spacing:.04em}
+.inv .km-art .km-cap{font-family:"Comic Neue",cursive;font-weight:700;letter-spacing:.03em}
+.inv .km-paper{position:absolute;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.55}
+.inv .km-ear{position:absolute;right:0;bottom:0;width:64px;height:64px;border:0;padding:0;background:none;cursor:pointer;z-index:3}
+.inv .km-ear i{position:absolute;right:0;bottom:0;width:46px;height:46px;filter:drop-shadow(-3px -2px 3px rgba(0,0,0,.35))}
+.inv .km-ear i::before{content:"";position:absolute;inset:0;background:var(--ground);clip-path:polygon(100% 0,100% 100%,0 100%)}
+.inv .km-ear i::after{content:"";position:absolute;inset:0;clip-path:polygon(100% 0,0 100%,0 0);background:linear-gradient(135deg,color-mix(in srgb,var(--sheet) 80%,#000),var(--sheet) 70%);box-shadow:inset 0 0 0 1px var(--ink)}
+.inv .km-ear span{position:absolute;right:50px;bottom:12px;white-space:nowrap;font-family:"Bangers",cursive;font-size:clamp(12px,4cqi,16px);letter-spacing:.06em;color:var(--ink);background:#fff;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);padding:2px 8px 1px;transform:rotate(-4deg)}
+.inv.opening .km-pg{transform:translate(-50%,-50%) rotateY(-178deg)}
+.inv.opening .km-desk{opacity:0}
+/* page: a comic-book front cover */
+.inv .pg-komik{background:var(--ground);padding:56px 14px 76px}
+.inv .pg-komik::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,color-mix(in srgb,var(--pagefg) 16%,transparent) 0 1.2px,transparent 1.6px) 0 0/9px 9px}
+.inv .km-cover{position:relative;width:min(90%,calc((100vh - 140px) * 300 / 560),344px);aspect-ratio:300/560;background:var(--sheet);border:3px solid var(--ink);box-shadow:6px 7px 0 rgba(0,0,0,.5);overflow:hidden}
+.inv .km-cover::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.5;pointer-events:none}
+/* skin: panel-framed sections with caption-box headings */
+.fam-komik .scroller{background:radial-gradient(circle,color-mix(in srgb,var(--pagefg) 14%,transparent) 0 1.2px,transparent 1.6px) 0 0/9px 9px,var(--ground)}
+.fam-komik.cardsecs .sec{background:var(--sheet);color:var(--ink);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);margin:30px 18px 22px 14px;padding:42px 20px 28px;font-family:"Comic Neue",cursive;overflow:visible}
+.fam-komik.cardsecs .sec::before{content:"";position:absolute;right:0;top:0;width:130px;height:130px;pointer-events:none;background:radial-gradient(circle,var(--sky) 0 1.6px,transparent 2px) 0 0/5px 5px;-webkit-mask:linear-gradient(225deg,#000,transparent 65%);mask:linear-gradient(225deg,#000,transparent 65%)}
+.fam-komik.cardsecs .sec.km-b::before{background:radial-gradient(circle,var(--pink) 0 1.7px,transparent 2.1px) 0 0/5px 5px;right:auto;left:0;top:auto;bottom:0;-webkit-mask:linear-gradient(45deg,#000,transparent 65%);mask:linear-gradient(45deg,#000,transparent 65%)}
+.fam-komik.cardsecs .sec.km-c::before{background:radial-gradient(circle,var(--gold) 0 2px,transparent 2.4px) 0 0/5.5px 5.5px}
+.fam-komik.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.4;pointer-events:none}
+.fam-komik .sec > *{position:relative;z-index:1}
+.fam-komik .sec h2{position:absolute;left:-10px;top:-18px;z-index:2;background:var(--gold);color:var(--ink);border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:6px 14px 3px;font-family:"Bangers",cursive;font-size:24px;letter-spacing:.06em;transform:rotate(-1.5deg)}
+.fam-komik .sec .orn,.fam-komik .sec .rule{display:none}
+.fam-komik .sec p{font-size:16px}
+.fam-komik .person{font-family:"Bangers",cursive;letter-spacing:.06em;font-size:22px;color:var(--accent);text-shadow:1.5px 1.5px 0 var(--ink)}
+.fam-komik .info{border-top:2.5px solid var(--ink);border-left:2.5px solid var(--ink);background:#fff}
+.fam-komik .info > div{border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink)}
+.fam-komik .info span{font-family:"Comic Neue",cursive;font-weight:700;opacity:.8}
+.fam-komik .info b{font-weight:700}
+.fam-komik .ibtn{border:2px solid var(--ink);background:#fff;color:var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:"Bangers",cursive;font-size:15px;letter-spacing:.06em}
+.fam-komik .ibtn:hover{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.fam-komik .count{gap:6px}
+.fam-komik .count div{background:#fff;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.fam-komik .count div + div{border-left:2.5px solid var(--ink)}
+.fam-komik .count b{font-family:"Bangers",cursive;font-size:34px;color:var(--accent);letter-spacing:.04em;text-shadow:2px 2px 0 var(--ink)}
+.fam-komik .count span{font-weight:700}
+.fam-komik .timeline li{border-bottom:2px dashed var(--ink)}
+.fam-komik .timeline b{font-family:"Bangers",cursive;font-size:17px;letter-spacing:.06em;color:var(--accent)}
+.fam-komik form label{font-family:"Comic Neue",cursive;font-weight:700;opacity:1}
+.fam-komik form input,.fam-komik form select{border-bottom:2.5px solid var(--ink);font-family:"Comic Neue",cursive;font-weight:700}
+.fam-komik form textarea{border:2.5px solid var(--ink);background:#fff;border-radius:18px;font-family:"Comic Neue",cursive}
+.fam-komik .seg button{border:2.5px solid var(--ink);background:#fff;font-family:"Bangers",cursive;font-size:18px;letter-spacing:.06em;box-shadow:3px 3px 0 var(--ink)}
+.fam-komik .seg button[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.fam-komik .submit{background:var(--accent);color:#fff;border:2.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-family:"Bangers",cursive;font-size:21px;letter-spacing:.1em;text-shadow:1.5px 1.5px 0 var(--ink)}
+.fam-komik .wishes{gap:12px;padding:4px 6px 4px 2px}
+.fam-komik .wish{background:#fff;border:2.5px solid var(--ink);border-radius:18px;padding:12px 14px;position:relative;margin-bottom:10px}
+.fam-komik .wish::after{content:"";position:absolute;left:22px;bottom:-12px;width:16px;height:12px;background:#fff;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);clip-path:polygon(0 0,100% 0,100% 100%);transform:skewX(-20deg)}
+.fam-komik .wish b{font-family:"Bangers",cursive;letter-spacing:.06em;color:var(--accent);font-size:15px}
+.fam-komik .giftcard{border:2.5px solid var(--ink);outline:0;background:#fff;box-shadow:4px 4px 0 var(--ink)}
+.fam-komik .giftcard .acc{font-family:"Bangers",cursive;letter-spacing:.08em}
+.fam-komik .contact{border-bottom:2px dashed var(--ink)}
+.fam-komik .note{border:2.5px solid var(--ink);background:var(--gold);font-style:normal;font-weight:700}
+.fam-komik .dock{background:var(--sheet);border-top:3px solid var(--ink)}
+.fam-komik .dock button{font-family:"Comic Neue",cursive;font-weight:700;color:var(--ink)}
+.fam-komik .foot{color:var(--pagefg);font-family:"Bangers",cursive;letter-spacing:.1em}
+@media (prefers-reduced-motion: reduce){.inv .km-pg,.inv .km-desk{transition:none}}

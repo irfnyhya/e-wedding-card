@@ -1,0 +1,54 @@
+/* ===== santorini: ink and watercolour on deckled cotton paper ===== */
+.inv .cv-santorini{background:var(--ground);overflow:hidden;padding:9px;transition:opacity .5s ease 1.35s}
+.inv .cv-santorini::before,.inv .pg-santorini::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+.inv .st-card{position:relative;height:100%;filter:drop-shadow(0 6px 12px rgba(0,0,0,.22)) drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.inv .st-paper{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/340px,var(--st-paper);background-blend-mode:multiply;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;-webkit-mask-mode:luminance;mask-mode:luminance}
+.inv .st-dark .st-paper{background:url(assets/paper.jpg) 0 0/340px,var(--st-paper);background-blend-mode:soft-light}
+/* gold-foil hairline frame, drawn as a 1px ring of foil */
+.inv .st-foil{position:absolute;inset:14px;z-index:3;pointer-events:none;padding:1px;background:url(assets/foil.jpg) 0 0/240px,var(--gold);background-blend-mode:overlay;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);transition:opacity .45s}
+.inv .st-foil.in{inset:19px;padding:.6px;opacity:.75}
+.inv .st-tap{position:absolute;inset:6px;border:0;padding:0;margin:0;background:none;cursor:pointer;display:block;overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;-webkit-mask-mode:luminance;mask-mode:luminance}
+.inv .st-scene{position:absolute;left:0;right:0;top:0;height:200%;display:block;will-change:transform;transition:transform 1.6s cubic-bezier(.45,.05,.25,1)}
+.inv .st-scene svg{display:block;width:100%;height:100%}
+.inv .st-scene::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/340px;mix-blend-mode:multiply;opacity:.55;pointer-events:none}
+.inv .st-dark .st-scene::after{mix-blend-mode:soft-light;opacity:.4}
+.inv .st-head{position:absolute;left:0;right:0;top:40px;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--st-fg2);pointer-events:none;transition:opacity .45s}
+.inv .st-k{font-family:var(--d);font-size:10px;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--st-fg)}
+.inv .st-n{font-family:var(--s);font-size:clamp(50px,15cqi,62px);line-height:1;color:var(--st-fg);margin:2px 0}
+.inv .st-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--st-fg2);opacity:.8}
+.inv .st-d{font-family:var(--d);font-size:11px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .st-foot{position:absolute;left:40px;right:40px;bottom:32px;z-index:2;text-align:center;display:flex;flex-direction:column;gap:4px;color:var(--st-fg2);pointer-events:none;padding:10px 12px 9px;background:url(assets/paper.jpg) 0 0/300px,var(--st-paper);background-blend-mode:multiply;box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 80%,transparent),inset 0 0 0 3px var(--st-paper),inset 0 0 0 3.6px color-mix(in srgb,var(--gold) 50%,transparent),0 4px 10px rgba(0,0,0,.15);transition:opacity .45s}
+.inv .st-dark .st-foot{background-blend-mode:soft-light}
+.inv .st-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px}
+.inv .st-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:31px;line-height:1.05;color:var(--st-fg)}
+.inv .st-hint{font-family:var(--d);font-size:9px;font-weight:600;letter-spacing:.2em;white-space:nowrap;text-transform:uppercase;opacity:.75}
+.inv.opening .st-scene{transform:translateY(-50%)}
+.inv.opening .st-head,.inv.opening .st-foot{opacity:0}
+.inv.opening .cv-santorini{opacity:0}
+/* page */
+.inv .pg-santorini{background:var(--ground);padding:9px 9px 64px;align-items:stretch;justify-content:stretch}
+.inv .pg-santorini .st-card{flex:1}
+.inv .st-art{position:absolute;left:24px;right:24px;top:24px;bottom:24px;width:calc(100% - 48px);height:calc(100% - 48px);z-index:1}
+.inv .st-ptxt{position:absolute;z-index:2;left:24%;right:24%;top:52%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;color:var(--st-fg2)}
+.inv .pg-santorini .kicker{font-family:var(--d);font-size:9.5px;font-weight:600;letter-spacing:.36em;color:var(--st-fg)}
+.inv .pg-santorini .names{font-size:clamp(50px,15cqi,62px);color:var(--st-fg);line-height:.92}
+.inv .pg-santorini .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.36em;color:var(--st-fg2);opacity:.8}
+.inv .st-rule{display:flex;align-items:center;gap:6px;width:110px}
+.inv .st-rule i{flex:1;height:1px;background:var(--gold)}
+.inv .st-rule b{width:12px;height:7px;border-radius:12px 12px 0 0;border:1px solid var(--gold);border-bottom:0}
+.inv .pg-santorini .caps{font-size:11px;font-weight:600;letter-spacing:.22em}
+.inv .pg-santorini .small{font-size:14px;opacity:.9}
+/* skin: deckled whitewash cards, a painted blue trim, gold hairline, ink dome vignettes */
+.fam-santorini .scroller{background:var(--ground)}
+.fam-santorini.cardsecs .sec{background:none;padding:54px 30px 44px;isolation:isolate}
+.fam-santorini .st-sp{position:absolute;inset:0;z-index:-1;background:url(assets/paper.jpg) 0 0/340px,var(--st-paper);background-blend-mode:multiply;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;-webkit-mask-mode:luminance;mask-mode:luminance;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
+.fam-santorini.cardsecs .sec::before{content:"";position:absolute;inset:12px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);pointer-events:none}
+.fam-santorini .st-tr{position:absolute;left:12px;right:12px;top:18px;height:10px;background:var(--st-trim) center/100% 100% no-repeat}
+.fam-santorini .st-fl{position:absolute;right:2px;top:-6px;width:96px;height:64px;background:var(--st-flower) center/contain no-repeat;z-index:3}
+.fam-santorini .sec h2.st-h2{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:13px;color:var(--accent);letter-spacing:.34em}
+.fam-santorini .st-hd{display:block;width:62px;height:38px;background:var(--st-dome) center/contain no-repeat}
+.fam-santorini .sec .rule{color:var(--gold)}
+.fam-santorini .info,.fam-santorini .info > div,.fam-santorini .timeline li,.fam-santorini .ibtn,.fam-santorini .giftcard{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-santorini .submit,.fam-santorini .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.fam-santorini .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .st-scene,.inv .cv-santorini{transition:none}}

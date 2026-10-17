@@ -1,0 +1,97 @@
+/* ===== bungatelur ===== */
+/* shared drawing classes for the spray */
+.inv .bt-st{fill:none;stroke:var(--gold);stroke-width:.85;stroke-linecap:round}
+.inv .bt-tin{fill:none;stroke:color-mix(in srgb,var(--gold) 70%,transparent);stroke-width:.45;stroke-dasharray:1.2 2.4;stroke-linecap:round}
+.inv .bt-lf path{fill:none;stroke:var(--gold);stroke-width:.7;stroke-linecap:round}
+.inv .bt-pt{fill:var(--bloom,var(--accent));stroke:color-mix(in srgb,var(--bloom,var(--accent)) 60%,#000);stroke-width:.3}
+.inv .bt-bead{fill:color-mix(in srgb,var(--gold) 50%,#fff)}
+.inv .bt-gd{fill:var(--gold)}
+.inv .bt-egg{fill:color-mix(in srgb,var(--sheet) 88%,var(--gold));stroke:var(--gold);stroke-width:.6}
+.inv .bt-dk .bt-egg{fill:#f8f1e2}
+.inv .bt-hi{fill:none;stroke:#fff;stroke-width:.6;opacity:.8;stroke-linecap:round}
+.inv .bt-sh{fill:#000;opacity:.16;filter:blur(3px)}
+.inv .bt-runf{fill:var(--cloth,var(--accent))}
+.inv .bt-ln{fill:none;stroke:var(--gold);stroke-width:.7}
+.inv .bt-reb path{fill:var(--gold);opacity:.9}
+.inv .bt-reb path.bt-in{fill:none;stroke:var(--cloth,var(--accent));stroke-width:.6}
+.inv .bt-fr{fill:none;stroke:var(--gold);stroke-width:.7;opacity:.85}
+.inv .bt-eng{fill:none;stroke:color-mix(in srgb,var(--gold) 40%,#000);stroke-width:.6;opacity:.7}
+.inv .bt-rim path{fill:none;stroke:color-mix(in srgb,var(--gold) 45%,#000);stroke-width:.6;opacity:.6}
+.inv .bt-dish{fill:color-mix(in srgb,var(--gold) 70%,#000);opacity:.35}
+.inv .bt-foil{mix-blend-mode:overlay;opacity:.2}
+.inv .bt-dome{fill:var(--cloth,var(--accent))}
+.inv .bt-domeo{fill:none;stroke:color-mix(in srgb,var(--gold) 80%,#000);stroke-width:.8}
+.inv .bt-band{fill:color-mix(in srgb,var(--cloth,var(--accent)) 70%,#000)}
+/* ---- cover: a stationery card ---- */
+.inv .cv-bungatelur{background:var(--ground);overflow:hidden;transition:opacity .8s .6s}
+.inv .bt-paper{position:absolute;inset:8px;background:radial-gradient(ellipse 80% 60% at 50% 40%,var(--sheet) 40%,color-mix(in srgb,var(--sheet) 92%,var(--ground))),var(--sheet);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.inv .bt-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.8}
+.inv .bt-dk .bt-paper::after{mix-blend-mode:soft-light;opacity:.5}
+.inv .bt-fr1,.inv .bt-fr2{position:absolute;pointer-events:none;z-index:1}
+.inv .bt-fr1{inset:18px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent)}
+.inv .bt-fr2{inset:23px;border:.6px solid color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .bt-c{position:absolute;width:40px;height:40px;z-index:2;pointer-events:none}
+.inv .bt-c svg{display:block;width:100%;height:100%}
+.inv .cv-bungatelur .bt-c.tl{left:14px;top:14px}.inv .cv-bungatelur .bt-c.tr{right:14px;top:14px;transform:scaleX(-1)}
+.inv .cv-bungatelur .bt-c.bl{left:14px;bottom:14px;transform:scaleY(-1)}.inv .cv-bungatelur .bt-c.br{right:14px;bottom:14px;transform:scale(-1)}
+.inv .bt-head{position:absolute;left:0;right:0;top:8.5%;z-index:3;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink);transition:opacity .5s}
+.inv .bt-k{font-family:var(--d);font-weight:600;font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--ink);opacity:.75}
+.inv .bt-n{font-family:var(--s);font-size:clamp(34px,10.6cqi,44px);line-height:1.12;color:var(--accent);padding:0 40px}
+.inv .bt-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold);margin:0 .35em}
+.inv .bt-dot{display:flex;align-items:center;gap:8px;width:150px;margin:2px auto}
+.inv .bt-dot i{flex:1;height:4px;background:var(--bt-dots) 0 50%/7px 4px repeat-x}
+.inv .bt-dot b{width:12px;height:16px;background:var(--bt-egg) center/contain no-repeat}
+.inv .bt-d{font-family:var(--d);font-size:12px;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--ink)}
+.inv .bt-arr{position:absolute;left:50%;bottom:14%;width:min(80%,330px);transform:translateX(-50%);border:0;padding:0;margin:0;background:none;cursor:pointer;z-index:3;transition:transform 1.35s cubic-bezier(.55,0,.2,1),opacity 1s .25s}
+.inv .bt-art{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 2px 1px rgba(0,0,0,.18)) drop-shadow(0 10px 12px rgba(0,0,0,.12))}
+.inv .bt-foot{position:absolute;left:0;right:0;bottom:4.5%;z-index:3;text-align:center;display:flex;flex-direction:column;gap:6px;color:var(--ink);transition:opacity .4s}
+.inv .bt-to{font-family:var(--b);font-style:italic;font-size:13.5px}
+.inv .bt-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:25px;line-height:1.2;color:var(--accent)}
+.inv .bt-hint{font-family:var(--d);font-size:9.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;opacity:.6}
+.inv.opening .bt-arr{transform:translate(-50%,-62%);opacity:0}
+.inv.opening .bt-head,.inv.opening .bt-foot{opacity:0}
+.inv.opening .cv-bungatelur{opacity:0}
+/* ---- page ---- */
+.inv .pg-bungatelur{background:var(--ground);padding:10px;align-items:stretch}
+.inv .bt-card{position:relative;flex:1;background:var(--sheet);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:40px 60px 50px;text-align:center;color:var(--ink);overflow:hidden;box-shadow:inset 0 0 0 9px var(--sheet),inset 0 0 0 10px color-mix(in srgb,var(--gold) 75%,transparent),inset 0 0 0 14px var(--sheet),inset 0 0 0 14.6px color-mix(in srgb,var(--gold) 45%,transparent)}
+.inv .bt-card::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.8;pointer-events:none}
+.inv .bt-dk .bt-card::after{mix-blend-mode:soft-light;opacity:.5}
+.inv .bt-card > *{position:relative;z-index:2}
+.inv .bt-card > .bt-side,.inv .bt-card > .bt-c{position:absolute}
+.inv .bt-side{top:46px;bottom:46px;width:42px;background:var(--bt-bord) 50% 0/42px 72px repeat-y;opacity:.95}
+.inv .bt-side.l{left:18px}.inv .bt-side.r{right:18px;transform:scaleX(-1)}
+.inv .bt-card .bt-c{width:34px;height:34px}
+.inv .bt-card .bt-c.tl{left:16px;top:16px}.inv .bt-card .bt-c.tr{right:16px;top:16px;transform:scaleX(-1)}
+.inv .bt-card .bt-c.bl{left:16px;bottom:16px;transform:scaleY(-1)}.inv .bt-card .bt-c.br{right:16px;bottom:16px;transform:scale(-1)}
+.inv .bt-crest{width:min(100%,232px);margin-bottom:4px}
+.inv .bt-fan{display:block;width:100%;height:auto;overflow:visible}
+.inv .pg-bungatelur .kicker{color:var(--ink);opacity:.75;font-weight:600;letter-spacing:.4em;font-size:10px}
+.inv .pg-bungatelur .names{font-size:clamp(42px,13cqi,54px);color:var(--accent);line-height:1}
+.inv .pg-bungatelur .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:.2em 0}
+.inv .bt-date{font-family:var(--d);font-weight:600;font-size:12.5px;letter-spacing:.26em;text-transform:uppercase}
+.inv .bt-time{font-family:var(--b);font-style:italic;font-size:15px;opacity:.85}
+.inv .bt-ven{font-family:var(--d);font-size:13px;letter-spacing:.14em;text-transform:uppercase;max-width:22ch;line-height:1.5;color:var(--accent)}
+/* ---- skin: paper cards with egg-flower headings and dotted gold dividers ---- */
+.fam-bungatelur .scroller{background:radial-gradient(ellipse 120% 60% at 50% 0,color-mix(in srgb,var(--ground) 80%,var(--gold)),var(--ground) 60%)}
+.fam-bungatelur.cardsecs .sec{background:var(--sheet);margin:18px 14px;padding:46px 28px 42px;box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 11px var(--sheet),inset 0 0 0 11.6px color-mix(in srgb,var(--gold) 40%,transparent),0 10px 24px rgba(0,0,0,.22)}
+.fam-bungatelur.cardsecs .sec::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.7;pointer-events:none}
+.fam-bungatelur.bt-dk.cardsecs .sec::before{mix-blend-mode:soft-light;opacity:.45}
+.fam-bungatelur.cardsecs .sec::after{content:"";position:absolute;left:50%;top:-1px;width:120px;height:9px;transform:translateX(-50%);background:var(--bt-dots) 0 50%/7px 4px repeat-x;pointer-events:none}
+.fam-bungatelur .sec > *{position:relative}
+.fam-bungatelur .sec h2{display:flex;align-items:center;gap:12px;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12.5px;letter-spacing:.34em;color:var(--accent)}
+.fam-bungatelur .bt-hb{width:13px;height:17px;flex:none;background:var(--bt-egg) center/contain no-repeat}
+.fam-bungatelur .sec h2 .bt-hb:first-child{transform:rotate(-30deg)}.fam-bungatelur .sec h2 .bt-hb:last-child{transform:rotate(30deg)}
+.fam-bungatelur .info,.fam-bungatelur .info > div{border-color:transparent}
+.fam-bungatelur .info > div{background:var(--bt-dots) 0 100%/7px 4px repeat-x}
+.fam-bungatelur .info > div:not(.full):first-of-type,.fam-bungatelur .info > div:nth-child(2){position:relative}
+.fam-bungatelur .info span{color:var(--accent);opacity:.9;font-weight:600}
+.fam-bungatelur .count div + div{border-left:0;background:var(--bt-dots) 0 0/4px 7px repeat-y}
+.fam-bungatelur .count b{font-family:"Cormorant Garamond",serif;font-weight:500}
+.fam-bungatelur .timeline li{border-bottom:0;background:var(--bt-dots) 0 100%/7px 4px repeat-x}
+.fam-bungatelur .ibtn{border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
+.fam-bungatelur .submit{background:var(--accent);color:var(--sheet);box-shadow:inset 0 0 0 3px var(--accent),inset 0 0 0 4px color-mix(in srgb,var(--gold) 80%,transparent)}
+.fam-bungatelur .seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.fam-bungatelur.bt-dk .submit,.fam-bungatelur.bt-dk .seg button[aria-pressed="true"]{color:var(--ground)}
+.fam-bungatelur .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .bt-arr,.inv .cv-bungatelur{transition:none}}
+.inv .bt-lip{stroke:color-mix(in srgb,var(--gold) 45%,#000);stroke-width:.4}

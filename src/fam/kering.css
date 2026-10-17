@@ -1,0 +1,58 @@
+/* ===== kering: dried bouquet, arch card in a terracotta sleeve ===== */
+.inv .cv-kering{background:var(--ground);overflow:hidden;transition:opacity .6s .95s}
+.inv .cv-kering::before,.inv .pg-kering::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+.inv .kering-tex{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.8;pointer-events:none;border-radius:inherit}
+.inv .kering-bu{position:absolute;height:auto;overflow:visible;pointer-events:none}
+.inv .cv-kering .kering-bu{width:104%;top:4%}
+.inv .cv-kering .kering-bu.cl{left:-29%}
+.inv .cv-kering .kering-bu.cr{right:-29%}
+.inv .kering-arch{position:absolute;background:var(--sheet);border-radius:32cqi 32cqi 3px 3px;aspect-ratio:300/520;box-shadow:0 1px 1px rgba(0,0,0,.12),0 12px 24px rgba(60,30,10,.22)}
+.inv .kering-card{left:18%;width:64%;top:9%;z-index:2;transition:transform 1.25s cubic-bezier(.5,0,.25,1)}
+.inv .kering-al{position:absolute;inset:0;width:100%;height:100%}
+.inv .kering-txt{position:absolute;left:12%;right:12%;top:17%;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;color:var(--ink)}
+.inv .kering-k{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;opacity:.8}
+.inv .kering-n{font-family:var(--s);font-size:clamp(34px,10.6cqi,42px);line-height:1.1;color:var(--accent);margin:4px 0 0}
+.inv .kering-n i{display:block;font-family:"Cormorant Garamond",serif;font-size:.45em;line-height:1.2;color:var(--gold)}
+.inv .kering-rule{display:flex;align-items:center;gap:6px;width:110px;margin:3px auto;color:var(--gold)}
+.inv .kering-rule i{flex:1;height:.8px;background:currentColor}
+.inv .kering-rule b{width:5px;height:5px;border-radius:50%;border:.8px solid currentColor}
+.inv .kering-d{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600;font-size:11.5px;letter-spacing:.14em;white-space:nowrap;text-transform:uppercase}
+.inv .kering-sw{position:absolute;left:9%;right:9%;top:52%;bottom:9%;z-index:3;filter:drop-shadow(0 -2px 3px rgba(60,30,10,.18)) drop-shadow(0 12px 16px rgba(60,30,10,.28))}
+.inv .kering-sleeve{position:absolute;inset:0;background:var(--sleeve);-webkit-mask:radial-gradient(circle 34px at 50% 0,transparent 33px,#000 34px);mask:radial-gradient(circle 34px at 50% 0,transparent 33px,#000 34px);color:var(--sleeveInk);text-align:center}
+.inv .kering-sleeve .kering-tex{opacity:.6}
+.inv .kering-deb{position:absolute;inset:11px;border:.8px solid color-mix(in srgb,var(--sleeveInk) 55%,transparent);outline:.5px solid color-mix(in srgb,var(--sleeveInk) 35%,transparent);outline-offset:-4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 1px 0 rgba(255,255,255,.18);-webkit-mask:radial-gradient(circle 46px at 50% -11px,transparent 45px,#000 46px);mask:radial-gradient(circle 46px at 50% -11px,transparent 45px,#000 46px)}
+.inv .kering-to{position:absolute;left:10%;right:10%;top:22%;display:flex;flex-direction:column;align-items:center;gap:3px}
+.inv .kering-to span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.9}
+.inv .kering-to b{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase}
+.inv .kering-ss{position:absolute;left:50%;bottom:25%;width:70px;margin-left:-35px;height:auto;opacity:.55}
+.inv .kering-v{position:absolute;left:8%;right:8%;bottom:13%;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.85}
+.inv .kering-stamp{position:absolute;left:50%;top:52%;width:58px;height:58px;margin:-29px 0 0 -29px;border:0;padding:0;border-radius:50%;cursor:pointer;z-index:4;background:url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:multiply;box-shadow:inset 0 0 0 4px var(--sheet),inset 0 0 0 4.8px var(--gold),inset 0 0 0 7px var(--sheet),inset 0 0 0 7.5px color-mix(in srgb,var(--gold) 60%,transparent),0 3px 8px rgba(60,30,10,.3);display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+.inv .kering-stamp span{font-family:var(--s);font-size:20px;color:var(--accent)}
+.inv .kering-stamp i{font-family:"Cormorant Garamond",serif;font-size:.55em;margin:0 1px;color:var(--gold)}
+.inv .kering-hint{position:absolute;left:0;right:0;bottom:3.2%;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12.5px;color:var(--pagefg);opacity:.8;transition:opacity .3s}
+.inv.opening .kering-card{transform:translateY(-118%)}
+.inv.opening .kering-stamp,.inv.opening .kering-hint{opacity:0}
+.inv.opening .cv-kering{opacity:0}
+/* page */
+.inv .pg-kering{background:var(--ground)}
+.inv .pg-kering .kering-arch{position:relative;width:72%;max-width:300px;z-index:2;display:flex;align-items:center;justify-content:center;border-radius:36cqi 36cqi 3px 3px}
+.inv .kering-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:7px;padding:12% 13% 0;color:var(--ink)}
+.inv .pg-kering .kicker{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600;color:var(--ink);font-size:10.5px}
+.inv .pg-kering .names{font-size:clamp(38px,11.5cqi,46px);line-height:1.1}
+.inv .pg-kering .names .amp{display:block;font-family:"Cormorant Garamond",serif;font-size:.42em;color:var(--gold);line-height:1.3}
+.inv .pg-kering .caps{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600}
+.inv .pg-kering .kering-bu{z-index:1}
+.inv .pg-kering .kering-bu.pl{width:100%;left:-30%;top:3%}
+.inv .pg-kering .kering-bu.pr{width:100%;right:-30%;top:3%}
+.inv .pg-kering .kering-bu.fl{width:50%;left:-4%;bottom:3%;z-index:3}
+.inv .pg-kering .kering-bu.fr{width:50%;right:-4%;bottom:3%;z-index:3}
+/* skin: arch-topped paper cards */
+.fam-kering .scroller{background:var(--ground)}
+.fam-kering.cardsecs .sec{background:var(--sheet);border-radius:calc(50cqi - 14px) calc(50cqi - 14px) 4px 4px;outline:1px solid color-mix(in srgb,var(--gold) 75%,transparent);outline-offset:-9px;box-shadow:0 12px 22px rgba(60,30,10,.18);padding:96px 30px 46px}
+.fam-kering .sec > .kering-tex{z-index:-1}
+.fam-kering .kering-bu.sk{width:112px;left:50%;top:-18px;margin-left:-56px;z-index:0}
+.fam-kering .sec h2{font-family:"Cormorant Upright","Cormorant Garamond",serif;font-weight:600;font-size:13.5px;letter-spacing:.3em;color:var(--accent);position:relative}
+.fam-kering .sec > .rule{display:none}
+.fam-kering .count b{font-family:"Parisienne",cursive;font-size:34px}
+.fam-kering .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .kering-card,.inv .cv-kering{transition:none}}

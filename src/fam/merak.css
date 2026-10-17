@@ -1,0 +1,62 @@
+/* ===== merak ===== */
+.inv .cv-merak{background:var(--ground);overflow:hidden;transition:opacity .5s ease 1.15s}
+.inv .mk-silk{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 62%,color-mix(in srgb,var(--accent) 35%,transparent),transparent 70%),radial-gradient(ellipse 120% 80% at 50% 40%,transparent 55%,rgba(0,0,0,.4)),var(--ground)}
+.inv .mk-silk::after{content:"";position:absolute;inset:0;background:url(assets/silk.jpg) 0 0/300px;mix-blend-mode:soft-light;opacity:.45}
+.inv .mk-light .mk-silk{background:radial-gradient(ellipse 70% 55% at 50% 62%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),var(--ground)}
+.inv .mk-light .mk-silk::after{background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.6}
+.inv .mk-head{position:absolute;left:0;right:0;top:5.5%;z-index:3;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--pagefg);padding:0 22px;transition:opacity .4s}
+.inv .mk-k{font-family:var(--d);font-size:9px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.inv .mk-n{font-family:var(--s);font-size:clamp(42px,13cqi,54px);line-height:1.08;margin:2px 0;background:url(assets/foil.jpg) 0 0/220px,linear-gradient(180deg,color-mix(in srgb,var(--gold) 60%,#fff),var(--gold) 60%,color-mix(in srgb,var(--gold) 70%,#000));background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+.inv .mk-light .mk-n{filter:none;background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000));-webkit-background-clip:text;background-clip:text}
+.inv .mk-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em}
+.inv .mk-d{font-family:var(--d);font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.9;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .mk-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;margin-top:6px}
+.inv .mk-to b{display:block;font-family:"Bodoni Moda",serif;font-style:normal;font-weight:400;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-top:3px}
+.inv .mk-train{position:absolute;inset:0;z-index:1;pointer-events:none}
+.inv .mk-f{position:absolute;left:50%;bottom:11%;height:calc(var(--L) * 1%);aspect-ratio:60/300;transform-origin:50% 100%;transform:translateX(-50%) rotate(var(--a0));transition:transform 1.35s cubic-bezier(.3,.55,.15,1);filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+.inv .mk-f svg{display:block;width:100%;height:100%;overflow:visible}
+.inv .mk-sheen{position:absolute;left:30%;right:30%;bottom:11%;height:66%;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.18) 45%,rgba(160,255,230,.12) 52%,transparent 66%) 0 0/250% 100%;mix-blend-mode:screen;animation:mkSheen 7s ease-in-out infinite;-webkit-mask:linear-gradient(transparent,#000 20%,#000 80%,transparent);mask:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+@keyframes mkSheen{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+.inv .mk-brooch{position:absolute;left:50%;bottom:calc(11% - 36px);width:88px;height:88px;margin-left:-44px;z-index:4;border:0;padding:0;background:none;cursor:pointer;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));transition:opacity .5s,transform .8s;-webkit-tap-highlight-color:transparent}
+.inv .mk-brooch svg{position:absolute;inset:0;width:100%;height:100%}
+.inv .mk-brooch span{position:relative;font-family:var(--s);font-size:24px;color:color-mix(in srgb,var(--gold) 70%,#fff);text-shadow:0 1px 2px rgba(0,0,0,.4);display:flex;align-items:baseline;justify-content:center;gap:1px}
+.inv .mk-brooch span i{font-family:"Cormorant Garamond",serif;font-size:.5em}
+.inv .mk-hint{position:absolute;left:0;right:0;bottom:24px;z-index:4;text-align:center;font-family:var(--d);font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--pagefg);opacity:.7;transition:opacity .4s}
+.inv.opening .mk-f{transform:translateX(-50%) rotate(var(--a1)) scale(1.08)}
+.inv.opening .mk-head,.inv.opening .mk-hint{opacity:0}
+.inv.opening .mk-brooch{opacity:0;transform:scale(.92)}
+.inv.opening .mk-sheen{opacity:0}
+.inv.opening .cv-merak{opacity:0}
+/* page */
+.inv .pg-merak{background:var(--ground);padding:40px 34px 80px}
+.inv .mk-pframe{position:absolute;inset:16px 16px 70px;border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);box-shadow:inset 0 0 0 5px transparent,inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 40%,transparent);z-index:1;pointer-events:none}
+.inv .mk-pframe b{position:absolute;width:14px;height:18px;background:var(--mk-eye,none) center/contain no-repeat}
+.inv .mk-pframe .tl{left:-7px;top:-9px}.inv .mk-pframe .tr{right:-7px;top:-9px}.inv .mk-pframe .bl{left:-7px;bottom:-9px}.inv .mk-pframe .br{right:-7px;bottom:-9px}
+.inv .mk-fan{position:absolute;left:50%;top:34px;width:118%;transform:translateX(-50%);z-index:1;opacity:.55;pointer-events:none}
+.inv .pg-merak.mk-light .mk-fan{opacity:.75}
+.inv .mk-ptxt{margin-top:34%;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--pagefg)}
+.inv .pg-merak .kicker{color:var(--gold);font-size:9.5px;letter-spacing:.4em}
+.inv .pg-merak .names{font-size:clamp(50px,15cqi,64px);line-height:1.05;background:url(assets/foil.jpg) 0 0/220px,linear-gradient(180deg,color-mix(in srgb,var(--gold) 60%,#fff),var(--gold) 60%,color-mix(in srgb,var(--gold) 70%,#000));background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
+.inv .pg-merak.mk-light .names{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000));-webkit-background-clip:text;background-clip:text}
+.inv .pg-merak .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em}
+.inv .mk-div{display:block;width:min(92%,330px);height:auto;margin:4px 0 2px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.inv .pg-merak .caps{font-family:var(--d);font-size:10.5px;letter-spacing:.3em;color:var(--pagefg)}
+.inv .pg-merak .small{color:var(--pagefg)}
+/* skin: feather-eye bullets */
+.fam-merak .scroller{background:radial-gradient(ellipse 120% 50% at 50% 0,color-mix(in srgb,var(--accent) 25%,transparent),transparent),var(--ground)}
+.fam-merak.cardsecs .sec{background:var(--sheet);padding:46px 26px 54px;box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 75%,transparent),0 0 0 4px var(--sheet),0 0 0 4.6px color-mix(in srgb,var(--gold) 45%,transparent),0 14px 26px rgba(0,0,0,.3)}
+.fam-merak.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.45;pointer-events:none}
+.fam-merak .sec h2.mk-h2{font-family:"Bodoni Moda",serif;color:var(--accent);letter-spacing:.3em;display:flex;align-items:center;gap:12px}
+.fam-merak .sec h2.mk-h2::before,.fam-merak .sec h2.mk-h2::after{content:"";width:13px;height:17px;flex:none;background:var(--mk-eye) center/contain no-repeat}
+.fam-merak .mk-plume{position:absolute;left:50%;bottom:14px;width:150px;height:30px;margin-left:-75px;background:var(--mk-plume) center/contain no-repeat;opacity:.9}
+.fam-merak .timeline li{position:relative;padding-left:20px}
+.fam-merak .timeline li::before,.fam-merak .contact::before,.fam-merak .wish b::before{content:"";display:inline-block;width:10px;height:13px;background:var(--mk-eye) center/contain no-repeat;vertical-align:-1px;margin-right:7px}
+.fam-merak .timeline li::before{position:absolute;left:0;top:13px;margin:0}
+.fam-merak .contact::before{flex:none;margin:0}
+.fam-merak .info span::before{content:"";display:inline-block;width:7px;height:9px;background:var(--mk-eye) center/contain no-repeat;margin-right:5px;vertical-align:-1px}
+.fam-merak .sec .rule{color:var(--gold)}
+.fam-merak .info,.fam-merak .info > div,.fam-merak .timeline li,.fam-merak .ibtn,.fam-merak .giftcard{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-merak .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .mk-f,.inv .cv-merak{transition:none}.inv .mk-sheen{animation:none}}
+.inv .mk-pframe.cv{inset:14px;opacity:.75;transition:opacity .4s}
+.inv.opening .mk-pframe.cv{opacity:0}

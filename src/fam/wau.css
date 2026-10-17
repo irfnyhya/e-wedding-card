@@ -1,0 +1,38 @@
+/* ===== wau ===== */
+.inv .wau-sky{position:absolute;inset:0;background:radial-gradient(ellipse 90% 55% at 50% 100%,color-mix(in srgb,var(--gold) 45%,var(--ground)) 0%,transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--ground) 80%,#000),var(--ground) 55%,color-mix(in srgb,var(--ground) 70%,var(--gold)))}
+.inv .wau-sky::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:soft-light;opacity:.35}
+.inv .wau-cloud{position:absolute;height:40px;border-radius:40px;background:radial-gradient(ellipse at 50% 60%,rgba(255,255,255,.28),transparent 70%);filter:blur(2px)}
+.inv .wau-cloud.a{width:60%;left:-10%;top:30%}.inv .wau-cloud.b{width:50%;right:-12%;top:62%}
+.inv .cv-wau{background:transparent;overflow:hidden;transition:opacity .7s .55s}
+.inv .cv-wau .wau-sky{transition:opacity .7s .5s}
+.inv .wau-head{position:absolute;top:8%;left:0;right:0;text-align:center;z-index:2;color:var(--pagefg);transition:opacity .4s}
+.inv .wau-head .kicker{color:var(--gold);letter-spacing:.36em}
+.inv .wau-n{font-family:var(--s);font-size:clamp(32px,10cqi,42px);line-height:1.1;margin-top:6px}
+.inv .wau-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.55em;color:var(--gold)}
+.inv .wau-fly{position:absolute;left:50%;top:25%;width:min(62%,250px);margin-left:calc(min(62%,250px) / -2);border:0;padding:0;background:none;cursor:pointer;z-index:3;transform-origin:50% 40%;animation:wauSway 6s ease-in-out infinite;transition:transform 1.4s cubic-bezier(.5,0,.25,1)}
+.inv .wau-k{display:block;width:100%;height:auto;filter:drop-shadow(0 14px 14px rgba(0,0,0,.35))}
+.inv .wau-str{position:absolute;left:50%;top:92%;width:40px;height:62cqh;margin-left:-20px;pointer-events:none}
+@keyframes wauSway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.inv .wau-foot{position:absolute;left:0;right:0;bottom:6%;text-align:center;z-index:2;color:var(--pagefg);display:flex;flex-direction:column;gap:10px;transition:opacity .4s}
+.inv .wau-foot .to-line b{color:var(--pagefg);font-family:var(--s);font-size:26px;letter-spacing:0;text-transform:none}
+.inv .wau-hint{font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.inv.opening .wau-fly{animation:none;transform:translate(14%,-95cqh) rotate(8deg) scale(.55)}
+.inv.opening .wau-head,.inv.opening .wau-foot,.inv.opening .wau-cloud{opacity:0}
+.inv.opening .cv-wau{opacity:0}
+/* page */
+.inv .pg-wau{background:var(--ground);color:var(--pagefg);gap:10px;padding:40px 34px}
+.inv .pg-wau > :not(.wau-sky){position:relative;z-index:2}
+.inv .pg-wau .wau-frame{position:absolute;inset:14px;z-index:1;border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-6px}
+.inv .wau-mini{width:38%;max-width:150px;margin-bottom:6px}
+.inv .wau-mini svg{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
+.inv .pg-wau .kicker{color:var(--pagefg);opacity:.8}
+.inv .pg-wau .names{color:var(--pagefg);font-size:clamp(44px,14cqi,58px)}
+.inv .pg-wau .names .amp{color:var(--gold);font-size:.5em}
+.inv .pg-wau .caps,.inv .pg-wau .small{color:var(--pagefg)}
+/* skin: sky behind, paper cards, a small kite on each heading */
+.fam-wau .scroller{background:linear-gradient(180deg,var(--ground),color-mix(in srgb,var(--ground) 75%,var(--gold)))}
+.fam-wau.cardsecs .sec{background:var(--sheet);box-shadow:0 0 0 1px var(--gold),0 0 0 5px var(--sheet),0 0 0 6px var(--accent),0 12px 22px rgba(0,0,0,.25)}
+.fam-wau .sec h2{font-family:"Cinzel",serif;letter-spacing:.18em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:8px}
+.fam-wau .wau-h{width:22px;height:28px;background:var(--accent);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Cpath d='M100 14C122 30 134 58 128 92C150 92 178 86 196 70C192 104 160 128 118 132C116 150 118 166 124 184C146 182 168 178 186 168C178 220 140 252 100 252C60 252 22 220 14 168C32 178 54 182 76 184C82 166 84 150 82 132C40 128 8 104 4 70C22 86 50 92 72 92C66 58 78 30 100 14Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Cpath d='M100 14C122 30 134 58 128 92C150 92 178 86 196 70C192 104 160 128 118 132C116 150 118 166 124 184C146 182 168 178 186 168C178 220 140 252 100 252C60 252 22 220 14 168C32 178 54 182 76 184C82 166 84 150 82 132C40 128 8 104 4 70C22 86 50 92 72 92C66 58 78 30 100 14Z'/%3E%3C/svg%3E") center/contain no-repeat}
+.fam-wau .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .wau-fly{animation:none;transition:none}}

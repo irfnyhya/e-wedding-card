@@ -1,0 +1,61 @@
+/* ===== kraft ===== */
+.inv .cv-kraft{background:transparent;overflow:hidden;transition:opacity .5s 1.05s}
+.inv .kraft-table,.inv .pg-kraft,.fam-kraft .scroller{background-color:var(--ground);background-image:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(255,255,255,.14),rgba(0,0,0,.12))}
+.inv .kraft-table::after,.inv .pg-kraft::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.55;pointer-events:none}
+.inv .kraft-table{position:absolute;inset:0;transition:opacity .7s .65s}
+.inv .kraft-wrap{position:absolute;left:6%;right:6%;top:7%;bottom:8%;perspective:1500px;filter:drop-shadow(0 16px 22px rgba(0,0,0,.28)) drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.inv .kraft-paper{background-color:var(--sheet);background-image:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.07)),url(assets/paper.jpg);background-size:auto,250px;background-blend-mode:normal,multiply;color:var(--ink)}
+.inv .kraft-st{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.inv .kraft-top{position:absolute;left:0;right:0;top:0;height:59%;transform-origin:50% 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;padding:8% 8% 0;text-align:center;box-shadow:inset 0 0 34px rgba(70,40,10,.16);transition:transform .95s .42s cubic-bezier(.5,0,.25,1),opacity .35s 1s}
+.inv .kraft-botw{position:absolute;left:0;right:0;bottom:0;height:47%;transform-origin:50% 100%;filter:drop-shadow(0 -2px 3px rgba(0,0,0,.22));transition:transform .95s .48s cubic-bezier(.5,0,.25,1),opacity .35s 1.02s;z-index:2}
+.inv .kraft-bot{position:absolute;inset:0;clip-path:polygon(0 4.4%,50% 0,100% 4.4%,100% 100%,0 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:17% 8% 14%;text-align:center;background-image:linear-gradient(180deg,rgba(255,255,255,.14),transparent 22%,rgba(0,0,0,.08)),url(assets/paper.jpg)}
+.inv .kraft-top > :not(.kraft-st),.inv .kraft-bot > :not(.kraft-st){position:relative;z-index:2}
+.inv .kraft-stamp{color:var(--accent);-webkit-mask:url(assets/paper.jpg) 0 0/170px;mask:url(assets/paper.jpg) 0 0/170px;mask-mode:luminance;opacity:.93}
+.inv .kraft-k{font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.36em;text-transform:uppercase}
+.inv .kraft-round{width:33%;max-width:140px;transform:rotate(-9deg);margin:2px 0}
+.inv .kraft-seal{display:block;width:100%;height:auto}
+.inv .kraft-names{margin:0;font-family:var(--s);font-weight:400;font-size:clamp(46px,14.6cqi,60px);line-height:.9;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .kraft-names i{font-family:"IM Fell English",serif;font-style:italic;font-size:.32em;margin:.55em 0 .2em;opacity:.8}
+.inv .kraft-box{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 18px 8px;border:2px solid currentColor;outline:.8px solid currentColor;outline-offset:3px;transform:rotate(-2deg);margin-bottom:8px;max-width:88%}
+.inv .kraft-box small{font-family:"IM Fell English SC",serif;font-size:10.5px;letter-spacing:.32em;text-transform:uppercase}
+.inv .kraft-box b{font-family:"IM Fell English SC",serif;font-weight:400;font-size:clamp(22px,7cqi,27px);letter-spacing:.08em;line-height:1.1}
+.inv .kraft-box span{font-family:"IM Fell English",serif;font-style:italic;font-size:13.5px;line-height:1.2}
+.inv .kraft-to{font-family:"IM Fell English",serif;font-style:italic;font-size:13px;opacity:.85}
+.inv .kraft-guest{font-family:var(--s);font-size:clamp(30px,9.4cqi,38px);line-height:1;margin-top:-2px}
+.inv .kraft-hint{position:absolute!important;left:0;right:0;bottom:5%;font-family:"IM Fell English SC",serif;font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.6}
+.inv .kraft-tie{position:absolute;left:0;right:0;top:53.4%;height:0;z-index:5;transition:transform .62s cubic-bezier(.5,0,.75,.4),opacity .45s .2s}
+.inv .kraft-strand{position:absolute;left:0;right:0;top:-4px;height:3.4px;z-index:2;border-radius:2px;background:repeating-linear-gradient(118deg,var(--gold) 0 1.7px,color-mix(in srgb,var(--gold) 58%,#3e2a16) 1.7px 2.5px);box-shadow:0 1.6px 1.4px rgba(0,0,0,.3)}
+.inv .kraft-strand.b{top:1.6px}
+.inv .kraft-gyp{position:absolute;left:50%;top:0;width:34%;max-width:140px;z-index:1;transform-origin:50% 96%;transform:translate(-50%,-96%) translate(-8%,8px) rotate(-66deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.inv .kraft-knot{position:absolute;left:50%;top:0;width:54%;max-width:210px;transform:translate(-50%,-46%);border:0;padding:0;background:none;cursor:pointer;z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.inv .kraft-knot:focus-visible{outline:2px dashed var(--accent);outline-offset:2px}
+.inv .kraft-bow{display:block;width:100%;height:auto}
+.inv.opening .cv-kraft .kraft-tie{transform:translateY(150px) rotate(4deg);opacity:0}
+.inv.opening .kraft-top{transform:rotateX(-112deg);opacity:0}
+.inv.opening .kraft-botw{transform:rotateX(112deg);opacity:0}
+.inv.opening .kraft-table{opacity:0}
+.inv.opening .cv-kraft{opacity:0}
+/* page: a stitched kraft card with stamped text */
+.inv .pg-kraft{padding:22px 18px 76px;align-items:stretch}
+.inv .kraft-card{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:12% 9% 26%;text-align:center;background-color:var(--sheet);background-image:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.07)),url(assets/paper.jpg);background-size:auto,250px;background-blend-mode:normal,multiply;color:var(--ink);box-shadow:inset 0 0 40px rgba(70,40,10,.16),0 14px 26px rgba(0,0,0,.26)}
+.inv .kraft-card > :not(.kraft-st):not(.kraft-tie){position:relative;z-index:2}
+.inv .pg-kraft .kraft-round{width:34%}
+.inv .pg-kraft .kraft-names{font-size:clamp(52px,16cqi,66px)}
+.inv .kraft-venue{font-family:"IM Fell English",serif;font-style:italic;font-size:15px;opacity:.85;max-width:80%}
+.inv .pg-kraft .kraft-tie{top:87%}
+.inv .pg-kraft .kraft-tie .kraft-bow{position:absolute;left:50%;top:0;width:38%;max-width:150px;transform:translate(-50%,-46%);z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+/* skin: kraft cards with stitched edges and stamped headings */
+.fam-kraft.cardsecs .sec{background-color:var(--sheet);background-image:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.06)),url(assets/paper.jpg);background-size:auto,250px;background-blend-mode:normal,multiply;color:var(--ink);box-shadow:inset 0 0 30px rgba(70,40,10,.14),0 2px 3px rgba(0,0,0,.18),0 12px 22px rgba(0,0,0,.16)}
+.fam-kraft.cardsecs .sec::before{content:"";position:absolute;inset:9px;border:1.3px dashed var(--chalk);pointer-events:none;filter:drop-shadow(.5px .7px 0 rgba(0,0,0,.28))}
+.fam-kraft .sheet.tex::after{display:none}
+.fam-kraft .sec h2{font-family:"IM Fell English SC",serif;font-size:14px;letter-spacing:.24em}
+.fam-kraft .kraft-hs{display:inline-block;padding:7px 14px 5px;border:1.8px solid currentColor;outline:.7px solid currentColor;outline-offset:2.5px;transform:rotate(-1.6deg);color:var(--accent);-webkit-mask:url(assets/paper.jpg) 0 0/170px;mask:url(assets/paper.jpg) 0 0/170px;mask-mode:luminance}
+.fam-kraft .rule{color:var(--chalk)}
+.fam-kraft .info b,.fam-kraft .contact b{font-family:"IM Fell English",serif}
+.fam-kraft .count b{font-family:"IM Fell English SC",serif;color:var(--accent)}
+.fam-kraft form input,.fam-kraft form textarea,.fam-kraft form select{color:var(--ink)}
+.fam-kraft .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .kraft-top,.inv .kraft-botw,.inv .kraft-tie,.inv .kraft-table,.inv .cv-kraft{transition:none}}
+.inv .kraft-gyp.b{width:24%;transform:translate(-50%,-96%) translate(30%,8px) rotate(58deg) scaleX(-1)}
+.inv .pg-kraft .kraft-tie .kraft-gyp{width:24%;transform:translate(-50%,-96%) translate(-8%,8px) rotate(-74deg)}
+.inv .pg-kraft .kraft-tie .kraft-gyp.b{width:20%;transform:translate(-50%,-96%) translate(30%,8px) rotate(70deg) scaleX(-1)}

@@ -1,0 +1,72 @@
+/* ===== monogram ===== */
+.inv .cv-monogram{background:transparent;overflow:hidden;transition:opacity .6s .9s}
+.inv .monogram-table,.inv .pg-monogram{background:radial-gradient(ellipse 90% 70% at 50% 45%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 75%)}
+.inv .monogram-table{position:absolute;inset:0}
+.inv .monogram-table::after,.inv .pg-monogram::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6;pointer-events:none}
+.inv .monogram-card{position:absolute;inset:24px 18px 26px;background:var(--sheet);border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:9% 11% 13%;text-align:center;color:var(--ink);
+ box-shadow:0 1px 0 color-mix(in srgb,var(--sheet) 88%,#000),0 2px 0 color-mix(in srgb,var(--sheet) 82%,#000),0 3px 0 color-mix(in srgb,var(--sheet) 76%,#000),0 4px 1px color-mix(in srgb,var(--sheet) 70%,#000),0 18px 34px rgba(0,0,0,.38);
+ transition:transform 1s .5s cubic-bezier(.4,0,.2,1),opacity .7s .8s,box-shadow 1s .5s}
+.inv .monogram-card.tex::after{opacity:.6}
+.inv .monogram-plate{position:absolute;inset:14px;pointer-events:none;box-shadow:inset 1.4px 1.4px 1px var(--mglo),inset -1px -1px 0 var(--mghi),1px 1px 0 var(--mghi),-.6px -.6px 0 var(--mglo)}
+.inv .monogram-plate::after{content:"";position:absolute;inset:9px;border:.8px solid var(--gold);opacity:.75}
+.inv .monogram-plate::before{content:"";position:absolute;inset:13px;border:.6px solid var(--gold);opacity:.4}
+.inv .monogram-card > :not(.monogram-plate){position:relative;z-index:2}
+.inv .monogram-k{font-family:"Cinzel",serif;font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:var(--accent);text-shadow:0 1px 0 var(--mghi)}
+.inv .monogram-crest{position:relative;display:block;width:min(92%,300px);aspect-ratio:240/262;border:0;padding:0;background:none;cursor:pointer;margin:2px 0 4px;transition:transform .45s ease-out}
+.inv .monogram-crest:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
+.inv .monogram-emb,.inv .monogram-emb i,.inv .monogram-foil{position:absolute;inset:0;display:block}
+.inv .monogram-emb i{-webkit-mask:var(--mgemb) center/100% 100% no-repeat;mask:var(--mgemb) center/100% 100% no-repeat;transition:transform .5s ease-out,opacity .5s}
+.inv .monogram-emb .lo{background:var(--mglo);transform:translate(1.1px,1.3px);filter:blur(.35px)}
+.inv .monogram-emb .hi{background:var(--mghi);transform:translate(-.9px,-.9px)}
+.inv .monogram-emb .base{background:var(--sheet)}
+.inv .monogram-foil{background:url(assets/foil.jpg) 0 0/340px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--mgfoil) center/100% 100% no-repeat;mask:var(--mgfoil) center/100% 100% no-repeat;filter:drop-shadow(.5px .7px 0 var(--mglo))}
+.inv .monogram-mono{position:absolute;left:50%;top:52.7%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:46%;aspect-ratio:1}
+.inv .monogram-mono b{position:relative;font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(58px,19cqi,80px);line-height:1}
+.inv .monogram-mono .a{margin-right:-.26em;top:-.08em;filter:drop-shadow(.6px .8px 0 var(--mglo))}
+.inv .monogram-mono .b{top:.12em;color:var(--accent);-webkit-text-stroke:.085em var(--sheet);paint-order:stroke fill}
+.inv .monogram-rib{position:absolute;left:24%;right:24%;top:83.6%;transform:translateY(-50%);font-family:"Cinzel",serif;font-size:clamp(8px,2.5cqi,10px);letter-spacing:.24em;color:var(--accent);white-space:nowrap;text-shadow:0 1px 0 var(--mghi)}
+.inv .monogram-names{font-family:var(--s);font-size:clamp(34px,10.4cqi,44px);line-height:1.1;color:var(--accent)}
+.inv .monogram-names i{font-family:"Cormorant Garamond",serif;font-size:.5em;color:var(--gold)}
+.inv .monogram-date{font-family:"Cinzel",serif;font-size:clamp(10.5px,3.2cqi,12.5px);letter-spacing:.24em;text-transform:uppercase;color:var(--ink);text-shadow:0 1px 0 var(--mghi)}
+.inv .monogram-rule{display:flex;align-items:center;gap:8px;width:46%;margin:2px 0}
+.inv .monogram-rule i{flex:1;height:1px;background:var(--mglo);box-shadow:0 1px 0 var(--mghi)}
+.inv .monogram-rule b{width:6px;height:6px;transform:rotate(45deg);background:url(assets/foil.jpg) 0 0/120px,var(--gold);background-blend-mode:overlay}
+.inv .monogram-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px;opacity:.85}
+.inv .monogram-guest{font-family:"Cinzel",serif;font-size:clamp(12px,3.7cqi,14px);letter-spacing:.16em;color:var(--accent);margin-top:-4px}
+.inv .monogram-hint{position:absolute!important;left:0;right:0;bottom:12%;font-family:"Cormorant Garamond",serif;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.55;transition:opacity .3s}
+.inv.opening .cv-monogram .monogram-emb .lo{transform:translate(2.3px,2.7px)}
+.inv.opening .cv-monogram .monogram-emb .hi{transform:translate(-1.8px,-1.8px)}
+.inv.opening .cv-monogram .monogram-crest{transform:scale(.988)}
+.inv.opening .monogram-hint{opacity:0}
+.inv.opening .cv-monogram .monogram-card{transform:translateY(-5%) scale(1.035);opacity:0;box-shadow:0 1px 0 color-mix(in srgb,var(--sheet) 88%,#000),0 40px 60px rgba(0,0,0,.3)}
+.inv.opening .cv-monogram{opacity:0}
+/* page: deep-impression letterpress */
+.inv .pg-monogram{padding:20px 16px 72px;align-items:stretch}
+.inv .pg-monogram .monogram-card{position:relative;inset:auto;flex:1;padding:12% 12% 11%;gap:10px;transition:none}
+.inv .pg-monogram .monogram-crest{width:68%;cursor:default;margin:0 0 4px}
+.inv .monogram-lp{margin:0;font-family:"Cinzel",serif;font-weight:500;font-size:clamp(28px,9cqi,38px);letter-spacing:.14em;line-height:1.12;color:var(--accent);display:flex;flex-direction:column;align-items:center;text-shadow:0 1.2px 0 var(--mghi),0 -.8px 0 var(--mglo)}
+.inv .monogram-lp i{font-family:"Pinyon Script",cursive;font-style:normal;font-weight:400;font-size:.95em;letter-spacing:0;line-height:1;margin:.04em 0;text-shadow:none}
+.inv .monogram-venue{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;opacity:.85}
+/* skin: plate-marked cotton cards, blind-embossed badges */
+.fam-monogram .scroller{background:radial-gradient(ellipse 90% 70% at 50% 45%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 75%) fixed}
+.fam-monogram.cardsecs .sec{background:var(--sheet);border-radius:2px;box-shadow:0 1px 0 color-mix(in srgb,var(--sheet) 86%,#000),0 2px 0 color-mix(in srgb,var(--sheet) 78%,#000),0 3px 1px color-mix(in srgb,var(--sheet) 72%,#000),0 14px 26px rgba(0,0,0,.28)}
+.fam-monogram.cardsecs .sec::before{content:"";position:absolute;inset:10px;pointer-events:none;box-shadow:inset 1.2px 1.2px 1px var(--mglo),inset -1px -1px 0 var(--mghi),1px 1px 0 var(--mghi)}
+.fam-monogram .sec h2{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-family:"Cinzel",serif;letter-spacing:.24em}
+.fam-monogram .monogram-badge{padding:9px 18px 8px;border-radius:40px;background:var(--sheet);box-shadow:inset 1.2px 1.2px 0 var(--mghi),inset -1.2px -1.2px 1px var(--mglo),1px 1.5px 2px var(--mglo);outline:.8px solid color-mix(in srgb,var(--gold) 80%,transparent);outline-offset:4px;text-shadow:0 1px 0 var(--mghi)}
+.fam-monogram .monogram-sp{flex:none;width:38px;height:13px;background:url(assets/foil.jpg) 0 0/160px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--mgsprig) center/contain no-repeat;mask:var(--mgsprig) center/contain no-repeat}
+.fam-monogram .monogram-sp:not(.r){transform:scaleX(-1)}
+.fam-monogram .sheet{--line:color-mix(in srgb,var(--ink) 16%,transparent)}
+.fam-monogram .info{box-shadow:1px 1px 0 var(--mghi)}
+.fam-monogram .count b,.fam-monogram .timeline b{font-family:"Cinzel",serif;text-shadow:0 1px 0 var(--mghi),0 -.6px 0 var(--mglo)}
+.fam-monogram .submit,.fam-monogram .seg button[aria-pressed="true"]{box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.fam-monogram .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .monogram-card,.inv .monogram-emb i,.inv .monogram-crest,.inv .cv-monogram{transition:none}}
+.inv .monogram-cn{position:absolute!important;width:21%;aspect-ratio:1;z-index:1!important;pointer-events:none}
+.inv .monogram-cn i{position:absolute;inset:0;-webkit-mask:var(--mgcorner) 0 0/100% 100% no-repeat;mask:var(--mgcorner) 0 0/100% 100% no-repeat}
+.inv .monogram-cn .lo{background:var(--mglo);transform:translate(1.1px,1.3px);filter:blur(.3px)}
+.inv .monogram-cn .hi{background:var(--mghi);transform:translate(-.8px,-.8px)}
+.inv .monogram-cn .base{background:var(--sheet)}
+.inv .monogram-cn.tl{left:30px;top:30px}
+.inv .monogram-cn.tr{right:30px;top:30px;transform:scaleX(-1)}
+.inv .monogram-cn.bl{left:30px;bottom:30px;transform:scaleY(-1)}
+.inv .monogram-cn.br{right:30px;bottom:30px;transform:scale(-1,-1)}

@@ -1,0 +1,66 @@
+/* ===== jam ===== */
+.inv .jam-bg{position:absolute;inset:0;background:radial-gradient(ellipse 75% 55% at 50% 44%,color-mix(in srgb,var(--ground) 88%,#fff) 0%,transparent 70%),radial-gradient(ellipse 100% 80% at 50% 50%,transparent 50%,color-mix(in srgb,var(--ground) 70%,#000) 100%),var(--ground)}
+.inv .jam-bg::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.7}
+.inv .jam-bg::before{content:"";position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 30%,transparent);outline-offset:-5px;z-index:1}
+/* cover */
+.inv .cv-jam{overflow:hidden;color:var(--pagefg);transition:opacity .5s 1.15s}
+.inv .jam-head{position:absolute;top:6.4%;left:8%;right:8%;text-align:center;z-index:3;display:flex;flex-direction:column;gap:6px}
+.inv .jam-k{font-family:var(--d);font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:color-mix(in srgb,var(--gold) 60%,var(--pagefg));margin:0}
+.inv .jam-n{font-family:var(--s);font-size:clamp(32px,10cqi,40px);line-height:1.1;margin:0;color:var(--pagefg)}
+.inv .jam-n span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .jam-w{position:absolute;left:50%;top:27%;width:min(60%,250px);aspect-ratio:1;transform:translateX(-50%);border:0;padding:0;background:none;cursor:pointer;z-index:3;perspective:900px;transition:opacity .5s 1.1s;-webkit-tap-highlight-color:transparent}
+.inv .jam-w > *{position:absolute;display:block}
+.inv .jam-w svg{display:block;width:100%;height:100%;overflow:visible}
+.inv .jam-chain{inset:0;width:100%;height:100%;z-index:0;overflow:visible}
+.inv .jam-bow{left:50%;top:-29%;width:26%;transform:translateX(-50%);z-index:1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.inv .jam-bow svg{height:auto}
+.inv .jam-case{inset:0;border-radius:50%;transform:translateY(6px);background:linear-gradient(160deg,var(--g2),var(--g3) 60%,var(--g2));box-shadow:0 20px 30px rgba(0,0,0,.42),0 6px 8px rgba(0,0,0,.3);z-index:1}
+.inv .jam-dial{inset:0;z-index:2;border-radius:50%}
+.inv .jam-lid{inset:0;z-index:3;transform-origin:50% 100%;transform-style:preserve-3d;transition:transform 1.05s cubic-bezier(.2,.8,.25,1)}
+.inv .jam-lf,.inv .jam-lb{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:50%}
+.inv .jam-lf{box-shadow:0 1px 0 rgba(255,255,255,.25)}
+.inv .jam-lb{transform:rotateX(180deg)}
+.inv .jam-hinge{left:41%;width:18%;bottom:-2.6%;height:5%;border-radius:4px;background:linear-gradient(180deg,var(--g1),var(--g2) 45%,var(--g3));box-shadow:0 2px 3px rgba(0,0,0,.35),inset 0 0 0 .5px var(--g3);z-index:4}
+.inv .jam-w:focus-visible{outline:1px solid var(--gold);outline-offset:8px;border-radius:50%}
+.inv .jam-foot{position:absolute;top:66.5%;bottom:3.6%;left:8%;right:8%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.inv .jam-date{font-family:var(--d);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0;color:var(--pagefg)}
+.inv .jam-date i{font-style:normal;color:var(--gold)}
+.inv .jam-to{display:flex;flex-direction:column;margin:8px 0 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--pagefg)}
+.inv .jam-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:26px;line-height:1.25}
+.inv .jam-hint{margin:auto 0 0;font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--pagefg);opacity:.75}
+.inv .cv-jam .jam-fade{transition:opacity .4s}
+.inv.opening .cv-jam .jam-fade{opacity:0}
+.inv.opening .jam-lid{transform:rotateX(-122deg)}
+.inv.opening .jam-w{opacity:0}
+.inv.opening .cv-jam{opacity:0}
+/* page */
+.inv .pg-jam{color:var(--pagefg);padding:60px 26px 46px;gap:8px}
+.inv .pg-jam > :not(.jam-bg){position:relative;z-index:3}
+.inv .jam-pd{width:min(84%,340px);aspect-ratio:1;margin:30% 0 14px;flex:none}
+.inv .jam-pd > svg,.inv .jam-pd > .jam-pchain{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 14px 20px rgba(0,0,0,.35))}
+.inv .jam-pd .jam-bow{position:absolute;left:50%;top:-29%;width:26%;transform:translateX(-50%)}
+.inv .jam-pd .jam-bow svg{width:100%;height:auto;display:block}
+.inv .jam-pin{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.inv .pg-jam .names{font-size:clamp(30px,9.4cqi,40px);color:var(--accent);line-height:1.02}
+.inv .pg-jam .names .amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.45em;color:var(--gold)}
+.inv .jam-at{margin:4px 0 0;font-family:var(--d);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);opacity:.75}
+.inv .jam-meta{display:flex;flex-direction:column;align-items:center;gap:6px}
+.inv .jam-rule{display:flex;align-items:center;gap:10px;width:170px}
+.inv .jam-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.inv .jam-rule i:last-child{background:linear-gradient(-90deg,transparent,var(--gold))}
+.inv .jam-rule b{font-family:var(--d);font-weight:400;font-size:12px;color:var(--gold);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 3px transparent,inset 0 0 0 3.6px color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .pg-jam .jam-date{font-size:12px}
+.inv .jam-hj{margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--gold)}
+.inv .jam-ven{margin:2px 0 0;font-family:'Cormorant Garamond',serif;font-size:19px}
+/* skin: enamel cards with a minute-track edge, Roman-numeral bezels on headings, curb-chain dividers */
+.fam-jam .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 92%,#fff),var(--ground) 40%) local,var(--ground)}
+.fam-jam.cardsecs .sec{margin:0 14px;background:var(--sheet);border-radius:6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 80%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 40%,transparent),0 14px 26px rgba(0,0,0,.3);padding-top:52px}
+.fam-jam.cardsecs .sec:first-child{margin-top:16px}
+.fam-jam .sec::before{content:"";position:absolute;top:12px;left:24px;right:24px;height:7px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--ink) 55%,transparent) 0 .7px,transparent .7px 6px),repeating-linear-gradient(90deg,var(--ink) 0 1.2px,transparent 1.2px 30px);-webkit-mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);opacity:.5}
+.fam-jam .sec h2{display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--d);letter-spacing:.26em;color:var(--accent)}
+.fam-jam .jam-h{font-style:normal;font-family:var(--d);font-size:12px;letter-spacing:0;color:var(--gold);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,var(--sheet) 58%,transparent 60%),repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--gold) 80%,transparent) 0 1.2deg,transparent 1.2deg 6deg);box-shadow:inset 0 0 0 1px var(--gold),0 0 0 2px var(--sheet),0 0 0 2.6px color-mix(in srgb,var(--gold) 55%,transparent)}
+.fam-jam .jam-div{height:44px;display:flex;align-items:center;justify-content:center}
+.fam-jam .jam-div i{width:62%;height:10px;background:var(--jam-links) 0 0/20px 10px repeat-x;filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.35));-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.fam-jam .info,.fam-jam .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-jam .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .jam-lid,.inv .jam-w,.inv .cv-jam{transition:none}}

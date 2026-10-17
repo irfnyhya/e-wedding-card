@@ -1,0 +1,54 @@
+/* ===== mughal (Mahal) ===== */
+.inv .cv-mughal{background:var(--ground);display:flex;flex-direction:column;overflow:hidden;transition:opacity .6s ease .95s}
+.inv .mughal-wall,.inv .pg-mughal::before{content:"";position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/420px;mix-blend-mode:multiply;opacity:.55;pointer-events:none}
+.inv .mughal-dark .mughal-wall,.inv .pg-mughal.mughal-dark::before{background:url(assets/veins.png) 0 0/420px,radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,255,255,.07),rgba(0,0,0,.25));mix-blend-mode:soft-light;opacity:.9}
+.inv .mughal-top{position:relative;z-index:2;padding:26px 66px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:opacity .45s}
+.inv .mughal-par{position:absolute;left:0;right:0;top:0;width:100%;height:11px}
+.inv .mughal-jh{position:absolute;top:18px;width:52px;height:auto;filter:drop-shadow(0 4px 4px rgba(0,0,0,.18))}
+.inv .mughal-jh.l{left:7px}.inv .mughal-jh.r{right:7px}
+.inv .mughal-k{font-family:var(--d);font-size:9.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.inv .mughal-n{font-family:var(--s);font-size:clamp(34px,10.4cqi,44px);line-height:1.12;color:var(--hi);margin:2px 0}
+.inv .mughal-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .mughal-d{font-family:var(--d);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--pagefg);opacity:.85}
+.inv .mughal-portal{position:relative;z-index:1;flex:1;min-height:0;width:100%;border:0;padding:0 2px;margin:0;background:none;cursor:pointer;display:block;-webkit-tap-highlight-color:transparent}
+.inv .mughal-portal svg{display:block;width:100%;height:100%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.18))}
+.inv .mughal-jmove{transition:transform 1.15s cubic-bezier(.55,0,.25,1)}
+.inv .mughal-foot{position:relative;z-index:2;padding:2px 20px 16px;text-align:center;display:flex;flex-direction:column;gap:6px;color:var(--pagefg);transition:opacity .45s}
+.inv .mughal-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px}
+.inv .mughal-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:24px;line-height:1.2;color:var(--hi)}
+.inv .mughal-hint{font-family:var(--d);font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.6}
+.inv.opening .mughal-jmove{transform:translateY(390px)}
+.inv.opening .mughal-top,.inv.opening .mughal-foot{opacity:0}
+.inv.opening .cv-mughal{opacity:0}
+/* page */
+.inv .pg-mughal{background:var(--ground);padding:14px 10px 62px;align-items:stretch;justify-content:stretch}
+.inv .mughal-pframe{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;filter:drop-shadow(0 8px 14px rgba(0,0,0,.16))}
+.inv .mughal-headwrap svg,.inv .mughal-sill{display:block;width:100%;height:auto}
+.inv .mughal-body{position:relative;flex:1;display:flex;flex-direction:column;background:linear-gradient(90deg,transparent 16.6%,var(--sheet) 16.6%,var(--sheet) 83.4%,transparent 83.4%)}
+.inv .mughal-side{position:absolute;top:0;bottom:0;width:16.67%;background:var(--mg-side) 0 0/100% auto repeat-y}
+.inv .mughal-side.l{left:0}.inv .mughal-side.r{right:0;transform:scaleX(-1)}
+.inv .mughal-txt{position:relative;z-index:2;flex:1;margin:-30% 19% 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--ink)}
+.inv .pg-mughal .kicker{font-size:9.5px;color:var(--gold);letter-spacing:.34em}
+.inv .pg-mughal .names{font-size:clamp(42px,13.4cqi,56px);color:var(--accent)}
+.inv .pg-mughal .names .amp{color:var(--gold);font-size:.46em}
+.inv .mughal-rule{width:120px}.inv .mughal-rule svg{display:block;width:100%}
+.inv .pg-mughal .caps{font-size:11px;letter-spacing:.22em;color:var(--ink)}
+.inv .pg-mughal .small{color:var(--ink)}
+.inv .mughal-stripwrap{position:relative;margin:6px 16.6% 0;border-top:1px solid var(--gold)}
+.inv .mughal-stripwrap::after{content:"";position:absolute;inset:6px;border:.6px solid color-mix(in srgb,var(--gold) 80%,#fff);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--sheet) 35%,transparent);pointer-events:none}
+.inv .mughal-strip{display:block;width:100%;height:auto;aspect-ratio:300/196}
+/* skin: inlay-bordered marble cards, cusped-arch headings, stone rosettes at the corners */
+.fam-mughal .scroller{background:var(--ground)}
+.fam-mughal .scroller::before{content:"";position:fixed;inset:0;background:url(assets/marble.jpg) 0 0/420px;mix-blend-mode:multiply;opacity:.4;pointer-events:none}
+.fam-mughal.cardsecs .sec{background:var(--mg-band) 0 0/24px 12px repeat-x,var(--mg-band) 0 100%/24px 12px repeat-x,var(--mg-bandv) 0 0/12px 24px repeat-y,var(--mg-bandv) 100% 0/12px 24px repeat-y,var(--mg-marble);padding:48px 34px 42px;box-shadow:0 0 0 1px var(--gold),0 12px 24px rgba(0,0,0,.18)}
+.fam-mughal.cardsecs .sec::before{content:"";position:absolute;inset:15px;border:1px solid var(--gold);box-shadow:inset 0 0 0 3px var(--mg-marble),inset 0 0 0 3.6px color-mix(in srgb,var(--gold) 60%,transparent);pointer-events:none}
+.fam-mughal.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/420px;mix-blend-mode:multiply;opacity:.3;pointer-events:none}
+.fam-mughal .mughal-cn{position:absolute;width:24px;height:24px;background:var(--mg-ros) center/contain no-repeat;z-index:2}
+.fam-mughal .mughal-cn.tl{left:-6px;top:-6px}.fam-mughal .mughal-cn.tr{right:-6px;top:-6px}.fam-mughal .mughal-cn.bl{left:-6px;bottom:-6px}.fam-mughal .mughal-cn.br{right:-6px;bottom:-6px}
+.fam-mughal .sec h2.mughal-h2{position:relative;font-family:"Marcellus",serif;color:var(--accent);letter-spacing:.3em;padding:30px 26px 9px;min-width:210px;border-bottom:1px solid var(--gold)}
+.fam-mughal .mughal-ha{position:absolute;inset:0 0 -1px;pointer-events:none}
+.fam-mughal .sec h2.mughal-h2::after{content:"";position:absolute;left:50%;top:9px;width:9px;height:9px;margin-left:-4.5px;background:var(--mg-ros) center/contain no-repeat}
+.fam-mughal .sec .rule{color:var(--gold)}
+.fam-mughal .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .mughal-jmove,.inv .cv-mughal{transition:none}}
+.fam-mughal .info,.fam-mughal .info > div,.fam-mughal .timeline li,.fam-mughal .ibtn,.fam-mughal .giftcard{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}

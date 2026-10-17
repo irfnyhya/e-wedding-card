@@ -1,0 +1,61 @@
+/* ===== akrilik ===== */
+.inv .ak-bd{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 20% 15%,var(--blob1) 0%,transparent 70%),radial-gradient(ellipse 70% 55% at 85% 85%,var(--blob1) 0%,transparent 70%),radial-gradient(ellipse 80% 60% at 70% 30%,var(--blob2) 0%,transparent 70%),var(--ground)}
+.inv .ak-bd .ak-fl{filter:blur(2.5px) saturate(.9);opacity:.85}
+.inv .ak-bd .ak-fl.b{filter:blur(6px);opacity:.45}
+.inv .ak-blob{position:absolute;border-radius:50%;filter:blur(30px);opacity:.6}
+.inv .ak-blob.a{width:60%;height:30%;left:40%;top:-8%;background:#fff}
+.inv .ak-blob.b{width:50%;height:26%;left:-10%;bottom:6%;background:#fff;opacity:.35}
+.inv .ak-bd::after{content:"";position:absolute;inset:0;background:url(assets/silk.jpg) 0 0/320px;mix-blend-mode:soft-light;opacity:.18}
+/* the acrylic panel: clear, refracting edges, glare, white-ink florals, mirror-gold lettering */
+.inv .ak-pan{position:absolute;display:block;overflow:hidden;border-radius:50% 50% 10px 10px/37cqi 37cqi 10px 10px;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.03) 38%,rgba(255,255,255,0) 60%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(.6px) saturate(1.05);backdrop-filter:blur(.6px) saturate(1.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.85),inset 0 0 0 3.5px rgba(255,255,255,.22),inset 3px 3px 0 1px rgba(255,255,255,.35),inset -3px -3px 0 1px color-mix(in srgb,var(--blob1) 60%,rgba(0,0,0,.15)),0 1px 1px rgba(0,0,0,.08);isolation:isolate}
+.inv .ak-pan::before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 10px rgba(255,255,255,.4),inset 0 -1px 0 6px rgba(150,220,215,.06);pointer-events:none}
+.inv .ak-lines{position:absolute;inset:0;width:100%;height:100%;z-index:2;opacity:.95}
+.inv .ak-ink{background:var(--inkw);opacity:.82;z-index:1;filter:drop-shadow(3px 5px 2px rgba(0,0,0,.12))}
+.inv .ak-glare{position:absolute;inset:0;background:linear-gradient(118deg,transparent 18%,rgba(255,255,255,.26) 22%,rgba(255,255,255,.06) 27%,transparent 30%,transparent 80%,rgba(255,255,255,.16) 84%,transparent 88%);z-index:4;pointer-events:none}
+.inv .ak-in{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:30% 13% 14%;text-align:center}
+.inv .ak-in > span{display:block}
+.inv .ak-mg{background:linear-gradient(176deg,#f9e7b0 0%,var(--gold) 18%,#5a3c0c 42%,#e6c674 56%,color-mix(in srgb,var(--gold) 80%,#000) 74%,#6b4912 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .6px rgba(70,45,10,.45)) drop-shadow(2px 4px 2px rgba(0,0,0,.14))}
+.inv .ak-k{font-family:var(--d);font-size:10.5px;letter-spacing:.34em;text-transform:uppercase}
+.inv .ak-n{font-family:var(--s);font-size:clamp(40px,12.6cqi,52px);line-height:1.04;display:flex!important;flex-direction:column;padding:0 .12em}
+.inv .ak-n i{font-family:'Cormorant Garamond',serif;font-size:.42em;margin:.1em 0}
+.inv .ak-rule{display:flex!important;align-items:center;gap:8px;width:110px}
+.inv .ak-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.inv .ak-rule i:last-child{background:linear-gradient(-90deg,transparent,var(--gold))}
+.inv .ak-rule b{width:6px;height:6px;transform:rotate(45deg);background:linear-gradient(135deg,#fff3c8,var(--gold),#6b4912)}
+.inv .ak-d{font-family:var(--d);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.inv .ak-hj{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;margin-top:-4px}
+.inv .ak-v{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600}
+.inv .ak-t{font-family:var(--d);font-size:10px;letter-spacing:.26em;text-transform:uppercase}
+.inv .ak-sh{position:absolute;display:block;border-radius:50% 50% 10px 10px/37cqi 37cqi 10px 10px;background:rgba(0,0,0,.13);filter:blur(14px);transform:translate(20px,26px)}
+/* cover: the panel half inside a frosted sleeve */
+.inv .cv-akrilik{overflow:hidden;transition:opacity .45s 1s}
+.inv .ak-btn{position:absolute;left:13%;right:13%;top:7%;bottom:5%;border:0;padding:0;background:none;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
+.inv .ak-btn > .ak-pan,.inv .ak-btn > .ak-sh{left:0;right:0;top:0;height:86%;transition:transform 1.05s cubic-bezier(.45,0,.2,1)}
+.inv .ak-sleeve{position:absolute;display:block;left:-6%;right:-6%;top:57%;bottom:0;z-index:5;border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.38));-webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(255,255,255,.55),0 -2px 8px rgba(0,0,0,.05),0 20px 30px rgba(0,0,0,.18);-webkit-mask:radial-gradient(circle 26px at 50% 0,transparent 25px,#000 26px);mask:radial-gradient(circle 26px at 50% 0,transparent 25px,#000 26px);transition:transform 1.05s cubic-bezier(.45,0,.2,1),opacity .6s .45s;isolation:isolate}
+.inv .ak-sleeve::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.6;border-radius:inherit;z-index:-1}
+.inv .ak-sleeve::after{content:"";position:absolute;inset:12px;border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);box-shadow:inset 0 0 0 4px rgba(255,255,255,.15),inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 40%,transparent);pointer-events:none}
+.inv .ak-sl-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:12px;padding:0 10% 13%;text-align:center;color:var(--ink)}
+.inv .ak-to{display:flex!important;flex-direction:column;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px}
+.inv .ak-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:28px;line-height:1.25;color:var(--accent)}
+.inv .ak-sl-rule{display:block;width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.inv .ak-hint{font-family:var(--d);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.7}
+.inv.opening .ak-btn > .ak-pan,.inv.opening .ak-btn > .ak-sh{transform:translateY(-9%)}
+.inv.opening .ak-btn > .ak-sh{transform:translate(20px,calc(26px - 9%))}
+.inv.opening .ak-sleeve{transform:translateY(62%);opacity:0}
+.inv.opening .cv-akrilik{opacity:0}
+/* page */
+.inv .pg-akrilik{padding:0}
+.inv .ak-stand{position:relative;z-index:2;width:76%;height:min(84%,640px);min-height:560px}
+.inv .ak-stand > .ak-pan,.inv .ak-stand > .ak-sh{inset:0}
+.inv .ak-stand .ak-in{padding:34% 12% 12%;gap:10px}
+.inv .pg-akrilik .ak-n{font-size:clamp(44px,13.6cqi,56px)}
+/* skin: frosted-glass cards over soft colour, mirror-gold headings */
+.fam-akrilik .scroller{background:radial-gradient(ellipse 60% 22% at 15% 20%,var(--blob1),transparent 70%) 0 0/100% 1400px local,radial-gradient(ellipse 60% 22% at 85% 65%,var(--blob1),transparent 70%) 0 0/100% 1400px local,radial-gradient(ellipse 70% 20% at 60% 45%,var(--blob2),transparent 70%) 0 0/100% 1400px local,var(--ground)}
+.fam-akrilik.cardsecs .sec{margin:0 14px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.36));-webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 1px 0 1px rgba(255,255,255,.6),0 16px 30px rgba(0,0,0,.12)}
+.fam-akrilik.cardsecs .sec:first-child{margin-top:16px}
+.fam-akrilik .sec h2{font-family:var(--s);font-size:34px;letter-spacing:0;text-transform:none;line-height:1.2;padding:0 .15em}
+.fam-akrilik .sec h2::after{content:"";display:block;width:90px;height:1px;margin:8px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.fam-akrilik .info,.fam-akrilik .info > div{border-color:rgba(255,255,255,.75)}
+.fam-akrilik .info > div{background:rgba(255,255,255,.18)}
+.fam-akrilik .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .ak-pan,.inv .ak-sh,.inv .ak-sleeve,.inv .cv-akrilik{transition:none}}

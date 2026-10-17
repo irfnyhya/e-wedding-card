@@ -1,0 +1,73 @@
+/* ===== wayang ===== */
+.inv .cv-wayang,.inv .pg-wayang,.fam-wayang{--wy-lt:color-mix(in srgb,var(--sheet) 82%,var(--gold));--wy-hot:color-mix(in srgb,var(--sheet) 55%,#fff)}
+/* the gunungan */
+.inv .wy-g{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 1.6px color-mix(in srgb,var(--ink) 70%,transparent))}
+.inv .wy-sil{fill:var(--ink);opacity:.94}
+.inv .wy-rod{fill:none;stroke:var(--ink);stroke-width:1.4}
+.inv .wy-cut{fill:var(--wy-lt)}
+.inv .wy-g pattern circle{fill:var(--wy-lt);opacity:.8}
+.inv .wy-holes{fill:none;stroke:var(--wy-lt);stroke-width:1.7;stroke-dasharray:0 3.3;stroke-linecap:round}
+.inv .wy-slit{fill:none;stroke:var(--wy-lt);stroke-width:.8}
+.inv .wy-trunk{fill:none;stroke:var(--wy-lt);stroke-width:6;stroke-linecap:round}
+.inv .wy-trunkh{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-dasharray:3.4 2.2}
+.inv .wy-br{fill:none;stroke:var(--wy-lt);stroke-width:1.8;stroke-linecap:round}
+.inv .wy-lv path{fill:var(--wy-lt)}
+.inv .wy-roof{fill:none;stroke:var(--wy-lt);stroke-width:.9}
+.inv .wy-door{fill:none;stroke:var(--wy-lt);stroke-width:.9}
+.inv .wy-slit2{fill:none;stroke:var(--wy-lt);stroke-width:.9;stroke-dasharray:2 1.6}
+.inv .wy-fl{fill:var(--wy-lt);opacity:.9}
+/* frame, valance, screen */
+.inv .cv-wayang{background:var(--ground);overflow:hidden;transition:opacity .8s .8s}
+.inv .wy-wood{position:absolute;inset:0;background:var(--wy-kaw) 0 0/22px,repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 2px,rgba(0,0,0,.05) 2px 5px),var(--ground)}
+.inv .wy-val{position:absolute;left:0;right:0;top:0;height:12.5%;z-index:4;background:url(assets/linen.jpg) 0 0/180px,linear-gradient(180deg,color-mix(in srgb,var(--accent) 70%,#000),var(--accent));background-blend-mode:soft-light;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;box-shadow:0 6px 14px rgba(0,0,0,.45);transition:opacity .5s}
+.inv .wy-val::before{content:"";position:absolute;left:0;right:0;bottom:7px;height:5px;border-top:1px solid var(--gold);border-bottom:1px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.inv .wy-val::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:9px;background:radial-gradient(circle at 50% 0,var(--accent) 6px,transparent 6.6px) 0 0/16px 9px repeat-x;filter:brightness(.92)}
+.inv .wy-val span{position:relative;font-family:var(--d);font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.inv .wy-scr{position:absolute;left:5.5%;right:5.5%;top:12.5%;bottom:16.5%;overflow:hidden;background:radial-gradient(ellipse 66% 48% at 50% 40%,var(--wy-hot),color-mix(in srgb,var(--sheet) 80%,var(--gold)) 50%,color-mix(in srgb,var(--gold) 55%,var(--ink)) 125%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 50%,transparent),inset 0 0 40px color-mix(in srgb,var(--ink) 35%,transparent),0 0 0 4px color-mix(in srgb,var(--ground) 80%,#000),0 0 0 5px color-mix(in srgb,var(--gold) 60%,transparent)}
+.inv .wy-glow{position:absolute;left:10%;right:10%;top:8%;height:60%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--wy-hot) 70%,transparent),transparent);mix-blend-mode:screen;animation:wyGlow 6s ease-in-out infinite alternate}
+@keyframes wyGlow{from{opacity:.55}to{opacity:.9}}
+.inv .wy-warm{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,color-mix(in srgb,var(--gold) 60%,#fff),color-mix(in srgb,var(--gold) 40%,transparent) 60%,transparent);mix-blend-mode:soft-light;opacity:0;transition:opacity 1.2s}
+.inv .wy-cloth{position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/160px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none;z-index:3}
+.inv .wy-lift{position:absolute;left:50%;top:3%;width:min(66%,270px);transform:translateX(-50%);border:0;padding:0;margin:0;background:none;cursor:pointer;z-index:2;transition:transform 1.35s cubic-bezier(.55,0,.25,1)}
+.inv .wy-nm{position:absolute;left:0;right:0;bottom:5%;z-index:2;text-align:center;color:var(--ink);transition:opacity .5s}
+.inv .wy-n{font-family:var(--s);font-size:clamp(34px,10.5cqi,44px);line-height:1.1;text-shadow:0 0 2px color-mix(in srgb,var(--ink) 45%,transparent)}
+.inv .wy-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;margin:0 .3em;color:var(--accent)}
+.inv .wy-d{font-family:var(--d);font-size:10.5px;letter-spacing:.3em;margin-top:6px;opacity:.85}
+.inv .wy-trunkbar{position:absolute;left:3%;right:3%;bottom:calc(16.5% - 12px);height:24px;z-index:4;border-radius:12px/10px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px 7px,rgba(0,0,0,.12) 7px 8px,transparent 8px 13px),linear-gradient(180deg,color-mix(in srgb,var(--gold) 55%,var(--ink)),color-mix(in srgb,var(--gold) 30%,var(--ink)) 55%,color-mix(in srgb,var(--gold) 12%,var(--ink)));box-shadow:0 6px 10px rgba(0,0,0,.5),inset 0 2px 1px rgba(255,255,255,.18)}
+.inv .wy-foot{position:absolute;left:0;right:0;bottom:3.6%;z-index:4;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;gap:6px;transition:opacity .4s}
+.inv .wy-to{font-family:var(--b);font-style:italic;font-size:13.5px}
+.inv .wy-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:24px;line-height:1.2;color:var(--wy-gn)}
+.inv .wy-hint{font-family:var(--d);font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.6}
+.inv.opening .wy-lift{transform:translate(-50%,-118%)}
+.inv.opening .wy-warm{opacity:1}
+.inv.opening .wy-nm,.inv.opening .wy-foot,.inv.opening .wy-val{opacity:0}
+.inv.opening .cv-wayang{opacity:0}
+/* page */
+.inv .pg-wayang{background:var(--ground);padding:0}
+.inv .pg-wayang .wy-scr{top:22px;bottom:48px;left:16px;right:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:30px 26px;text-align:center;color:var(--ink)}
+.inv .pg-wayang .wy-scr > :not(i){position:relative;z-index:2}
+.inv .pg-wayang .wy-trunkbar{bottom:36px}
+.inv .wy-mini{width:min(36%,140px);margin-bottom:4px}
+.inv .pg-wayang .kicker{color:var(--ink);opacity:.8;font-size:10px;letter-spacing:.4em}
+.inv .pg-wayang .names{font-size:clamp(42px,13cqi,54px);color:var(--ink);text-shadow:0 0 2.5px color-mix(in srgb,var(--ink) 50%,transparent)}
+.inv .pg-wayang .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--accent)}
+.inv .wy-rule{display:flex;align-items:center;gap:6px;width:150px}
+.inv .wy-rule i{flex:1;height:3px;background:radial-gradient(circle,var(--ink) .9px,transparent 1.2px) 0 50%/6px 3px repeat-x}
+.inv .wy-rule b{width:9px;height:9px;transform:rotate(45deg);background:var(--ink);box-shadow:0 0 0 2px var(--wy-lt),0 0 0 3px var(--ink)}
+.inv .wy-date{font-family:var(--d);font-size:12px;letter-spacing:.24em}
+.inv .wy-ven{font-family:var(--b);font-style:italic;font-size:15px;max-width:28ch}
+/* skin: amber screen cards with dark pierced borders */
+.fam-wayang .scroller{background:var(--wy-kaw) 0 0/22px,var(--ground)}
+.fam-wayang.cardsecs .sec{margin:30px 24px;background:transparent;color:var(--ink)}
+.fam-wayang.cardsecs .sec::before{content:"";position:absolute;inset:-12px;z-index:-1;background:var(--wy-pierce) 0 0/16px;box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),0 0 0 4px var(--ground),0 0 0 5px color-mix(in srgb,var(--gold) 35%,transparent),0 14px 24px rgba(0,0,0,.5)}
+.fam-wayang.cardsecs .sec::after{content:"";position:absolute;inset:0;z-index:-1;background:url(assets/linen.jpg) 0 0/160px,radial-gradient(ellipse 80% 60% at 50% 35%,var(--wy-hot),color-mix(in srgb,var(--sheet) 82%,var(--gold)) 60%,color-mix(in srgb,var(--gold) 45%,var(--sheet)));background-blend-mode:soft-light,normal;box-shadow:inset 0 0 0 1px var(--ink),inset 0 0 28px color-mix(in srgb,var(--ink) 30%,transparent)}
+.fam-wayang .sec > *{position:relative;z-index:1}
+.fam-wayang .sec h2{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:600;text-shadow:0 0 1.5px color-mix(in srgb,var(--ink) 40%,transparent)}
+.fam-wayang .sec h2::before,.fam-wayang .sec h2::after{content:"";width:7px;height:7px;transform:rotate(45deg);background:var(--ink);box-shadow:0 0 0 2px var(--wy-lt),0 0 0 3px var(--ink)}
+.fam-wayang .info,.fam-wayang .info > div,.fam-wayang .count div + div{border-color:color-mix(in srgb,var(--ink) 25%,transparent)}
+.fam-wayang .rule{color:var(--ink)}
+.fam-wayang .ibtn{border-color:color-mix(in srgb,var(--ink) 35%,transparent);color:var(--ink)}
+.fam-wayang .submit,.fam-wayang .seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.fam-wayang .count b{color:var(--accent)}
+.fam-wayang .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .wy-glow{animation:none}.inv .wy-lift,.inv .wy-warm,.inv .cv-wayang{transition:none}}

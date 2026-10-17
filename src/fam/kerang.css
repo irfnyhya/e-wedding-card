@@ -1,0 +1,44 @@
+/* ===== kerang: scallop and pearl on sand ===== */
+.inv .cv-kerang{background:radial-gradient(ellipse 90% 60% at 50% 48%,color-mix(in srgb,var(--ground) 88%,#fff),var(--ground) 75%,color-mix(in srgb,var(--ground) 88%,#000));overflow:hidden;transition:opacity .6s .95s}
+.inv .kg-sand{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.inv .kg-neck{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;filter:drop-shadow(0 2px 1.5px rgba(40,25,10,.2));transition:opacity .5s .6s}
+.inv.opening .kg-neck{opacity:0}
+.inv .kg-frame{position:absolute;inset:14px;border:.8px solid color-mix(in srgb,var(--gold) 80%,transparent);outline:.5px solid color-mix(in srgb,var(--gold) 55%,transparent);outline-offset:-5px;pointer-events:none}
+.inv .kg-head{position:absolute;left:8%;right:8%;top:7.5%;text-align:center;color:var(--pagefg);transition:opacity .5s}
+.inv .kg-k{font-family:"Bodoni Moda",serif;font-size:9.5px;letter-spacing:.38em;text-transform:uppercase;opacity:.85}
+.inv .kg-n{font-family:var(--s);font-size:clamp(48px,15cqi,60px);line-height:.95;color:var(--kgn);margin-top:10px}
+.inv .kg-n i{display:block;font-family:"Bodoni Moda",serif;font-style:italic;font-size:.3em;line-height:1.4;color:var(--gold)}
+.inv .kg-shell{position:absolute;left:14%;width:72%;top:30%;aspect-ratio:1;border:0;padding:0;background:none;cursor:pointer;z-index:3;perspective:900px}
+.inv .kg-low,.inv .kg-lid{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.inv .kg-low{filter:drop-shadow(0 6px 8px rgba(40,25,10,.25))}
+.inv .kg-lid{transform-origin:50% 13.3%;transition:transform 1.3s cubic-bezier(.45,0,.2,1),opacity .45s .95s;filter:drop-shadow(0 10px 12px rgba(40,25,10,.3)) drop-shadow(0 1px 1px rgba(40,25,10,.2))}
+.inv .kg-foot{position:absolute;left:8%;right:8%;bottom:4.2%;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;color:var(--pagefg);transition:opacity .5s}
+.inv .kg-str{width:150px;height:auto;display:block;overflow:visible}
+.inv .kg-d{font-family:"Bodoni Moda",serif;font-size:11.5px;letter-spacing:.24em;text-transform:uppercase}
+.inv .kg-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px}
+.inv .kg-to b{display:block;font-family:"Bodoni Moda",serif;font-style:normal;font-weight:400;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:2px}
+.inv .kg-hint{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;opacity:.75;margin-top:6px}
+.inv.opening .kg-lid{transform:rotateX(-74deg);opacity:0}
+.inv.opening .kg-head,.inv.opening .kg-foot{opacity:0}
+.inv.opening .cv-kerang{opacity:0}
+/* page */
+.inv .pg-kerang{background:radial-gradient(ellipse 90% 60% at 50% 48%,color-mix(in srgb,var(--ground) 88%,#fff),var(--ground) 75%)}
+.inv .kg-border{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.inv .kg-cs{position:absolute;width:24%;height:auto;overflow:visible;filter:drop-shadow(0 4px 5px rgba(40,25,10,.25))}
+.inv .kg-cs.tl{left:1%;top:1%}.inv .kg-cs.tr{right:1%;top:1%}.inv .kg-cs.bl{left:1%;bottom:1%}.inv .kg-cs.br{right:1%;bottom:1%}
+.inv .kg-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 18%;color:var(--pagefg)}
+.inv .kg-top{width:96px;height:auto;filter:drop-shadow(0 5px 6px rgba(40,25,10,.25));margin-bottom:4px}
+.inv .pg-kerang .kicker{font-family:"Bodoni Moda",serif;color:var(--pagefg);font-size:9.5px}
+.inv .pg-kerang .names{color:var(--kgn);font-size:clamp(50px,15.5cqi,62px);line-height:.95}
+.inv .pg-kerang .names .amp{display:block;font-family:"Bodoni Moda",serif;font-style:italic;font-size:.3em;line-height:1.5;color:var(--gold)}
+.inv .pg-kerang .caps{font-family:"Bodoni Moda",serif;font-size:11.5px}
+/* skin: cards with a pearl swag along the top and a pearl strand under each heading */
+.fam-kerang .scroller{background:var(--ground)}
+.fam-kerang.cardsecs .sec{background:radial-gradient(ellipse 120% 70% at 30% 0,color-mix(in srgb,var(--sheet) 70%,#fff),var(--sheet) 60%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 45%,transparent),0 12px 22px rgba(40,25,10,.18);padding-top:62px;border-radius:2px}
+.fam-kerang .kg-swag{position:absolute;left:0;top:2px;width:100%;height:40px;pointer-events:none;overflow:visible}
+.fam-kerang .sec h2{font-family:"Bodoni Moda",serif;font-size:12px;letter-spacing:.32em;color:var(--accent)}
+.fam-kerang .sec > .rule{display:none}
+.fam-kerang .sec .kg-str{width:140px;margin-top:-6px}
+.fam-kerang .count b{font-family:"Bodoni Moda",serif;font-size:28px}
+.fam-kerang .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .kg-lid,.inv .cv-kerang{transition:none}}

@@ -1,0 +1,53 @@
+/* ===== sakura (sumi-e cherry branch) ===== */
+.inv .sakura-paper{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 40% 40%,color-mix(in srgb,var(--ground) 85%,#fff),var(--ground) 70%,color-mix(in srgb,var(--ground) 92%,#000))}
+.inv .sakura-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/340px;mix-blend-mode:multiply;opacity:.7}
+.inv .cv-sakura{background:transparent;overflow:hidden;transition:opacity .5s 1s}
+.inv .cv-sakura .sakura-paper,.inv .cv-sakura .sakura-fl{transition:opacity .7s .6s}
+.inv .sakura-fl{position:absolute;inset:0;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--fleck) center/cover no-repeat;mask:var(--fleck) center/cover no-repeat;opacity:.75;pointer-events:none}
+.inv .sakura-br{position:absolute;left:-2%;top:1%;width:104%;z-index:2;transform-origin:0 20%;transition:transform 1.35s cubic-bezier(.5,0,.25,1),opacity .9s .35s}
+.inv .sakura-cbr{display:block;width:100%;height:auto}
+.inv .sakura-pt{position:absolute;width:15px;height:16px;z-index:3;transform:rotate(var(--r));opacity:.95;transition:transform 1.4s var(--dl) cubic-bezier(.3,0,.4,1),opacity 1s calc(var(--dl) + .35s)}
+.inv .sakura-pt svg{display:block;width:100%;height:100%}
+.inv .sakura-txt{position:absolute;left:10%;right:10%;top:45%;z-index:3;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .4s}
+.inv .sakura-k{font-family:var(--d);font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;opacity:.8}
+.inv .sakura-n{font-family:var(--s);font-size:clamp(44px,13.4cqi,56px);line-height:.95;color:var(--pagefg);display:flex;flex-direction:column;align-items:center}
+.inv .sakura-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.36em;color:var(--accent);line-height:1.5}
+.inv .sakura-div{display:block;width:130px;height:11px;background:var(--div) center/100% 100% no-repeat;opacity:.85}
+.inv .sakura-d{font-family:var(--d);font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+.inv .sakura-vn{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;opacity:.85}
+.inv .sakura-foot{position:absolute;left:8%;right:8%;bottom:3.5%;z-index:3;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;transition:opacity .4s}
+.inv .sakura-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column}
+.inv .sakura-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:28px;line-height:1.1}
+.inv .sakura-seal{width:46px;height:46px;border:0;padding:0;background:none;cursor:pointer;transform:rotate(-4deg);display:block;transition:transform .4s,opacity .4s}
+.inv .sakura-seal svg{display:block;width:100%;height:100%}
+.inv .sakura-hint{font-family:var(--d);font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.65}
+.inv.opening .sakura-br{transform:translate(-34%,-26%) rotate(-6deg);opacity:0}
+.inv.opening .sakura-pt{transform:translate(var(--dx),var(--dy)) rotate(var(--rr));opacity:0}
+.inv.opening .sakura-txt,.inv.opening .sakura-foot{opacity:0}
+.inv.opening .cv-sakura .sakura-paper,.inv.opening .cv-sakura .sakura-fl{opacity:0}
+.inv.opening .cv-sakura{opacity:0}
+/* page: the branch across the top */
+.inv .pg-sakura{background:transparent;padding:0 30px 80px;justify-content:flex-end}
+.inv .pg-sakura .sakura-paper{position:absolute}
+.inv .sakura-pbr{position:absolute;left:-4%;top:-2%;width:108%;height:auto;z-index:1}
+.inv .sakura-ptxt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--pagefg);margin-bottom:6%}
+.inv .pg-sakura .kicker{color:var(--pagefg);opacity:.8;letter-spacing:.4em}
+.inv .pg-sakura .names{font-size:clamp(56px,17cqi,72px);line-height:.9;color:var(--pagefg)}
+.inv .pg-sakura .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.32em;color:var(--accent);margin:.3em 0}
+.inv .pg-sakura .caps{color:var(--pagefg)}
+.inv .sakura-v{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;opacity:.85}
+.inv .sakura-pseal{width:44px;height:44px;transform:rotate(-4deg);margin-top:6px}
+/* skin: one long sheet, a dry-brush divider between sections, a blossom on each heading */
+.fam-sakura .scroller{background:var(--ground)}
+.fam-sakura .sheet::before{content:"";position:absolute;inset:0;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--fleck) 0 0/400px 760px repeat;mask:var(--fleck) 0 0/400px 760px repeat;opacity:.5;pointer-events:none;z-index:1}
+.fam-sakura .sheet{margin:0;box-shadow:none}
+.fam-sakura .sec + .sec{border-top:0}
+.fam-sakura .sakura-sd{position:absolute;left:12%;right:12%;top:0;height:22px;background:var(--div) center/100% 100% no-repeat;opacity:.8;transform:translateY(-50%)}
+.fam-sakura .sec:nth-child(even) .sakura-sd{transform:translateY(-50%) scaleX(-1)}
+.fam-sakura .sec h2{font-family:var(--d);font-weight:500;font-size:13px;letter-spacing:.34em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:8px}
+.fam-sakura .sakura-hb{display:block;width:30px;height:30px}
+.fam-sakura .sakura-hb svg{display:block;width:100%;height:100%}
+.fam-sakura .sec .rule{display:none}
+.fam-sakura .info,.fam-sakura .info > div{border-color:color-mix(in srgb,var(--ink) 16%,transparent)}
+@media (prefers-reduced-motion: reduce){.inv .sakura-br,.inv .sakura-pt,.inv .cv-sakura,.inv .cv-sakura .sakura-paper{transition:none}}
+.fam-sakura .submit,.fam-sakura .seg button[aria-pressed="true"]{font-weight:600}

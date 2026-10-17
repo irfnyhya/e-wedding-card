@@ -1,0 +1,57 @@
+/* ===== jianzhi (papercut) ===== */
+.inv .jz-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 46%,color-mix(in srgb,var(--ground) 80%,#fff),var(--ground) 75%)}
+.inv .jz-bg::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.6}
+.inv .jz-l{position:absolute;inset:0;display:block;pointer-events:none;transform-origin:50% 46.8%}
+.inv .jz-l > i{position:absolute;inset:0;display:block;background:url(assets/paper.jpg) 0 0/260px,var(--paper);background-blend-mode:multiply}
+.inv .jz-l.a{filter:drop-shadow(0 7px 7px rgba(0,0,0,.34)) drop-shadow(0 1px 1px rgba(0,0,0,.3));transition:transform 1.3s cubic-bezier(.55,0,.3,1),opacity .8s .35s}
+.inv .jz-l.a > i{-webkit-mask:var(--la) center/cover no-repeat;mask:var(--la) center/cover no-repeat}
+.inv .jz-l.b{filter:drop-shadow(0 5px 6px rgba(0,0,0,.3)) drop-shadow(0 1px 1px rgba(0,0,0,.25));transition:transform 1.3s .07s cubic-bezier(.55,0,.3,1),opacity .8s .42s}
+.inv .jz-l.b > i{background-color:var(--paperB);-webkit-mask:var(--lb) center/cover no-repeat;mask:var(--lb) center/cover no-repeat}
+.inv .jz-l.c{filter:drop-shadow(0 3px 4px rgba(0,0,0,.22));transition:transform 1.3s .14s cubic-bezier(.55,0,.3,1),opacity .8s .5s}
+.inv .jz-l.c > i{background-color:var(--paperC);-webkit-mask:var(--lc) center/cover no-repeat;mask:var(--lc) center/cover no-repeat}
+.inv .jz-foil .jz-l > i,.inv .jz-foil .jz-pl > i{background:url(assets/paper.jpg) 0 0/260px,linear-gradient(125deg,color-mix(in srgb,var(--paper) 60%,#fff) 0%,var(--paper) 30%,color-mix(in srgb,var(--paper) 75%,#000) 55%,var(--paper) 75%,color-mix(in srgb,var(--paper) 70%,#fff) 100%);background-blend-mode:multiply}
+
+.inv .cv-jianzhi{background:transparent;overflow:hidden;transition:opacity .5s .95s}
+.inv .cv-jianzhi .jz-bg{transition:opacity .7s .55s}
+.inv .jz-gate{position:absolute;left:50%;top:46.8%;width:56%;aspect-ratio:1;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--gi);transition:opacity .5s .1s,transform 1.3s cubic-bezier(.55,0,.3,1)}
+.inv .jz-k{font-family:var(--d);font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--ga)}
+.inv .jz-n{font-family:var(--s);font-size:clamp(34px,10.4cqi,44px);line-height:1.05;color:var(--ga);display:flex;flex-direction:column;align-items:center}
+.inv .jz-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--gold);margin:.1em 0}
+.inv .jz-d{font-family:var(--d);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--ga) 45%,transparent)}
+.inv .jz-tap{position:absolute;left:50%;top:46.8%;width:66%;aspect-ratio:1;transform:translate(-50%,-50%);border:0;padding:0;margin:0;background:none;border-radius:50%;cursor:pointer;z-index:5}
+.inv .jz-foot{position:absolute;left:22%;right:22%;top:72.5%;z-index:4;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .35s}
+.inv .jz-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px;display:flex;flex-direction:column}
+.inv .jz-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:26px;line-height:1.2}
+.inv .jz-hint{font-family:var(--d);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;opacity:.85}
+.inv.opening .jz-l.a{transform:scale(2.3);opacity:0}
+.inv.opening .jz-l.b{transform:scale(1.75);opacity:0}
+.inv.opening .jz-l.c{transform:scale(1.35);opacity:0}
+.inv.opening .jz-gate{transform:translate(-50%,-50%) scale(1.15);opacity:0}
+.inv.opening .jz-foot{opacity:0}
+.inv.opening .cv-jianzhi .jz-bg{opacity:0}
+.inv.opening .cv-jianzhi{opacity:0}
+/* page: the papercut moon-gate around the names */
+.inv .pg-jianzhi{background:transparent;padding:20px 0 80px}
+.inv .pg-jianzhi .jz-bg{position:absolute}
+.inv .jz-pw{position:relative;z-index:2;width:min(100%,420px);aspect-ratio:400/640}
+.inv .jz-pl{position:absolute;inset:0;display:block;filter:drop-shadow(0 6px 7px rgba(0,0,0,.3)) drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.inv .jz-pl > i{position:absolute;inset:0;display:block;background:url(assets/paper.jpg) 0 0/260px,var(--paper);background-blend-mode:multiply;-webkit-mask:var(--pg) center/contain no-repeat;mask:var(--pg) center/contain no-repeat}
+.inv .jz-pin{position:absolute;left:50%;top:49.5%;width:64%;aspect-ratio:1;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;color:var(--gi)}
+.inv .jz-pin .kicker{font-size:9.5px;color:var(--ga)}
+.inv .pg-jianzhi .names{font-size:clamp(38px,11.4cqi,48px);color:var(--ga)}
+.inv .pg-jianzhi .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold)}
+.inv .jz-rule{display:flex;align-items:center;gap:6px;width:120px}
+.inv .jz-rule i{flex:1;height:5px;background:linear-gradient(135deg,transparent 35%,var(--ga) 35% 65%,transparent 65%) 0 0/5px 5px,linear-gradient(45deg,transparent 35%,var(--ga) 35% 65%,transparent 65%) 0 0/5px 5px;opacity:.6}
+.inv .jz-rule b{width:8px;height:8px;transform:rotate(45deg);background:var(--ga)}
+.inv .jz-pin .caps{font-size:10.5px;color:var(--gi)}
+.inv .jz-v{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.85}
+/* skin: cards with a papercut border, a cut peony on each heading */
+.fam-jianzhi .scroller{background:var(--ground)}
+.fam-jianzhi .scroller::before{content:"";position:fixed;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.5;pointer-events:none}
+.fam-jianzhi.cardsecs .sec{border:20px solid transparent;border-image:var(--frame) 30 round;background:var(--sheet) padding-box;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));padding:30px 12px 30px}
+.fam-jianzhi .sec h2{font-family:var(--d);letter-spacing:.3em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:8px}
+.fam-jianzhi .jz-hr{display:block;width:40px;height:40px;background:var(--paper);-webkit-mask:var(--rose) center/contain no-repeat;mask:var(--rose) center/contain no-repeat;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.fam-jianzhi .sec .rule i{background:var(--accent)}
+.fam-jianzhi .info,.fam-jianzhi .info > div{border-color:color-mix(in srgb,var(--accent) 25%,transparent)}
+.fam-jianzhi .foot{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){.inv .jz-l,.inv .jz-gate,.inv .cv-jianzhi,.inv .cv-jianzhi .jz-bg{transition:none}}
