@@ -1,0 +1,154 @@
+<style>
+/* ===== Round-three families: batik, tingkap, foto, bahagia, marmar, kaligrafi ===== */
+/* batik: canting repeat with wax crackle and parang borders */
+.inv .pg-batik{background:var(--ground);padding:0 22px}
+.inv .batik-motif{position:absolute;inset:0;background:var(--wax);-webkit-mask:var(--m) 0 0/150px auto repeat,var(--m) 75px 105px/150px auto repeat;mask:var(--m) 0 0/150px auto repeat,var(--m) 75px 105px/150px auto repeat;opacity:.85;z-index:0}
+.inv .batik-crack{position:absolute;inset:0;background:var(--wax);-webkit-mask:url(assets/crackle.png) 0 0/240px;mask:url(assets/crackle.png) 0 0/240px;opacity:.28;z-index:1}
+.inv .parang{position:absolute;left:0;right:0;height:46px;z-index:2;background:repeating-linear-gradient(-45deg,var(--wax) 0 4px,transparent 4px 9px,var(--wax) 9px 11px,transparent 11px 22px),var(--ground);border-block:2px solid var(--wax)}
+.inv .parang.t{top:0}.inv .parang.b{bottom:0}
+.inv .batik-panel{position:relative;z-index:3;background:var(--sheet);padding:34px 22px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;border-radius:120px 120px 8px 8px/60px 60px 8px 8px;box-shadow:0 0 0 5px var(--ground),0 0 0 7px var(--wax),0 14px 30px rgba(0,0,0,.35)}
+.inv .batik-panel .names{font-size:clamp(40px,13cqi,54px)}
+.inv .cv-batik{transition:transform 1.1s cubic-bezier(.6,0,.25,1)}
+.inv .cv-batik .cloth{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .cv-batik .tag{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%) rotate(-4deg);z-index:4;background:var(--sheet);color:var(--ink);padding:16px 22px 14px;min-width:58%;text-align:center;box-shadow:0 6px 14px rgba(0,0,0,.35);clip-path:polygon(12% 0,88% 0,100% 18%,100% 100%,0 100%,0 18%);font-family:var(--b)}
+.inv .cv-batik .tag::before{content:"";position:absolute;left:50%;top:9px;width:9px;height:9px;border-radius:50%;background:var(--ground);transform:translateX(-50%)}
+.inv .cv-batik .string{position:absolute;left:50%;top:0;height:calc(58% - 40px);border-left:1px solid var(--wax);z-index:3}
+.inv .cv-batik .tag b{display:block;font-family:var(--s);font-weight:400;font-size:26px;color:var(--accent);margin:8px 0 10px}
+.inv.opening .cv-batik{transform:translateY(-102%)}
+
+/* tingkap: a timber window in a Malay house */
+.inv .pg-tingkap{background:var(--ground);justify-content:flex-start;padding-top:8%;gap:22px}
+.inv .win{position:relative;z-index:2;width:68%;aspect-ratio:.72;background:var(--wood);padding:9px;box-shadow:0 14px 26px rgba(0,0,0,.28),inset 0 0 0 2px rgba(0,0,0,.2)}
+.inv .win .fan{position:relative;height:24%;background:var(--wood);border-bottom:8px solid var(--wood);overflow:hidden}
+.inv .win .fan::before{content:"";position:absolute;inset:4px;background:#f8efd9;-webkit-mask:var(--lat) 0 0/30px;mask:var(--lat) 0 0/30px}
+.inv .win .vista{position:relative;height:76%;background-size:cover;background-position:center;filter:sepia(.15) saturate(.92)}
+.inv .win .vista::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:8px;transform:translateX(-50%);background:var(--wood)}
+.inv .louvre{background:repeating-linear-gradient(to bottom,var(--wood) 0 7px,rgba(0,0,0,.35) 7px 8px,rgba(255,255,255,.18) 8px 9px),var(--wood);box-shadow:inset 0 0 0 6px var(--wood),inset 0 0 0 7px rgba(0,0,0,.25)}
+.inv .pg-tingkap .shut{position:absolute;top:0;bottom:0;width:46%;z-index:-1}
+.inv .pg-tingkap .shut.l{right:100%;transform-origin:100% 50%;transform:perspective(600px) rotateY(-62deg)}
+.inv .pg-tingkap .shut.r{left:100%;transform-origin:0 50%;transform:perspective(600px) rotateY(62deg)}
+.inv .plaque{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink)}
+.inv .plaque .names{font-size:clamp(36px,12cqi,48px);color:var(--accent)}
+.inv .plaque .names .amp{display:inline;font-size:.6em;margin:0 .15em}
+.inv .cv-tingkap{background:var(--ground);display:flex;flex-direction:column;align-items:center;padding-top:8%;gap:22px}
+.inv .cv-tingkap .win .vista{perspective:1000px;overflow:visible}
+.inv .cv-tingkap .win .vista::after{display:none}
+.inv .cv-tingkap .shut{position:absolute;top:0;bottom:0;width:50%;transition:transform 1.2s cubic-bezier(.55,0,.25,1);z-index:2}
+.inv .cv-tingkap .shut.l{left:0;transform-origin:0 50%}.inv .cv-tingkap .shut.r{right:0;transform-origin:100% 50%}
+.inv .cv-tingkap .knob{position:absolute;top:50%;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.inv .cv-tingkap .shut.l .knob{right:10px}.inv .cv-tingkap .shut.r .knob{left:10px}
+.inv.opening .cv-tingkap .shut.l{transform:rotateY(-115deg)}
+.inv.opening .cv-tingkap .shut.r{transform:rotateY(115deg)}
+
+/* foto: the couple's own photo, set like a magazine */
+.inv .pg-foto{background:#111;color:#fff;justify-content:flex-end;padding:0 0 92px}
+.inv .pg-foto .ph{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0}
+.inv .pg-foto .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,.05) 55%,rgba(0,0,0,.25));z-index:1}
+.inv .pg-foto .txt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 22px;text-align:center}
+.inv .pg-foto .names{font-family:"Pinyon Script",cursive;font-size:clamp(52px,17cqi,70px);color:#fff;line-height:1}
+.inv .pg-foto .names .amp{display:inline;font-size:.55em;margin:0 .1em;color:#fff;opacity:.8}
+.inv .pg-foto .caps{color:#fff;letter-spacing:.3em}
+.inv .pg-foto.v-hitam .ph{filter:grayscale(1) contrast(1.08)}
+.inv .pg-foto.v-hitam .names{font-family:"Bodoni Moda",serif;font-style:italic;font-size:clamp(40px,13cqi,54px)}
+.inv .pg-foto.v-emas .ph{filter:sepia(.45) saturate(.85)}
+.inv .pg-foto.v-filem{background:#0d0d0d;padding:56px 0 100px}
+.inv .pg-foto.v-filem .ph{inset:56px 22px 150px;border:0}
+.inv .pg-foto.v-filem::before,.inv .pg-foto.v-filem::after{content:"";position:absolute;left:0;right:0;height:22px;z-index:2;background:radial-gradient(circle,transparent 0 0) ,repeating-linear-gradient(90deg,transparent 0 10px,#e9e4da 10px 22px,transparent 22px 32px);-webkit-mask:linear-gradient(#000 0 0) 0 6px/100% 10px no-repeat;mask:linear-gradient(#000 0 0) 0 6px/100% 10px no-repeat}
+.inv .pg-foto.v-filem::before{top:20px}.inv .pg-foto.v-filem::after{bottom:118px}
+.inv .pg-foto.v-filem .shade{display:none}
+.inv .pg-foto.v-filem .names{font-family:"IBM Plex Mono",monospace;font-size:20px;letter-spacing:.2em;text-transform:uppercase}
+.inv .pg-foto.v-polaroid{background:var(--ground);color:var(--ink);justify-content:center;padding:0 0 70px}
+.inv .pg-foto.v-polaroid .ph{position:relative;inset:auto;width:78%;aspect-ratio:.92;border:14px solid #fbfaf6;border-bottom-width:64px;box-shadow:0 14px 30px rgba(0,0,0,.3);transform:rotate(-3deg)}
+.inv .pg-foto.v-polaroid .shade{display:none}
+.inv .pg-foto.v-polaroid .txt{margin-top:-62px;transform:rotate(-3deg)}
+.inv .pg-foto.v-polaroid .names{font-family:"Homemade Apple",cursive;color:var(--accent);font-size:clamp(20px,6.5cqi,26px)}
+.inv .pg-foto.v-polaroid .names .amp{color:var(--ink)}
+.inv .pg-foto.v-polaroid .caps{color:var(--ink);font-size:10px}
+.inv .pg-foto.v-majalah{justify-content:space-between;padding:26px 0 96px}
+.inv .pg-foto.v-majalah .mast{position:relative;z-index:2;font-family:"Bodoni Moda",serif;font-size:clamp(54px,19cqi,78px);line-height:.9;letter-spacing:-.02em;text-transform:uppercase;text-align:center;width:100%}
+.inv .pg-foto.v-majalah .issue{position:relative;z-index:2;display:flex;justify-content:space-between;width:100%;padding:0 22px;font-family:"Jost",sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.inv .pg-foto.v-majalah .shade{background:linear-gradient(to bottom,rgba(0,0,0,.45),transparent 30%,transparent 60%,rgba(0,0,0,.6))}
+.inv .cv-foto{background:#1a1816;display:flex;align-items:center;justify-content:center;transition:opacity 1.2s ease}
+.inv .cv-foto .pol{width:74%;aspect-ratio:.82;background:#fbfaf6;padding:14px 14px 70px;box-shadow:0 16px 34px rgba(0,0,0,.5);transform:rotate(2deg);display:flex;flex-direction:column;border:0;cursor:pointer;font:inherit;color:#2a2622}
+.inv .cv-foto .pol .dev{flex:1;background:#2b2a28;position:relative;overflow:hidden}
+.inv .cv-foto .pol .dev i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.06;filter:grayscale(1) blur(3px);transition:opacity 1.1s,filter 1.1s}
+.inv .cv-foto .pol span{font-family:"Homemade Apple",cursive;font-size:15px;margin-top:16px}
+.inv.opening .cv-foto .pol .dev i{opacity:1;filter:none}
+
+/* bahagia: red and gold, double happiness */
+.inv .pg-bahagia{background:var(--ground);padding:28px 20px;align-items:stretch}
+.inv .xi-tile{position:absolute;inset:0;-webkit-mask:var(--xi) 0 0/70px;mask:var(--xi) 0 0/70px;opacity:.22;z-index:0}
+.inv .bh-card{position:relative;z-index:2;flex:1;background:var(--sheet);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:56px 26px;overflow:hidden;box-shadow:0 0 0 1px var(--gold),0 0 0 6px var(--sheet),0 0 0 7px var(--gold),0 16px 32px rgba(0,0,0,.35)}
+.inv .bh-card > :not(.fl){position:relative;z-index:3}
+.inv .xi{font-family:"Noto Serif TC","Songti SC","SimSun",serif;font-size:72px;line-height:1;font-weight:700}
+.inv .bh-card .names{font-size:clamp(40px,13cqi,52px)}
+.inv .cv-bahagia{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .6s .7s}
+.inv .hongbao{position:relative;width:70%;aspect-ratio:.58;background:var(--ground);box-shadow:0 18px 36px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:transform 1s cubic-bezier(.6,0,.25,1);overflow:hidden;border:0;cursor:pointer;font:inherit;color:inherit;padding:0}
+.inv .hongbao .flapv{position:absolute;left:0;right:0;top:0;height:34%;background:rgba(0,0,0,.12);clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%)}
+.inv .hongbao .coin{position:relative;width:46%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-6%}
+.inv .hongbao .coin .xi{font-size:clamp(40px,14cqi,56px);color:var(--ground)}
+.inv .hongbao small{font-family:var(--d);letter-spacing:.3em;text-transform:uppercase;font-size:10px}
+.inv.opening .hongbao{transform:translateY(130%) rotate(4deg)}
+
+/* marmar: marble and gold foil */
+.inv .marble{position:relative;isolation:isolate;background:var(--ground)}
+.inv .marble::before{content:"";position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/520px;mix-blend-mode:multiply;z-index:0;pointer-events:none}
+.inv .marble.dark::before{filter:invert(1);mix-blend-mode:screen;opacity:.42}
+.inv .pg-marmar{color:var(--pagefg)}
+.inv .pg-marmar .gl{position:absolute;inset:16px;z-index:1;-webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);padding:1px}
+.inv .pg-marmar .gl.in{inset:22px}
+.inv .pg-marmar .mid{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 34px}
+.inv .pg-marmar .ring{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.inv .pg-marmar .ring::before{content:"";position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(circle,transparent 64%,#000 65.5%);mask:radial-gradient(circle,transparent 64%,#000 65.5%)}
+.inv .pg-marmar .names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(46px,15cqi,60px)}
+.inv .pg-marmar .caps{color:var(--pagefg)}
+.inv .cv-marmar{transition:transform 1.1s cubic-bezier(.6,0,.25,1);box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:var(--pagefg)}
+.inv .cv-marmar > *{position:relative;z-index:2}
+.inv .cv-marmar .etch{font-family:"Cormorant Garamond",serif;font-size:clamp(30px,10cqi,40px);letter-spacing:.1em;text-transform:uppercase;color:transparent;text-shadow:0 1px 0 rgba(255,255,255,.45),0 -1px 0 rgba(0,0,0,.25);-webkit-text-stroke:.5px rgba(0,0,0,.18)}
+.inv.opening .cv-marmar{transform:translateY(-104%)}
+
+/* kaligrafi: a Jawi blessing set large */
+.inv .pg-kaligrafi{background:var(--ground);color:var(--pagefg);gap:12px;padding:0 30px}
+.inv .kframe{position:absolute;inset:18px;z-index:1;pointer-events:none}
+.inv .kframe svg{width:100%;height:100%}
+.inv .pg-kaligrafi > :not(.kframe){position:relative;z-index:2}
+.inv .callig{font-family:"Aref Ruqaa","Amiri",serif;font-size:clamp(54px,18cqi,74px);line-height:1.25;direction:rtl}
+.inv .pg-kaligrafi .names{font-family:"Cormorant Garamond",serif;font-weight:400;text-transform:uppercase;letter-spacing:.2em;font-size:clamp(20px,6.4cqi,26px);line-height:1.5}
+.inv .pg-kaligrafi .names .amp{display:block;font-size:.8em;font-style:italic;text-transform:none;letter-spacing:0}
+.inv .pg-kaligrafi .caps,.inv .pg-kaligrafi .small{color:var(--pagefg)}
+.inv .cv-kaligrafi{background:var(--ground);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--pagefg);transition:opacity .8s .5s}
+.inv .khatam{width:48%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;border:0;padding:0;position:relative;transition:transform .9s cubic-bezier(.5,0,.2,1),opacity .6s;font:inherit}
+.inv .khatam::before{content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid var(--ground);opacity:.6}
+.inv .khatam .callig{font-size:clamp(30px,10cqi,40px);color:var(--ground)}
+.inv .khatam small{font-family:"Cormorant Garamond",serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ground)}
+.inv.opening .khatam{transform:scale(2.4);opacity:0}
+@media (prefers-reduced-motion: reduce){.inv .cv-batik,.inv .cv-tingkap .shut,.inv .hongbao,.inv .cv-marmar,.inv .khatam{transition:none}}
+</style>
+<style>
+/* reference-led revisions: foil batik on dyed paper, gold-leaf marble veins, window balustrade */
+.inv .pg-batik{color:var(--pagefg);padding:0}
+.inv .batik-band{position:absolute;top:0;bottom:0;left:0;width:30%;z-index:1;-webkit-mask:var(--m) 0 0/130px auto repeat,linear-gradient(90deg,#000 60%,transparent);mask:var(--m) 0 0/130px auto repeat,linear-gradient(90deg,#000 60%,transparent);-webkit-mask-composite:source-in;mask-composite:intersect}
+.inv .batik-corner{position:absolute;right:-12%;top:-4%;width:58%;z-index:1;opacity:.9}
+.inv .batik-mid{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 12% 0 30%}
+.inv .batik-mid .names{font-size:clamp(40px,13cqi,52px)}
+.inv .batik-mid .caps,.inv .batik-mid .small{color:var(--pagefg)}
+.inv .gold-veins{position:absolute;inset:0;z-index:1;-webkit-mask:url(assets/veins.png) 0 0/520px;mask:url(assets/veins.png) 0 0/520px;opacity:.95}
+.inv .rail{position:relative;height:22%;margin-top:-1px;background:repeating-linear-gradient(90deg,transparent 0 9px,var(--wood) 9px 15px),linear-gradient(var(--wood),var(--wood)) 0 0/100% 7px no-repeat,linear-gradient(var(--wood),var(--wood)) 0 100%/100% 7px no-repeat}
+</style>
+<style>
+.inv .win{aspect-ratio:auto;display:flex;flex-direction:column}
+.inv .win .fan{height:auto!important;aspect-ratio:3.4/1;flex:none}
+.inv .win .vista{height:auto!important;aspect-ratio:.9;flex:none}
+.inv .win .rail{height:auto;aspect-ratio:4/1;flex:none}
+.inv .cv-tingkap .win{padding:9px;background:var(--wood)}
+.inv .marble::before{background-size:1100px;opacity:.8}
+.inv .gold-veins{-webkit-mask-size:1100px;mask-size:1100px}
+</style>
+<style>.inv .win .vista{height:0!important;padding-bottom:108%;aspect-ratio:auto}</style>
+<style>
+.inv .batik-motif.foil,.inv .batik-band.foil{background:url(assets/foil.jpg) 0 0/240px,var(--gold);background-blend-mode:overlay}
+.inv .cover.marble{position:absolute}
+.inv .cv-bahagia{transition:opacity .5s}
+.inv .cv-kaligrafi{transition:opacity .5s .2s}
+.inv .cv-foto{transition:opacity .6s}
+</style>

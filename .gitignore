@@ -1,0 +1,16 @@
+# reference images downloaded for design research (not ours to publish)
+references/
+# local tool settings
+.claude/
+# build check artefact
+.check.js
+# app build output, dependencies and secrets
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env*
+!.env.example
+*.pem
+.DS_Store
+__pycache__/

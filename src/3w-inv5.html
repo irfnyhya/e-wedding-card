@@ -1,0 +1,190 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Bangers&family=Abril+Fatface&display=swap">
+<style>
+/* ===== Round-five families ===== */
+.inv .halftone{position:relative;background-size:cover;background-position:center;filter:grayscale(1) contrast(1.15) brightness(1.05)}
+.inv .halftone::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(0,0,0,.42) 28%,transparent 31%) 0 0/4px 4px;mix-blend-mode:multiply}
+/* akhbar: a newspaper front page */
+.inv .pg-akhbar{background:var(--sheet);color:var(--ink);justify-content:flex-start;align-items:stretch;text-align:left;padding:22px 18px 86px;gap:8px;font-family:"Old Standard TT",serif}
+.inv .np-top{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:4px}
+.inv .np-mast{font-family:"UnifrakturMaguntia",serif;font-size:clamp(34px,11.5cqi,46px);text-align:center;line-height:1.05;border-bottom:3px double var(--ink);padding-bottom:4px}
+.inv .np-line{display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:.06em;border-bottom:1px solid var(--ink);padding-bottom:4px;text-transform:uppercase}
+.inv .np-head{font-family:"Old Standard TT",serif;font-weight:700;font-size:clamp(26px,9cqi,36px);line-height:1;text-transform:uppercase;text-align:center;letter-spacing:-.01em;margin:4px 0}
+.inv .np-head em{display:block;font-style:italic;font-weight:400;text-transform:none;font-size:.5em;color:var(--accent);margin-top:4px}
+.inv .np-photo{height:30%;min-height:150px;border:1px solid var(--ink)}
+.inv .np-cap{font-size:11px;font-style:italic;text-align:center}
+.inv .np-cols{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;font-size:11.5px;line-height:1.45;border-top:1px solid var(--ink);padding-top:8px}
+.inv .np-cols p{font-size:11.5px;max-width:none;line-height:1.45}
+.inv .np-cols p:first-child::first-letter{font-size:2.6em;float:left;line-height:.85;margin:2px 4px 0 0;font-weight:700}
+.inv .np-box{border:1px solid var(--ink);padding:8px;display:flex;flex-direction:column;gap:4px}
+.inv .np-box b{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--ink)}
+.inv .np-ad{border:2px solid var(--ink);padding:6px;text-align:center;font-size:10px;margin-top:6px}
+.inv .cv-akhbar{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .7s}
+.inv .np-fold{width:86%;background:var(--sheet);padding:18px 16px 24px;transform:rotate(-3deg);box-shadow:0 16px 30px rgba(0,0,0,.35);font-family:"Old Standard TT",serif;color:var(--ink);display:flex;flex-direction:column;gap:8px;border:0;cursor:pointer;text-align:center}
+.inv .np-fold .np-mast{font-size:clamp(28px,9.6cqi,38px)}
+/* piring hitam: a vinyl record and its sleeve */
+.inv .pg-vinyl{background:var(--ground);color:var(--pagefg);justify-content:flex-start;padding:30px 22px 90px;gap:16px}
+.inv .disc{position:relative;width:86%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,transparent 0 17%,#111 17.5%),repeating-radial-gradient(circle,#151515 0 1.2px,#222 1.4px 2.6px);box-shadow:0 14px 30px rgba(0,0,0,.45);animation:spin 9s linear infinite}
+.inv .disc::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 10%,rgba(255,255,255,.12) 14%,transparent 20% 60%,rgba(255,255,255,.1) 64%,transparent 70%)}
+.inv .disc .lbl{position:absolute;inset:31%;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--sheet)}
+.inv .disc .lbl svg{position:absolute;inset:0;width:100%;height:100%}
+.inv .disc .lbl::after{content:"";position:absolute;width:7%;height:7%;border-radius:50%;background:var(--ground)}
+.inv.thumb .disc,.inv .disc.still{animation:none}
+.inv .tracks{width:100%;font-family:"Jost",sans-serif;font-size:12px;letter-spacing:.04em}
+.inv .tracks h3{font-family:"Abril Fatface",serif;font-weight:400;font-size:clamp(28px,9cqi,36px);letter-spacing:.01em;text-align:center;margin:0 0 6px;line-height:1.05}
+.inv .tracks li{display:grid;grid-template-columns:30px 1fr auto;gap:8px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--pagefg) 25%,transparent)}
+.inv .tracks ol{list-style:none;margin:0;padding:0}
+.inv .cv-vinyl{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .6s .5s}
+.inv .sleeve-wrap{position:relative;width:76%;aspect-ratio:1}
+.inv .sleeve-wrap .disc{position:absolute;inset:4%;width:auto;animation:none;transition:transform 1s cubic-bezier(.5,0,.2,1)}
+.inv .sleeve{position:absolute;inset:0;background:var(--accent);box-shadow:0 18px 34px rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--sheet);border:0;cursor:pointer;font:inherit;padding:16px;text-align:center}
+.inv .sleeve b{font-family:"Abril Fatface",serif;font-weight:400;font-size:clamp(28px,10cqi,40px);line-height:1}
+.inv.opening .sleeve-wrap .disc{transform:translateX(52%) rotate(200deg)}
+/* buku: a cloth-bound book */
+.inv .pg-buku{background:var(--sheet);padding:40px 30px 40px 46px;gap:12px}
+.inv .pg-buku .endp{position:absolute;left:0;top:0;bottom:0;width:22px;background:var(--accent);z-index:1}
+.inv .pg-buku .endp::before{content:"";position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/180px;mix-blend-mode:screen;opacity:.6}
+.inv .pg-buku .endp::after{content:"";position:absolute;right:0;top:0;bottom:0;width:8px;background:linear-gradient(90deg,rgba(0,0,0,.25),transparent)}
+.inv .pg-buku .names{font-size:clamp(42px,14cqi,56px)}
+.inv .pg-buku .pub{position:absolute;bottom:92px;left:46px;right:30px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;border-top:1px solid var(--line);padding-top:10px}
+.inv .cv-buku{perspective:1800px;background:transparent}
+.inv .bookcov{position:absolute;inset:0;background:var(--ground);transform-origin:0 50%;transition:transform 1.2s cubic-bezier(.6,0,.25,1),opacity .4s 1s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;box-shadow:inset 18px 0 22px rgba(0,0,0,.35);color:var(--gold)}
+.inv .bookcov .fr{position:absolute;inset:22px 18px 22px 30px;border:1.5px solid var(--gold);outline:1px solid var(--gold);outline-offset:-7px}
+.inv .bookcov .ttl{font-family:"Cinzel",serif;font-size:clamp(26px,9cqi,34px);letter-spacing:.12em}
+.inv.opening .bookcov{transform:rotateY(-160deg);opacity:0}
+/* jahitan: cross-stitch on aida cloth */
+.inv .aida{background-color:var(--sheet);background-image:linear-gradient(rgba(0,0,0,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.07) 1px,transparent 1px);background-size:5px 5px}
+.inv .pg-jahit{gap:14px;padding:30px 18px 86px}
+.inv .stitch{width:100%;height:auto;display:block}
+.inv .pg-jahit .caps,.inv .pg-jahit .small{font-family:"Jost",sans-serif}
+.inv .cv-jahit{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .6s .4s}
+.inv .hoop{position:relative;width:78%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 10px #b98a5a,0 0 0 13px #8a5e36,0 14px 30px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border:0;cursor:pointer;padding:12%;transition:transform 1s cubic-bezier(.5,0,.2,1),opacity .6s}
+.inv .hoop::before{content:"";position:absolute;left:50%;top:-22px;width:18px;height:16px;transform:translateX(-50%);background:linear-gradient(#c9a26a,#7a5a3a);border-radius:3px}
+.inv.opening .hoop{transform:scale(1.6);opacity:0}
+/* jubin: blue-and-white tiles */
+.inv .pg-jubin{background:var(--tiles) 0 0/64px,var(--sheet);padding:44px 34px}
+.inv .tile-panel{position:relative;z-index:2;align-self:stretch;flex:1;background:var(--sheet);box-shadow:0 0 0 2px var(--accent),0 0 0 7px var(--sheet),0 0 0 8px var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:26px 18px;text-align:center}
+.inv .pg-jubin{align-items:stretch}
+.inv .tile-panel .names{font-size:clamp(40px,13.5cqi,54px)}
+.inv .cv-jubin{background:var(--tiles) 0 0/64px,var(--sheet);display:flex;align-items:center;justify-content:center;transition:opacity .8s}
+.inv .tile-medal{width:62%;aspect-ratio:1;border-radius:50%;background:var(--sheet);box-shadow:0 0 0 2px var(--accent),0 0 0 8px var(--sheet),0 0 0 9px var(--accent),0 12px 26px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;font:inherit;color:var(--ink);padding:16px;transition:transform .8s}
+.inv.opening .tile-medal{transform:scale(.6)}
+/* pawagam: a retro picture-house poster */
+.inv .pg-poster{background:var(--ground);color:#1a1410;justify-content:space-between;padding:30px 20px 92px;overflow:hidden}
+.inv .rays{position:absolute;inset:-30%;background:repeating-conic-gradient(from 0deg at 50% 45%,rgba(255,255,255,.22) 0 6deg,transparent 6deg 14deg);z-index:0}
+.inv .dots{position:absolute;inset:0;background:radial-gradient(circle,rgba(0,0,0,.18) 30%,transparent 33%) 0 0/7px 7px;z-index:0}
+.inv .pg-poster > :not(.rays):not(.dots){position:relative;z-index:2}
+.inv .pst-top{font-family:"Jost",sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:500}
+.inv .pst-title{font-family:"Bangers",cursive;font-size:clamp(58px,20cqi,84px);line-height:.9;letter-spacing:.02em;color:var(--sheet);text-shadow:3px 3px 0 #1a1410,-1px -1px 0 #1a1410,1px -1px 0 #1a1410,-1px 1px 0 #1a1410;transform:rotate(-4deg)}
+.inv .pst-names{font-family:"Abril Fatface",serif;font-size:clamp(30px,10cqi,40px);line-height:1.05}
+.inv .pst-names small{display:block;font-family:"Jost",sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:4px}
+.inv .pst-date{background:#1a1410;color:var(--ground);padding:8px 16px;font-family:"Bangers",cursive;font-size:24px;letter-spacing:.06em;transform:rotate(2deg)}
+.inv .credits{font-family:"Jost",sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;line-height:1.6;max-width:92%}
+.inv .cv-poster{background:#1a1410;display:flex;align-items:center;justify-content:center;transition:opacity .6s .6s}
+.inv .cticket{display:flex;width:84%;background:var(--ground);color:#1a1410;border:0;cursor:pointer;font:inherit;box-shadow:0 14px 30px rgba(0,0,0,.5);padding:0;text-align:left}
+.inv .cticket .main{flex:1;padding:18px 16px;border-right:2px dashed #1a1410;display:flex;flex-direction:column;gap:6px}
+.inv .cticket .main b{font-family:"Bangers",cursive;font-size:30px;letter-spacing:.04em;font-weight:400}
+.inv .cticket .stub{width:30%;padding:14px 8px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-family:"Bangers",cursive;font-size:20px;letter-spacing:.1em;transition:transform .9s cubic-bezier(.5,0,.3,1)}
+.inv.opening .cticket .stub{transform:translate(30px,160px) rotate(40deg);opacity:0;transition:transform .9s,opacity .6s .3s}
+/* skrol: a royal letter on a scroll */
+.inv .pg-skrol{background:var(--sheet);padding:58px 26px 96px;gap:10px}
+.inv .rod{position:absolute;left:-2%;right:-2%;height:20px;background:linear-gradient(180deg,#7a5a2a,#f3d790 35%,#c9a24a 55%,#6b4a1e);z-index:4;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,.35)}
+.inv .rod.t{top:8px}.inv .rod.b{bottom:70px}
+.inv .scroll-border{position:absolute;inset:36px 14px 88px;border:1.5px solid var(--accent);outline:1px solid var(--accent);outline-offset:-6px;z-index:1}
+.inv .pg-skrol > :not(.rod):not(.scroll-border){position:relative;z-index:2}
+.inv .khatam-red{width:84px;height:84px;border-radius:50%;border:3px double #b3261e;color:#b3261e;display:flex;align-items:center;justify-content:center;font-family:"Aref Ruqaa","Amiri",serif;font-size:24px;transform:rotate(-8deg);opacity:.85;mix-blend-mode:multiply;-webkit-mask:url(assets/crackle.png) 0 0/120px,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:url(assets/crackle.png) 0 0/120px exclude,linear-gradient(#000 0 0)}
+.inv .cv-skrol{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .6s .9s}
+.inv .rolled{position:relative;width:78%;height:16%;background:linear-gradient(180deg,#b9a27a,var(--sheet) 30%,var(--sheet) 70%,#b9a27a);border-radius:16px;box-shadow:0 14px 28px rgba(0,0,0,.4);transition:height 1.1s cubic-bezier(.5,0,.2,1);display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;font:inherit;color:var(--ink);overflow:hidden}
+.inv .rolled::before,.inv .rolled::after{content:"";position:absolute;left:-4%;right:-4%;height:18px;background:linear-gradient(180deg,#7a5a2a,#f3d790 35%,#c9a24a 55%,#6b4a1e);border-radius:9px}
+.inv .rolled::before{top:-6px}.inv .rolled::after{bottom:-6px}
+.inv .rolled .band{position:absolute;left:46%;top:0;bottom:0;width:8%;background:var(--accent)}
+.inv .rolled .seal-m{position:relative;z-index:2;width:58px;height:58px;background:url(assets/seal-merah.webp) center/contain no-repeat}
+.inv.opening .rolled{height:96%}
+.inv.opening .rolled .band,.inv.opening .rolled .seal-m{opacity:0;transition:opacity .3s}
+/* gerbang: laser-cut wrought-iron gates */
+.inv .pg-gerbang{background:var(--ground);padding:22px 16px;align-items:stretch}
+.inv .gcard{position:relative;flex:1;background:var(--sheet);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 22px;text-align:center;box-shadow:0 12px 26px rgba(0,0,0,.25);overflow:hidden}
+.inv .gcard .names{font-size:clamp(42px,14cqi,56px)}
+.inv .gate{position:absolute;top:0;bottom:0;width:50%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.inv .gate svg{width:100%;height:100%;display:block}
+.inv .pg-gerbang .gate.l{left:-36%}.inv .pg-gerbang .gate.r{right:-36%}
+.inv .cv-gerbang{perspective:1500px;background:transparent}
+.inv .cv-gerbang .gate{transition:transform 1.3s cubic-bezier(.55,0,.25,1)}
+.inv .cv-gerbang .gate.l{left:0;transform-origin:0 50%}.inv .cv-gerbang .gate.r{right:0;transform-origin:100% 50%}
+.inv .cv-gerbang .gbtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;background:var(--sheet);border:0;padding:14px 20px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 0 0 1px var(--gold),0 8px 18px rgba(0,0,0,.3);text-align:center;transition:opacity .3s}
+.inv.opening .cv-gerbang .gate.l{transform:rotateY(-100deg)}
+.inv.opening .cv-gerbang .gate.r{transform:rotateY(100deg)}
+.inv.opening .cv-gerbang .gbtn{opacity:0}
+/* lakaran: a pen sketch of the venue */
+.inv .pg-lakaran{background:var(--sheet);justify-content:flex-start;padding:46px 24px 90px;gap:12px}
+.inv .sketch{width:100%;aspect-ratio:var(--ar);background:var(--ink);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.inv .pg-lakaran .names{font-size:clamp(42px,14cqi,56px)}
+/* telegram */
+.inv .pg-telegram{background:var(--ground);padding:26px 16px 90px}
+.inv .tg-form{position:relative;width:100%;background:#f6eedb;color:#2a2620;padding:16px 14px 18px;box-shadow:0 12px 26px rgba(0,0,0,.28);text-align:left;font-family:"Old Standard TT",serif}
+.inv .tg-form::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.8;pointer-events:none}
+.inv .tg-head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--accent);padding-bottom:6px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.inv .tg-title{font-family:"Old Standard TT",serif;font-weight:700;font-size:clamp(30px,10cqi,40px);letter-spacing:.2em;text-align:center;color:var(--accent);margin:8px 0}
+.inv .tg-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--accent);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.inv .tg-grid span{padding:4px;border-right:1px solid var(--accent)}
+.inv .tg-grid span:last-child{border-right:0}
+.inv .strip{position:relative;display:block;background:#fffaf0;margin:6px 0;padding:4px 8px;font-family:"Special Elite","Courier New",monospace;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 1px 1px rgba(0,0,0,.18);transform:rotate(var(--r,0deg))}
+.inv .rubber{position:absolute;right:12px;top:58px;border:3px solid #b3261e;color:#b3261e;padding:3px 10px;font-family:"Old Standard TT",serif;font-weight:700;letter-spacing:.2em;transform:rotate(-12deg);opacity:.8;mix-blend-mode:multiply}
+.inv .cv-telegram{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:transform 1s cubic-bezier(.6,0,.25,1)}
+.inv .tg-env{width:86%;aspect-ratio:1.6;background:#efe3c8;box-shadow:0 14px 28px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:14px;gap:10px;border:0;cursor:pointer;font:inherit;text-align:left;color:#2a2620;position:relative}
+.inv .tg-env .bar{background:var(--accent);color:#fff;font-family:"Old Standard TT",serif;font-weight:700;letter-spacing:.3em;padding:6px 10px;font-size:15px}
+.inv .tg-env .win{background:#fffaf0;border:1px solid rgba(0,0,0,.25);padding:10px 12px;font-family:"Special Elite",monospace;font-size:13px;margin-left:30%;width:auto;box-shadow:inset 0 1px 3px rgba(0,0,0,.15)}
+.inv.opening .cv-telegram{transform:translateY(104%)}
+/* mancis: a matchbox */
+.inv .pg-mancis{background:var(--ground);padding:28px 30px 90px}
+.inv .striker{position:absolute;top:0;bottom:0;width:14px;background:#6b4a32;background-image:url(assets/crackle.png);background-size:60px;z-index:1}
+.inv .striker.l{left:0}.inv .striker.r{right:0}
+.inv .mlabel{position:relative;z-index:2;width:100%;background:var(--sheet);padding:20px 14px;box-shadow:0 0 0 3px var(--accent),0 0 0 7px var(--sheet),0 0 0 8px var(--accent);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.inv .mlabel svg.arc{width:100%;height:auto}
+.inv .mlabel .heart{width:34%;aspect-ratio:1;background:var(--accent);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.inv .banner{background:var(--accent);color:var(--sheet);padding:6px 18px;font-family:"Abril Fatface",serif;font-size:16px;letter-spacing:.06em;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%)}
+.inv .cv-mancis{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .6s .9s}
+.inv .mbox{position:relative;width:70%;aspect-ratio:.66;border:0;padding:0;background:none;cursor:pointer}
+.inv .mbox .drawer{position:absolute;inset:6% 3%;background:#e9dcc4;transition:transform 1s cubic-bezier(.5,0,.2,1);overflow:hidden}
+.inv .mbox .drawer::before{content:"";position:absolute;inset:8%;background:repeating-linear-gradient(90deg,#e4c89a 0 7px,#c9a46c 7px 8px)}
+.inv .mbox .drawer::after{content:"";position:absolute;left:8%;right:8%;top:6%;height:9%;background:repeating-linear-gradient(90deg,#b3261e 0 7px,transparent 7px 8px);border-radius:4px}
+.inv .mbox .sleeve2{position:absolute;inset:0;background:var(--sheet);box-shadow:0 0 0 3px var(--accent) inset,0 16px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;text-align:center;color:var(--ink)}
+.inv .mbox .sleeve2 b{font-family:"Abril Fatface",serif;font-weight:400;font-size:clamp(22px,8cqi,30px);color:var(--accent)}
+.inv.opening .mbox .drawer{transform:translateY(-62%)}
+/* anyaman: a woven mengkuang mat */
+.inv .pg-anyaman{background:var(--weave) 0 0/24px,#d9c08a;padding:30px 22px 90px}
+.inv .weave-band{position:absolute;left:0;right:0;height:64px;background:var(--weave2) 0 0/24px;-webkit-mask:var(--dia) 0 0/64px 64px repeat-x;mask:var(--dia) 0 0/64px 64px repeat-x}
+.inv .woven-card{position:relative;z-index:2;background:var(--sheet);padding:36px 24px;border-radius:50%/26%;box-shadow:0 0 0 3px var(--accent),0 0 0 8px var(--sheet),0 12px 26px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;width:92%}
+.inv .woven-card .names{font-size:clamp(40px,13cqi,52px)}
+.inv .cv-anyaman{background:var(--weave) 0 0/24px,#d9c08a;display:flex;align-items:center;justify-content:center;transition:opacity .8s .2s,transform 1s}
+.inv.opening .cv-anyaman{transform:scale(1.15)}
+/* tekat: gold-thread embroidery on velvet */
+.inv .pg-tekat{background:var(--ground);color:var(--gold);gap:12px;padding:30px 26px 90px}
+.inv .wreath{position:relative;width:74%;aspect-ratio:1;filter:drop-shadow(0 2px 1px rgba(0,0,0,.6)) drop-shadow(0 -1px 0 rgba(255,255,255,.18))}
+.inv .wreath i{position:absolute;left:50%;top:50%;width:30%;aspect-ratio:var(--ar);transform-origin:0 0;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.inv .wreath .mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Pinyon Script",cursive;font-size:clamp(52px,17cqi,70px)}
+.inv .pg-tekat .names{font-family:"Cinzel",serif;font-weight:400;letter-spacing:.16em;text-transform:uppercase;font-size:clamp(20px,6.6cqi,26px);line-height:1.5}
+.inv .pg-tekat .names .amp{display:inline;margin:0 .3em}
+.inv .pg-tekat .caps,.inv .pg-tekat .small{color:var(--gold)}
+.inv .cv-tekat{background:var(--ground);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .7s .5s}
+.inv .cv-tekat .wreath{transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
+.inv.opening .cv-tekat .wreath{transform:rotate(25deg) scale(1.3)}
+/* label: vintage labels */
+.inv .pg-label{background:var(--ground);padding:30px 20px 90px;gap:16px}
+.inv .vlabel{position:relative;z-index:2;width:100%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
+.inv .vlabel svg{width:100%;height:auto;display:block}
+.inv .vlabel .in{position:absolute;inset:16% 14%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--ink)}
+.inv .vlabel .names{font-size:clamp(36px,12cqi,48px)}
+.inv .ribbon-b{position:relative;z-index:2;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));width:96%}
+.inv .ribbon-b svg{width:100%;height:auto;display:block}
+.inv .ribbon-b span{position:absolute;inset:0 18%;display:flex;align-items:center;justify-content:center;color:var(--sheet);font-family:"Abril Fatface",serif;font-size:clamp(13px,4.4cqi,17px);letter-spacing:.08em}
+.inv .cv-label{background:var(--ground);display:flex;align-items:center;justify-content:center;transition:opacity .7s .3s}
+.inv .hangtag{position:relative;width:60%;border:0;padding:0;background:none;cursor:pointer;transform-origin:50% 0;animation:sway 3s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.inv .hangtag .in{position:absolute;inset:22% 12% 12%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--ink);text-align:center}
+.inv.thumb .hangtag{animation:none}
+@media (prefers-reduced-motion: reduce){.inv .disc,.inv .hangtag{animation:none}.inv .bookcov,.inv .rolled,.inv .cv-gerbang .gate,.inv .mbox .drawer,.inv .cv-telegram{transition:none}}
+</style>
+<style>.inv .wreath i{transform-origin:50% 50%;width:26%}</style>
+<style>.inv .cv-vinyl{transition:opacity .5s .2s}.inv .cv-jahit{transition:opacity .5s .1s}.inv .cv-skrol{transition:opacity .5s .3s}.inv .cv-mancis{transition:opacity .5s .3s}</style>
+<style>.inv.opening .sleeve-wrap .disc{transform:translateY(-62%) rotate(220deg)}.inv .cv-poster{transition:opacity .5s .2s}.inv.opening .mbox .drawer{transform:translateY(-58%)}.inv .mbox .drawer{z-index:0}.inv .mbox .sleeve2{z-index:1}</style>
+<style>.inv .mbox{overflow:visible;display:block}.inv .mbox .drawer,.inv .mbox .sleeve2{display:block}.inv .mbox .sleeve2{display:flex}</style>

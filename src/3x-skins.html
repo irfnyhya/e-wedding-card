@@ -1,0 +1,311 @@
+<style>
+/* ===== Per-family content skins: what the card looks like once you scroll past the front ===== */
+/* shared mechanics for "each section is its own object" skins */
+.inv.cardsecs .sheet{background:transparent;box-shadow:none;margin:0}
+.inv.cardsecs .sheet::after{display:none}
+.inv.cardsecs .sec{margin:16px 14px;border-top:0!important}
+.inv.cardsecs .foot{color:var(--pagefg,var(--ink))}
+
+/* sampul: separate stationery inserts tucked in the envelope liner */
+.fam-sampul .scroller{background:var(--liner)}
+.fam-sampul .sec{background:var(--sheet);box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 22px rgba(0,0,0,.18);position:relative}
+.fam-sampul .sec::before{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);pointer-events:none}
+.fam-sampul .sec:nth-child(even){transform:rotate(.6deg)}.fam-sampul .sec:nth-child(odd){transform:rotate(-.5deg)}
+.fam-sampul .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+.fam-sampul .info{border:0;gap:8px}.fam-sampul .info>div{border:0;background:color-mix(in srgb,var(--liner) 30%,var(--sheet))}
+
+/* mihrab: every section sits in its own arched niche */
+.fam-mihrab .scroller{background:var(--ground) var(--lattice)}
+.fam-mihrab .sec{background:var(--sheet);border-radius:999px 999px 6px 6px/150px 150px 6px 6px;padding-top:64px;box-shadow:0 0 0 1px var(--gold),0 0 0 6px var(--sheet),0 0 0 7px color-mix(in srgb,var(--gold) 60%,transparent)}
+.fam-mihrab .sec h2{font-family:"Marcellus",serif;color:var(--accent);font-size:13px}
+.fam-mihrab .sec h2::before{content:"";display:block;width:26px;height:26px;margin:0 auto 10px;background:var(--gold);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 2l5 13 13 5-13 5-5 13-5-13-13-5 13-5z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 2l5 13 13 5-13 5-5 13-5-13-13-5 13-5z'/%3E%3C/svg%3E") center/contain no-repeat}
+.fam-mihrab .count div{border:1px solid var(--gold);border-radius:999px 999px 4px 4px/40px 40px 4px 4px}
+
+/* ukiran: one-ink print with fleurons and engraved rules */
+.fam-ukiran .sec{padding:40px 30px}
+.fam-ukiran .sec+.sec{border-top:0!important}
+.fam-ukiran .sec+.sec::before{content:"❦";display:block;color:var(--ink);font-size:22px;margin-top:-56px;margin-bottom:12px;background:var(--sheet);padding:0 12px}
+.fam-ukiran .sec h2{font-family:"IM Fell English SC",serif;letter-spacing:.2em;font-size:15px;color:var(--ink);border-top:1.5px solid var(--ink);border-bottom:.6px solid var(--ink);padding:6px 18px}
+.fam-ukiran .info,.fam-ukiran .info>div{border-color:var(--ink)}
+.fam-ukiran .count b{font-family:"IM Fell English",serif;font-style:italic;color:var(--ink)}
+
+/* catair: airy editorial pages with a wash behind each heading */
+.fam-catair .sec{align-items:flex-start;text-align:left;padding:48px 30px}
+.fam-catair .sec p{max-width:30ch}
+.fam-catair .sec h2{position:relative;font-family:"Cormorant Garamond",serif;font-style:italic;text-transform:none;letter-spacing:0;font-size:34px;font-weight:400;color:var(--accent);padding:6px 0}
+.fam-catair .sec h2::before{content:"";position:absolute;left:-18px;top:-10px;width:120px;height:70px;background:var(--gold);opacity:.35;border-radius:58% 42% 61% 39%/45% 55% 45% 55%;filter:blur(6px);z-index:-1}
+.fam-catair .info,.fam-catair .count,.fam-catair .timeline,.fam-catair form,.fam-catair .wishes,.fam-catair .giftcard{margin-left:0}
+.fam-catair .ibtns{justify-content:flex-start}
+
+/* songket: dark silk, foil headings and a woven band between sections */
+.fam-songket .sheet{background:var(--ground);color:var(--pagefg);box-shadow:none;margin:0}
+.fam-songket .sheet::after{display:none}
+.fam-songket .sec{color:var(--pagefg)}
+.fam-songket .sec+.sec{border-top:0!important;padding-top:70px}
+.fam-songket .sec+.sec::before{content:"";position:absolute;left:0;right:0;top:12px;height:28px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--band) 0 0/auto 100% repeat-x;mask:var(--band) 0 0/auto 100% repeat-x}
+.fam-songket .sec h2{color:var(--gold);font-family:"Cinzel",serif;letter-spacing:.3em}
+.fam-songket .info,.fam-songket .info>div{border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.fam-songket .info b,.fam-songket .count b{color:var(--gold)}
+.fam-songket .ibtn,.fam-songket .seg button,.fam-songket form input,.fam-songket form select,.fam-songket form textarea{color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-songket .submit{background:var(--gold);color:var(--ground)}
+
+/* tiket: every section is a boarding-pass coupon */
+.fam-tiket .scroller{background:var(--ground)}
+.fam-tiket .sec{background:var(--sheet);border-radius:14px;padding:46px 22px 30px;box-shadow:0 8px 18px rgba(0,0,0,.14);position:relative;overflow:hidden}
+.fam-tiket .sec::before{content:attr(data-gate);position:absolute;left:0;right:0;top:0;background:var(--accent);color:var(--sheet);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;padding:8px 16px;text-align:left}
+.fam-tiket .sec::after{content:"";position:absolute;left:12px;right:12px;bottom:12px;border-top:2px dotted var(--line)}
+.fam-tiket .sec h2{font-family:"IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--accent)}
+.fam-tiket .info,.fam-tiket .info>div{border-style:dashed}
+.fam-tiket .info span,.fam-tiket .count span{font-family:"IBM Plex Mono",monospace}
+
+/* herbarium: specimen sheets taped to the table */
+.fam-herb .scroller{background:var(--ground)}
+.fam-herb .sec{background:var(--sheet);position:relative;padding:42px 22px 30px;box-shadow:0 6px 14px rgba(0,0,0,.18);-webkit-mask:url(assets/deckle.png) 0 0/100% 100%;mask:url(assets/deckle.png) 0 0/100% 100%}
+.fam-herb .sec h2{font-family:"Special Elite",monospace;letter-spacing:.14em;color:var(--ink);border:1px solid var(--ink);padding:5px 12px;transform:rotate(-1.5deg)}
+.fam-herb .sec::before{content:"";position:absolute;top:12px;left:50%;width:90px;height:20px;transform:translateX(-50%) rotate(-3deg);background:var(--tape);opacity:.75}
+.fam-herb .info span,.fam-herb .count span{font-family:"Special Elite",monospace}
+
+/* tipografi: a Swiss-style grid with large section titles */
+.fam-tipografi .sec{align-items:stretch;text-align:left;padding:40px 26px;gap:16px}
+.fam-tipografi .sec h2{font-family:"Bodoni Moda",serif;text-transform:none;letter-spacing:-.01em;font-size:40px;line-height:1;color:var(--ink);border-bottom:2px solid var(--ink);padding-bottom:10px;font-style:italic}
+.fam-tipografi .sec h2::after{content:"";display:none}
+.fam-tipografi .sec p{max-width:none}
+.fam-tipografi .count b{font-family:"Bodoni Moda",serif;font-size:44px;color:var(--pageAccent,var(--accent))}
+.fam-tipografi .info,.fam-tipografi .info>div{border-color:var(--ink)}
+.fam-tipografi .ibtns{justify-content:flex-start}
+.fam-tipografi .rule,.fam-tipografi .orn{display:none}
+
+/* deco: gold geometric frames on a dark ground */
+.fam-deco .sheet{background:var(--ground);color:var(--pagefg);margin:0;box-shadow:none}
+.fam-deco .sheet::after{display:none}
+.fam-deco .sec{margin:14px;color:var(--pagefg);border:1px solid var(--gold)!important;outline:1px solid var(--gold);outline-offset:-6px;clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 16px,100% calc(100% - 16px),calc(100% - 16px) 100%,16px 100%,0 calc(100% - 16px),0 16px)}
+.fam-deco .sec h2{font-family:"Poiret One",sans-serif;color:var(--gold);font-size:16px;letter-spacing:.4em}
+.fam-deco .sec h2::before,.fam-deco .sec h2::after{content:"◆";margin:0 10px;font-size:8px;vertical-align:middle}
+.fam-deco .info,.fam-deco .info>div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-deco .info b,.fam-deco .count b{color:var(--gold);font-family:"Poiret One",sans-serif}
+.fam-deco .ibtn,.fam-deco .seg button,.fam-deco form input,.fam-deco form select,.fam-deco form textarea{color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-deco .submit{background:var(--gold);color:var(--ground)}
+
+/* baldu: ivory cards with gilt edges on velvet, each with a ribbon tab */
+.fam-baldu .scroller{background:var(--ground)}
+.fam-baldu .sec{background:var(--sheet);position:relative;box-shadow:0 0 0 1px var(--gold),0 12px 24px rgba(0,0,0,.4)}
+.fam-baldu .sec::before{content:"";position:absolute;top:-6px;right:22px;width:22px;height:46px;background:var(--ribbon);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+.fam-baldu .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+
+/* bingkai: small gilt frames around each section */
+.fam-bingkai .scroller{background:var(--ground)}
+.fam-bingkai .sec{background:var(--sheet);border:6px double var(--gold)!important;border-radius:2px;position:relative}
+.fam-bingkai .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--pageAccent,var(--accent))}
+
+/* poskad: each section is a postcard with a stamp */
+.fam-poskad .scroller{background:var(--ground)}
+.fam-poskad .sec{background:var(--sheet);box-shadow:0 8px 18px rgba(0,0,0,.22);position:relative;align-items:flex-start;text-align:left;padding:40px 22px 28px}
+.fam-poskad .sec:nth-child(odd){transform:rotate(-1deg)}.fam-poskad .sec:nth-child(even){transform:rotate(.8deg)}
+.fam-poskad .sec h2{font-family:"Homemade Apple",cursive;text-transform:none;letter-spacing:0;font-size:20px;color:var(--accent)}
+.fam-poskad .sec .pstamp{position:absolute;top:14px;right:14px;width:44px;height:54px}
+.fam-poskad .sec p{font-family:"Homemade Apple",cursive;font-size:13px;line-height:2}
+.fam-poskad .ibtns{justify-content:flex-start}
+
+/* batik: dyed paper with a foil batik edge down each section */
+.fam-batik .sheet{background:var(--ground);color:var(--pagefg);margin:0;box-shadow:none}
+.fam-batik .sheet::after{display:none}
+.fam-batik .sec{color:var(--pagefg);padding-left:62px;position:relative}
+.fam-batik .sec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:44px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--motif) 0 0/44px auto repeat-y;mask:var(--motif) 0 0/44px auto repeat-y}
+.fam-batik .sec+.sec{border-top:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important}
+.fam-batik .sec h2{color:var(--gold);font-family:"Cinzel",serif}
+.fam-batik .info,.fam-batik .info>div{border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.fam-batik .info b,.fam-batik .count b{color:var(--gold)}
+.fam-batik .ibtn,.fam-batik .seg button,.fam-batik form input,.fam-batik form select,.fam-batik form textarea{color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-batik .submit{background:var(--gold);color:var(--ground)}
+
+/* tingkap: timber-framed panels with a carved band on top */
+.fam-tingkap .scroller{background:var(--ground)}
+.fam-tingkap .sec{background:var(--sheet);border:9px solid var(--wood)!important;padding-top:58px;position:relative}
+.fam-tingkap .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:26px;background:var(--wood);-webkit-mask:var(--lat) 0 0/26px;mask:var(--lat) 0 0/26px;opacity:.85}
+.fam-tingkap .sec h2{color:var(--accent);font-family:"Cormorant Garamond",serif;font-size:14px}
+
+/* foto: a magazine spread with your photo between sections */
+.fam-foto .sheet{background:#141312;color:#efe9df;margin:0;box-shadow:none}
+.fam-foto .sheet::after{display:none}
+.fam-foto .sec{color:#efe9df;align-items:flex-start;text-align:left;padding:40px 24px}
+.fam-foto .sec+.sec{border-top:1px solid #3a3734!important}
+.fam-foto .sec h2{font-family:"Bodoni Moda",serif;text-transform:none;letter-spacing:-.01em;font-size:38px;color:#fff;font-weight:400}
+.fam-foto .info,.fam-foto .info>div{border-color:#3a3734}
+.fam-foto .ibtn,.fam-foto .seg button,.fam-foto form input,.fam-foto form select,.fam-foto form textarea{color:#efe9df;border-color:#4a4643}
+.fam-foto .submit{background:#efe9df;color:#141312}
+.fam-foto .ibtns{justify-content:flex-start}
+.fam-foto .spread{width:100%;aspect-ratio:1.5;background-size:cover;background-position:center;filter:grayscale(.2)}
+
+/* bahagia: ivory cards edged in red and gold, with a double-happiness seal */
+.fam-bahagia .scroller{background:var(--ground)}
+.fam-bahagia .sec{background:var(--sheet);box-shadow:0 0 0 1px var(--gold),0 0 0 5px var(--sheet),0 0 0 6px #a11a1f,0 12px 22px rgba(0,0,0,.3)}
+.fam-bahagia .sec h2{color:#a11a1f;font-family:"Cormorant Garamond",serif;font-weight:600}
+.fam-bahagia .sec h2::before{content:"囍";display:block;font-family:"Noto Serif TC",serif;font-size:22px;margin-bottom:6px}
+
+/* marmar: marble all the way down, gold hairlines */
+.fam-marmar .sheet{background:var(--ground);color:var(--pagefg);margin:0;box-shadow:none;position:relative;isolation:isolate}
+.fam-marmar .sheet::after{background:url(assets/marble.jpg) 0 0/1100px;opacity:.8}
+.fam-marmar .sec{color:var(--pagefg)}
+.fam-marmar .sec+.sec{border-top:0!important}
+.fam-marmar .sec+.sec::before{content:"";display:block;width:60%;height:1px;margin:-44px auto 30px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay}
+.fam-marmar .sec h2{font-family:"Cormorant Garamond",serif;font-style:italic;text-transform:none;letter-spacing:0;font-size:32px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* kaligrafi: geometric frames and gold numerals on a dark ground */
+.fam-kaligrafi .sheet{background:var(--ground);color:var(--pagefg);margin:0;box-shadow:none}
+.fam-kaligrafi .sheet::after{display:none}
+.fam-kaligrafi .sec{color:var(--pagefg);margin:14px;border:1px solid var(--gold)!important;outline:1px solid var(--gold);outline-offset:4px}
+.fam-kaligrafi .sec h2{color:var(--gold);font-family:"Cormorant Garamond",serif;letter-spacing:.3em}
+.fam-kaligrafi .sec h2::before{content:"۞";display:block;font-family:"Amiri",serif;font-size:22px;letter-spacing:0;margin-bottom:6px}
+.fam-kaligrafi .info,.fam-kaligrafi .info>div{border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.fam-kaligrafi .info b,.fam-kaligrafi .count b{color:var(--gold)}
+.fam-kaligrafi .ibtn,.fam-kaligrafi .seg button,.fam-kaligrafi form input,.fam-kaligrafi form select,.fam-kaligrafi form textarea{color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-kaligrafi .submit{background:var(--gold);color:var(--ground)}
+
+/* renda: lace-edged cards */
+.fam-renda .scroller{background:var(--ground)}
+.fam-renda .sec{background:var(--sheet);border:22px solid transparent!important;border-image:var(--lace) 30 round;background-clip:padding-box;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
+.fam-renda .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+
+/* kertas: torn strips of coloured paper between sections */
+.fam-kertas .sec{padding-top:66px;position:relative}
+.fam-kertas .sec+.sec{border-top:0!important}
+.fam-kertas .sec::before{content:"";position:absolute;left:-2%;right:-2%;top:0;height:46px;background:var(--layer);-webkit-mask:url(assets/torn.png) 0 0/100% 100% no-repeat;mask:url(assets/torn.png) 0 0/100% 100% no-repeat;transform:scaleY(-1)}
+.fam-kertas .sec:nth-child(3n+1){--layer:var(--l1)}.fam-kertas .sec:nth-child(3n+2){--layer:var(--l2)}.fam-kertas .sec:nth-child(3n){--layer:var(--l3)}
+.fam-kertas .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+
+/* akuarel: a different wash under every heading */
+.fam-akuarel .sec h2{position:relative;font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:32px;color:var(--accent);padding:14px 30px}
+.fam-akuarel .sec h2::before{content:"";position:absolute;inset:0 -10px;background:var(--w);-webkit-mask:url(assets/wash-corner.png) center/180% 260%;mask:url(assets/wash-corner.png) center/180% 260%;mix-blend-mode:multiply;opacity:.55;z-index:-1}
+.fam-akuarel .sec:nth-child(odd) h2{--w:var(--wash1)}.fam-akuarel .sec:nth-child(even) h2{--w:var(--wash2)}
+
+/* peta: a faint chart behind everything, sections as map legends */
+.fam-peta .sheet{background:var(--sheet) var(--mapbg) center/cover;margin:0;box-shadow:none}
+.fam-peta .sheet::before{content:"";position:absolute;inset:0;background:var(--sheet);opacity:.82;z-index:0}
+.fam-peta .sec{margin:16px 14px;background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--accent)!important;outline:1px solid var(--accent);outline-offset:3px}
+.fam-peta .sec h2{font-family:"IM Fell English SC",serif;color:var(--accent);letter-spacing:.2em}
+.fam-peta .sec h2::before{content:"✥";display:block;font-size:20px;margin-bottom:4px}
+.fam-peta .sec+.sec{margin-top:40px}
+.fam-peta .sec+.sec::after{content:"";position:absolute;left:50%;top:-38px;height:30px;border-left:2px dashed var(--accent)}
+
+/* kaca: stained-glass panels */
+.fam-kaca .sheet{background:var(--ground);margin:0;box-shadow:none}
+.fam-kaca .sheet::after{display:none}
+.fam-kaca .sec{margin:14px;background:var(--sheet);border-radius:999px 999px 4px 4px/120px 120px 4px 4px;border:10px solid transparent!important;background-clip:padding-box;box-shadow:0 0 0 2px #1e1a18;position:relative;padding-top:62px}
+.fam-kaca .sec::before{content:"";position:absolute;inset:-10px;border-radius:inherit;background:var(--glassbg);z-index:-1;-webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);padding:10px}
+.fam-kaca .sec h2{color:var(--accent)}
+
+/* akhbar: the paper continues: columns, headlines, notices */
+.fam-akhbar .sheet{background:var(--sheet);margin:0;box-shadow:none;font-family:"Old Standard TT",serif}
+.fam-akhbar .sec{align-items:stretch;text-align:left;padding:26px 18px}
+.fam-akhbar .sec+.sec{border-top:3px double var(--ink)!important}
+.fam-akhbar .sec h2{font-family:"Old Standard TT",serif;font-weight:700;font-size:24px;letter-spacing:0;text-transform:uppercase;color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:4px}
+.fam-akhbar .sec h2::before{content:attr(data-kicker);display:block;font-weight:400;font-size:9.5px;letter-spacing:.2em;color:var(--accent);margin-bottom:2px}
+.fam-akhbar .sec p{max-width:none;font-size:14px;text-align:left}
+.fam-akhbar .sec[data-s=intro]{display:block;column-count:2;column-gap:18px;column-rule:1px solid color-mix(in srgb,var(--ink) 40%,transparent)}
+.fam-akhbar .sec[data-s=intro]>*{break-inside:avoid;margin:0 0 10px}
+.fam-akhbar .sec[data-s=intro] h2,.fam-akhbar .sec[data-s=intro] .person{column-span:all}
+.fam-akhbar .sec[data-s=intro] p{font-size:13px;line-height:1.5;hyphens:auto}
+.fam-akhbar .info,.fam-akhbar .info>div{border-color:var(--ink)}
+.fam-akhbar .count b{font-family:"Old Standard TT",serif;font-weight:700}
+.fam-akhbar .wish{border-bottom:1px solid var(--ink)}
+.fam-akhbar .wish p{column-count:1}
+
+/* vinyl: liner notes: side labels, credits type, record-label countdown */
+.fam-vinyl .sheet{background:var(--ground);margin:0;box-shadow:none}
+.fam-vinyl .sec{align-items:stretch;text-align:left;font-family:"Jost",sans-serif}
+.fam-vinyl .sec h2{font-family:"Abril Fatface",serif;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+.fam-vinyl .sec h2::before{content:attr(data-side);display:block;font-family:"Jost",sans-serif;font-size:10px;letter-spacing:.3em;color:var(--ink);opacity:.6;margin-bottom:4px}
+.fam-vinyl .count{gap:8px}.fam-vinyl .count div{aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--accent) 0 38%,#151515 39%);color:var(--sheet);display:flex;flex-direction:column;align-items:center;justify-content:center;border:0!important}
+.fam-vinyl .count b{color:var(--sheet);font-size:18px}.fam-vinyl .count span{font-size:7px}
+.fam-vinyl .ibtns{justify-content:flex-start}
+
+/* buku: book pages with chapter titles and page numbers */
+.fam-buku .sheet{background:var(--sheet);margin:0;box-shadow:none;border-left:22px solid var(--accent)}
+.fam-buku .sec{position:relative;padding:48px 30px 54px}
+.fam-buku .sec+.sec{border-top:0!important}
+.fam-buku .sec::after{content:attr(data-page);position:absolute;bottom:16px;left:0;right:0;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.6}
+.fam-buku .sec h2{font-family:"Cormorant Garamond",serif;text-transform:none;letter-spacing:0;font-size:30px;font-weight:400;font-style:italic;color:var(--ink)}
+.fam-buku .sec h2::before{content:attr(data-chap);display:block;font-family:"Cinzel",serif;font-style:normal;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px}
+.fam-buku .sec[data-s="intro"] p:nth-of-type(2)::first-letter{font-size:3em;float:left;line-height:.8;margin:4px 6px 0 0;color:var(--accent)}
+
+/* jahitan: aida cloth with stitched headings and borders */
+.fam-jahit .sheet{background-color:var(--sheet);background-image:linear-gradient(rgba(0,0,0,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.07) 1px,transparent 1px);background-size:5px 5px;margin:0;box-shadow:none}
+.fam-jahit .sheet::after{display:none}
+.fam-jahit .sec+.sec{border-top:0!important}
+.fam-jahit .sec h2 svg{height:22px;width:auto;max-width:100%}
+.fam-jahit .sec{font-family:"Jost",sans-serif}
+.fam-jahit .stitchrule{width:86%;height:auto}
+.fam-jahit .info,.fam-jahit .info>div{border-style:dashed;border-color:var(--accent)}
+
+/* jubin: a tile border round each section */
+.fam-jubin .scroller{background:var(--tiles) 0 0/48px,var(--sheet)}
+.fam-jubin .sheet{background:transparent}
+.fam-jubin .sec{background:var(--sheet);margin:18px;box-shadow:0 0 0 2px var(--accent),0 0 0 6px var(--sheet),0 0 0 7px var(--accent)}
+.fam-jubin .sec h2{color:var(--accent);font-family:"Cormorant Garamond",serif;font-weight:600}
+
+/* pawagam: poster panels with bold banners and showtimes */
+.fam-pawagam .sheet{background:#1a1410;margin:0;box-shadow:none}
+.fam-pawagam .sheet::after{display:none}
+.fam-pawagam .sec{background:var(--ground);margin:14px;color:#1a1410;border:3px solid #1a1410!important;box-shadow:6px 6px 0 #1a1410}
+.fam-pawagam .sec h2{font-family:"Bangers",cursive;font-size:30px;letter-spacing:.06em;color:var(--sheet);text-shadow:2px 2px 0 #1a1410,-1px -1px 0 #1a1410,1px -1px 0 #1a1410,-1px 1px 0 #1a1410;transform:rotate(-2deg)}
+.fam-pawagam .info,.fam-pawagam .info>div{border-color:#1a1410}
+.fam-pawagam .submit,.fam-pawagam .ibtn.solid{background:#1a1410;color:var(--ground)}
+.fam-pawagam .ibtn{border-color:#1a1410;color:#1a1410}
+
+/* skrol: parchment with gilt rods between sections and red seals */
+.fam-skrol .sheet{background:var(--sheet);margin:0 10px}
+.fam-skrol .sec+.sec{border-top:0!important;padding-top:64px}
+.fam-skrol .sec+.sec::before{content:"";position:absolute;left:-14px;right:-14px;top:16px;height:14px;border-radius:7px;background:linear-gradient(180deg,#7a5a2a,#f3d790 35%,#c9a24a 55%,#6b4a1e);box-shadow:0 3px 5px rgba(0,0,0,.3)}
+.fam-skrol .sec h2{font-family:"Cinzel",serif;color:var(--accent);letter-spacing:.24em}
+.fam-skrol .sec h2::after{content:"";display:block;width:34px;height:34px;margin:10px auto 0;border-radius:50%;border:2px double #b3261e;opacity:.8}
+
+/* gerbang: garden paths and iron scrollwork */
+.fam-gerbang .scroller{background:var(--ground)}
+.fam-gerbang .sec{background:var(--sheet);border-radius:2px;position:relative;padding-top:56px;box-shadow:0 10px 22px rgba(0,0,0,.3)}
+.fam-gerbang .sec::before{content:"";position:absolute;left:50%;top:14px;width:120px;height:26px;transform:translateX(-50%);background:var(--metal,var(--gold));-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 26' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M60 22c0-10-10-16-20-12s-6 14 2 12M60 22c0-10 10-16 20-12s6 14-2 12M2 22h40M78 22h40'/%3E%3Ccircle cx='60' cy='8' r='4'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 26' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M60 22c0-10-10-16-20-12s-6 14 2 12M60 22c0-10 10-16 20-12s6 14-2 12M2 22h40M78 22h40'/%3E%3Ccircle cx='60' cy='8' r='4'/%3E%3C/svg%3E") center/contain no-repeat}
+.fam-gerbang .sec h2{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px;color:var(--accent)}
+
+/* lakaran: a sketchbook with ruled lines and drawings between sections */
+.fam-lakaran .sheet{background:var(--sheet) repeating-linear-gradient(180deg,transparent 0 27px,color-mix(in srgb,var(--ink) 12%,transparent) 27px 28px);margin:0;box-shadow:none}
+.fam-lakaran .sec{align-items:flex-start;text-align:left;padding:36px 26px}
+.fam-lakaran .sec+.sec{border-top:0!important}
+.fam-lakaran .sec h2{font-family:"Homemade Apple",cursive;text-transform:none;letter-spacing:0;font-size:20px;color:var(--ink);border-bottom:1.5px solid var(--ink);padding-bottom:2px}
+.fam-lakaran .ibtns{justify-content:flex-start}
+.fam-lakaran .sketchv{width:100%;background:var(--ink);opacity:.8;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+
+/* telegram: typed strips and STOP */
+.fam-telegram .scroller{background:var(--ground)}
+.fam-telegram .sec{background:#f6eedb;font-family:"Special Elite",monospace;color:#2a2620;border-top:4px solid var(--accent)!important;box-shadow:0 8px 18px rgba(0,0,0,.2)}
+.fam-telegram .sec h2{font-family:"Special Elite",monospace;color:var(--accent);background:#fffaf0;padding:4px 10px;box-shadow:0 1px 1px rgba(0,0,0,.2)}
+.fam-telegram .sec h2::after{content:" STOP";opacity:.7}
+.fam-telegram .sec p{font-family:"Special Elite",monospace;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.fam-telegram .info,.fam-telegram .info>div{border-color:var(--accent)}
+
+/* mancis: every section is a matchbox label */
+.fam-mancis .scroller{background:var(--ground)}
+.fam-mancis .sec{background:var(--sheet);box-shadow:0 0 0 3px var(--accent),0 0 0 7px var(--sheet),0 0 0 8px var(--accent),0 12px 22px rgba(0,0,0,.35);margin:24px 20px;position:relative}
+.fam-mancis .sec::before,.fam-mancis .sec::after{content:"";position:absolute;top:0;bottom:0;width:10px;background:#6b4a32 url(assets/crackle.png) 0 0/50px}
+.fam-mancis .sec::before{left:-24px}.fam-mancis .sec::after{right:-24px}
+.fam-mancis .sec h2{font-family:"Abril Fatface",serif;letter-spacing:.08em;background:var(--accent);color:var(--sheet);padding:5px 18px;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%)}
+
+/* anyaman: woven mat with oval cards */
+.fam-anyaman .scroller{background:var(--weave) 0 0/24px,#d9c08a}
+.fam-anyaman .sec{background:var(--sheet);border-radius:40px;box-shadow:0 0 0 3px var(--accent),0 0 0 8px var(--sheet),0 10px 22px rgba(0,0,0,.3);overflow:hidden}
+.fam-anyaman .sec h2{color:var(--accent);font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-size:30px}
+
+/* tekat: velvet with raised gold-thread headings */
+.fam-tekat .sheet{background:var(--ground);color:var(--gold);margin:0;box-shadow:none;position:relative;isolation:isolate}
+.fam-tekat .sheet::after{background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.9}
+.fam-tekat .sec{color:#efe6d4}
+.fam-tekat .sec+.sec{border-top:1px dashed color-mix(in srgb,var(--gold) 50%,transparent)!important}
+.fam-tekat .sec h2{font-family:"Cinzel",serif;font-size:15px;letter-spacing:.3em;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7))}
+.fam-tekat .info,.fam-tekat .info>div{border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.fam-tekat .info b,.fam-tekat .count b{color:var(--gold)}
+.fam-tekat .ibtn,.fam-tekat .seg button,.fam-tekat form input,.fam-tekat form select,.fam-tekat form textarea{color:#efe6d4;border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-tekat .submit{background:var(--gold);color:var(--ground)}
+
+/* label: apothecary labels on a dark ground */
+.fam-label .scroller{background:var(--ground)}
+.fam-label .sec{background:var(--sheet);border-radius:28px;box-shadow:0 0 0 3px var(--accent),inset 0 0 0 8px var(--sheet),inset 0 0 0 9px var(--accent),0 12px 22px rgba(0,0,0,.35);margin:20px 18px}
+.fam-label .sec h2{background:var(--accent);color:var(--sheet);padding:6px 22px;font-family:"Abril Fatface",serif;letter-spacing:.1em;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%)}
+</style>

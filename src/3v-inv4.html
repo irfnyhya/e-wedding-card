@@ -1,0 +1,81 @@
+<style>
+/* ===== Round-four families: renda, kertas, akuarel, peta, kaca ===== */
+/* renda: a paper card edged in lace */
+.inv .pg-renda{background:var(--ground);padding:26px 18px;align-items:stretch}
+.inv .lace-card{position:relative;z-index:2;flex:1;background:var(--sheet);border:30px solid transparent;border-image:var(--lace) 30 round;background-clip:padding-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:34px 14px;text-align:center;filter:drop-shadow(0 10px 18px rgba(0,0,0,.25))}
+.inv .lace-card .names{font-size:clamp(42px,14cqi,56px)}
+.inv .cv-renda{background:var(--ground);transition:transform 1.1s cubic-bezier(.6,0,.25,1)}
+.inv .cv-renda .lacesheet{position:absolute;inset:0;background:var(--lacec);-webkit-mask:var(--lacetile) 0 0/56px;mask:var(--lacetile) 0 0/56px;opacity:.92}
+.inv .cv-renda .ribbonh{position:absolute;left:0;right:0;top:50%;height:46px;transform:translateY(-50%);background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.05) 40%,rgba(0,0,0,.18)),var(--accent);box-shadow:0 4px 10px rgba(0,0,0,.25);transition:transform .7s cubic-bezier(.6,0,.3,1)}
+.inv .cv-renda .knot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;background:var(--sheet);border:0;padding:14px 22px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 6px 14px rgba(0,0,0,.25);text-align:center;transition:opacity .3s}
+.inv .cv-renda .knot b{display:block;font-family:var(--s);font-weight:400;font-size:24px;color:var(--accent)}
+.inv.opening .cv-renda .ribbonh{transform:translate(105%,-50%)}
+.inv.opening .cv-renda .knot{opacity:0}
+.inv.opening .cv-renda{transform:translateY(-104%);transition-delay:.45s}
+
+/* kertas: torn layers of handmade paper */
+.inv .pg-kertas{background:var(--sheet);justify-content:flex-start;padding-top:22%}
+.inv .torn{position:absolute;left:-2%;right:-2%;-webkit-mask:url(assets/torn.png) 0 0/100% 100% no-repeat;mask:url(assets/torn.png) 0 0/100% 100% no-repeat}
+.inv .torn.flip{transform:scaleY(-1)}
+.inv .pg-kertas .mid{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 26px;text-align:center}
+.inv .pg-kertas .names{font-size:clamp(42px,14cqi,56px)}
+.inv .pg-kertas .seal-s{position:absolute;left:50%;width:74px;height:74px;transform:translateX(-50%);background:var(--seal) center/contain no-repeat;z-index:6;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.inv .cv-kertas{overflow:hidden}
+.inv .cv-kertas .layer{position:absolute;left:-2%;right:-2%;transition:transform 1s cubic-bezier(.6,0,.25,1);-webkit-mask:url(assets/torn.png) 0 0/100% 100% no-repeat,linear-gradient(#000 0 0) 0 60px/100% 100% no-repeat;mask:url(assets/torn.png) 0 0/100% 260px no-repeat,linear-gradient(#000 0 0) 0 250px/100% 100% no-repeat}
+.inv .cv-kertas .sealbtn{position:absolute;left:50%;top:46%;width:30%;aspect-ratio:1;transform:translate(-50%,-50%);border:0;padding:0;background:var(--seal) center/contain no-repeat;cursor:pointer;z-index:9;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));transition:opacity .4s,transform .4s}
+.inv .cv-kertas .to{position:absolute;left:0;right:0;top:12%;z-index:9;text-align:center;transition:opacity .3s}
+.inv.opening .cv-kertas .sealbtn{opacity:0;transform:translate(-50%,-50%) scale(1.2)}
+.inv.opening .cv-kertas .to{opacity:0}
+.inv.opening .cv-kertas .layer{transform:translateY(105%)}
+
+/* akuarel: a watercolour wash on cotton paper */
+.inv .pg-akuarel{background:var(--sheet)}
+.inv .wash{position:absolute;inset:0;-webkit-mask:var(--wm) 0 0/100% 100% no-repeat;mask:var(--wm) 0 0/100% 100% no-repeat;mix-blend-mode:multiply;z-index:1}
+.inv .pg-akuarel .mid{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 28px;text-align:center;margin-top:-12%}
+.inv .pg-akuarel .names{font-size:clamp(44px,15cqi,58px)}
+.inv .cv-akuarel{background:var(--sheet);transition:opacity 1s ease}
+.inv .cv-akuarel .wash{transition:transform 1.2s ease,opacity 1.2s}
+.inv .cv-akuarel .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:3}
+.inv.opening .cv-akuarel .wash{transform:scale(1.25);opacity:.4}
+
+/* peta: an old map of Malaya with your route */
+.inv .pg-peta{background:var(--sheet)}
+.inv .mapimg{position:absolute;inset:0;background-size:cover;background-position:center;mix-blend-mode:multiply;filter:sepia(var(--sep,.35)) saturate(.9) contrast(1.02);opacity:.9;z-index:0}
+.inv .route{position:absolute;inset:0;z-index:2;pointer-events:none}
+.inv .compass{position:absolute;right:18px;top:18px;width:84px;z-index:2;color:var(--accent)}
+.inv .cartouche{position:relative;z-index:3;background:var(--sheet);padding:22px 26px;border-radius:50%/38%;box-shadow:0 0 0 1.5px var(--accent),0 0 0 5px var(--sheet),0 0 0 6px var(--accent),0 10px 24px rgba(0,0,0,.25);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:82%}
+.inv .cartouche .names{font-size:clamp(34px,11cqi,44px)}
+.inv .cv-peta{perspective:1500px;background:transparent}
+.inv .fold{position:absolute;top:0;bottom:0;width:50.5%;background:var(--sheet);overflow:hidden;transition:transform 1.2s cubic-bezier(.55,0,.25,1);box-shadow:inset 0 0 30px rgba(0,0,0,.18)}
+.inv .fold.l{left:0;transform-origin:0 50%}.inv .fold.r{right:0;transform-origin:100% 50%}
+.inv .fold .mapimg{width:200%}
+.inv .fold.r .mapimg{left:-100%}
+.inv .cv-peta .tag{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;background:var(--sheet);border:0;padding:16px 24px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 0 0 1px var(--accent),0 0 0 4px var(--sheet),0 0 0 5px var(--accent),0 10px 20px rgba(0,0,0,.3);text-align:center;transition:opacity .3s}
+.inv .cv-peta .tag b{display:block;font-family:var(--s);font-weight:400;font-size:24px;color:var(--accent);margin:4px 0}
+.inv.opening .fold.l{transform:rotateY(-110deg)}
+.inv.opening .fold.r{transform:rotateY(110deg)}
+.inv.opening .cv-peta .tag{opacity:0}
+
+/* kaca: a stained-glass arch */
+.inv .pg-kaca{background:var(--ground)}
+.inv .glass{position:absolute;left:6%;right:6%;top:4%;bottom:4%;z-index:1}
+.inv .glass svg{width:100%;height:100%;display:block}
+.inv .pg-kaca .mid{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14% 30% 0;text-align:center}
+.inv .pg-kaca .names{font-size:clamp(34px,11cqi,44px)}
+.inv .cv-kaca{background:var(--ground);transition:opacity .8s .3s}
+.inv .cv-kaca .glass{filter:brightness(.42) saturate(.7);transition:filter 1.1s ease}
+.inv .cv-kaca .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:3;text-align:center;padding:0 30%;transition:opacity .4s}
+.inv.opening .cv-kaca .glass{filter:brightness(1.1) saturate(1.05)}
+.inv.opening .cv-kaca .mid{opacity:0}
+@media (prefers-reduced-motion: reduce){.inv .cv-renda,.inv .cv-kertas .layer,.inv .fold,.inv .cv-kaca .glass{transition:none}}
+</style>
+<style>
+.inv .cv-kertas .layer{-webkit-mask:url(assets/torn.png) 0 0/100% 120px no-repeat,linear-gradient(#000 0 0) 0 110px/100% 100% no-repeat;mask:url(assets/torn.png) 0 0/100% 120px no-repeat,linear-gradient(#000 0 0) 0 110px/100% 100% no-repeat}
+</style>
+<style>
+.inv .cv-renda .lacesheet{-webkit-mask-size:48px;mask-size:48px;opacity:.95}
+.inv .pg-akuarel .wash.band,.inv .cv-akuarel .wash.band{transform:translateY(18%);opacity:.7}
+.inv .cv-kaca .mid{color:#f3ece0}
+.inv .cv-kaca .mid .open-btn{color:#f3ece0;border-color:#f3ece0}
+.inv .cv-kaca .mid .to-line b{color:#fff}
+</style>
