@@ -49,7 +49,9 @@ create policy "owner reads members" on public.order_members for select to authen
   using (exists (select 1 from orders o where o.id = order_id and o.owner_id = auth.uid()));
 create policy "member reads own invite" on public.order_members for select to authenticated
   using (user_id = auth.uid());
--- invites are created and removed by server routes only
+-- invites are created and removed by server routes only. Grants are explicit: current Supabase images
+-- give new tables no table privileges for the API roles (see 20261019000000_table_grants.sql).
+grant select, insert, update, delete on public.order_members to service_role;
 revoke insert, update, delete on public.order_members from anon, authenticated;
 -- the token hash stays server-side: a column grant without it (a column revoke would not narrow a table grant)
 revoke select on public.order_members from anon, authenticated;
