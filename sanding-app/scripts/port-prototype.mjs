@@ -1,22 +1,49 @@
 // Re-ports the single-file prototype's design system into the app.
 //   node scripts/port-prototype.mjs [path-to-prototype]   (default: ..)
 // Follows the prototype's tools/build.sh order and regenerates:
-//   src/lib/invite/engine.js  - every src/3*.js part, as one ES module, with the app's fixes applied
+//   src/lib/invite/engine.js  - every src/3*.js part plus src/fam/* families, as one ES module, with the app's fixes applied
 //   src/app/globals.css       - 1-head.html site CSS + every src/3*.html invitation sheet + the app's own additions
 //   src/app/fonts.ts          - the Google Fonts links from 1-head.html
 //   public/assets/            - textures, seals, flowers, postcards, maps
 // Each fix must match exactly once (or the stated count), so a prototype change that breaks one fails loudly.
-import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const proto = resolve(process.argv[2] || '..');
 const app = resolve(import.meta.dirname, '..');
 const read = (p) => readFileSync(p, 'utf8');
-const order = read(join(proto, 'tools/build.sh')).match(/cat (.+?) >/)[1].split(/\s+/);
-const src = (f) => read(join(proto, 'src', f));
+const order = read(join(proto, 'tools/build.sh')).match(/^cat (1-head\.html .+?) >/m)[1].split(/\s+/).map((f) => f.replace(/^"|"$/g, ''));
+const srcFile = (f) => read(join(proto, 'src', f));
+
+// ---- self-contained families (src/fam/<key>.js + .css), bundled the way build.sh does
+const famDir = join(proto, 'src/fam');
+const famKeys = existsSync(famDir) ? readdirSync(famDir).filter((f) => f.endsWith('.js') && !f.startsWith('_')).map((f) => f.slice(0, -3)).sort() : [];
+const famRead = (f) => read(join(famDir, f));
+function famEnd() {
+  // _end.js: keep the THEME/CATS refresh. Drop the parts that touch document/location at load time (they break SSR):
+  // the needFont <link> (fonts.ts loads those), the live counts in marketing copy (pages read counts from the engine)
+  // and the ?qa= screenshot hook.
+  let e = famRead('_end.js');
+  const cut = e.indexOf('/* live counts');
+  if (cut < 0) throw new Error('_end.js: "/* live counts" marker not found');
+  e = e.slice(0, cut);
+  const fontLine = /^if\(FAM_FONTS\.size\)\{.*$/m;
+  if (!fontLine.test(e)) throw new Error('_end.js: FAM_FONTS link line not found');
+  return e.replace(fontLine, '/* needFont() fonts are loaded by src/app/fonts.ts */');
+}
+function src(f) {
+  if (f.endsWith('fam.css.html')) return famKeys.filter((k) => existsSync(join(famDir, k + '.css'))).map((k) => famRead(k + '.css')).join('\n');
+  // each family in its own try/IIFE, as build.sh does, so one bad family can't stop the rest
+  if (f.endsWith('fam.js.html')) return [famRead('_kit.js'),
+    ...famKeys.map((k) => `\n/* ===== family: ${k} ===== */\ntry{(()=>{\n${famRead(k + '.js')}\n})()}catch(e){console.error("family ${k} failed",e)}\n`),
+    famEnd()].join('\n');
+  return srcFile(f);
+}
+const isEngine = (f) => (f.startsWith('3') && f.endsWith('.js')) || f.endsWith('fam.js.html');
+const isSheet = (f) => /^3.*\.html$/.test(f) || f.endsWith('fam.css.html');
 
 // ---- engine
-const jsParts = order.filter((f) => f.endsWith('.js') && f.startsWith('3'));
+const jsParts = order.filter(isEngine);
 let js = jsParts.map(src).join('\n').split('\n').filter((l) => !/^\s*<\/?script>\s*$/.test(l)).join('\n');
 if (/<\/?script>/.test(js)) throw new Error('inline <script> tag left in engine');
 
@@ -43,6 +70,8 @@ function toast(m){if(typeof document==='undefined')return;let t=document.getElem
 ` + js;
 // Inline CSS in quoted strings (e.g. 3j-skins.js label page) can't use ${A}; point those at the app's absolute path.
 js = js.replace(/url\(assets\//g, 'url(/assets/');
+// Some families write <img src="assets/…"> / <image href="assets/…"> directly; relative paths break on nested routes.
+js = js.replace(/\b(src|href)="assets\//g, '$1="/assets/');
 const literalAssets = js.match(/["'`(]assets\//g);
 if (literalAssets) throw new Error(`asset paths not using A: ${literalAssets.length}`);
 
@@ -58,7 +87,7 @@ writeFileSync(join(app, 'src/lib/invite/engine.js'), header + js + `\n\nexport {
 // ---- css
 const head = src('1-head.html');
 const site = head.match(/<style>([\s\S]*?)<\/style>/)[1].trim();
-const sheetFiles = order.filter((f) => /^3.*\.html$/.test(f));
+const sheetFiles = order.filter(isSheet);
 const FONT_LINK = /<link[^>]+href="(https:\/\/fonts\.googleapis\.com\/css2\?[^"]+)"[^>]*>/g;
 const sheets = sheetFiles.map((f) => {
   const css = src(f).replace(FONT_LINK, '').replace(/<\/?style>/g, '').trim();
@@ -76,10 +105,20 @@ writeFileSync(cssPath, css);
 // ---- fonts
 // Font links live in 1-head.html and, since round 5, at the top of some invitation sheets too.
 const fonts = [head, ...sheetFiles.map(src)].flatMap((h) => [...h.matchAll(/href="(https:\/\/fonts\.googleapis\.com\/css2\?[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, '&')));
+// Families ask for extra Google Fonts with needFont('Family+Name:...'); load them all in one stylesheet link.
+const famSrc = famKeys.map((k) => famRead(k + '.js')).join('\n');
+const needFonts = [...new Set([...famSrc.matchAll(/needFont\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1]))];
+const needCalls = (famSrc.match(/needFont\(/g) || []).length;
+if (needCalls !== [...famSrc.matchAll(/needFont\(\s*['"][^'"]+['"]\s*\)/g)].length) throw new Error('needFont() called with a non-literal; add it to fonts by hand');
+// One spec per family (several families ask for Jost / Bodoni Moda with different axes); keep the widest one.
+const byFamily = new Map();
+for (const spec of needFonts) { const fam = spec.split(':')[0]; if (!byFamily.has(fam) || spec.length > byFamily.get(fam).length) byFamily.set(fam, spec); }
+needFonts.splice(0, needFonts.length, ...byFamily.values());
+if (needFonts.length) fonts.push('https://fonts.googleapis.com/css2?' + needFonts.map((f) => 'family=' + f).join('&') + '&display=swap');
 writeFileSync(join(app, 'src/app/fonts.ts'), `// GENERATED by scripts/port-prototype.mjs from the prototype's 1-head.html.\nexport const FONTS = ${JSON.stringify(fonts, null, 2)};\n`);
 
 // ---- assets
 if (!existsSync(join(proto, 'assets'))) throw new Error('prototype assets/ missing');
 cpSync(join(proto, 'assets'), join(app, 'public/assets'), { recursive: true });
 
-console.log(`engine: ${jsParts.length} parts · css: ${sheets.length} invitation sheets · fonts: ${fonts.length} links · assets copied`);
+console.log(`engine: ${jsParts.length} parts (${famKeys.length} self-contained families) · css: ${sheets.length} sheets · fonts: ${fonts.length} links (${needFonts.length} via needFont) · assets copied`);
