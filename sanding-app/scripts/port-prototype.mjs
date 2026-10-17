@@ -41,6 +41,8 @@ fix('ssr-safe .ics click listener', "document.addEventListener('click',e=>{const
 if (!/const ls=/.test(js)) js = `const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function toast(m){if(typeof document==='undefined')return;let t=document.getElementById('inv-toast');if(!t){t=document.createElement('div');t.id='inv-toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2400)}
 ` + js;
+// Inline CSS in quoted strings (e.g. 3j-skins.js label page) can't use ${A}; point those at the app's absolute path.
+js = js.replace(/url\(assets\//g, 'url(/assets/');
 const literalAssets = js.match(/["'`(]assets\//g);
 if (literalAssets) throw new Error(`asset paths not using A: ${literalAssets.length}`);
 

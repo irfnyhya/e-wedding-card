@@ -932,6 +932,50 @@ Object.assign(FAM2.gerbang,{ms:1150,
   <${tag} class="g3lock" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span></${tag}></div>
   <p class="g3hint">${en?'Touch the monogram to open':'Sentuh monogram untuk membuka'}</p></div></div>`}});
 
+
+/* label, front page take two: a board of vintage apothecary labels */
+const ROMN=n=>{let r='';for(const [a,t] of [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(n>=a){r+=t;n-=a}return r};
+const DAMASK=c=>svgUriSq(`<svg ${NS} width="56" height="56" viewBox="0 0 56 56"><g fill="${c}" opacity=".09"><path d="M28 6c4 6 4 10 0 14-4-4-4-8 0-14zM28 50c4-6 4-10 0-14-4 4-4 8 0 14zM6 28c6-4 10-4 14 0-4 4-8 4-14 0zM50 28c-6-4-10-4-14 0 4 4 8 4 14 0z"/><circle cx="28" cy="28" r="3"/><circle cx="0" cy="0" r="2"/><circle cx="56" cy="0" r="2"/><circle cx="0" cy="56" r="2"/><circle cx="56" cy="56" r="2"/></g></svg>`);
+function lbFrame(c){const notch=(i,r)=>{const a=i,b=300-i,t=i,d=400-i;return `M${a+r} ${t}H${b-r}A${r} ${r} 0 0 0 ${b} ${t+r}V${d-r}A${r} ${r} 0 0 0 ${b-r} ${d}H${a+r}A${r} ${r} 0 0 0 ${a} ${d-r}V${t+r}A${r} ${r} 0 0 0 ${a+r} ${t}Z`};
+  const flr=(x,y,rot)=>`<g transform="translate(${x} ${y}) rotate(${rot})" fill="${c.gold}"><path d="M0-7c2.6 2.6 2.6 4.4 0 7-2.6-2.6-2.6-4.4 0-7z"/><path d="M-9 0c3-1.6 5-1.6 7 0-2 1.6-4 1.6-7 0zM9 0c-3-1.6-5-1.6-7 0 2 1.6 4 1.6 7 0z" opacity=".8"/></g>`;
+  return `<svg class="lb-frame" viewBox="0 0 300 400"><path d="${notch(0,26)}" fill="${c.sheet}"/><path d="${notch(7,24)}" fill="none" stroke="${c.accent}" stroke-width="2"/><path d="${notch(12,22)}" fill="none" stroke="${c.accent}" stroke-width=".7"/>
+   <path d="${notch(18,20)}" fill="none" stroke="${c.gold}" stroke-width="1.4" stroke-dasharray="0 4.2" stroke-linecap="round"/>${flr(150,12,0)}${flr(150,388,180)}${flr(12,200,-90)}${flr(288,200,90)}</svg>`}
+function lbRibbon(c){return `<svg class="lb-rib" viewBox="0 0 340 74" preserveAspectRatio="none"><path d="M0 22H52V64H0L16 43Z" fill="${c.accent}" style="filter:brightness(.72)"/><path d="M340 22H288V64H340L324 43Z" fill="${c.accent}" style="filter:brightness(.72)"/>
+  <path d="M30 52L52 64V52Z" fill="#000" opacity=".35"/><path d="M310 52L288 64V52Z" fill="#000" opacity=".35"/><rect x="30" y="8" width="280" height="44" fill="${c.accent}"/><path d="M30 13H310M30 47H310" stroke="${c.sheet}" stroke-width=".8" opacity=".55" stroke-dasharray="3 3"/></svg>`}
+function lbSticker(c){let d='';const n=26,R=50,r=46;for(let i=0;i<=n;i++){const a=i/n*Math.PI*2,rr=i%1?r:R;const x=60+Math.cos(a)*R,y=60+Math.sin(a)*R;d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);const a2=(i+.5)/n*Math.PI*2;if(i<n)d+=`L${(60+Math.cos(a2)*r).toFixed(1)} ${(60+Math.sin(a2)*r).toFixed(1)}`}
+  return `<svg viewBox="0 0 120 120"><path d="${d}Z" fill="${c.sheet}"/><circle cx="60" cy="60" r="40" fill="none" stroke="${c.accent}" stroke-width="1.4"/><circle cx="60" cy="60" r="36.5" fill="none" stroke="${c.gold}" stroke-width=".8" stroke-dasharray="0 3" stroke-linecap="round"/></svg>`}
+FAM2.label.page=(o,th,L)=>{const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';const d=new Date((o.date||'2026-01-01')+'T00:00:00');const no=isNaN(d)?'':`№ ${d.getDate()} · ${ROMN(d.getMonth()+1)} · ${ROMN(d.getFullYear())}`;
+  return `<section class="page pg-label2" style="--damask:${DAMASK(c.sheet)}">
+  <div class="lb-main reveal">${lbFrame(c)}<div class="lb-in">
+   ${ENG(th.eng||'jasmine','position:relative;width:34%;background:url(/assets/foil.jpg) 0 0/220px,var(--gold);background-blend-mode:overlay','lb-eng')}
+   <p class="lb-no">${no}</p><p class="kicker">${ev(o,L)}</p><h1 class="names">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
+   <div class="lb-rule"><i></i><b></b><i></i></div><p class="lb-host">${en?'Hosted by':'Anjuran'} ${esc((o.hosts||'').split('&')[0].trim())}</p></div></div>
+  <div class="lb-ribbon reveal d1">${lbRibbon(c)}<span>${esc(fmtDate(o.date,o.lang))}</span></div>
+  <div class="lb-row reveal d2"><div class="lb-st">${lbSticker(c)}<span><small>${en?'From':'Mula'}</small><b>${esc(fmtTime(o.start,o.lang))}</b></span></div>
+   <div class="lb-seal"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></div>
+   <div class="lb-st">${lbSticker(c)}<span><small>${en?'At':'Di'}</small><b class="v">${esc(o.venue)}</b></span></div></div></section>`};
+
+
+/* jubin, take three: a zellige rosette medallion set into a tiled wall panel */
+function zelligeRosette(c,small){const P=(r,a)=>[(100+Math.cos(a)*r).toFixed(2),(100+Math.sin(a)*r).toFixed(2)];
+  let star='';for(let i=0;i<32;i++){const [x,y]=P(i%2?84:98,i/32*Math.PI*2-Math.PI/2);star+=(i?'L':'M')+x+' '+y}
+  let star2='';for(let i=0;i<32;i++){const [x,y]=P(i%2?76:88,(i+1)/32*Math.PI*2-Math.PI/2);star2+=(i?'L':'M')+x+' '+y}
+  if(small)return `<svg viewBox="0 0 200 200"><path d="${star}Z" fill="${c.accent}" stroke="${c.sheet}" stroke-width="3"/><path d="${star2}Z" fill="${c.gold}"/><circle cx="100" cy="100" r="40" fill="${c.sheet}"/><circle cx="100" cy="100" r="22" fill="${c.accent}"/></svg>`;
+  const pet=Array.from({length:16},(_,i)=>{const a=i/16*360;return `<ellipse cx="100" cy="30" rx="6.5" ry="11.5" transform="rotate(${a} 100 100)" fill="${i%2?c.gold:c.accent}" stroke="${c.sheet}" stroke-width="1.2"/>`}).join('');
+  const leaf=Array.from({length:16},(_,i)=>{const a=(i+.5)/16*360;return `<path d="M100 22l3 7-3 6-3-6z" transform="rotate(${a} 100 100)" fill="${c.accent}"/>`}).join('');
+  const dia=Array.from({length:32},(_,i)=>{const a=i/32*360;return `<path d="M100 40.5l2.2 2.7-2.2 2.7-2.2-2.7z" transform="rotate(${a} 100 100)" fill="${i%2?c.sheet:c.gold}"/>`}).join('');
+  return `<svg viewBox="0 0 200 200"><path d="${star}Z" fill="${c.accent}" stroke="${c.gold}" stroke-width="1"/><path d="${star2}Z" fill="${c.sheet}" opacity=".96"/>
+   <circle cx="100" cy="100" r="77" fill="none" stroke="${c.accent}" stroke-width=".8"/>${pet}${leaf}
+   <circle cx="100" cy="100" r="60" fill="${c.sheet}" stroke="${c.accent}" stroke-width="1.2"/><circle cx="100" cy="100" r="57" fill="${c.accent}"/>${dia}
+   <circle cx="100" cy="100" r="51.5" fill="${c.sheet}"/><circle cx="100" cy="100" r="49" fill="none" stroke="${c.gold}" stroke-width=".7"/><circle cx="100" cy="100" r="46.5" fill="none" stroke="${c.accent}" stroke-width=".5" stroke-dasharray="0 2.4" stroke-linecap="round"/></svg>`}
+Object.assign(FAM2.jubin,{ms:1200,cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',corner=zelligeRosette(c,true);
+  return `<div class="cover cv-jub3" style="--tiles:${tileUri(c.accent,c.sheet)}"><div class="j3-wall"></div>
+  <div class="j3-panel"><i class="j3-c tl">${corner}</i><i class="j3-c tr">${corner}</i><i class="j3-c bl">${corner}</i><i class="j3-c br">${corner}</i>
+   <p class="j3-k">${ev(o,L)}</p>
+   <${tag} class="j3-med" ${attr} aria-label="${L.open}">${zelligeRosette(c)}<span class="j3-in"><b class="j3-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</b><span class="j3-d">${esc(fmtShort(o.date))}</span></span></${tag}>
+   ${guest?`<p class="j3-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}
+   <p class="j3-h">${en?'Touch the medallion to open':'Sentuh medalion untuk membuka'}</p></div></div>`}});
+
 const SKINS={
  sampul:cards,
  mihrab(el,o,th){cards(el);el.style.setProperty('--lattice',`${latticeUri(th.c.gold,.35)} 0 0/64px`);const cv=$('.cv-mihrab',el);if(cv){cv.style.setProperty('--lattice',JALI(th.c.gold));$$('.door',cv).forEach((d,i)=>d.insertAdjacentHTML('beforeend',`<i class="handle ${i?'r':'l'}"></i>`));const [n1,n2]=coverNames(o);cv.insertAdjacentHTML('beforeend',`<p class="door-names">${esc(n1)} &amp; ${esc(n2)}</p>`)}},
