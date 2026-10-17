@@ -20,6 +20,13 @@ npm run db:reset     # applies migrations and supabase/seed.sql
 npm run dev          # http://localhost:3000
 ```
 
+`npm run setup` starts Supabase without the analytics/vector containers (`-x logflare,vector`): the
+Logflare container fails its health check on current CLI images, and the app does not use it.
+
+Table privileges are granted explicitly in `supabase/migrations/20261019000000_table_grants.sql`. Current
+Supabase images no longer auto-grant SELECT/INSERT/UPDATE/DELETE to `service_role` / `authenticated` on new
+tables, so every new table needs its own grants (and every new function its own `grant execute`).
+
 Seeded test login (local only): `demo@sanding.test` / `sanding-demo-123`.
 It owns a live Diraja card at <http://localhost:3000/aisyah-aiman> (guest links
 `/aisyah-aiman/paklong1`, `/aisyah-aiman/cikgu7r2`) with sample RSVPs and ucapan, plus one draft.

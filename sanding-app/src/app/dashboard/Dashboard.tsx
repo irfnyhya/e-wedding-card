@@ -83,15 +83,25 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
     if (!sel) return;
     const first = setTimeout(() => load(sel), 0);
     const sb = supabaseBrowser();
-    const ch = sb.channel(`order-${sel}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'rsvps', filter: `order_id=eq.${sel}` }, () => load(sel))
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'wishes', filter: `order_id=eq.${sel}` }, () => load(sel))
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reserves', filter: `order_id=eq.${sel}` }, () => load(sel))
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'checkins', filter: `order_id=eq.${sel}` }, () => load(sel))
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'views', filter: `order_id=eq.${sel}` }, () => load(sel))
-      .subscribe((s: string) => setLive(s === 'SUBSCRIBED'));
+    let ch: ReturnType<typeof sb.channel> | null = null;
+    let alive = true;
+    // Realtime applies RLS as whoever the socket is authenticated as. Subscribing before the cookie session is
+    // restored joins as anon and every row is filtered out, so set the user's token on the socket first.
+    (async () => {
+      const { data } = await sb.auth.getSession();
+      if (!alive) return;
+      if (data.session) await sb.realtime.setAuth(data.session.access_token);
+      if (!alive) return;
+      ch = sb.channel(`order-${sel}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'rsvps', filter: `order_id=eq.${sel}` }, () => load(sel))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'wishes', filter: `order_id=eq.${sel}` }, () => load(sel))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'reserves', filter: `order_id=eq.${sel}` }, () => load(sel))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'checkins', filter: `order_id=eq.${sel}` }, () => load(sel))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'views', filter: `order_id=eq.${sel}` }, () => load(sel))
+        .subscribe((s: string) => setLive(s === 'SUBSCRIBED'));
+    })();
     const poll = setInterval(() => { if (!document.hidden) load(sel); }, 30000);
-    return () => { clearTimeout(first); sb.removeChannel(ch); clearInterval(poll); };
+    return () => { alive = false; clearTimeout(first); if (ch) sb.removeChannel(ch); clearInterval(poll); };
   }, [sel, load]);
 
   if (!orders.length) {
