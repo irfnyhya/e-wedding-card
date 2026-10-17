@@ -2030,6 +2030,10 @@ tr:last-child td{border-bottom:0}
 .inv .ep-row b{font-weight:500;font-size:14px}
 .inv .ep-code{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em}
 .inv .epass > .small{padding:6px 16px 14px;margin:0;color:#7a7066}
+/* extra sessions: a second date or venue under the main one */
+.inv .more-ev{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);width:100%;display:flex;flex-direction:column;align-items:center}
+.inv .more-lb{font-size:11px;letter-spacing:.18em;margin:0 0 10px;color:var(--accent)}
+.inv .sheet-pop .loc-item+.loc-item{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 </style>
 <style>
 /* ===== akrilik ===== */
@@ -6730,7 +6734,8 @@ const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismil
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',
   schedule:[{time:'11:00',label:'Ketibaan tetamu'},{time:'12:30',label:'Ketibaan pengantin'},{time:'13:00',label:'Makan beradab & bacaan doa'},{time:'16:00',label:'Majlis bersurai'}],
   x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'piano',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
-  x_contacts:true,contacts:[{name:'Ahmad Faizal',role:'Bapa pengantin',phone:'012-345 6789'},{name:'Hafiz',role:'Abang pengantin',phone:'019-876 5432'}],x_guestlinks:false};
+  x_contacts:true,contacts:[{name:'Ahmad Faizal',role:'Bapa pengantin',phone:'012-345 6789'},{name:'Hafiz',role:'Abang pengantin',phone:'019-876 5432'}],x_guestlinks:false,
+  events:[{label:'Majlis Akad Nikah',date:'2026-12-18',start:'20:30',end:'22:00',venue:'Masjid Sultan Salahuddin Abdul Aziz Shah',address:'Persiaran Masjid, Seksyen 14, 40000 Shah Alam, Selangor'}],ogImage:''};
 const SAMPLE_WISHES=[{id:'s1',name:'Mak Ngah Rosnah',msg:'Selamat pengantin baru Aisyah & Aiman. Semoga berkekalan hingga ke jannah.',at:Date.now()-3600e3},{id:'s2',name:'Farah, rakan sekolah',msg:'Tahniah! Tak sabar nak datang. Semoga bahagia selalu.',at:Date.now()-7200e3},{id:'s3',name:'Keluarga Encik Zul',msg:'Barakallahu lakuma. Semoga dimurahkan rezeki.',at:Date.now()-86400e3}];
 
 /* ================= the front of each card ================= */
@@ -6780,6 +6785,20 @@ function coverHTML(o,th,L,guest,mode){
     <${btnTag} class="open-btn" ${mode==='thumb'?'':'type="button" data-open'}>${L.openVellum}</${btnTag}></div></div>`;
 }
 
+/* extra sessions after the main one (akad nikah, bertandang, a second venue): each with its own date, time and Maps/Waze */
+const moreEvents=o=>(Array.isArray(o.events)?o.events:[]).filter(e=>e&&(e.date||String(e.venue||'').trim())).slice(0,2);
+const timeRange=(a,b,lang)=>a?esc(fmtTime(a,lang))+(b?' – '+esc(fmtTime(b,lang)):''):'';
+function moreEvHTML(o,L){return moreEvents(o).map(e=>`<div class="more-ev" data-ev>
+  ${e.label?`<p class="caps more-lb">${esc(e.label)}</p>`:''}
+  <div class="info">
+    ${e.date?`<div class="full"><span>${L.date}</span><b>${esc(fmtDate(e.date,o.lang))}</b></div>`:''}
+    ${e.start?`<div class="full"><span>${L.time}</span><b>${timeRange(e.start,e.end,o.lang)}</b></div>`:''}
+    ${e.venue?`<div class="full"><span>${L.venue}</span><b>${esc(e.venue)}</b>${e.address?`<p class="small" style="margin:6px auto 0;font-size:14px">${esc(e.address)}</p>`:''}</div>`:''}
+  </div>
+  ${e.venue||e.address?`<div class="ibtns"><a class="ibtn" href="${mapsUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn" href="${wazeUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a></div>`:''}
+</div>`).join('')}
+const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-lb">${esc(label)}</p>`:''}<p><b style="font-weight:400;font-size:18px">${esc(e.venue)}</b><br><span class="small">${esc(e.address)}</span></p><div class="ibtns"><a class="ibtn solid" href="${mapsUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn solid" href="${wazeUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a></div></div>`;
+
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
@@ -6818,6 +6837,7 @@ function renderInvite(host,o,opts={}){
         ${o.dress?`<div class="full"><span>${L.dress}</span><b>${esc(o.dress)}</b></div>`:''}
       </div>
       <div class="ibtns"><a class="ibtn" href="${mapsUrl(o)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn" href="${wazeUrl(o)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a><a class="ibtn" href="${calUrl(o)}" target="_blank" rel="noopener">${ICON.cal}${L.dock[0]}</a></div>
+      ${moreEvHTML(o,L)}
     </section>
     <section class="sec" data-s="count"><h2>${L.count}</h2><div class="count" data-count>${L.units.map(u=>`<div><b>0</b><span>${u}</span></div>`).join('')}</div></section>
     ${(o.schedule||[]).filter(s=>s.label).length?`<section class="sec" data-s="sched"><h2>${L.sched}</h2>${orn}<ul class="timeline">${o.schedule.filter(s=>s.label).map(s=>`<li><b>${esc(fmtTime(s.time,o.lang))}</b><span>${esc(s.label)}</span></li>`).join('')}</ul></section>`:''}
@@ -6859,7 +6879,7 @@ function renderInvite(host,o,opts={}){
   const sheet=(title,body)=>{const bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML=`<div class="sheet-pop" role="dialog" aria-label="${esc(title)}"><h3>${esc(title)}</h3>${body}<button type="button" class="ibtn" data-x>${o.lang==='en'?'Close':'Tutup'}</button></div>`;bg.addEventListener('click',e=>{if(e.target===bg||e.target.closest('[data-x]'))bg.remove()});el.appendChild(bg)};
   $$('[data-dock]',el).forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.dock;
     if(k==='cal')sheet(L.dock[0],`<p class="small">${esc(fmtDate(o.date,o.lang))} · ${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}</p><a class="ibtn solid" href="${calUrl(o)}" target="_blank" rel="noopener">${ICON.cal}${L.addCal}</a>`);
-    else if(k==='loc')sheet(L.loc,`<p><b style="font-weight:400;font-size:18px">${esc(o.venue)}</b><br><span class="small">${esc(o.address)}</span></p><div class="ibtns"><a class="ibtn solid" href="${mapsUrl(o)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn solid" href="${wazeUrl(o)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a></div>`);
+    else if(k==='loc'){const ev=moreEvents(o).filter(e=>e.venue||e.address);sheet(L.loc,locItem(o,L,ev.length?L.ev[o.eventTitle]:'')+ev.map(e=>locItem(e,L,e.label)).join(''))}
     else{const s=$(`[data-s="${k}"]`,el);if(s)scroller.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:REDUCED?'auto':'smooth'})}}));
   // RSVP
   const rsvpBox=$('[data-rsvp]',el);

@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Refreshes the Supabase session cookie and keeps signed-out visitors out of owner pages.
-const PROTECTED = ['/dashboard', '/create', '/editor', '/checkout'];
+const PROTECTED = ['/dashboard', '/create', '/editor', '/checkout', '/share'];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -28,5 +28,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/create', '/editor/:path*', '/checkout/:path*', '/login', '/api/orders/:path*'],
+  matcher: ['/dashboard/:path*', '/create', '/editor/:path*', '/checkout/:path*', '/share/:path*', '/login', '/api/orders/:path*'],
 };

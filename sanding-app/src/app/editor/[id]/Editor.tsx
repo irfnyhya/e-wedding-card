@@ -6,9 +6,10 @@ import { families } from '@/components/HomeCards';
 import { EFFECTS, FAMILIES, Music, renderInvite, swatchEl, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
 import { supabaseBrowser } from '@/lib/supabase/client';
+import { blankEvent, MAX_EXTRA_EVENTS, type EventItem } from '@/lib/events';
 
 type Props = { orderId: string; userId: string; initial: Card; status: 'draft' | 'live'; paidPkg: PackageId | null; addonPaid: boolean; slug: string | null };
-type Media = 'photo' | 'qr' | 'own';
+type Media = 'photo' | 'qr' | 'own' | 'og';
 const MAX_PHOTOS = 6;
 const TABS = ['Design', 'Couple', 'Majlis', 'Extras', 'Review'];
 const sampleGuest = (c: Card) => (c.lang === 'en' ? 'Mr Ahmad & family' : 'Encik Ahmad & keluarga');
@@ -24,6 +25,26 @@ function shrink(file: File, max: number, type: string, q?: number): Promise<Blob
       const g = c.getContext('2d')!;
       g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
       c.toBlob((b) => (b ? res(b) : rej(new Error('Could not process that image.'))), type, q);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => rej(new Error('That file is not an image we can read.'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/** Centre-crops an image to the link-preview shape WhatsApp and Facebook show (1.91:1). */
+function crop(file: File, w: number, h: number): Promise<Blob> {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.max(w / img.width, h / img.height);
+      const sw = w / k, sh = h / k;
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const g = c.getContext('2d')!;
+      g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
+      g.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, w, h);
+      c.toBlob((b) => (b ? res(b) : rej(new Error('Could not process that image.'))), 'image/jpeg', 0.82);
       URL.revokeObjectURL(img.src);
     };
     img.onerror = () => rej(new Error('That file is not an image we can read.'));
@@ -87,19 +108,19 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   async function upload(file: File, kind: Media) {
     setUploading(kind);
     try {
-      const blob = kind === 'qr' ? await shrink(file, 480, 'image/png') : kind === 'own' ? await shrink(file, 1600, 'image/jpeg', 0.8) : await shrink(file, 1080, 'image/jpeg', 0.75);
+      const blob = kind === 'qr' ? await shrink(file, 480, 'image/png') : kind === 'own' ? await shrink(file, 1600, 'image/jpeg', 0.8) : kind === 'og' ? await crop(file, 1200, 630) : await shrink(file, 1080, 'image/jpeg', 0.75);
       const path = `${userId}/${orderId}/${kind}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}.${kind === 'qr' ? 'png' : 'jpg'}`;
       const sb = supabaseBrowser();
       const { error } = await sb.storage.from('card-media').upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
       if (error) throw error;
       const url = sb.storage.from('card-media').getPublicUrl(path).data.publicUrl;
       dirty.current = true;
-      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
+      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
     } catch (e) { flash((e as Error).message || 'Upload failed.'); } finally { setUploading(null); }
   }
   async function removeMedia(url: string, kind: Media) {
     dirty.current = true;
-    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : { ...o, photos: o.photos.filter((p) => p !== url) }));
+    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : { ...o, photos: o.photos.filter((p) => p !== url) }));
     const m = url.match(/\/card-media\/(.+)$/);
     if (m) supabaseBrowser().storage.from('card-media').remove([decodeURIComponent(m[1])]).catch(() => {});
   }
@@ -110,6 +131,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const addonDue = !!c.ownDesign && !addonPaid;
   const setGifts = (gifts: GiftAccount[]) => { dirty.current = true; setC((o) => ({ ...o, gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '' })); };
   const setWish = (wishlist: WishItem[]) => set('wishlist', wishlist);
+  const setEv = (i: number, k: keyof EventItem, v: string) => set('events', c.events.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   const L = T[c.lang];
 
   async function proceed() {
@@ -118,6 +140,11 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
     try { await save(); } catch (e) { flash((e as Error).message); return; }
     if (covered) { flash('Changes saved'); router.push(`/dashboard?card=${orderId}`); return; }
     router.push(`/checkout/${orderId}`);
+  }
+
+  async function laterPay() {
+    try { await save(); } catch (e) { flash((e as Error).message); return; }
+    router.push(`/dashboard?card=${orderId}`);
   }
 
   const dim = (on: boolean) => ({ opacity: on ? 1 : 0.45 });
@@ -129,7 +156,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
         <div>
           <p className="eyebrow">{live ? `Editing ${displayLink(slug || '')}` : 'New card · filled with example details, replace them with yours'}</p>
           <h1 style={{ fontSize: 'clamp(28px,4vw,40px)', margin: '8px 0 6px' }}>{live ? 'Edit card' : 'Create your card'}</h1>
-          <p className="status-note" style={{ marginBottom: 16 }} aria-live="polite">{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Not saved. Check your connection.' : 'All changes saved'}</p>
+          <p className="status-note" style={{ marginBottom: 16 }} aria-live="polite">{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Not saved. Check your connection.' : (live ? 'All changes saved' : 'Draft saved to your account')}</p>
           <div className="tabs" role="tablist">
             {TABS.map((t, i) => <button key={t} role="tab" aria-selected={tab === i} onClick={() => setTab(i)}><span className="ix">{i + 1}</span>{t}</button>)}
           </div>
@@ -165,6 +192,11 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   {c.ownDesign ? <div className="ph tall"><img src={c.ownDesign} alt="Your design" /><button type="button" aria-label="Remove your design" onClick={() => removeMedia(c.ownDesign, 'own')}>✕</button></div>
                     : <label className="add" style={{ height: 150 }}>{uploading === 'own' ? 'Uploading…' : 'Upload design'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'own'); }} /></label>}
                 </div></div></div>
+              <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>WhatsApp link preview</b>{tag('Asas')}</div><p className="muted" style={{ fontSize: 13 }}>The picture shown when you share your link on WhatsApp, Telegram or Facebook. Landscape works best; it is cropped to 1200×630. Without one, your first gallery photo is used.</p>
+                <div className="og-prev">
+                  {c.ogImage ? <><img src={c.ogImage} alt="Link preview" /><button type="button" className="icon-btn" aria-label="Remove link preview image" onClick={() => removeMedia(c.ogImage, 'og')}>✕</button></>
+                    : <label className="add" style={{ height: '100%', width: '100%' }}>{uploading === 'og' ? 'Uploading…' : 'Upload preview image'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'og'); }} /></label>}
+                </div></div></div>
             </div>}
 
             {tab === 1 && <div className="panel on">
@@ -196,6 +228,23 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                 <div className="field full"><label htmlFor="f-addr">Address</label><textarea id="f-addr" style={{ minHeight: 64 }} value={c.address} maxLength={300} onChange={(e) => set('address', e.target.value)} /><span className="hint">Used for the Google Maps and Waze buttons.</span></div>
                 <div className="field full"><label htmlFor="f-dress">Dress code (optional)</label><input type="text" id="f-dress" placeholder="Sage green & cream" value={c.dress} maxLength={80} onChange={(e) => set('dress', e.target.value)} /></div>
                 <div className="field full"><label htmlFor="f-live">Livestream link (optional)</label><input type="url" id="f-live" placeholder="https://youtube.com/live/…" value={c.livestream} maxLength={300} onChange={(e) => set('livestream', e.target.value)} /><span className="hint">YouTube, Facebook or Zoom. Guests who can’t come get a Watch live button.</span></div>
+              </div>
+              <div className="section-title"><h3>More dates or venues</h3><button type="button" className="btn btn-ghost btn-sm" disabled={c.events.length >= MAX_EXTRA_EVENTS} onClick={() => set('events', [...c.events, blankEvent()])}>Add date or venue</button></div>
+              <p className="muted" style={{ fontSize: 13, marginBottom: 10 }}>For an akad nikah the night before, a bertandang at the groom&apos;s side, or a second hall. Up to {MAX_EXTRA_EVENTS + 1} sessions on one card, each with its own Google Maps and Waze buttons.</p>
+              <div className="rows">
+                {c.events.map((ev, i) => (
+                  <div className="ev-card" key={i}>
+                    <div className="top"><b>Session {i + 2}</b><button type="button" className="icon-btn" aria-label={`Remove session ${i + 2}`} onClick={() => set('events', c.events.filter((_, j) => j !== i))}>✕</button></div>
+                    <div className="fieldset">
+                      <div className="field full"><label htmlFor={`ev-l${i}`}>Title</label><input type="text" id={`ev-l${i}`} placeholder="Majlis Akad Nikah" value={ev.label} maxLength={80} onChange={(e) => setEv(i, 'label', e.target.value)} /></div>
+                      <div className="field"><label htmlFor={`ev-d${i}`}>Date</label><input type="date" id={`ev-d${i}`} value={ev.date} onChange={(e) => setEv(i, 'date', e.target.value)} /></div>
+                      <div className="field"><label htmlFor={`ev-s${i}`}>Starts</label><input type="time" id={`ev-s${i}`} value={ev.start} onChange={(e) => setEv(i, 'start', e.target.value)} /></div>
+                      <div className="field"><label htmlFor={`ev-e${i}`}>Ends</label><input type="time" id={`ev-e${i}`} value={ev.end} onChange={(e) => setEv(i, 'end', e.target.value)} /></div>
+                      <div className="field full"><label htmlFor={`ev-v${i}`}>Venue</label><input type="text" id={`ev-v${i}`} placeholder="Masjid Al-Hidayah" value={ev.venue} maxLength={120} onChange={(e) => setEv(i, 'venue', e.target.value)} /></div>
+                      <div className="field full"><label htmlFor={`ev-a${i}`}>Address</label><textarea id={`ev-a${i}`} style={{ minHeight: 56 }} value={ev.address} maxLength={300} onChange={(e) => setEv(i, 'address', e.target.value)} /></div>
+                    </div>
+                  </div>
+                ))}
               </div>
               <div className="section-title"><h3>Aturcara majlis</h3><button type="button" className="btn btn-ghost btn-sm" disabled={c.schedule.length >= 12} onClick={() => set('schedule', [...c.schedule, { time: '', label: '' }])}>Add item</button></div>
               <div className="rows">
@@ -279,7 +328,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
             {tab === 4 && <div className="panel on">
               <div className="summary"><dl>
                 {([['Design', `${FAMILIES[themeOf(c.template).fam].name} · ${themeOf(c.template).name}`], ['Couple', `${c.brideShort || '—'} & ${c.groomShort || '—'}`], ['Event', L.ev[c.eventTitle]], ['Date', fmtDate(c.date, c.lang) || '—'],
-                  ['Time', `${fmtTime(c.start, c.lang)} – ${fmtTime(c.end, c.lang)}`], ['Venue', c.venue || '—'], ['Language', c.lang === 'en' ? 'English' : 'Bahasa Melayu'],
+                  ['Time', `${fmtTime(c.start, c.lang)} – ${fmtTime(c.end, c.lang)}`], ['Venue', c.venue || '—'], ...(c.events.length ? [['More sessions', c.events.map((e) => [e.label, e.date && fmtDate(e.date, c.lang), e.venue].filter(Boolean).join(', ')).join(' · ')]] : []), ['Language', c.lang === 'en' ? 'English' : 'Bahasa Melayu'],
                   ['Extras', ([['x_rsvp', 'RSVP'], ['x_counter', 'Attendance count'], ['x_epass', 'E-pass'], ['x_wishes', 'Ucapan'], ['x_music', 'Music'], ['x_gallery', 'Gallery'], ['x_gift', 'Salam kaut'], ['x_wishlist', 'Wishlist'], ['x_contacts', 'Contacts'], ['x_guestlinks', 'Guest links']] as const).filter(([k]) => c[k]).map(([, l]) => l).join(', ') || 'None']] as [string, string][])
                   .map(([a, b]) => <div key={a} style={{ display: 'contents' }}><dt>{a}</dt><dd>{b}</dd></div>)}
               </dl></div>
@@ -292,6 +341,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               </div>
             </div>}
 
+            {tab === 4 && !live && <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>Your draft is saved to your account as you type. Previewing is free; the card goes live at its link only after payment. <button type="button" style={{ textDecoration: 'underline', padding: 0, border: 0, background: 'none', color: 'var(--fg)', cursor: 'pointer', font: 'inherit' }} onClick={laterPay}>Save and pay later</button></p>}
             <div className="foot-nav">
               <button type="button" className="btn btn-ghost" style={{ visibility: tab ? 'visible' : 'hidden' }} onClick={() => { setTab(tab - 1); scrollTo({ top: 0 }); }}>Back</button>
               <button type="button" className="btn btn-primary" onClick={() => { if (tab < 4) { setTab(tab + 1); scrollTo({ top: 0 }); } else proceed(); }}>

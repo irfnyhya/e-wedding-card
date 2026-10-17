@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { gate, sanitizeCard, SLUG_RE, type Card } from '@/lib/card';
 import { coverNames, fmtDate, SAMPLE, T } from '@/lib/invite/engine';
+import { ogImageOf } from '@/lib/og';
 
 export type PublicCard =
   | { kind: 'ok'; card: Card; slug: string; guest: { token: string; name: string } | null; sample?: boolean }
@@ -32,5 +33,10 @@ export function cardMetadata(p: PublicCard): Metadata {
   const names = coverNames(c).join(' & ');
   const title = `${T[c.lang].ev[c.eventTitle]} · ${names}`;
   const description = [fmtDate(c.date, c.lang), c.venue].filter(Boolean).join(' · ');
-  return { title: { absolute: title }, description, robots: { index: false }, openGraph: { title, description, type: 'website' } };
+  const image = ogImageOf(c);
+  return {
+    title: { absolute: title }, description, robots: { index: false },
+    openGraph: { title, description, type: 'website', ...(image ? { images: [{ url: image, width: 1200, height: 630, alt: names }] } : {}) },
+    twitter: image ? { card: 'summary_large_image', title, description, images: [image] } : { card: 'summary', title, description },
+  };
 }

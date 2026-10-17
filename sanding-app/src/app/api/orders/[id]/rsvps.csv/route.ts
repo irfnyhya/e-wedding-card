@@ -1,11 +1,11 @@
 import type { NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { fail, ownOrder } from '@/lib/api';
+import { fail, readableOrder } from '@/lib/api';
 import { rsvpCode } from '@/lib/invite/engine';
 
 // GET -> guest list as CSV (Diraja), with notes, e-pass codes and check-ins.
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/orders/[id]/rsvps.csv'>) {
-  const r = await ownOrder((await ctx.params).id);
+  const r = await readableOrder((await ctx.params).id); // family members may export too
   if ('res' in r) return r.res;
   if (r.order.package !== 'diraja') return fail('CSV export comes with the Diraja package.', 402);
   const admin = supabaseAdmin();

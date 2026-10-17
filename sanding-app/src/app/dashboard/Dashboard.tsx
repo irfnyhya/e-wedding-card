@@ -7,10 +7,16 @@ import { PKG, SITE_URL, displayLink, needPkg, needsPayment, type Card, type Pack
 import { supabaseBrowser } from '@/lib/supabase/client';
 import QrScanner, { canScan } from './QrScanner';
 
-export type DashOrder = { id: string; slug: string | null; status: 'draft' | 'live'; package: PackageId | null; addon_own: boolean; paid_cents: number; valid_until: string | null; created_at: string; content: Card };
+export type DashOrder = {
+  id: string; slug: string | null; status: 'draft' | 'live'; package: PackageId | null; addon_own: boolean; paid_cents: number; valid_until: string | null;
+  created_at: string; updated_at: string; content: Card;
+  /** True when a family member was given read access; the owner's controls are hidden. */
+  shared: boolean;
+};
 type Rsvp = { id: string; name: string; phone: string; attending: boolean; pax: number; note: string; created_at: string; updated_at: string; guest_id: string | null };
 type Reserve = { item_key: string; name: string; item: string; at: string };
-type Tab = 'rsvp' | 'wishes' | 'wishlist' | 'checkin' | 'links';
+type Tab = 'rsvp' | 'wishes' | 'wishlist' | 'checkin' | 'links' | 'family';
+type Member = { id: string; email: string; created_at: string; accepted_at: string | null };
 type Wish = { id: string; name: string; msg: string; hidden: boolean; created_at: string };
 type Guest = { id: string; token: string; name: string; sort: number };
 
@@ -41,10 +47,14 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
   const [guestText, setGuestText] = useState('');
   const [live, setLive] = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteLink, setInviteLink] = useState<{ email: string; link: string; emailed: boolean } | null>(null);
   const [toast, setToast] = useState('');
   const [now] = useState(() => Date.now());
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast(''), 2400); };
   const o = orders.find((x) => x.id === sel) || null;
+  const ro = !!o?.shared; // family access is read only
 
   const load = useCallback(async (id: string) => {
     const sb = supabaseBrowser();
@@ -60,6 +70,13 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
     setReserves(res.data || []); setCheckins(new Set((ci.data || []).map((x: { rsvp_id: string }) => x.rsvp_id))); setOpens(v.count || 0);
     setGuestText((g.data || []).map((x: Guest) => x.name).join('\n'));
   }, []);
+
+  useEffect(() => {
+    if (!sel || tab !== 'family' || orders.find((x) => x.id === sel)?.shared) return;
+    let alive = true;
+    fetch(`/api/orders/${sel}/members`).then((r) => r.json()).then((b) => { if (alive) setMembers(b.members || []); }).catch(() => {});
+    return () => { alive = false; };
+  }, [sel, tab, orders]);
 
   // live updates while the dashboard is open
   useEffect(() => {
@@ -141,6 +158,23 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
     const rest = orders.filter((x) => x.id !== o.id);
     setOrders(rest); setSel(rest[0]?.id || null); setConfirmDel(false); flash('Card deleted'); router.refresh();
   }
+  async function invite(again?: string) {
+    if (!o) return;
+    const email = (again || inviteEmail).trim();
+    const r = await fetch(`/api/orders/${o.id}/members`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email }) });
+    const b = await r.json().catch(() => ({}));
+    if (!r.ok) { flash(b.error || 'Could not send the invite.'); return; }
+    setMembers((l) => [...l.filter((m) => m.id !== b.member.id), b.member]);
+    setInviteLink({ email: b.member.email, link: b.link, emailed: b.emailed });
+    if (!again) setInviteEmail('');
+    flash(b.emailed ? 'Invite sent' : 'Invite link ready');
+  }
+  async function removeMember(m: Member) {
+    if (!o) return;
+    const r = await fetch(`/api/orders/${o.id}/members`, { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: m.id }) });
+    if (!r.ok) { flash((await r.json().catch(() => ({}))).error || 'Could not remove.'); return; }
+    setMembers((l) => l.filter((x) => x.id !== m.id)); flash(`${m.email} no longer has access`);
+  }
   async function saveGuests() {
     if (!o) return;
     const r = await fetch(`/api/orders/${o.id}/guests`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ names: guestText.split('\n') }) });
@@ -155,11 +189,15 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
         <div className="order-list">
           {orders.map((x) => {
             const t = themeOf(x.content.template);
+            const unpaid = x.status === 'draft' && !x.shared;
             return (
-              <button key={x.id} type="button" className="order-item" aria-current={x.id === sel} onClick={() => { setSel(x.id); setConfirmDel(false); }}>
-                <span className="sw" style={{ background: swatchBg(t) }} />
-                <span className="t"><b>{coverNames(x.content).join(' & ')}</b><span>{fmtDate(x.content.date, 'en', false)} · {x.status === 'draft' ? 'Draft' : PKG[x.package!]?.name}</span></span>
-              </button>
+              <div key={x.id} className="order-row">
+                <button type="button" className="order-item" aria-current={x.id === sel} onClick={() => { setSel(x.id); setConfirmDel(false); }}>
+                  <span className="sw" style={{ background: swatchBg(t) }} />
+                  <span className="t"><b>{coverNames(x.content).join(' & ')}</b><span>{fmtDate(x.content.date, 'en', false)} · {x.shared ? 'Shared with you' : x.status === 'draft' ? <span className="unpaid">Unpaid draft · saved {when(x.updated_at)}</span> : PKG[x.package!]?.name}</span></span>
+                </button>
+                {unpaid && <Link className="btn btn-primary btn-sm pay-now" href={`/checkout/${x.id}`} aria-label={`Pay now for ${coverNames(x.content).join(' & ')}`}>Pay now</Link>}
+              </div>
             );
           })}
         </div>
@@ -176,9 +214,9 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {o.status === 'live'
               ? <Link className="btn btn-primary btn-sm" href={`/${o.slug}`} target="_blank">Open card</Link>
-              : <Link className="btn btn-primary btn-sm" href={`/checkout/${o.id}`}>Pay & publish</Link>}
-            <Link className="btn btn-ghost btn-sm" href={`/editor/${o.id}`}>Edit</Link>
-            <button className="btn btn-danger btn-sm" onClick={() => setConfirmDel(true)}>Delete</button>
+              : !ro && <Link className="btn btn-primary btn-sm" href={`/checkout/${o.id}`}>Pay & publish</Link>}
+            {!ro && <Link className="btn btn-ghost btn-sm" href={`/editor/${o.id}`}>Edit</Link>}
+            {!ro && <button className="btn btn-danger btn-sm" onClick={() => setConfirmDel(true)}>Delete</button>}
           </div>
         </div>
         {confirmDel && <div className="confirm-bar" style={{ marginBottom: 16 }}>
@@ -186,7 +224,8 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           <button className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff' }} onClick={delCard}>Delete card</button>
           <button className="btn btn-ghost btn-sm" onClick={() => setConfirmDel(false)}>Keep it</button>
         </div>}
-        {needsUpgrade && <p className="demo-note" style={{ marginBottom: 16 }}>Some things you turned on are not paid for yet ({PKG[needPkg(o.content).id].name} package{o.content.ownDesign && !o.addon_own ? ', own design' : ''}) and stay hidden from guests. <Link href={`/checkout/${o.id}`}>Pay the difference</Link></p>}
+        {ro && <p className="demo-note shared-note">The couple shared this card with you. You can follow RSVPs, ucapan, the wishlist and check-ins; only they can edit or moderate.</p>}
+        {needsUpgrade && !ro && <p className="demo-note" style={{ marginBottom: 16 }}>Some things you turned on are not paid for yet ({PKG[needPkg(o.content).id].name} package{o.content.ownDesign && !o.addon_own ? ', own design' : ''}) and stay hidden from guests. <Link href={`/checkout/${o.id}`}>Pay the difference</Link></p>}
 
         <div className="kpis k6">
           <div className="kpi"><b>{pax}</b><span>Total pax attending</span></div>
@@ -209,6 +248,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           <button role="tab" aria-selected={tab === 'wishlist'} onClick={() => setTab('wishlist')}>Wishlist <span className="muted">{reserves.length}</span></button>
           <button role="tab" aria-selected={tab === 'checkin'} onClick={() => setTab('checkin')}>Check-in</button>
           <button role="tab" aria-selected={tab === 'links'} onClick={() => setTab('links')}>Guest links</button>
+          {!ro && <button role="tab" aria-selected={tab === 'family'} onClick={() => setTab('family')}>Family access</button>}
         </div>
 
         {tab === 'rsvp' && <>
@@ -227,7 +267,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
         {tab === 'wishes' && (wishes.length ? <div className="wish-admin">{wishes.map((w) => (
           <div key={w.id} className={`w ${w.hidden ? 'hidden-w' : ''}`}>
             <div style={{ minWidth: 0 }}><b>{w.name}</b> <span className="muted" style={{ fontSize: 12 }}>{new Date(w.created_at).toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}{w.hidden ? ' · hidden from guests' : ''}</span><p style={{ marginTop: 4, overflowWrap: 'anywhere' }}>{w.msg}</p></div>
-            <div style={{ display: 'flex', gap: 6, flex: '0 0 auto' }}><button className="btn btn-ghost btn-sm" onClick={() => setHidden(w)}>{w.hidden ? 'Show' : 'Hide'}</button><button className="btn btn-danger btn-sm" onClick={() => delWish(w.id)}>Delete</button></div>
+            {!ro && <div style={{ display: 'flex', gap: 6, flex: '0 0 auto' }}><button className="btn btn-ghost btn-sm" onClick={() => setHidden(w)}>{w.hidden ? 'Show' : 'Hide'}</button><button className="btn btn-danger btn-sm" onClick={() => delWish(w.id)}>Delete</button></div>}
           </div>))}</div>
           : <div className="empty"><b>No ucapan yet</b><p className="muted">Wishes from guests appear here. Hide any message before others see it.</p></div>)}
 
@@ -236,7 +276,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           return (
             <div key={i} className="w">
               <div style={{ minWidth: 0 }}><b>{w.name}</b> {w.price && <span className="muted" style={{ fontSize: 12 }}>{w.price}</span>}<p className="muted" style={{ marginTop: 4 }}>{r ? `Reserved by ${r.name} · ${when(r.at)}` : 'Not reserved yet'}</p></div>
-              {r && <button className="btn btn-ghost btn-sm" onClick={() => release(r.item_key)}>Release</button>}
+              {r && !ro && <button className="btn btn-ghost btn-sm" onClick={() => release(r.item_key)}>Release</button>}
             </div>
           );
         })}</div> : <div className="empty"><span className="tag">Premium</span><b>Gift wishlist</b><p className="muted" style={{ maxWidth: '46ch' }}>List the gifts you would like; guests reserve one so nobody brings the same thing. Turn on Gift wishlist in Edit, then Extras.</p></div>)}
@@ -244,7 +284,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
         {tab === 'checkin' && (epass ? <>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
             <input type="search" aria-label="Search guests" placeholder="Search name, phone or 6-letter code" value={ciQuery} onChange={(e) => setCiQuery(e.target.value)} style={{ flex: 1, minWidth: 200 }} />
-            {canScan() && <button className="btn btn-primary btn-sm" onClick={() => setScanning((s) => !s)}>{scanning ? 'Stop camera' : 'Scan QR'}</button>}
+            {canScan() && !ro && <button className="btn btn-primary btn-sm" onClick={() => setScanning((s) => !s)}>{scanning ? 'Stop camera' : 'Scan QR'}</button>}
           </div>
           {scanning && <QrScanner onCode={onScan} onError={(m) => { flash(m); setScanning(false); }} />}
           <p className="muted" style={{ fontSize: 13, marginBottom: 10 }}>{yes.filter((r) => checkins.has(r.id)).length} of {yes.length} parties arrived · {arrivedPax} of {pax} pax</p>
@@ -253,13 +293,13 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
             <tbody>{ciList.map((r) => { const isIn = checkins.has(r.id); return (
               <tr key={r.id}><td><code>{rsvpCode(r.id)}</code></td><td>{r.name}</td><td style={{ textAlign: 'right' }}>{r.pax}</td>
                 <td>{isIn ? <span className="pill in">Arrived</span> : <span className="muted">Expected</span>}</td>
-                <td><button className={`btn ${isIn ? 'btn-ghost' : 'btn-primary'} btn-sm`} onClick={() => toggleCheckin(r.id, isIn)}>{isIn ? 'Undo' : 'Check in'}</button></td></tr>); })}</tbody>
+                <td>{!ro && <button className={`btn ${isIn ? 'btn-ghost' : 'btn-primary'} btn-sm`} onClick={() => toggleCheckin(r.id, isIn)}>{isIn ? 'Undo' : 'Check in'}</button>}</td></tr>); })}</tbody>
           </table></div> : <div className="empty"><b>{q ? 'No guest matches' : 'No attending guests yet'}</b></div>}
         </> : <div className="empty"><span className="tag brass">Diraja</span><b>Check guests in on the day</b><p className="muted" style={{ maxWidth: '48ch' }}>Every attending guest gets an e-pass with a QR code. At the reception desk, scan it with this page or search by name or code, and watch the pax count fill up. Turn on the e-pass in Edit, then Extras, then RSVP.</p></div>)}
 
         {tab === 'links' && (diraja ? <>
-          <div className="field"><label htmlFor="d-guests">Guest names, one per line</label><textarea id="d-guests" rows={5} placeholder={'Pak Long Hashim & keluarga\nCikgu Rohani'} value={guestText} onChange={(e) => setGuestText(e.target.value)} /></div>
-          <div style={{ marginTop: 10 }}><button className="btn btn-primary btn-sm" onClick={saveGuests}>Save guest links</button></div>
+          {!ro && <><div className="field"><label htmlFor="d-guests">Guest names, one per line</label><textarea id="d-guests" rows={5} placeholder={'Pak Long Hashim & keluarga\nCikgu Rohani'} value={guestText} onChange={(e) => setGuestText(e.target.value)} /></div>
+          <div style={{ marginTop: 10 }}><button className="btn btn-primary btn-sm" onClick={saveGuests}>Save guest links</button></div></>}
           <div className="rows" style={{ marginTop: 14 }}>
             {guests.length ? guests.map((g) => {
               const url = `${SITE_URL}/${o.slug}/${g.token}`;
@@ -269,6 +309,27 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
             }) : <p className="muted" style={{ fontSize: 13 }}>Type names above and save to get a link for each guest.</p>}
           </div>
         </> : <div className="empty"><span className="tag brass">Diraja</span><b>Personal guest links</b><p className="muted" style={{ maxWidth: '46ch' }}>Put each guest&apos;s name on the cover of their card. Turn on Personal guest links in Edit, then Extras, and pay the upgrade.</p></div>)}
+
+        {tab === 'family' && !ro && <>
+          <p className="muted" style={{ maxWidth: '60ch', fontSize: 14 }}>Let parents or siblings follow RSVPs, ucapan, the wishlist and check-ins from their own phone. They get read-only access: they cannot edit the card, hide ucapan or delete replies.</p>
+          <form style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }} onSubmit={(e) => { e.preventDefault(); invite(); }}>
+            <input type="email" aria-label="Family member's email" placeholder="mak@example.com" required value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} style={{ flex: 1, minWidth: 200 }} />
+            <button className="btn btn-primary btn-sm">Send invite</button>
+          </form>
+          {inviteLink && <div className="demo-note" style={{ marginTop: 12 }}>
+            {inviteLink.emailed ? <>We emailed a sign-in link to <b>{inviteLink.email}</b>. </> : <>The email could not be sent. </>}You can also send them this link on WhatsApp; it only works for {inviteLink.email}.
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigator.clipboard?.writeText(inviteLink.link).then(() => flash('Link copied'), () => flash(inviteLink.link))}>Copy link</button>
+              <a className="btn btn-ghost btn-sm" target="_blank" rel="noopener" href={`https://wa.me/?text=${encodeURIComponent(`Saya kongsikan senarai RSVP majlis kami. Log masuk dengan ${inviteLink.email}: ${inviteLink.link}`)}`}>WhatsApp</a>
+            </div>
+          </div>}
+          <div className="members">
+            {members.length ? members.map((m) => <div className="order-item" style={{ cursor: 'default' }} key={m.id}><span className="t"><b>{m.email}</b><span>{m.accepted_at ? `Joined ${when(m.accepted_at)}` : `Invited ${when(m.created_at)}, not opened yet`}</span></span>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => invite(m.email)}>Resend</button>
+              <button type="button" className="btn btn-danger btn-sm" onClick={() => removeMember(m)}>Remove</button></div>)
+              : <p className="muted" style={{ fontSize: 13 }}>Nobody else has access yet.</p>}
+          </div>
+        </>}
       </div>}
       <div className={`toast ${toast ? 'on' : ''}`} role="status" aria-live="polite">{toast}</div>
     </div>

@@ -243,6 +243,16 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Email links use the token_hash flow (src/app/auth/confirm/route.ts), so links sent from the server,
+# like family-access invites, sign people in without a PKCE verifier. Set the same templates on hosted projects.
+[auth.email.template.magic_link]
+subject = "Your Sanding sign-in link"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your email for Sanding"
+content_path = "./supabase/templates/confirmation.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

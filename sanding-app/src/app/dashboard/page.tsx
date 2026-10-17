@@ -11,8 +11,10 @@ export default async function DashboardPage({ searchParams }: PageProps<'/dashbo
   const sp = await searchParams;
   const { sb, user } = await currentUser();
   if (!user) redirect('/login?next=/dashboard');
-  const { data } = await sb.from('orders').select('id, slug, status, package, addon_own, paid_cents, valid_until, created_at, content').order('created_at', { ascending: false });
-  const orders: DashOrder[] = (data || []).map((o) => ({ ...o, content: sanitizeCard(o.content) }));
+  // RLS returns the user's own cards plus any a family member shared with them (read only)
+  const { data } = await sb.from('orders').select('id, owner_id, slug, status, package, addon_own, paid_cents, valid_until, created_at, updated_at, content').order('created_at', { ascending: false });
+  const orders: DashOrder[] = (data || [])
+    .map(({ owner_id, ...o }) => ({ ...o, content: sanitizeCard(o.content), shared: owner_id !== user.id }));
   return (
     <>
       <SiteHeader current="dashboard" />

@@ -5,8 +5,10 @@ import { SAMPLE } from '@/lib/invite/engine';
 
 /** A real card rendered at 360×640 and scaled to fit its box (gallery, home flat-lay).
     Painted only when it comes within 600px of the viewport: hundreds of live cards at once are too heavy. */
-export default function Mini({ template, face, style, label, onOpen, children }: {
+export default function Mini({ template, face, style, label, onOpen, children, extra }: {
   template: string; face?: 'cover' | 'page'; style?: React.CSSProperties; label?: string; onOpen?: () => void; children?: React.ReactNode;
+  /** Fields laid over the sample, e.g. the couple's names from "Personalise preview". */
+  extra?: Record<string, string>;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
@@ -23,7 +25,7 @@ export default function Mini({ template, face, style, label, onOpen, children }:
     onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(); } } } : {};
   return (
     <div ref={box} className="mini" style={style} {...interactive}>
-      {seen ? <Invite className="scale" style={{ transform: `scale(${scale})` }} card={{ ...SAMPLE, template }} opts={{ mode: 'thumb', face }} /> : <div className="scale" />}
+      {seen ? <Invite className="scale" style={{ transform: `scale(${scale})` }} card={{ ...SAMPLE, ...extra, template }} opts={{ mode: 'thumb', face }} /> : <div className="scale" />}
       {children}
     </div>
   );

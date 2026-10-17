@@ -1,6 +1,9 @@
 // Card content shape, packages and the rules both the editor and the server agree on.
 // The server is the source of truth: prices, package gating and content sanitising all run here.
 import { EFFECTS, LEGACY, THEMES } from '@/lib/invite/engine';
+import { sanitizeEvents, type EventItem } from '@/lib/events';
+
+export type { EventItem };
 
 export type ScheduleItem = { time: string; label: string };
 export type Contact = { name: string; role: string; phone: string };
@@ -11,6 +14,8 @@ export type Card = {
   brideFull: string; brideShort: string; groomFull: string; groomShort: string;
   hosts: string; side: 'bride' | 'groom' | 'couple'; eventTitle: (typeof EVENT_TITLES)[number];
   date: string; hijri: string; start: string; end: string; venue: string; address: string; dress: string; livestream: string;
+  /** More sessions after the main one, each with its own date, time and venue (Maps/Waze). */
+  events: EventItem[];
   schedule: ScheduleItem[];
   x_rsvp: boolean; maxPax: number; deadline: string; x_counter: boolean; x_epass: boolean;
   x_wishes: boolean; x_music: boolean; music: string;
@@ -21,6 +26,8 @@ export type Card = {
   x_contacts: boolean; contacts: Contact[];
   x_guestlinks: boolean;
   effect: string; ownDesign: string;
+  /** Custom image for the WhatsApp / social link preview (og:image), 1200×630. */
+  ogImage: string;
 };
 export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tunang', 'nikah'] as const;
 /** Own-design front page add-on, on top of the package price. */
@@ -126,6 +133,7 @@ export function sanitizeCard(input: unknown): Card {
     eventTitle: oneOf(o.eventTitle, EVENT_TITLES, 'walimah'),
     date: isoDate(o.date), hijri: str(o.hijri, 60), start: hhmm(o.start), end: hhmm(o.end),
     venue: str(o.venue, 120), address: str(o.address, 300), dress: str(o.dress, 80), livestream: linkUrl(o.livestream),
+    events: sanitizeEvents(o.events),
     schedule: arr(o.schedule).slice(0, 12).map((s: Record<string, unknown>) => ({ time: hhmm(s?.time), label: str(s?.label, 80) })),
     x_rsvp: bool(o.x_rsvp), maxPax: Math.max(1, Math.min(20, Math.round(Number(o.maxPax) || 1))), deadline: isoDate(o.deadline),
     x_counter: bool(o.x_counter), x_epass: bool(o.x_epass),
@@ -139,6 +147,7 @@ export function sanitizeCard(input: unknown): Card {
     x_guestlinks: bool(o.x_guestlinks),
     effect: oneOf(o.effect, Object.keys(EFFECTS), 'none'),
     ownDesign: mediaUrl(o.ownDesign),
+    ogImage: mediaUrl(o.ogImage),
   };
 }
 

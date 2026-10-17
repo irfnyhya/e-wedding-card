@@ -29,6 +29,21 @@ export async function ownOrder(id: string): Promise<{ order: OrderRow; user: { i
   return { order: { ...data, content: sanitizeCard(data.content) } as OrderRow, user };
 }
 
+/** Loads an order the signed-in user owns or was given family (read-only) access to. */
+export async function readableOrder(id: string): Promise<{ order: OrderRow; user: { id: string; email?: string }; shared: boolean } | { res: NextResponse }> {
+  const { user } = await currentUser();
+  if (!user) return { res: fail('Sign in first.', 401) };
+  if (!/^[0-9a-f-]{36}$/.test(id)) return { res: fail('Card not found.', 404) };
+  const admin = supabaseAdmin();
+  const { data } = await admin.from('orders').select('*').eq('id', id).single();
+  if (!data) return { res: fail('Card not found.', 404) };
+  if (data.owner_id !== user.id) {
+    const { data: m } = await admin.from('order_members').select('id').eq('order_id', id).eq('user_id', user.id).maybeSingle();
+    if (!m) return { res: fail('Card not found.', 404) };
+  }
+  return { order: { ...data, content: sanitizeCard(data.content) } as OrderRow, user, shared: data.owner_id !== user.id };
+}
+
 /** Same-origin check for browser POSTs that change data. */
 export function sameOrigin(req: NextRequest) {
   const origin = req.headers.get('origin');
