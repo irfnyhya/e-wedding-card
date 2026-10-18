@@ -26,6 +26,39 @@ const T={
   contact:'Contact',dock:['Calendar','Location','RSVP','Gift','Contact'],addCal:'Save to Google Calendar',maps:'Google Maps',waze:'Waze',
   previewNote:'Preview only. Replies are saved once the card is published.',made:'Digital card by Sanding',ampm:()=>''}
 };
+/* ================= wedding traditions: Malay, Chinese, Indian, General ================= */
+Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
+Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
+const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
+const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
+const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};
+function invHost(h,side,ms,lead){return `${lead}<br><b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`+(ms?`dengan hormatnya menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan ${side==='bride'?'puteri':'putera'} kesayangan kami`:`request the pleasure of your company at the wedding of their beloved ${side==='bride'?'daughter':'son'}`)}
+const TRAD_COPY={
+ chinese:{ms:{salam:'Dengan penuh kegembiraan',doaT:'Ucapan Restu',doa:'Semoga kalian berdua dikurniakan kasih sayang, keharmonian dan kebahagiaan sepanjang hayat. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'With great joy',doaT:'A Blessing',doa:'May you share a lifetime of love, harmony and happiness. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}},
+ indian:{ms:{salam:'Dengan restu Yang Maha Kuasa',doaT:'Restu',doa:'Semoga ikatan suci ini diberkati dengan kasih sayang, kesejahteraan dan kebahagiaan yang berkekalan.',
+   intro:(h,side)=>side==='couple'?'Dengan restu Yang Maha Kuasa dan keluarga, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan restu Yang Maha Kuasa, kami')},
+  en:{salam:'With the blessings of the Almighty',doaT:'Blessings',doa:'May this sacred union be blessed with love, prosperity and lasting happiness.',
+   intro:(h,side)=>side==='couple'?'With the blessings of the Almighty and our elders, we invite you and your family to celebrate our wedding':invHost(h,side,false,'With the blessings of the Almighty and our elders,')}},
+ general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga kasih sayang kalian kekal mekar selamanya.',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput anda serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'Warm greetings',doaT:'A Wish',doa:'May your love grow with every year you share.',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}}};
+/* the copy a card uses: the language, adjusted for its wedding tradition */
+function copyFor(o){const base=T[o.lang]||T.ms,tr=TRAD_COPY[o.tradition];const L=tr?Object.assign(Object.create(base),tr[o.lang==='en'?'en':'ms']):Object.create(base);
+  // the couple's own wording, when they wrote some
+  const t=k=>String(o[k]||'').trim();
+  if(t('txtSalam'))L.salam=t('txtSalam');
+  if(t('txtDoaT'))L.doaT=esc(t('txtDoaT'));
+  if(t('txtDoa'))L.doa=esc(t('txtDoa')).replace(/\n/g,'<br>');
+  if(t('txtIntro')){const own=t('txtIntro');L.intro=h=>esc(own).replace(/\n/g,'<br>').replace(/\{hosts\}/g,`<b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`)}
+  return L}
+const defaultCopy=o=>copyFor({...o,txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:''});
+const plainOf=html=>String(html).replace(/<br\s*\/?>/g,'\n').replace(/<b[^>]*>[^<]*<\/b>/,'\n{hosts}\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/[ \t]+\n/g,'\n').replace(/\n{2,}/g,'\n').trim();
+const greetingFor=o=>({chinese:'Salam sejahtera',indian:'Salam sejahtera',general:'Salam sejahtera'}[o.tradition]||'Assalamualaikum');
 function fmtDate(iso,lang,withDay=true){if(!iso)return'';const d=new Date(iso+'T00:00:00');if(isNaN(d))return'';return (withDay?DAYS[lang][d.getDay()]+', ':'')+`${d.getDate()} ${MONTHS[lang][d.getMonth()]} ${d.getFullYear()}`}
 function fmtShort(iso){if(!iso)return'';const [y,m,d]=iso.split('-');return `${d}.${m}.${y}`}
 function fmtTime(t,lang){if(!t)return'';let [h,m]=t.split(':').map(Number);if(lang==='en'){const ap=h>=12?'PM':'AM';const hh=h%12||12;return `${hh}:${String(m).padStart(2,'0')} ${ap}`}const hh=h>12?h-12:h;return `${hh}.${String(m).padStart(2,'0')} ${T.ms.ampm(h)}`}

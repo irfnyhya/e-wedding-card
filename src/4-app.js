@@ -136,7 +136,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'malay',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -146,10 +146,10 @@ function initEditor(){
   fillForm();setTab(tab);paintPreview(true);
 }
 function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.name)continue;const v=draft[el.name];if(el.type==='checkbox')el.checked=!!v;else if(v!=null)el.value=v}
-  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderGifts();renderWl();renderFx();syncDisabled()}
+  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
-function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===4)renderReview()}
+function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
 $('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
@@ -212,10 +212,41 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
     if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
     put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
   tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
-  $('#jawi-auto').onclick=()=>{const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
+  $('#jawi-auto').onclick=()=>{const scr=draft.monoScript||TRAD_DEFAULT[draft.tradition||'malay'].monoScript;if(scr==='latin'){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}.`);return}
+    if(scr!=='jawi'){toast(scr==='chinese'?'Type the Chinese characters with your phone keyboard, e.g. 囍 or your surnames 李 王.':'Type the letters with your phone keyboard, e.g. அ & அ.');inp.focus();return}
+    const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
     const how=nm.map((n,i)=>n&&ls2[i]?`${String(n).trim().split(/\s+/)[0]} → ${ls2[i]}`:'').filter(Boolean).join(', ');
     if(v===inp.value.trim()){toast(`Already filled: ${how}.`);inp.focus();return}put(v);toast(`Filled in: ${how}. Check the letters before you publish.`)};
 })();
+/* wedding tradition, monogram script and the card's wording */
+function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript||TRAD_DEFAULT[tr].monoScript;
+  $('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
+  $$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
+    if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
+    fillForm();changed()});
+  $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
+  $$('#mono-pick [data-mono]').forEach(b=>b.onclick=()=>{draft.monoScript=b.dataset.mono;renderTradition();changed()});
+  $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
+  $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
+  // event titles that fit the tradition
+  const sel=$('#f-eventTitle'),L=T[draft.lang]||T.ms,keep=TRAD_EVENTS[tr].includes(draft.eventTitle)?draft.eventTitle:TRAD_EVENTS[tr][0];
+  sel.innerHTML=TRAD_EVENTS[tr].map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
+  renderWording();if(typeof renderContent==="function"&&$("#sec-rows").children.length)renderContent()}
+function renderWording(){const d=defaultCopy(draft);
+  $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}
+$('#txt-reset').onclick=()=>{['txtSalam','txtIntro','txtDoaT','txtDoa'].forEach(k=>{draft[k]='';$('#f-'+k).value=''});changed()};
+['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(renderTradition)));
+/* content step: show / hide / rename sections, the couple's own sections */
+function renderContent(){const L=copyFor(draft),hide=new Set(draft.hideSecs||[]),tt=draft.secTitles||{};
+  $('#sec-rows').innerHTML=CARD_SECTIONS.map(([k,f])=>`<label class="sec-row"><input type="checkbox" data-sk="${k}" ${hide.has(k)?'':'checked'}><input type="text" data-st="${k}" value="${esc(tt[k]||'')}" placeholder="${esc(plainOf(f(L)||''))}" maxlength="60" aria-label="Heading"></label>`).join('');
+  $$('#sec-rows [data-sk]').forEach(c=>c.onchange=e=>{e.stopPropagation();const h=new Set(draft.hideSecs||[]);c.checked?h.delete(c.dataset.sk):h.add(c.dataset.sk);draft.hideSecs=[...h];changed()});
+  $$('#sec-rows [data-st]').forEach(x=>x.oninput=e=>{e.stopPropagation();draft.secTitles={...(draft.secTitles||{}),[x.dataset.st]:x.value};changed()});
+  const cs=draft.customSecs||(draft.customSecs=[]);
+  $('#csec-rows').innerHTML=cs.map((x,i)=>`<div class="csec"><div class="row-line" style="grid-template-columns:1fr auto"><input type="text" data-ci="${i}" data-ck="title" value="${esc(x.title)}" placeholder="Title, e.g. Parking" maxlength="60" aria-label="Section title"><button type="button" class="icon-btn" data-cdel="${i}" aria-label="Remove section">✕</button></div><textarea data-ci="${i}" data-ck="text" rows="3" maxlength="600" placeholder="What guests should know" aria-label="Section text">${esc(x.text)}</textarea></div>`).join('')||'<p class="muted" style="font-size:13px">None yet.</p>';
+  $('#add-csec').disabled=cs.length>=6;
+  $$('#csec-rows [data-ci]').forEach(x=>x.oninput=e=>{e.stopPropagation();cs[x.dataset.ci][x.dataset.ck]=x.value;changed()});
+  $$('#csec-rows [data-cdel]').forEach(b=>b.onclick=()=>{cs.splice(+b.dataset.cdel,1);renderContent();changed()})}
+$('#add-csec').onclick=()=>{(draft.customSecs||(draft.customSecs=[])).push({title:'',text:''});renderContent();changed();$$('#csec-rows [data-ck=title]').pop()?.focus()};
 function renderGifts(){const box=$('#gift-rows');box.innerHTML=draft.gifts.map((g,i)=>`<div class="row-line c4"><select data-i="${i}" data-k="bank" aria-label="Bank">${BANKS.map(b=>`<option ${b===g.bank?'selected':''}>${esc(b)}</option>`).join('')}</select><input type="text" data-i="${i}" data-k="accName" value="${esc(g.accName)}" placeholder="Account holder" aria-label="Account holder"><input type="text" data-i="${i}" data-k="accNo" value="${esc(g.accNo)}" placeholder="Account or phone no." inputmode="numeric" aria-label="Account number"><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove account" ${draft.gifts.length<2?'disabled':''}>✕</button></div>`).join('');
   $('#add-gift').disabled=draft.gifts.length>=3;
   $$('input,select',box).forEach(x=>x.oninput=x.onchange=e=>{e.stopPropagation();draft.gifts[x.dataset.i][x.dataset.k]=x.value;const g0=draft.gifts[0];Object.assign(draft,{bank:g0.bank,accName:g0.accName,accNo:g0.accNo});changed()});
@@ -230,10 +261,10 @@ function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
   $('#ed-prev').style.visibility=i?'visible':'hidden';
-  if(i===4)renderReview();else $('#ed-next').textContent='Next'}
+  if(i===5)renderReview();else $('#ed-next').textContent='Next'}
 $$('#ed-tabs [data-tab]').forEach(b=>b.onclick=()=>setTab(+b.dataset.tab));
 $('#ed-prev').onclick=()=>{setTab(Math.max(0,tab-1));window.scrollTo({top:0})};
-$('#ed-next').onclick=()=>{if(tab<4){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
+$('#ed-next').onclick=()=>{if(tab<5){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
 function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
   const extras=[['x_rsvp','RSVP'],['x_counter','Attendance count'],['x_epass','E-pass'],['x_wishes','Ucapan'],['x_music','Music'],['x_gallery','Gallery'],['x_gift','Salam kaut'],['x_wishlist','Wishlist'],['x_contacts','Contacts'],['x_guestlinks','Guest links']].filter(([k])=>o[k]).map(([,l])=>l).concat(o.effect&&o.effect!=='none'?[EFFECTS[o.effect].label]:[],o.livestream?['Livestream']:[],o.ownDesign?['Own design (+RM10)']:[]).join(', ')||'None';
   $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',`${o.brideShort||'—'} & ${o.groomShort||'—'}`],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
@@ -245,7 +276,7 @@ function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
 async function proceed(){
   const req=[['brideShort',1,'the bride’s cover name'],['groomShort',1,'the groom’s cover name'],['date',2,'the date'],['venue',2,'the venue']];
   for(const [k,t,l] of req)if(!String(draft[k]||'').trim()){setTab(t);toast(`Add ${l} first.`);const el=$(`[name=${k}]`);el&&el.focus();return}
-  if(JSON.stringify(draft).length>420000){setTab(3);toast('Photos are too large together. Remove one photo and try again.');return}
+  if(JSON.stringify(draft).length>420000){setTab(4);toast('Photos are too large together. Remove one photo and try again.');return}
   const pk=needPkg(draft).id;
   if(editingId){const cur=ORDERS.find(x=>x.id===editingId);if(cur&&rank(pk)<=rank(cur.package)&&!(draft.ownDesign&&!cur.addonOwn)){const upd={...draft,addonOwn:cur.addonOwn,package:cur.package,paid:cur.paid,createdAt:cur.createdAt,updatedAt:Date.now(),slug:cur.slug,status:'live',validUntil:cur.validUntil};delete upd.id;try{await Store.set('orders/'+editingId,upd);toast('Changes saved');selectedId=editingId;draft=null;editingId=null;go('dashboard')}catch(e){toast(e.message)}return}}
   go('checkout');
@@ -281,7 +312,7 @@ function initCheckout(){
     ls.set('sanding-draft',null);const done={...order,id};draft=null;editingId=null;promo=0;selectedId=id;showSuccess(done);
   };
 }
-function showSuccess(o){go('success');const link=`sanding.my/${o.slug}`;const wa=`https://wa.me/?text=${encodeURIComponent(`Assalamualaikum. Dengan segala hormatnya kami menjemput anda ke ${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}. Kad jemputan: https://${link}`)}`;
+function showSuccess(o){go('success');const link=`sanding.my/${o.slug}`;const wa=`https://wa.me/?text=${encodeURIComponent(`${greetingFor(o)}. Dengan segala hormatnya kami menjemput anda ke ${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}. Kad jemputan: https://${link}`)}`;
   $('#success-body').innerHTML=`<div class="seal"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 style="font-size:clamp(30px,5vw,46px)">${esc(coverNames(o).join(' & '))}, your card is live</h1>
   <p class="muted" style="max-width:52ch">${esc(PKG[o.package].name)} package, paid RM${o.paid.toFixed(2)}. Your card stays online until ${new Date(o.validUntil).toLocaleDateString('en-MY',{day:'numeric',month:'long',year:'numeric'})}.</p>
   <div class="linkbox"><code>${esc(link)}</code><button type="button" class="btn btn-ghost btn-sm" id="s-copy">Copy</button></div>
@@ -368,7 +399,7 @@ function drawDetail(){
     if(diraja){$('#d-guests').oninput=draw;draw()}
   }
 }
-function remindUrl(o,r){const L=T[o.lang]||T.ms;const msg=o.lang==='en'?`Hi ${r.name}, a reminder for ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} on ${fmtDate(o.date,'en')} at ${o.venue}, ${fmtTime(o.start,'en')}. Your guest code: ${rsvpCode(r.id)}. Card: https://sanding.my/${o.slug}`:`Assalamualaikum ${r.name}. Peringatan mesra untuk ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}, ${fmtTime(o.start,'ms')} di ${o.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: https://sanding.my/${o.slug}`;return`https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(msg)}`}
+function remindUrl(o,r){const L=T[o.lang]||T.ms;const msg=o.lang==='en'?`Hi ${r.name}, a reminder for ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} on ${fmtDate(o.date,'en')} at ${o.venue}, ${fmtTime(o.start,'en')}. Your guest code: ${rsvpCode(r.id)}. Card: https://sanding.my/${o.slug}`:`${greetingFor(o)} ${r.name}. Peringatan mesra untuk ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}, ${fmtTime(o.start,'ms')} di ${o.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: https://sanding.my/${o.slug}`;return`https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(msg)}`}
 async function toggleCheckin(o,id,isIn){try{if(isIn)await Store.del(`orders/${o.id}/checkins/${id}`);else{await Store.set(`orders/${o.id}/checkins/${id}`,{at:Date.now()});const r=RSVPS.find(x=>x.id===id);r&&toast(`${r.name} checked in, ${r.pax} pax`)}}catch(e){toast(e.message)}}
 async function startScan(o){const cam=$('#ci-cam');let stream;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){toast('Camera not available. Search by code instead.');return}
   cam.innerHTML='<div class="scan-box"><video playsinline muted></video><span class="muted" style="font-size:13px">Point the camera at the guest’s pass</span></div>';const v=$('video',cam);v.srcObject=stream;await v.play().catch(()=>{});

@@ -244,6 +244,11 @@ input:focus,select:focus,textarea:focus{outline:1px solid var(--fg);border-color
 .uploads label.add{width:84px;height:84px;border:1px dashed var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:12px;text-align:center}
 .uploads input{display:none}
 .switch-sp{flex:0 0 40px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.sec-row{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:center}
+.sec-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--fg)}
+.sec-row:has(input[type=checkbox]:not(:checked)) input[type=text]{opacity:.45;text-decoration:line-through}
+.csec{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);background:var(--surface)}
 /* design step: the grid scrolls inside its own box; extra options fold away; Back/Next stay on screen */
 .fam-scroll{max-height:min(66vh,720px);overflow-y:auto;padding:4px 6px 14px 4px;margin:0 -6px 18px -4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);scrollbar-width:thin;overscroll-behavior:contain}
 .fam-scroll .fam-pick{padding-top:10px}
@@ -477,19 +482,21 @@ tr:last-child td{border-bottom:0}
           <button role="tab" data-tab="0" aria-selected="true"><span class="ix">1</span>Design</button>
           <button role="tab" data-tab="1" aria-selected="false"><span class="ix">2</span>Couple</button>
           <button role="tab" data-tab="2" aria-selected="false"><span class="ix">3</span>Majlis</button>
-          <button role="tab" data-tab="3" aria-selected="false"><span class="ix">4</span>Extras</button>
-          <button role="tab" data-tab="4" aria-selected="false"><span class="ix">5</span>Review</button>
+          <button role="tab" data-tab="3" aria-selected="false"><span class="ix">4</span>Content</button>
+          <button role="tab" data-tab="4" aria-selected="false"><span class="ix">5</span>Extras</button>
+          <button role="tab" data-tab="5" aria-selected="false"><span class="ix">6</span>Review</button>
         </div>
         <form id="ed-form" autocomplete="off">
           <!-- 1 design -->
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
+              <div class="field full"><span class="lbl">Wedding tradition</span><div class="chips" id="trad-pick" role="group" aria-label="Wedding tradition"></div><span class="hint">Sets the greeting, wording, event titles and monogram. You can change any of them after.</span></div>
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-              <div class="field"><label for="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="rtl" lang="ms-Arab" placeholder="ع ا">
+              <div class="field"><label for="f-jawi">Monogram initials (optional)</label><div class="chips" id="mono-pick" role="group" aria-label="Monogram script" style="margin-bottom:8px"></div><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="ع ا">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
-                <span class="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). "Fill from names" guesses the first letters; check them, e.g. Aisyah starts with ع.</span></div>
+                <span class="hint" id="mono-hint">Shown on the cover of designs with a monogram and as a small seal inside the card. "Fill from names" guesses the letters; check them.</span></div>
             </div>
             <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
             <div class="fam-scroll"><div class="tpl-pick" id="tpl-pick"></div></div>
@@ -534,8 +541,25 @@ tr:last-child td{border-bottom:0}
             <div class="section-title"><h3>Aturcara majlis</h3><button type="button" class="btn btn-ghost btn-sm" id="add-sched">Add item</button></div>
             <div class="rows" id="sched-rows"></div>
           </div>
-          <!-- 4 extras -->
+          <!-- 4 content -->
           <div class="panel" data-panel="3">
+            <p class="muted">Choose what your card shows, rename the headings, and write in your own words. The phone shows every change.</p>
+            <div class="section-title"><h3>Sections</h3><span class="muted" style="font-size:12px">Untick to hide · type to rename</span></div>
+            <div class="rows" id="sec-rows"></div>
+            <div class="section-title"><h3>Your own sections</h3><button type="button" class="btn btn-ghost btn-sm" id="add-csec">Add section</button></div>
+            <p class="muted" style="font-size:13px;margin:-6px 0 10px">E.g. parking, dress code note, our story, a thank-you. Shown before the RSVP.</p>
+            <div class="rows" id="csec-rows"></div>
+            <div class="section-title"><h3>Wording</h3><button type="button" class="btn btn-ghost btn-sm" id="txt-reset">Reset to default</button></div>
+            <p class="muted" style="font-size:13px;margin:-6px 0 12px">Edit what the card says. Leave a box empty to use the default for your tradition and language. In the invitation text, <code>{hosts}</code> is replaced by the host names.</p>
+            <div class="fieldset">
+              <div class="field full"><label for="f-txtSalam">Greeting</label><input type="text" id="f-txtSalam" name="txtSalam" maxlength="120"></div>
+              <div class="field full"><label for="f-txtIntro">Invitation text</label><textarea id="f-txtIntro" name="txtIntro" rows="4" maxlength="600"></textarea></div>
+              <div class="field"><label for="f-txtDoaT">Closing title</label><input type="text" id="f-txtDoaT" name="txtDoaT" maxlength="60"></div>
+              <div class="field full"><label for="f-txtDoa">Closing blessing / doa</label><textarea id="f-txtDoa" name="txtDoa" rows="3" maxlength="500"></textarea></div>
+            </div>
+          </div>
+          <!-- 4 extras -->
+          <div class="panel" data-panel="4">
             <p class="muted">Turn on what you need. The package updates to the smallest one that covers your choices.</p>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-rsvp" name="x_rsvp" checked><span></span></label><div class="body"><div class="top"><b>RSVP</b><span class="tag">Asas</span></div>
               <div class="fieldset"><div class="field"><label for="f-maxPax">Max pax per RSVP</label><input type="number" id="f-maxPax" name="maxPax" min="1" max="20" value="5"></div><div class="field"><label for="f-deadline">RSVP closes on</label><input type="date" id="f-deadline" name="deadline"></div></div>
@@ -559,7 +583,7 @@ tr:last-child td{border-bottom:0}
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-guestlinks" name="x_guestlinks"><span></span></label><div class="body"><div class="top"><b>Personal guest links</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Put each guest's name on the cover. Also unlocks CSV export.</p></div></div>
           </div>
           <!-- 5 review -->
-          <div class="panel" data-panel="4">
+          <div class="panel" data-panel="5">
             <div class="summary"><dl id="review-dl"></dl></div>
             <div class="pkg-bar"><div><span class="muted" style="font-size:13px">Your package</span><br><b id="pkg-name">Permata</b></div><div style="text-align:right"><b id="pkg-price">RM59</b><br><span class="muted" style="font-size:12px" id="pkg-why"></span></div></div>
           </div>
@@ -714,7 +738,7 @@ tr:last-child td{border-bottom:0}
 .inv .env .tex::after,.inv .env-pocket::after,.inv .env-flap .face::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.9;pointer-events:none}
 .inv .seal{position:absolute;left:50%;top:54%;width:32%;aspect-ratio:1;transform:translate(-50%,-50%);border:0;padding:0;background:var(--seal) center/contain no-repeat;cursor:pointer;z-index:6;transition:transform .5s,opacity .45s;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));display:flex;align-items:center;justify-content:center}
 .inv .seal span{font-family:var(--s);font-size:clamp(20px,7cqi,30px);color:rgba(0,0,0,.28);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.2);margin-top:-2%}
-.inv .seal span.jw{font-family:"Aref Ruqaa","Amiri",serif;direction:rtl;font-size:clamp(22px,7.6cqi,32px);margin-top:0}
+.inv .seal span.jw{font-family:"Aref Ruqaa","Amiri","Noto Serif TC",var(--s),serif;unicode-bidi:plaintext;white-space:nowrap;font-size:clamp(22px,7.6cqi,32px);margin-top:0}
 .inv .seal:focus-visible{outline:2px solid var(--envInk);outline-offset:4px;border-radius:50%}
 .inv .env-to{position:absolute;left:0;right:0;top:15%;text-align:center;z-index:5;color:var(--envInk);transition:opacity .3s}
 .inv .env-to .caps{font-size:10px;opacity:.75}
@@ -2037,7 +2061,7 @@ tr:last-child td{border-bottom:0}
 /* Jawi initials seal for designs that do not show them */
 .inv .jawi-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--accent);
   box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px transparent,inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 60%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 10%,transparent),transparent 70%)}
-.inv .jawi-seal span{font-family:"Aref Ruqaa","Amiri",serif;font-size:24px;line-height:1;direction:rtl;padding-top:4px}
+.inv .jawi-seal span{font-family:"Aref Ruqaa","Amiri","Noto Serif TC",var(--s),serif;font-size:24px;line-height:1;unicode-bidi:plaintext;padding-top:4px;white-space:nowrap;max-width:56px;overflow:hidden}
 /* the hidden YouTube player for the couple's own song */
 .inv .yt-host{position:absolute;left:0;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 /* safety net: once a card has opened, no cover may stay on top of the page */
@@ -6752,6 +6776,39 @@ const T={
   contact:'Contact',dock:['Calendar','Location','RSVP','Gift','Contact'],addCal:'Save to Google Calendar',maps:'Google Maps',waze:'Waze',
   previewNote:'Preview only. Replies are saved once the card is published.',made:'Digital card by Sanding',ampm:()=>''}
 };
+/* ================= wedding traditions: Malay, Chinese, Indian, General ================= */
+Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
+Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
+const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
+const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
+const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};
+function invHost(h,side,ms,lead){return `${lead}<br><b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`+(ms?`dengan hormatnya menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan ${side==='bride'?'puteri':'putera'} kesayangan kami`:`request the pleasure of your company at the wedding of their beloved ${side==='bride'?'daughter':'son'}`)}
+const TRAD_COPY={
+ chinese:{ms:{salam:'Dengan penuh kegembiraan',doaT:'Ucapan Restu',doa:'Semoga kalian berdua dikurniakan kasih sayang, keharmonian dan kebahagiaan sepanjang hayat. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'With great joy',doaT:'A Blessing',doa:'May you share a lifetime of love, harmony and happiness. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}},
+ indian:{ms:{salam:'Dengan restu Yang Maha Kuasa',doaT:'Restu',doa:'Semoga ikatan suci ini diberkati dengan kasih sayang, kesejahteraan dan kebahagiaan yang berkekalan.',
+   intro:(h,side)=>side==='couple'?'Dengan restu Yang Maha Kuasa dan keluarga, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan restu Yang Maha Kuasa, kami')},
+  en:{salam:'With the blessings of the Almighty',doaT:'Blessings',doa:'May this sacred union be blessed with love, prosperity and lasting happiness.',
+   intro:(h,side)=>side==='couple'?'With the blessings of the Almighty and our elders, we invite you and your family to celebrate our wedding':invHost(h,side,false,'With the blessings of the Almighty and our elders,')}},
+ general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga kasih sayang kalian kekal mekar selamanya.',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput anda serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'Warm greetings',doaT:'A Wish',doa:'May your love grow with every year you share.',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}}};
+/* the copy a card uses: the language, adjusted for its wedding tradition */
+function copyFor(o){const base=T[o.lang]||T.ms,tr=TRAD_COPY[o.tradition];const L=tr?Object.assign(Object.create(base),tr[o.lang==='en'?'en':'ms']):Object.create(base);
+  // the couple's own wording, when they wrote some
+  const t=k=>String(o[k]||'').trim();
+  if(t('txtSalam'))L.salam=t('txtSalam');
+  if(t('txtDoaT'))L.doaT=esc(t('txtDoaT'));
+  if(t('txtDoa'))L.doa=esc(t('txtDoa')).replace(/\n/g,'<br>');
+  if(t('txtIntro')){const own=t('txtIntro');L.intro=h=>esc(own).replace(/\n/g,'<br>').replace(/\{hosts\}/g,`<b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`)}
+  return L}
+const defaultCopy=o=>copyFor({...o,txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:''});
+const plainOf=html=>String(html).replace(/<br\s*\/?>/g,'\n').replace(/<b[^>]*>[^<]*<\/b>/,'\n{hosts}\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/[ \t]+\n/g,'\n').replace(/\n{2,}/g,'\n').trim();
+const greetingFor=o=>({chinese:'Salam sejahtera',indian:'Salam sejahtera',general:'Salam sejahtera'}[o.tradition]||'Assalamualaikum');
 function fmtDate(iso,lang,withDay=true){if(!iso)return'';const d=new Date(iso+'T00:00:00');if(isNaN(d))return'';return (withDay?DAYS[lang][d.getDay()]+', ':'')+`${d.getDate()} ${MONTHS[lang][d.getMonth()]} ${d.getFullYear()}`}
 function fmtShort(iso){if(!iso)return'';const [y,m,d]=iso.split('-');return `${d}.${m}.${y}`}
 function fmtTime(t,lang){if(!t)return'';let [h,m]=t.split(':').map(Number);if(lang==='en'){const ap=h>=12?'PM':'AM';const hh=h%12||12;return `${hh}:${String(m).padStart(2,'0')} ${ap}`}const hh=h>12?h-12:h;return `${hh}.${String(m).padStart(2,'0')} ${T.ms.ampm(h)}`}
@@ -6904,7 +6961,7 @@ const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-l
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
-  const mode=opts.mode||'preview',L=T[o.lang]||T.ms,th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
+  const mode=opts.mode||'preview',L=copyFor(o),th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
   if(o.useAccent&&o.accent){c.accent=o.accent}
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
@@ -6944,7 +7001,7 @@ function renderInvite(host,o,opts={}){
     <section class="sec" data-s="count"><h2>${L.count}</h2><div class="count" data-count>${L.units.map(u=>`<div><b>0</b><span>${u}</span></div>`).join('')}</div></section>
     ${(o.schedule||[]).filter(s=>s.label).length?`<section class="sec" data-s="sched"><h2>${L.sched}</h2>${orn}<ul class="timeline">${o.schedule.filter(s=>s.label).map(s=>`<li><b>${esc(fmtTime(s.time,o.lang))}</b><span>${esc(s.label)}</span></li>`).join('')}</ul></section>`:''}
     ${o.x_gallery&&photos.length?`<section class="sec" data-s="gallery"><h2>${L.gallery}</h2><div class="gallery">${photos.map(p=>`<img src="${p}" alt="">`).join('')}</div></section>`:''}
-    ${o.bismillah?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
+    ${o.bismillah||(o.tradition&&o.tradition!=='malay')||String(o.txtDoa||'').trim()?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
     ${o.x_rsvp?`<section class="sec" data-s="rsvp"><h2>${L.rsvp}</h2>${deadline?`<p class="small it">${L.rsvpSub(esc(deadline))}</p>`:''}<div data-rsvp style="width:100%;display:flex;justify-content:center"></div></section>`:''}
     ${o.x_wishes?`<section class="sec" data-s="wishes"><h2>${L.wishes}</h2>
       <form data-wishform><input name="name" required maxlength="60" placeholder="${L.name}" aria-label="${L.name}"><textarea name="msg" required maxlength="400" rows="3" placeholder="${L.wishPh}" aria-label="${L.wishPh}"></textarea><button class="submit">${L.sendWish}</button><p class="note" data-wishnote hidden></p></form>
@@ -7789,6 +7846,18 @@ function runEffect(el,kind,accent){
 const SAMPLE_WL=[{name:'Periuk nasi Philips HD3119',link:'https://shopee.com.my',price:'RM189'},{name:'Set cadar king, warna krim',link:'',price:'RM120'},{name:'Cerek elektrik keluli',link:'https://lazada.com.my',price:'RM99'},{name:'Baucar IKEA',link:'https://ikea.com.my',price:'RM100'}];
 Object.assign(SAMPLE,{effect:'none',x_wishlist:true,wishlist:SAMPLE_WL,x_counter:true,livestream:'',gifts:[{bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317'},{bank:'Touch ’n Go eWallet',accName:'Muhammad Aiman Hakimi',accNo:'012-345 6789'}],x_epass:false,ownDesign:''});
 
+/* ---------- card sections the couple can hide, rename or add to ---------- */
+const CARD_SECTIONS=[['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
+const DOCK_FOR={rsvp:'rsvp',gift:'gift',contact:'contact',wishes:'wishes'};
+function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"]`);
+  const hide=new Set(Array.isArray(o.hideSecs)?o.hideSecs:[]),titles=o.secTitles&&typeof o.secTitles==='object'?o.secTitles:{};
+  // the couple's own sections go before RSVP (or at the end)
+  const extra=(Array.isArray(o.customSecs)?o.customSecs:[]).filter(x=>x&&(String(x.title||'').trim()||String(x.text||'').trim())).slice(0,6);
+  const anchor=sec('rsvp')||sec('wishes')||el.querySelector('.sheet .foot');
+  extra.forEach((x,i)=>{const h=`<section class="sec" data-s="custom${i}">${String(x.title||'').trim()?`<h2>${esc(String(x.title).trim())}</h2>`:''}<p>${esc(String(x.text||'').trim()).replace(/\n/g,'<br>')}</p></section>`;anchor?anchor.insertAdjacentHTML('beforebegin',h):el.querySelector('.sheet')?.insertAdjacentHTML('beforeend',h)});
+  CARD_SECTIONS.forEach(([k])=>{const s=sec(k);if(!s)return;
+    if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
+    const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
@@ -7832,6 +7901,8 @@ function FEATURES(el,o,th,L,mode,opts){
   const rs=sec('rsvp');if(rs&&o.x_counter){rs.insertAdjacentHTML('beforeend',`<div class="att"><div><b data-att-yes>0</b><span>${L.going}</span></div><div><b data-att-no>0</b><span>${L.notGoing}</span></div></div>`);
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
+  // the couple's section choices: hidden sections, renamed headings, their own sections
+  try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
   if(mode!=='thumb'&&o.effect&&o.effect!=='none')requestAnimationFrame(()=>runEffect(el,o.effect,o.effect==='kelopak'?(th.c.accent||'#b5475d'):th.c.gold));
 }
@@ -13771,7 +13842,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'malay',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -13781,10 +13852,10 @@ function initEditor(){
   fillForm();setTab(tab);paintPreview(true);
 }
 function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.name)continue;const v=draft[el.name];if(el.type==='checkbox')el.checked=!!v;else if(v!=null)el.value=v}
-  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderGifts();renderWl();renderFx();syncDisabled()}
+  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
-function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===4)renderReview()}
+function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
 $('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
@@ -13847,10 +13918,41 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
     if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
     put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
   tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
-  $('#jawi-auto').onclick=()=>{const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
+  $('#jawi-auto').onclick=()=>{const scr=draft.monoScript||TRAD_DEFAULT[draft.tradition||'malay'].monoScript;if(scr==='latin'){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}.`);return}
+    if(scr!=='jawi'){toast(scr==='chinese'?'Type the Chinese characters with your phone keyboard, e.g. 囍 or your surnames 李 王.':'Type the letters with your phone keyboard, e.g. அ & அ.');inp.focus();return}
+    const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
     const how=nm.map((n,i)=>n&&ls2[i]?`${String(n).trim().split(/\s+/)[0]} → ${ls2[i]}`:'').filter(Boolean).join(', ');
     if(v===inp.value.trim()){toast(`Already filled: ${how}.`);inp.focus();return}put(v);toast(`Filled in: ${how}. Check the letters before you publish.`)};
 })();
+/* wedding tradition, monogram script and the card's wording */
+function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript||TRAD_DEFAULT[tr].monoScript;
+  $('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
+  $$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
+    if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
+    fillForm();changed()});
+  $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
+  $$('#mono-pick [data-mono]').forEach(b=>b.onclick=()=>{draft.monoScript=b.dataset.mono;renderTradition();changed()});
+  $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
+  $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
+  // event titles that fit the tradition
+  const sel=$('#f-eventTitle'),L=T[draft.lang]||T.ms,keep=TRAD_EVENTS[tr].includes(draft.eventTitle)?draft.eventTitle:TRAD_EVENTS[tr][0];
+  sel.innerHTML=TRAD_EVENTS[tr].map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
+  renderWording();if(typeof renderContent==="function"&&$("#sec-rows").children.length)renderContent()}
+function renderWording(){const d=defaultCopy(draft);
+  $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}
+$('#txt-reset').onclick=()=>{['txtSalam','txtIntro','txtDoaT','txtDoa'].forEach(k=>{draft[k]='';$('#f-'+k).value=''});changed()};
+['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(renderTradition)));
+/* content step: show / hide / rename sections, the couple's own sections */
+function renderContent(){const L=copyFor(draft),hide=new Set(draft.hideSecs||[]),tt=draft.secTitles||{};
+  $('#sec-rows').innerHTML=CARD_SECTIONS.map(([k,f])=>`<label class="sec-row"><input type="checkbox" data-sk="${k}" ${hide.has(k)?'':'checked'}><input type="text" data-st="${k}" value="${esc(tt[k]||'')}" placeholder="${esc(plainOf(f(L)||''))}" maxlength="60" aria-label="Heading"></label>`).join('');
+  $$('#sec-rows [data-sk]').forEach(c=>c.onchange=e=>{e.stopPropagation();const h=new Set(draft.hideSecs||[]);c.checked?h.delete(c.dataset.sk):h.add(c.dataset.sk);draft.hideSecs=[...h];changed()});
+  $$('#sec-rows [data-st]').forEach(x=>x.oninput=e=>{e.stopPropagation();draft.secTitles={...(draft.secTitles||{}),[x.dataset.st]:x.value};changed()});
+  const cs=draft.customSecs||(draft.customSecs=[]);
+  $('#csec-rows').innerHTML=cs.map((x,i)=>`<div class="csec"><div class="row-line" style="grid-template-columns:1fr auto"><input type="text" data-ci="${i}" data-ck="title" value="${esc(x.title)}" placeholder="Title, e.g. Parking" maxlength="60" aria-label="Section title"><button type="button" class="icon-btn" data-cdel="${i}" aria-label="Remove section">✕</button></div><textarea data-ci="${i}" data-ck="text" rows="3" maxlength="600" placeholder="What guests should know" aria-label="Section text">${esc(x.text)}</textarea></div>`).join('')||'<p class="muted" style="font-size:13px">None yet.</p>';
+  $('#add-csec').disabled=cs.length>=6;
+  $$('#csec-rows [data-ci]').forEach(x=>x.oninput=e=>{e.stopPropagation();cs[x.dataset.ci][x.dataset.ck]=x.value;changed()});
+  $$('#csec-rows [data-cdel]').forEach(b=>b.onclick=()=>{cs.splice(+b.dataset.cdel,1);renderContent();changed()})}
+$('#add-csec').onclick=()=>{(draft.customSecs||(draft.customSecs=[])).push({title:'',text:''});renderContent();changed();$$('#csec-rows [data-ck=title]').pop()?.focus()};
 function renderGifts(){const box=$('#gift-rows');box.innerHTML=draft.gifts.map((g,i)=>`<div class="row-line c4"><select data-i="${i}" data-k="bank" aria-label="Bank">${BANKS.map(b=>`<option ${b===g.bank?'selected':''}>${esc(b)}</option>`).join('')}</select><input type="text" data-i="${i}" data-k="accName" value="${esc(g.accName)}" placeholder="Account holder" aria-label="Account holder"><input type="text" data-i="${i}" data-k="accNo" value="${esc(g.accNo)}" placeholder="Account or phone no." inputmode="numeric" aria-label="Account number"><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove account" ${draft.gifts.length<2?'disabled':''}>✕</button></div>`).join('');
   $('#add-gift').disabled=draft.gifts.length>=3;
   $$('input,select',box).forEach(x=>x.oninput=x.onchange=e=>{e.stopPropagation();draft.gifts[x.dataset.i][x.dataset.k]=x.value;const g0=draft.gifts[0];Object.assign(draft,{bank:g0.bank,accName:g0.accName,accNo:g0.accNo});changed()});
@@ -13865,10 +13967,10 @@ function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
   $('#ed-prev').style.visibility=i?'visible':'hidden';
-  if(i===4)renderReview();else $('#ed-next').textContent='Next'}
+  if(i===5)renderReview();else $('#ed-next').textContent='Next'}
 $$('#ed-tabs [data-tab]').forEach(b=>b.onclick=()=>setTab(+b.dataset.tab));
 $('#ed-prev').onclick=()=>{setTab(Math.max(0,tab-1));window.scrollTo({top:0})};
-$('#ed-next').onclick=()=>{if(tab<4){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
+$('#ed-next').onclick=()=>{if(tab<5){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
 function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
   const extras=[['x_rsvp','RSVP'],['x_counter','Attendance count'],['x_epass','E-pass'],['x_wishes','Ucapan'],['x_music','Music'],['x_gallery','Gallery'],['x_gift','Salam kaut'],['x_wishlist','Wishlist'],['x_contacts','Contacts'],['x_guestlinks','Guest links']].filter(([k])=>o[k]).map(([,l])=>l).concat(o.effect&&o.effect!=='none'?[EFFECTS[o.effect].label]:[],o.livestream?['Livestream']:[],o.ownDesign?['Own design (+RM10)']:[]).join(', ')||'None';
   $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',`${o.brideShort||'—'} & ${o.groomShort||'—'}`],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
@@ -13880,7 +13982,7 @@ function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
 async function proceed(){
   const req=[['brideShort',1,'the bride’s cover name'],['groomShort',1,'the groom’s cover name'],['date',2,'the date'],['venue',2,'the venue']];
   for(const [k,t,l] of req)if(!String(draft[k]||'').trim()){setTab(t);toast(`Add ${l} first.`);const el=$(`[name=${k}]`);el&&el.focus();return}
-  if(JSON.stringify(draft).length>420000){setTab(3);toast('Photos are too large together. Remove one photo and try again.');return}
+  if(JSON.stringify(draft).length>420000){setTab(4);toast('Photos are too large together. Remove one photo and try again.');return}
   const pk=needPkg(draft).id;
   if(editingId){const cur=ORDERS.find(x=>x.id===editingId);if(cur&&rank(pk)<=rank(cur.package)&&!(draft.ownDesign&&!cur.addonOwn)){const upd={...draft,addonOwn:cur.addonOwn,package:cur.package,paid:cur.paid,createdAt:cur.createdAt,updatedAt:Date.now(),slug:cur.slug,status:'live',validUntil:cur.validUntil};delete upd.id;try{await Store.set('orders/'+editingId,upd);toast('Changes saved');selectedId=editingId;draft=null;editingId=null;go('dashboard')}catch(e){toast(e.message)}return}}
   go('checkout');
@@ -13916,7 +14018,7 @@ function initCheckout(){
     ls.set('sanding-draft',null);const done={...order,id};draft=null;editingId=null;promo=0;selectedId=id;showSuccess(done);
   };
 }
-function showSuccess(o){go('success');const link=`sanding.my/${o.slug}`;const wa=`https://wa.me/?text=${encodeURIComponent(`Assalamualaikum. Dengan segala hormatnya kami menjemput anda ke ${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}. Kad jemputan: https://${link}`)}`;
+function showSuccess(o){go('success');const link=`sanding.my/${o.slug}`;const wa=`https://wa.me/?text=${encodeURIComponent(`${greetingFor(o)}. Dengan segala hormatnya kami menjemput anda ke ${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}. Kad jemputan: https://${link}`)}`;
   $('#success-body').innerHTML=`<div class="seal"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 style="font-size:clamp(30px,5vw,46px)">${esc(coverNames(o).join(' & '))}, your card is live</h1>
   <p class="muted" style="max-width:52ch">${esc(PKG[o.package].name)} package, paid RM${o.paid.toFixed(2)}. Your card stays online until ${new Date(o.validUntil).toLocaleDateString('en-MY',{day:'numeric',month:'long',year:'numeric'})}.</p>
   <div class="linkbox"><code>${esc(link)}</code><button type="button" class="btn btn-ghost btn-sm" id="s-copy">Copy</button></div>
@@ -14003,7 +14105,7 @@ function drawDetail(){
     if(diraja){$('#d-guests').oninput=draw;draw()}
   }
 }
-function remindUrl(o,r){const L=T[o.lang]||T.ms;const msg=o.lang==='en'?`Hi ${r.name}, a reminder for ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} on ${fmtDate(o.date,'en')} at ${o.venue}, ${fmtTime(o.start,'en')}. Your guest code: ${rsvpCode(r.id)}. Card: https://sanding.my/${o.slug}`:`Assalamualaikum ${r.name}. Peringatan mesra untuk ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}, ${fmtTime(o.start,'ms')} di ${o.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: https://sanding.my/${o.slug}`;return`https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(msg)}`}
+function remindUrl(o,r){const L=T[o.lang]||T.ms;const msg=o.lang==='en'?`Hi ${r.name}, a reminder for ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} on ${fmtDate(o.date,'en')} at ${o.venue}, ${fmtTime(o.start,'en')}. Your guest code: ${rsvpCode(r.id)}. Card: https://sanding.my/${o.slug}`:`${greetingFor(o)} ${r.name}. Peringatan mesra untuk ${L.ev[o.eventTitle]} ${coverNames(o).join(' & ')} pada ${fmtDate(o.date,'ms')}, ${fmtTime(o.start,'ms')} di ${o.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: https://sanding.my/${o.slug}`;return`https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(msg)}`}
 async function toggleCheckin(o,id,isIn){try{if(isIn)await Store.del(`orders/${o.id}/checkins/${id}`);else{await Store.set(`orders/${o.id}/checkins/${id}`,{at:Date.now()});const r=RSVPS.find(x=>x.id===id);r&&toast(`${r.name} checked in, ${r.pax} pax`)}}catch(e){toast(e.message)}}
 async function startScan(o){const cam=$('#ci-cam');let stream;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){toast('Camera not available. Search by code instead.');return}
   cam.innerHTML='<div class="scan-box"><video playsinline muted></video><span class="muted" style="font-size:13px">Point the camera at the guest’s pass</span></div>';const v=$('video',cam);v.srcObject=stream;await v.play().catch(()=>{});

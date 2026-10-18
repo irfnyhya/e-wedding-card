@@ -24,19 +24,21 @@
           <button role="tab" data-tab="0" aria-selected="true"><span class="ix">1</span>Design</button>
           <button role="tab" data-tab="1" aria-selected="false"><span class="ix">2</span>Couple</button>
           <button role="tab" data-tab="2" aria-selected="false"><span class="ix">3</span>Majlis</button>
-          <button role="tab" data-tab="3" aria-selected="false"><span class="ix">4</span>Extras</button>
-          <button role="tab" data-tab="4" aria-selected="false"><span class="ix">5</span>Review</button>
+          <button role="tab" data-tab="3" aria-selected="false"><span class="ix">4</span>Content</button>
+          <button role="tab" data-tab="4" aria-selected="false"><span class="ix">5</span>Extras</button>
+          <button role="tab" data-tab="5" aria-selected="false"><span class="ix">6</span>Review</button>
         </div>
         <form id="ed-form" autocomplete="off">
           <!-- 1 design -->
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
+              <div class="field full"><span class="lbl">Wedding tradition</span><div class="chips" id="trad-pick" role="group" aria-label="Wedding tradition"></div><span class="hint">Sets the greeting, wording, event titles and monogram. You can change any of them after.</span></div>
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-              <div class="field"><label for="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="rtl" lang="ms-Arab" placeholder="ع ا">
+              <div class="field"><label for="f-jawi">Monogram initials (optional)</label><div class="chips" id="mono-pick" role="group" aria-label="Monogram script" style="margin-bottom:8px"></div><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="ع ا">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
-                <span class="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). "Fill from names" guesses the first letters; check them, e.g. Aisyah starts with ع.</span></div>
+                <span class="hint" id="mono-hint">Shown on the cover of designs with a monogram and as a small seal inside the card. "Fill from names" guesses the letters; check them.</span></div>
             </div>
             <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
             <div class="fam-scroll"><div class="tpl-pick" id="tpl-pick"></div></div>
@@ -81,8 +83,25 @@
             <div class="section-title"><h3>Aturcara majlis</h3><button type="button" class="btn btn-ghost btn-sm" id="add-sched">Add item</button></div>
             <div class="rows" id="sched-rows"></div>
           </div>
-          <!-- 4 extras -->
+          <!-- 4 content -->
           <div class="panel" data-panel="3">
+            <p class="muted">Choose what your card shows, rename the headings, and write in your own words. The phone shows every change.</p>
+            <div class="section-title"><h3>Sections</h3><span class="muted" style="font-size:12px">Untick to hide · type to rename</span></div>
+            <div class="rows" id="sec-rows"></div>
+            <div class="section-title"><h3>Your own sections</h3><button type="button" class="btn btn-ghost btn-sm" id="add-csec">Add section</button></div>
+            <p class="muted" style="font-size:13px;margin:-6px 0 10px">E.g. parking, dress code note, our story, a thank-you. Shown before the RSVP.</p>
+            <div class="rows" id="csec-rows"></div>
+            <div class="section-title"><h3>Wording</h3><button type="button" class="btn btn-ghost btn-sm" id="txt-reset">Reset to default</button></div>
+            <p class="muted" style="font-size:13px;margin:-6px 0 12px">Edit what the card says. Leave a box empty to use the default for your tradition and language. In the invitation text, <code>{hosts}</code> is replaced by the host names.</p>
+            <div class="fieldset">
+              <div class="field full"><label for="f-txtSalam">Greeting</label><input type="text" id="f-txtSalam" name="txtSalam" maxlength="120"></div>
+              <div class="field full"><label for="f-txtIntro">Invitation text</label><textarea id="f-txtIntro" name="txtIntro" rows="4" maxlength="600"></textarea></div>
+              <div class="field"><label for="f-txtDoaT">Closing title</label><input type="text" id="f-txtDoaT" name="txtDoaT" maxlength="60"></div>
+              <div class="field full"><label for="f-txtDoa">Closing blessing / doa</label><textarea id="f-txtDoa" name="txtDoa" rows="3" maxlength="500"></textarea></div>
+            </div>
+          </div>
+          <!-- 4 extras -->
+          <div class="panel" data-panel="4">
             <p class="muted">Turn on what you need. The package updates to the smallest one that covers your choices.</p>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-rsvp" name="x_rsvp" checked><span></span></label><div class="body"><div class="top"><b>RSVP</b><span class="tag">Asas</span></div>
               <div class="fieldset"><div class="field"><label for="f-maxPax">Max pax per RSVP</label><input type="number" id="f-maxPax" name="maxPax" min="1" max="20" value="5"></div><div class="field"><label for="f-deadline">RSVP closes on</label><input type="date" id="f-deadline" name="deadline"></div></div>
@@ -106,7 +125,7 @@
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-guestlinks" name="x_guestlinks"><span></span></label><div class="body"><div class="top"><b>Personal guest links</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Put each guest's name on the cover. Also unlocks CSV export.</p></div></div>
           </div>
           <!-- 5 review -->
-          <div class="panel" data-panel="4">
+          <div class="panel" data-panel="5">
             <div class="summary"><dl id="review-dl"></dl></div>
             <div class="pkg-bar"><div><span class="muted" style="font-size:13px">Your package</span><br><b id="pkg-name">Permata</b></div><div style="text-align:right"><b id="pkg-price">RM59</b><br><span class="muted" style="font-size:12px" id="pkg-why"></span></div></div>
           </div>

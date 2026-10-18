@@ -81,6 +81,18 @@ function runEffect(el,kind,accent){
 const SAMPLE_WL=[{name:'Periuk nasi Philips HD3119',link:'https://shopee.com.my',price:'RM189'},{name:'Set cadar king, warna krim',link:'',price:'RM120'},{name:'Cerek elektrik keluli',link:'https://lazada.com.my',price:'RM99'},{name:'Baucar IKEA',link:'https://ikea.com.my',price:'RM100'}];
 Object.assign(SAMPLE,{effect:'none',x_wishlist:true,wishlist:SAMPLE_WL,x_counter:true,livestream:'',gifts:[{bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317'},{bank:'Touch ’n Go eWallet',accName:'Muhammad Aiman Hakimi',accNo:'012-345 6789'}],x_epass:false,ownDesign:''});
 
+/* ---------- card sections the couple can hide, rename or add to ---------- */
+const CARD_SECTIONS=[['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
+const DOCK_FOR={rsvp:'rsvp',gift:'gift',contact:'contact',wishes:'wishes'};
+function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"]`);
+  const hide=new Set(Array.isArray(o.hideSecs)?o.hideSecs:[]),titles=o.secTitles&&typeof o.secTitles==='object'?o.secTitles:{};
+  // the couple's own sections go before RSVP (or at the end)
+  const extra=(Array.isArray(o.customSecs)?o.customSecs:[]).filter(x=>x&&(String(x.title||'').trim()||String(x.text||'').trim())).slice(0,6);
+  const anchor=sec('rsvp')||sec('wishes')||el.querySelector('.sheet .foot');
+  extra.forEach((x,i)=>{const h=`<section class="sec" data-s="custom${i}">${String(x.title||'').trim()?`<h2>${esc(String(x.title).trim())}</h2>`:''}<p>${esc(String(x.text||'').trim()).replace(/\n/g,'<br>')}</p></section>`;anchor?anchor.insertAdjacentHTML('beforebegin',h):el.querySelector('.sheet')?.insertAdjacentHTML('beforeend',h)});
+  CARD_SECTIONS.forEach(([k])=>{const s=sec(k);if(!s)return;
+    if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
+    const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
@@ -124,6 +136,8 @@ function FEATURES(el,o,th,L,mode,opts){
   const rs=sec('rsvp');if(rs&&o.x_counter){rs.insertAdjacentHTML('beforeend',`<div class="att"><div><b data-att-yes>0</b><span>${L.going}</span></div><div><b data-att-no>0</b><span>${L.notGoing}</span></div></div>`);
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
+  // the couple's section choices: hidden sections, renamed headings, their own sections
+  try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
   if(mode!=='thumb'&&o.effect&&o.effect!=='none')requestAnimationFrame(()=>runEffect(el,o.effect,o.effect==='kelopak'?(th.c.accent||'#b5475d'):th.c.gold));
 }

@@ -78,7 +78,7 @@ const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-l
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
-  const mode=opts.mode||'preview',L=T[o.lang]||T.ms,th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
+  const mode=opts.mode||'preview',L=copyFor(o),th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
   if(o.useAccent&&o.accent){c.accent=o.accent}
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
@@ -118,7 +118,7 @@ function renderInvite(host,o,opts={}){
     <section class="sec" data-s="count"><h2>${L.count}</h2><div class="count" data-count>${L.units.map(u=>`<div><b>0</b><span>${u}</span></div>`).join('')}</div></section>
     ${(o.schedule||[]).filter(s=>s.label).length?`<section class="sec" data-s="sched"><h2>${L.sched}</h2>${orn}<ul class="timeline">${o.schedule.filter(s=>s.label).map(s=>`<li><b>${esc(fmtTime(s.time,o.lang))}</b><span>${esc(s.label)}</span></li>`).join('')}</ul></section>`:''}
     ${o.x_gallery&&photos.length?`<section class="sec" data-s="gallery"><h2>${L.gallery}</h2><div class="gallery">${photos.map(p=>`<img src="${p}" alt="">`).join('')}</div></section>`:''}
-    ${o.bismillah?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
+    ${o.bismillah||(o.tradition&&o.tradition!=='malay')||String(o.txtDoa||'').trim()?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
     ${o.x_rsvp?`<section class="sec" data-s="rsvp"><h2>${L.rsvp}</h2>${deadline?`<p class="small it">${L.rsvpSub(esc(deadline))}</p>`:''}<div data-rsvp style="width:100%;display:flex;justify-content:center"></div></section>`:''}
     ${o.x_wishes?`<section class="sec" data-s="wishes"><h2>${L.wishes}</h2>
       <form data-wishform><input name="name" required maxlength="60" placeholder="${L.name}" aria-label="${L.name}"><textarea name="msg" required maxlength="400" rows="3" placeholder="${L.wishPh}" aria-label="${L.wishPh}"></textarea><button class="submit">${L.sendWish}</button><p class="note" data-wishnote hidden></p></form>
