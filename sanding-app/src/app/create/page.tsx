@@ -22,7 +22,7 @@ export default async function CreatePage({ searchParams }: PageProps<'/create'>)
     if (template || names) await admin.from('orders').update({ content: sanitizeCard({ ...draft.content, ...(untouched ? namesOverride(names) : {}), ...(template ? { template } : {}) }) }).eq('id', draft.id);
     redirect(`/editor/${draft.id}`);
   }
-  const content = sanitizeCard({ ...SAMPLE, ytMusic: '', ytStart: '', ...namesOverride(names), ...(template ? { template } : {}) });
+  const content = sanitizeCard({ ...SAMPLE, ...namesOverride(names), ...(template ? { template } : {}) });
   const { data, error } = await admin.from('orders').insert({ owner_id: user.id, content }).select('id').single();
   if (error || !data) throw new Error(error?.message || 'Could not create a card.');
   redirect(`/editor/${data.id}`);

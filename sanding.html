@@ -13746,9 +13746,9 @@ function initDesigns(){
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
 const blankExtras={ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
-function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),ytMusic:'',ytStart:'',id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
+function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
-  if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),ytMusic:'',ytStart:'',id:null,slug:''};editingId=null}
+  if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
   draft={...blankExtras,...draft};if(!draft.gifts)draft.gifts=[{bank:draft.bank||'Maybank',accName:draft.accName||'',accNo:draft.accNo||''}];
   $('#ed-title').textContent=editingId?'Edit card':'Create your card';
   $('#ed-eyebrow').textContent=editingId?`Editing sanding.my/${draft.slug}`:'New card · filled with example details, replace them with yours';
