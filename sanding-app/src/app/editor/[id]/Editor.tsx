@@ -145,10 +145,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const LC = copyFor(c);
   const hidden = new Set(c.hideSecs || []);
   const setCs = (cs: Card['customSecs']) => set('customSecs', cs);
+  const isDemoPhoto = /couple-demo\.jpg$/.test(c.couplePhoto || '');
 
   async function proceed() {
     const miss = missingField(c);
     if (miss) { setTab(miss[1]); flash(`Add ${miss[2]} first.`); return; }
+    if (isDemoPhoto) { setTab(1); flash('Replace the sample couple photo with yours, or remove it, before publishing.'); return; }
     try { await save(); } catch (e) { flash((e as Error).message); return; }
     if (covered) { flash('Changes saved'); router.push(`/dashboard?card=${orderId}`); return; }
     router.push(`/checkout/${orderId}`);
@@ -235,8 +237,8 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="section-title"><h3>Couple photo</h3><span className="muted" style={{ fontSize: 12 }}>Optional</span></div>
               <p className="muted" style={{ fontSize: 13, margin: '-6px 0 10px' }}>Shown in an arched frame at the top of the card, right after it opens. Portrait photos work best.</p>
               <div className="uploads">
-                {c.couplePhoto ? <div className="ph tall"><img src={c.couplePhoto} alt="Couple photo" /><button type="button" aria-label="Remove couple photo" onClick={() => removeMedia(c.couplePhoto, 'couple')}>✕</button></div>
-                  : <label className="add" style={{ height: 150 }}>{uploading === 'couple' ? 'Uploading…' : 'Add photo'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'couple'); }} /></label>}
+                {c.couplePhoto && <div className="ph tall"><img src={c.couplePhoto} alt="Couple photo" /><button type="button" aria-label="Remove couple photo" onClick={() => removeMedia(c.couplePhoto, 'couple')}>✕</button></div>}
+                {(!c.couplePhoto || isDemoPhoto) && <label className="add" style={{ height: 150 }}>{uploading === 'couple' ? 'Uploading…' : isDemoPhoto ? <>Sample photo<br />replace with yours</> : 'Add photo'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'couple'); }} /></label>}
               </div>
               <div className="section-title"><h3>Hosts</h3></div>
               <div className="fieldset">

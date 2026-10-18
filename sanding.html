@@ -13861,9 +13861,9 @@ function initDesigns(){
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
 const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
-function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),couplePhoto:'',id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
+function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
-  if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),couplePhoto:'',id:null,slug:''};editingId=null}
+  if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
   draft={...blankExtras,...draft};if(!draft.gifts)draft.gifts=[{bank:draft.bank||'Maybank',accName:draft.accName||'',accNo:draft.accNo||''}];
   $('#ed-title').textContent=editingId?'Edit card':'Create your card';
   $('#ed-eyebrow').textContent=editingId?`Editing sanding.my/${draft.slug}`:'New card · filled with example details, replace them with yours';
@@ -13916,7 +13916,7 @@ function renderUploads(){
   const q=$('#qr-upload');q.innerHTML=draft.qr?`<div class="ph"><img src="${draft.qr}" alt="DuitNow QR"><button type="button" data-rmqr aria-label="Remove QR">✕</button></div>`:`<label class="add" for="qr-in">Upload QR<input type="file" id="qr-in" accept="image/*"></label>`;
   $('[data-rmqr]',q)?.addEventListener('click',()=>{draft.qr='';renderUploads();changed()});
   $('#qr-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.qr=await shrink(f,320,'image/png');renderUploads();changed()}catch(err){toast(err.message)}});
-  const cu=$('#couple-upload');cu.innerHTML=draft.couplePhoto?`<div class="ph tall"><img src="${esc(draft.couplePhoto)}" alt="Couple photo"><button type="button" data-rmcp aria-label="Remove couple photo">✕</button></div>`:`<label class="add" for="cp-in" style="height:150px">Add photo<input type="file" id="cp-in" accept="image/*"></label>`;
+  const cu=$('#couple-upload');cu.innerHTML=draft.couplePhoto?`<div class="ph tall"><img src="${esc(draft.couplePhoto)}" alt="Couple photo"><button type="button" data-rmcp aria-label="Remove couple photo">✕</button></div>${/couple-demo\.jpg$/.test(draft.couplePhoto)?`<label class="add" for="cp-in" style="height:150px">Sample photo<br>replace with yours<input type="file" id="cp-in" accept="image/*"></label>`:''}`:`<label class="add" for="cp-in" style="height:150px">Add photo<input type="file" id="cp-in" accept="image/*"></label>`;
   $('[data-rmcp]',cu)?.addEventListener('click',()=>{draft.couplePhoto='';renderUploads();changed()});
   $('#cp-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.couplePhoto=await shrink(f,900,'image/jpeg',.74);renderUploads();changed()}catch(err){toast(err.message)}});
   const ow=$('#own-upload');ow.innerHTML=draft.ownDesign?`<div class="ph tall"><img src="${draft.ownDesign}" alt="Your design"><button type="button" data-rmown aria-label="Remove your design">✕</button></div>`:`<label class="add" for="own-in" style="height:150px">Upload artwork<input type="file" id="own-in" accept="image/*"></label>`;
@@ -14001,6 +14001,7 @@ function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
 async function proceed(){
   const req=[['brideShort',1,'the bride’s cover name'],['groomShort',1,'the groom’s cover name'],['date',2,'the date'],['venue',2,'the venue']];
   for(const [k,t,l] of req)if(!String(draft[k]||'').trim()){setTab(t);toast(`Add ${l} first.`);const el=$(`[name=${k}]`);el&&el.focus();return}
+  if(/couple-demo\.jpg$/.test(draft.couplePhoto||'')){setTab(1);toast('Replace the sample couple photo with yours, or remove it, before publishing.');return}
   if(JSON.stringify(draft).length>420000){setTab(4);toast('Photos are too large together. Remove one photo and try again.');return}
   const pk=needPkg(draft).id;
   if(editingId){const cur=ORDERS.find(x=>x.id===editingId);if(cur&&rank(pk)<=rank(cur.package)&&!(draft.ownDesign&&!cur.addonOwn)){const upd={...draft,addonOwn:cur.addonOwn,package:cur.package,paid:cur.paid,createdAt:cur.createdAt,updatedAt:Date.now(),slug:cur.slug,status:'live',validUntil:cur.validUntil};delete upd.id;try{await Store.set('orders/'+editingId,upd);toast('Changes saved');selectedId=editingId;draft=null;editingId=null;go('dashboard')}catch(e){toast(e.message)}return}}
