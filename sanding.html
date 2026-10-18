@@ -244,6 +244,19 @@ input:focus,select:focus,textarea:focus{outline:1px solid var(--fg);border-color
 .uploads label.add{width:84px;height:84px;border:1px dashed var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:12px;text-align:center}
 .uploads input{display:none}
 .switch-sp{flex:0 0 40px}
+/* design step: the grid scrolls inside its own box; extra options fold away; Back/Next stay on screen */
+.fam-scroll{max-height:min(66vh,720px);overflow-y:auto;padding:4px 6px 14px 4px;margin:0 -6px 18px -4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);scrollbar-width:thin;overscroll-behavior:contain}
+.fam-scroll .fam-pick{padding-top:10px}
+.fam-pick{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1200px){.fam-pick{grid-template-columns:repeat(4,minmax(0,1fr))}}
+details.more-opts{border-bottom:1px solid var(--line);margin-bottom:8px}
+details.more-opts>summary{cursor:pointer;list-style:none;padding:14px 0;font-family:var(--f-display);font-size:20px;display:flex;flex-direction:column;gap:2px}
+details.more-opts>summary::-webkit-details-marker{display:none}
+details.more-opts>summary::before{content:"+ ";font-family:var(--f-body);font-size:16px}
+details.more-opts[open]>summary::before{content:"2  "}
+details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
+.foot-nav{position:sticky;bottom:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:12px 0;border-top:1px solid var(--line);margin-top:8px}
+
 /* no visible scrollbars inside the phone preview or on the step tabs (still scrollable) */
 .inv .scroller,.phone .screen,.phone .screen *,.tabs,#ed-tabs,.ed-tabs{scrollbar-width:none;-ms-overflow-style:none}
 .inv .scroller::-webkit-scrollbar,.phone .screen::-webkit-scrollbar,.phone .screen *::-webkit-scrollbar,.tabs::-webkit-scrollbar,#ed-tabs::-webkit-scrollbar,.ed-tabs::-webkit-scrollbar{display:none;width:0;height:0}
@@ -471,8 +484,6 @@ tr:last-child td{border-bottom:0}
           <!-- 1 design -->
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
-            <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
-            <div class="tpl-pick" id="tpl-pick"></div>
             <div class="fieldset">
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
               <div class="field"><label for="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="rtl" lang="ms-Arab" placeholder="ع ا">
@@ -480,10 +491,14 @@ tr:last-child td{border-bottom:0}
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
                 <span class="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). "Fill from names" guesses the first letters; check them, e.g. Aisyah starts with ع.</span></div>
             </div>
+            <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
+            <div class="fam-scroll"><div class="tpl-pick" id="tpl-pick"></div></div>
+            <details class="more-opts"><summary>More design options <span class="muted">Bismillah, accent colour, effect, own artwork</span></summary>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-bismillah" name="bismillah" checked><span></span></label><div class="body"><div class="top"><b>Show Bismillah and doa</b></div><p class="muted" style="font-size:13px">Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-useAccent" name="useAccent"><span></span></label><div class="body"><div class="top"><b>Custom accent colour</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Match the card to your wedding colours.</p><input type="color" id="f-accent" name="accent" value="#c08a2e" style="width:64px;height:36px;border:1px solid var(--line);border-radius:8px;background:none"></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Effect</b><span class="tag">Asas</span></div><p class="muted" style="font-size:13px">A light layer that drifts over the card. Kept slow and sparse so it never fights the design.</p><div style="display:flex;gap:8px;flex-wrap:wrap" id="fx-pick"></div></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Use your own design</b><span class="tag brass">+RM10</span></div><p class="muted" style="font-size:13px">Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p><div class="uploads" id="own-upload"></div></div></div>
+            </details>
           </div>
           <!-- 2 couple -->
           <div class="panel" data-panel="1">

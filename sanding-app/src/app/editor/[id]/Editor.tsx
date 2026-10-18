@@ -170,8 +170,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
           <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
             {tab === 0 && <div className="panel on">
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
+              <div className="fieldset">
+                <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
+                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
+              </div>
               <p className="muted" style={{ fontSize: 13, margin: '-4px 0 14px' }}>Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
-              <div className="fam-pick">
+              <div className="fam-scroll"><div className="fam-pick">
                 {families().map(([k, f]) => {
                   const list = THEMES.filter((t) => t.fam === k);
                   const cur = themeOf(c.template), mine = cur.fam === k, shown = mine ? cur : list[0];
@@ -192,11 +196,8 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                     </div>,
                   ];
                 })}
-              </div>
-              <div className="fieldset">
-                <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
-              </div>
+              </div></div>
+              <details className="more-opts"><summary>More design options <span className="muted">Bismillah, accent colour, effect, own artwork, WhatsApp preview</span></summary>
               <div className="toggle-row"><Toggle label="Show Bismillah and doa" checked={c.bismillah} onChange={(v) => set('bismillah', v)} /><div className="body"><div className="top"><b>Show Bismillah and doa</b></div><p className="muted" style={{ fontSize: 13 }}>Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
               <div className="toggle-row"><Toggle label="Custom accent colour" checked={c.useAccent} onChange={(v) => set('useAccent', v)} /><div className="body"><div className="top"><b>Custom accent colour</b>{tag('Diraja')}</div><p className="muted" style={{ fontSize: 13 }}>Match the card to your wedding colours.</p>
                 <input type="color" aria-label="Accent colour" value={c.accent} onChange={(e) => set('accent', e.target.value)} style={{ width: 64, height: 36, border: '1px solid var(--line)', borderRadius: 8, background: 'none', ...dim(c.useAccent) }} /></div></div>
@@ -212,6 +213,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   {c.ogImage ? <><img src={c.ogImage} alt="Link preview" /><button type="button" className="icon-btn" aria-label="Remove link preview image" onClick={() => removeMedia(c.ogImage, 'og')}>✕</button></>
                     : <label className="add" style={{ height: '100%', width: '100%' }}>{uploading === 'og' ? 'Uploading…' : 'Upload preview image'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'og'); }} /></label>}
                 </div></div></div>
+              </details>
             </div>}
 
             {tab === 1 && <div className="panel on">
