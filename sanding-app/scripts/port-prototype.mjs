@@ -75,7 +75,7 @@ js = js.replace(/\b(src|href)="assets\//g, '$1="/assets/');
 const literalAssets = js.match(/["'`(]assets\//g);
 if (literalAssets) throw new Error(`asset paths not using A: ${literalAssets.length}`);
 
-const EXPORTS = ['CARD_SECTIONS', 'TRADITIONS', 'TRAD_EVENTS', 'TRAD_DEFAULT', 'MONO_SCRIPTS', 'copyFor', 'defaultCopy', 'plainOf', 'greetingFor', '$', '$$', 'esc', 'ICON', 'A', 'ASP', 'FAMILIES', 'THEMES', 'THEME', 'LEGACY', 'themeOf', 'CATS', 'TONES', 'toneOf', 'dotColor',
+const EXPORTS = ['ALL_EVENTS', 'CARD_SECTIONS', 'TRADITIONS', 'TRAD_EVENTS', 'TRAD_DEFAULT', 'MONO_SCRIPTS', 'copyFor', 'defaultCopy', 'plainOf', 'greetingFor', '$', '$$', 'esc', 'ICON', 'A', 'ASP', 'FAMILIES', 'THEMES', 'THEME', 'LEGACY', 'themeOf', 'CATS', 'TONES', 'toneOf', 'dotColor',
   'swatchBg', 'swatchEl', 'T', 'DAYS', 'MONTHS', 'fmtDate', 'fmtShort', 'fmtTime', 'calUrl', 'mapsUrl', 'wazeUrl', 'coverNames', 'waNum',
   'Music', 'SAMPLE', 'SAMPLE_WISHES', 'frontPage', 'coverHTML', 'renderInvite', 'copyText',
   'EFFECTS', 'rsvpCode', 'giftList', 'safeUrl', 'icsText', 'saveFile', 'qrSvg'];

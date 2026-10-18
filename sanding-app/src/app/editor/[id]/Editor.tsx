@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, MONO_SCRIPTS, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, TRAD_DEFAULT, TRAD_EVENTS, TRADITIONS } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, MONO_SCRIPTS, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, TRAD_DEFAULT, ALL_EVENTS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -141,7 +141,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const setEv = (i: number, k: keyof EventItem, v: string) => set('events', c.events.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   const L = T[c.lang];
   const script = c.monoScript || TRAD_DEFAULT[c.tradition || 'malay'].monoScript;
-  const evOpts = Array.from(new Set([...(TRAD_EVENTS[c.tradition || 'malay'] || []), c.eventTitle]));
+  const evOpts = Array.from(new Set([...ALL_EVENTS, c.eventTitle]));
   const dflt = defaultCopy(c);
   const LC = copyFor(c);
   const hidden = new Set(c.hideSecs || []);
@@ -176,11 +176,6 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
           <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
             {tab === 0 && <div className="panel on">
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
-              <div className="field" style={{ marginBottom: 14 }}><span className="lbl">Wedding tradition</span>
-                <div className="chips" role="group" aria-label="Wedding tradition">{Object.entries(TRADITIONS).map(([k, l]) => (
-                  <button key={k} type="button" className="chip" aria-pressed={c.tradition === k} onClick={() => { if (k === c.tradition) return; const d = TRAD_DEFAULT[k];
-                    dirty.current = true; setC((o) => ({ ...o, tradition: k as Card['tradition'], eventTitle: d.eventTitle as Card['eventTitle'], bismillah: d.bismillah, monoScript: d.monoScript as Card['monoScript'], jawi: d.monoScript !== 'jawi' && /[\u0600-\u06FF]/.test(o.jawi) ? '' : o.jawi })); }}>{l}</button>))}</div>
-                <span className="hint">Sets the greeting, wording, event titles and monogram. You can change any of them after.</span></div>
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
                 <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} script={script} onScript={(k) => set('monoScript', k as Card['monoScript'])} scripts={MONO_SCRIPTS} />

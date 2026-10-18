@@ -49,6 +49,7 @@ export const swatchBg: (t: Theme) => string;
 export const T: Record<'ms' | 'en', any>;
 export const TRADITIONS: Record<string, string>;
 export const TRAD_EVENTS: Record<string, string[]>;
+export const ALL_EVENTS: string[];
 export const TRAD_DEFAULT: Record<string, { eventTitle: string; bismillah: boolean; monoScript: string }>;
 export const MONO_SCRIPTS: Record<string, string>;
 export function copyFor(o: Partial<Card>): any;

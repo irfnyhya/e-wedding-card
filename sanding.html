@@ -491,7 +491,6 @@ tr:last-child td{border-bottom:0}
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
-              <div class="field full"><span class="lbl">Wedding tradition</span><div class="chips" id="trad-pick" role="group" aria-label="Wedding tradition"></div><span class="hint">Sets the greeting, wording, event titles and monogram. You can change any of them after.</span></div>
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
               <div class="field"><label for="f-jawi">Monogram initials (optional)</label><div class="chips" id="mono-pick" role="group" aria-label="Monogram script" style="margin-bottom:8px"></div><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="ع ا">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
@@ -6780,6 +6779,7 @@ const T={
 Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
 Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
 const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const ALL_EVENTS=['kahwin','walimah','resepsi','bertandang','nikah','tunang','banquet','tea','ceremony','mehndi'];
 const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
 const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
 const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};
@@ -6887,9 +6887,9 @@ Object.assign(T.en,{tapSeal:'Tap the seal to open',openDoors:'Open',openVellum:'
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================= sample content (used for gallery previews) ================= */
-const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:true,useAccent:false,accent:'#7a1b29',jawi:'ع ا',
+const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:false,useAccent:false,accent:'#7a1b29',jawi:'',tradition:'general',monoScript:'latin',
   brideFull:'Nur Aisyah Humaira binti Ahmad Faizal',brideShort:'Aisyah',groomFull:'Muhammad Aiman Hakimi bin Rahman',groomShort:'Aiman',
-  hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'walimah',
+  hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'kahwin',
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',
   schedule:[{time:'11:00',label:'Ketibaan tetamu'},{time:'12:30',label:'Ketibaan pengantin'},{time:'13:00',label:'Makan beradab & bacaan doa'},{time:'16:00',label:'Majlis bersurai'}],
   x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'sax',ytMusic:'https://youtu.be/lY5V4hSLWY8',ytStart:'',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
@@ -13842,7 +13842,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'malay',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -13926,8 +13926,8 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
 })();
 /* wedding tradition, monogram script and the card's wording */
 function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript||TRAD_DEFAULT[tr].monoScript;
-  $('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
-  $$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
+  if($('#trad-pick'))$('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
+  $$('#trad-pick [data-trad]')&&$$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
     if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
     fillForm();changed()});
   $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
@@ -13935,8 +13935,8 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
   $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
   $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
   // event titles that fit the tradition
-  const sel=$('#f-eventTitle'),L=T[draft.lang]||T.ms,keep=TRAD_EVENTS[tr].includes(draft.eventTitle)?draft.eventTitle:TRAD_EVENTS[tr][0];
-  sel.innerHTML=TRAD_EVENTS[tr].map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
+  const sel=$('#f-eventTitle'),keep=ALL_EVENTS.includes(draft.eventTitle)?draft.eventTitle:'kahwin';
+  sel.innerHTML=ALL_EVENTS.map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
   renderWording();if(typeof renderContent==="function"&&$("#sec-rows").children.length)renderContent()}
 function renderWording(){const d=defaultCopy(draft);
   $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}

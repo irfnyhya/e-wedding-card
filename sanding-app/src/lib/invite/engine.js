@@ -109,6 +109,7 @@ const T={
 Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
 Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
 const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const ALL_EVENTS=['kahwin','walimah','resepsi','bertandang','nikah','tunang','banquet','tea','ceremony','mehndi'];
 const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
 const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
 const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};
@@ -217,9 +218,9 @@ Object.assign(T.en,{tapSeal:'Tap the seal to open',openDoors:'Open',openVellum:'
 const REDUCED=typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================= sample content (used for gallery previews) ================= */
-const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:true,useAccent:false,accent:'#7a1b29',jawi:'ع ا',
+const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:false,useAccent:false,accent:'#7a1b29',jawi:'',tradition:'general',monoScript:'latin',
   brideFull:'Nur Aisyah Humaira binti Ahmad Faizal',brideShort:'Aisyah',groomFull:'Muhammad Aiman Hakimi bin Rahman',groomShort:'Aiman',
-  hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'walimah',
+  hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'kahwin',
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',
   schedule:[{time:'11:00',label:'Ketibaan tetamu'},{time:'12:30',label:'Ketibaan pengantin'},{time:'13:00',label:'Makan beradab & bacaan doa'},{time:'16:00',label:'Majlis bersurai'}],
   x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'sax',ytMusic:'https://youtu.be/lY5V4hSLWY8',ytStart:'',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
@@ -7075,4 +7076,4 @@ CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.f
 /* needFont() fonts are loaded by src/app/fonts.ts */
 
 
-export {CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
+export {ALL_EVENTS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};

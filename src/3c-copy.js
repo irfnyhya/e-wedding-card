@@ -30,6 +30,7 @@ const T={
 Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
 Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
 const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const ALL_EVENTS=['kahwin','walimah','resepsi','bertandang','nikah','tunang','banquet','tea','ceremony','mehndi'];
 const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
 const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
 const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};

@@ -136,7 +136,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'malay',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -220,8 +220,8 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
 })();
 /* wedding tradition, monogram script and the card's wording */
 function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript||TRAD_DEFAULT[tr].monoScript;
-  $('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
-  $$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
+  if($('#trad-pick'))$('#trad-pick').innerHTML=Object.entries(TRADITIONS).map(([k,l])=>`<button type="button" class="chip" data-trad="${k}" aria-pressed="${tr===k}">${l}</button>`).join('');
+  $$('#trad-pick [data-trad]')&&$$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
     if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
     fillForm();changed()});
   $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
@@ -229,8 +229,8 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
   $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
   $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
   // event titles that fit the tradition
-  const sel=$('#f-eventTitle'),L=T[draft.lang]||T.ms,keep=TRAD_EVENTS[tr].includes(draft.eventTitle)?draft.eventTitle:TRAD_EVENTS[tr][0];
-  sel.innerHTML=TRAD_EVENTS[tr].map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
+  const sel=$('#f-eventTitle'),keep=ALL_EVENTS.includes(draft.eventTitle)?draft.eventTitle:'kahwin';
+  sel.innerHTML=ALL_EVENTS.map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
   renderWording();if(typeof renderContent==="function"&&$("#sec-rows").children.length)renderContent()}
 function renderWording(){const d=defaultCopy(draft);
   $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}
