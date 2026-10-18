@@ -36,8 +36,8 @@ export type PackageId = 'asas' | 'premium' | 'diraja';
 
 export const PKGS: { id: PackageId; name: string; price: number; days: number; feats: string[] }[] = [
   { id: 'asas', name: 'Asas', price: 29, days: 60, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Card opens counted in your dashboard', 'Online for 60 days'] },
-  { id: 'premium', name: 'Kencana', price: 59, days: 120, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Background music', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp', 'Online for 120 days'] },
-  { id: 'diraja', name: 'Diraja', price: 99, days: 365, feats: ['Everything in Kencana', 'Personal guest links with names', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export', 'Online for 1 year'] },
+  { id: 'premium', name: 'Permata', price: 59, days: 120, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Background music', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp', 'Online for 120 days'] },
+  { id: 'diraja', name: 'Diraja', price: 99, days: 365, feats: ['Everything in Permata', 'Personal guest links with names', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export', 'Online for 1 year'] },
 ];
 export const PKG = Object.fromEntries(PKGS.map((p) => [p.id, p])) as Record<PackageId, (typeof PKGS)[number]>;
 export const rank = (id: string | null | undefined) => PKGS.findIndex((p) => p.id === id); // -1 for none

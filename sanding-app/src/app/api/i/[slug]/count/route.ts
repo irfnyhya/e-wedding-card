@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { json } from '@/lib/api';
 import { rank } from '@/lib/card';
 
-// GET -> { pax, no } for the live attendance counter (Kencana). Totals only, no names.
+// GET -> { pax, no } for the live attendance counter (Permata). Totals only, no names.
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/i/[slug]/count'>) {
   const { slug } = await ctx.params;
   const admin = supabaseAdmin();

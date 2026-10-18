@@ -149,7 +149,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   }
 
   const dim = (on: boolean) => ({ opacity: on ? 1 : 0.45 });
-  const tag = (p: 'Asas' | 'Kencana' | 'Diraja') => <span className={`tag ${p === 'Diraja' ? 'brass' : ''}`}>{p}</span>;
+  const tag = (p: 'Asas' | 'Permata' | 'Diraja') => <span className={`tag ${p === 'Diraja' ? 'brass' : ''}`}>{p}</span>;
 
   return (
     <div className="wrap">
@@ -267,21 +267,21 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   <div className="field"><label htmlFor="f-dl">RSVP closes on</label><input type="date" id="f-dl" value={c.deadline} onChange={(e) => set('deadline', e.target.value)} /></div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, ...dim(c.x_rsvp) }}>
-                  <label className="check"><input type="checkbox" checked={c.x_counter} onChange={(e) => set('x_counter', e.target.checked)} /> Show the live count of guests attending on the card {tag('Kencana')}</label>
+                  <label className="check"><input type="checkbox" checked={c.x_counter} onChange={(e) => set('x_counter', e.target.checked)} /> Show the live count of guests attending on the card {tag('Permata')}</label>
                   <label className="check"><input type="checkbox" checked={c.x_epass} onChange={(e) => set('x_epass', e.target.checked)} /> Give each attending guest an e-pass with a QR code for check-in {tag('Diraja')}</label>
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Ucapan" checked={c.x_wishes} onChange={(v) => set('x_wishes', v)} /><div className="body"><div className="top"><b>Ucapan (wishes wall)</b>{tag('Kencana')}</div></div></div>
-              <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Kencana')}</div>
+              <div className="toggle-row"><Toggle label="Ucapan" checked={c.x_wishes} onChange={(v) => set('x_wishes', v)} /><div className="body"><div className="top"><b>Ucapan (wishes wall)</b>{tag('Permata')}</div></div></div>
+              <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Permata')}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', ...dim(c.x_music) }}>
                   {Object.entries(Music.tracks).map(([k, t]) => <button key={k} type="button" className="chip" aria-pressed={c.music === k} onClick={() => { setC((o) => ({ ...o, music: k, x_music: true })); dirty.current = true; if (Music.playing()) Music.play(k); }}>{t.label}</button>)}
                   <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'musicbox'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Photo gallery" checked={c.x_gallery} onChange={(v) => set('x_gallery', v)} /><div className="body"><div className="top"><b>Photo gallery</b>{tag('Kencana')}<span className="muted" style={{ fontSize: 12 }}>Up to {MAX_PHOTOS} photos</span></div>
+              <div className="toggle-row"><Toggle label="Photo gallery" checked={c.x_gallery} onChange={(v) => set('x_gallery', v)} /><div className="body"><div className="top"><b>Photo gallery</b>{tag('Permata')}<span className="muted" style={{ fontSize: 12 }}>Up to {MAX_PHOTOS} photos</span></div>
                 <div className="uploads" style={dim(c.x_gallery)}>
                   {c.photos.map((p, i) => <div className="ph" key={p}><img src={p} alt={`Photo ${i + 1}`} /><button type="button" aria-label="Remove photo" onClick={() => removeMedia(p, 'photo')}>✕</button></div>)}
                   {c.photos.length < MAX_PHOTOS && <label className="add">{uploading === 'photo' ? 'Uploading…' : 'Add photo'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'photo'); }} /></label>}
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Salam kaut" checked={c.x_gift} onChange={(v) => set('x_gift', v)} /><div className="body"><div className="top"><b>Salam kaut (money gift)</b>{tag('Kencana')}</div>
+              <div className="toggle-row"><Toggle label="Salam kaut" checked={c.x_gift} onChange={(v) => set('x_gift', v)} /><div className="body"><div className="top"><b>Salam kaut (money gift)</b>{tag('Permata')}</div>
                 <div className="fieldset" style={dim(c.x_gift)}>
                   <div className="field full"><span className="lbl">Accounts (up to 3)</span>
                     <div className="rows">
@@ -301,7 +301,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                       : <label className="add">{uploading === 'qr' ? 'Uploading…' : 'Upload QR'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'qr'); }} /></label>}
                   </div></div>
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Gift wishlist" checked={c.x_wishlist} onChange={(v) => set('x_wishlist', v)} /><div className="body"><div className="top"><b>Gift wishlist</b>{tag('Kencana')}<button type="button" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} disabled={c.wishlist.length >= 12} onClick={() => { setC((o) => ({ ...o, x_wishlist: true, wishlist: [...o.wishlist, { name: '', price: '', link: '' }] })); dirty.current = true; }}>Add item</button></div>
+              <div className="toggle-row"><Toggle label="Gift wishlist" checked={c.x_wishlist} onChange={(v) => set('x_wishlist', v)} /><div className="body"><div className="top"><b>Gift wishlist</b>{tag('Permata')}<button type="button" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} disabled={c.wishlist.length >= 12} onClick={() => { setC((o) => ({ ...o, x_wishlist: true, wishlist: [...o.wishlist, { name: '', price: '', link: '' }] })); dirty.current = true; }}>Add item</button></div>
                 <p className="muted" style={{ fontSize: 13 }}>Guests reserve an item so nobody brings the same gift. You see who reserved what in the dashboard.</p>
                 <div className="rows" style={dim(c.x_wishlist)}>
                   {c.wishlist.map((w, i) => (
@@ -313,7 +313,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                     </div>
                   ))}
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Contacts" checked={c.x_contacts} onChange={(v) => set('x_contacts', v)} /><div className="body"><div className="top"><b>Contacts for guests</b>{tag('Kencana')}<button type="button" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} disabled={c.contacts.length >= 3} onClick={() => set('contacts', [...c.contacts, { name: '', role: '', phone: '' }])}>Add contact</button></div>
+              <div className="toggle-row"><Toggle label="Contacts" checked={c.x_contacts} onChange={(v) => set('x_contacts', v)} /><div className="body"><div className="top"><b>Contacts for guests</b>{tag('Permata')}<button type="button" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} disabled={c.contacts.length >= 3} onClick={() => set('contacts', [...c.contacts, { name: '', role: '', phone: '' }])}>Add contact</button></div>
                 <div className="rows" style={dim(c.x_contacts)}>
                   {c.contacts.map((ct, i) => (
                     <div className="row-line c3" key={i}>
