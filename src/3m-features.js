@@ -86,6 +86,9 @@ function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
   // own design as the front page
   if(o.ownDesign){const pg=$('.scroller > .page',el);if(pg)pg.outerHTML=`<section class="page pg-own"><img src="${esc(o.ownDesign)}" alt="${esc(coverNames(o).join(' & '))}"></section>`}
+  // Jawi initials on every design: designs that already show them are left alone; the rest get a small seal in the invitation text
+  const jw=String(o.jawi||'').trim();
+  if(jw&&!(el.textContent||'').includes(jw)){const intro=sec('intro');if(intro)intro.insertAdjacentHTML('afterbegin',`<div class="jawi-seal" aria-label="Jawi initials"><span>${esc(jw)}</span></div>`)}
   // calendar: add the .ics button next to Google
   const ib=$('[data-s="when"] .ibtns',el);if(ib)ib.insertAdjacentHTML('beforeend',`<button type="button" class="ibtn" data-ics>${ICON.cal}${L.appleCal}</button>`);
   // livestream

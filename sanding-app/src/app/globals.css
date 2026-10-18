@@ -237,9 +237,25 @@ input:focus,select:focus,textarea:focus{outline:1px solid var(--fg);border-color
 .uploads label.add{width:84px;height:84px;border:1px dashed var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:12px;text-align:center}
 .uploads input{display:none}
 .switch-sp{flex:0 0 40px}
+/* design step: the grid scrolls inside its own box; extra options fold away; Back/Next stay on screen */
+.fam-scroll{max-height:min(66vh,720px);overflow-y:auto;padding:4px 6px 14px 4px;margin:0 -6px 18px -4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);scrollbar-width:thin;overscroll-behavior:contain}
+.fam-scroll .fam-pick{padding-top:10px}
+.fam-pick{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1200px){.fam-pick{grid-template-columns:repeat(4,minmax(0,1fr))}}
+details.more-opts{border-bottom:1px solid var(--line);margin-bottom:8px}
+details.more-opts>summary{cursor:pointer;list-style:none;padding:14px 0;font-family:var(--f-display);font-size:20px;display:flex;flex-direction:column;gap:2px}
+details.more-opts>summary::-webkit-details-marker{display:none}
+details.more-opts>summary::before{content:"+ ";font-family:var(--f-body);font-size:16px}
+details.more-opts[open]>summary::before{content:"2  "}
+details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
+.foot-nav{position:sticky;bottom:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:12px 0;border-top:1px solid var(--line);margin-top:8px}
+
+/* no visible scrollbars inside the phone preview or on the step tabs (still scrollable) */
+.inv .scroller,.phone .screen,.phone .screen *,.tabs,#ed-tabs,.ed-tabs{scrollbar-width:none;-ms-overflow-style:none}
+.inv .scroller::-webkit-scrollbar,.phone .screen::-webkit-scrollbar,.phone .screen *::-webkit-scrollbar,.tabs::-webkit-scrollbar,#ed-tabs::-webkit-scrollbar,.ed-tabs::-webkit-scrollbar{display:none;width:0;height:0}
 .jawi-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .jawi-kb{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));min-width:0;max-width:100%;gap:4px;margin-top:8px;padding:8px;border:1px solid var(--line);background:var(--surface);direction:rtl}
-.jawi-kb[hidden]{display:none}
+.jawi-kb[hidden]{display:none}.jawi-kb .jawi-digits{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;padding-bottom:6px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
 .jawi-kb button{font-family:"Amiri",serif;font-size:20px;line-height:1;padding:8px 0;border:1px solid var(--line);background:var(--bg);cursor:pointer;border-radius:4px}
 .jawi-kb button:hover{border-color:var(--fg)}
 .jawi-kb button.wide{grid-column:span 3;font-family:var(--f-body);font-size:12px;letter-spacing:.06em}
@@ -1734,6 +1750,10 @@ tr:last-child td{border-bottom:0}
 @media (prefers-reduced-motion: reduce){.inv .roll,.inv .unroll,.inv .curtain,.inv .cv-gate2 .gate,.inv .hoop2{transition:none}.inv .hangtag2{animation:none}}
 
 /* ===== guest features: wishlist, gift accounts, counter, livestream, gallery, e-pass, effects ===== */
+/* Jawi initials seal for designs that do not show them */
+.inv .jawi-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px transparent,inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 60%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 10%,transparent),transparent 70%)}
+.inv .jawi-seal span{font-family:"Aref Ruqaa","Amiri",serif;font-size:24px;line-height:1;direction:rtl;padding-top:4px}
 /* the hidden YouTube player for the couple's own song */
 .inv .yt-host{position:absolute;left:0;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 /* safety net: once a card has opened, no cover may stay on top of the page */

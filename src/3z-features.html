@@ -1,5 +1,9 @@
 <style>
 /* ===== guest features: wishlist, gift accounts, counter, livestream, gallery, e-pass, effects ===== */
+/* Jawi initials seal for designs that do not show them */
+.inv .jawi-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px transparent,inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 60%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 10%,transparent),transparent 70%)}
+.inv .jawi-seal span{font-family:"Aref Ruqaa","Amiri",serif;font-size:24px;line-height:1;direction:rtl;padding-top:4px}
 /* the hidden YouTube player for the couple's own song */
 .inv .yt-host{position:absolute;left:0;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 /* safety net: once a card has opened, no cover may stay on top of the page */
