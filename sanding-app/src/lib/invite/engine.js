@@ -143,7 +143,19 @@ const Music=(()=>{
       if(i===2||i===6)brush(t,.022,.32,1800);
       const MEL=[[null,null,74,72,70,null,69,null],[null,null,67,null,69,null,70,null],[69,null,null,null,67,null,64,null],[65,null,null,null,null,null,62,null],
                  [null,null,65,67,69,null,70,null],[72,null,null,null,70,null,69,null],[67,null,64,null,65,null,null,null],[null,null,null,null,null,null,null,null]];
-      const n=MEL[bar][i];if(n)tone(n+12,t,MEL[bar][i+1]==null?2.2:.9,.07,'vibe')}}
+      const n=MEL[bar][i];if(n)tone(n+12,t,MEL[bar][i+1]==null?2.2:.9,.07,'vibe')}},
+    // senja: an original wistful solo-piano jazz waltz (3/4) in A minor / C major, with gentle rubato
+    senja:{label:'Senja (piano waltz)',spb:s=>{const i=s%6,bar=(s/6|0)%16;return (i===0?.29:.26)*(bar%4===3&&i>3?1.18:1)},fn(s,t){const bar=(s/6|0)%16,i=s%6;
+      // Am9 | Dmaj7/F# | Fmaj7 | E7sus-E7 | Am9 | D9 | Gmaj7 | Cmaj7 | Fmaj7 | Bm7b5 | E7 | Am9 | Dm9 | G13 | Cmaj9 | Esus-E
+      const R=[45,42,41,40,45,38,43,36,41,47,40,45,38,43,36,40];
+      const V=[[55,59,60,64],[54,57,61,64],[57,60,64,65],[56,59,62,64],[55,59,60,64],[54,57,60,64],[54,57,59,62],[55,59,62,64],[57,60,64,67],[57,59,62,65],[56,59,62,64],[55,59,60,64],[53,57,60,64],[53,57,59,64],[55,59,62,64],[56,59,62,64]];
+      if(i===0){tone(R[bar]-12,t,2.4,.14,'piano');tone(R[bar],t+.02,2,.07,'piano')}
+      if(i===2||i===4)V[bar].forEach((m,k)=>tone(m,t+k*.012,1.1,.035,'piano'));
+      const MEL=[[76,null,77,79,null,81],[null,null,79,null,76,null],[77,null,null,76,74,72],[71,null,null,null,null,null],
+                 [76,null,77,79,null,84],[null,null,83,null,81,null],[79,null,null,78,79,81],[76,null,null,null,null,null],
+                 [77,null,76,77,null,81],[null,null,79,null,77,null],[76,null,null,74,null,71],[72,null,null,null,76,null],
+                 [77,null,null,76,null,74],[null,null,null,null,72,74],[76,null,null,null,null,null],[null,null,71,null,72,74]];
+      const n=MEL[bar][i];if(n){let d=1;for(let k=i+1;k<6&&MEL[bar][k]==null;k++)d++;tone(n+12,t,Math.min(3,.32*d+.6),.085,'piano')}}}
   };
   function loop(){while(next<ctx.currentTime+.25){TR[cur].fn(step,next);const sp=TR[cur].spb;next+=typeof sp==='function'?sp(step):sp;step++}}
   return{tracks:TR,current:()=>cur,
@@ -166,7 +178,7 @@ const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismil
   hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'walimah',
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',
   schedule:[{time:'11:00',label:'Ketibaan tetamu'},{time:'12:30',label:'Ketibaan pengantin'},{time:'13:00',label:'Makan beradab & bacaan doa'},{time:'16:00',label:'Majlis bersurai'}],
-  x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'jazz',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
+  x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'senja',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
   x_contacts:true,contacts:[{name:'Ahmad Faizal',role:'Bapa pengantin',phone:'012-345 6789'},{name:'Hafiz',role:'Abang pengantin',phone:'019-876 5432'}],x_guestlinks:false,
   events:[{label:'Majlis Akad Nikah',date:'2026-12-18',start:'20:30',end:'22:00',venue:'Masjid Sultan Salahuddin Abdul Aziz Shah',address:'Persiaran Masjid, Seksyen 14, 40000 Shah Alam, Selangor'}],ogImage:''};
 const SAMPLE_WISHES=[{id:'s1',name:'Mak Ngah Rosnah',msg:'Selamat pengantin baru Aisyah & Aiman. Semoga berkekalan hingga ke jannah.',at:Date.now()-3600e3},{id:'s2',name:'Farah, rakan sekolah',msg:'Tahniah! Tak sabar nak datang. Semoga bahagia selalu.',at:Date.now()-7200e3},{id:'s3',name:'Keluarga Encik Zul',msg:'Barakallahu lakuma. Semoga dimurahkan rezeki.',at:Date.now()-86400e3}];

@@ -14,7 +14,7 @@ const DEFS: [string, string][] = [
   ['Salam kaut', 'Bank account with one-tap copy and your DuitNow QR.'],
   ['Aturcara', 'The programme of the day, from ketibaan tetamu to bersurai.'],
   ['Pautan peribadi', 'A link for each guest with their name on the envelope: "Dengan hormatnya kepada Pak Long Hashim".'],
-  ['Muzik', 'Four original tracks that start when the card is opened: soft swing jazz, piano, music box or gamelan.'],
+  ['Muzik', 'Five original tracks that start when the card is opened: a dreamy piano waltz, soft swing jazz, piano, music box or gamelan.'],
   ['Dua bahasa', 'The whole card in Bahasa Melayu or English, with Bismillah and doa if you want them.'],
 ];
 
