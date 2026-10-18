@@ -18,7 +18,7 @@ export type Card = {
   events: EventItem[];
   schedule: ScheduleItem[];
   x_rsvp: boolean; maxPax: number; deadline: string; x_counter: boolean; x_epass: boolean;
-  x_wishes: boolean; x_music: boolean; music: string;
+  x_wishes: boolean; x_music: boolean; music: string; ytMusic: string; ytStart: string;
   x_gallery: boolean; photos: string[];
   /** gifts[0] is mirrored into bank/accName/accNo for older renderers. */
   x_gift: boolean; gifts: GiftAccount[]; bank: string; accName: string; accNo: string; qr: string;
@@ -88,7 +88,7 @@ export const TEMPLATE_IDS = THEMES.map((t) => t.id);
 /** Ids from the first collection; existing orders keep rendering through this map. */
 export const LEGACY_TEMPLATES: Record<string, string> = LEGACY;
 export const templateId = (v: unknown) => (typeof v === 'string' && TEMPLATE_IDS.includes(v) ? v : typeof v === 'string' && LEGACY_TEMPLATES[v] ? LEGACY_TEMPLATES[v] : null);
-export const MUSIC_IDS = ['jazz'];
+export const MUSIC_IDS = ['sax'];
 
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/;
 export const RESERVED_SLUGS = new Set(['contoh', 'api', 'auth', 'login', 'logout', 'dashboard', 'designs', 'create', 'editor', 'checkout', 'pay', 'admin', 'about', 'pricing', 'help', 'static', '_next', 'favicon.ico', 'robots.txt', 'sitemap.xml']);
@@ -105,6 +105,8 @@ const bool = (v: unknown) => v === true || v === 'true';
 const oneOf = <T extends string>(v: unknown, list: readonly T[], d: T): T => (list.includes(v as T) ? (v as T) : d);
 const isoDate = (v: unknown) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '');
 const hhmm = (v: unknown) => (typeof v === 'string' && /^\d{2}:\d{2}$/.test(v) ? v : '');
+// the couple's own song: only real YouTube video links are kept
+const ytLink = (v: unknown) => { const s = String(v ?? '').trim().slice(0, 200); return /^https:\/\/(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\//i.test(s) && /(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)[\w-]{11}/.test(s) ? s : ''; };
 const linkUrl = (v: unknown) => {
   const s = str(v, 300).trim();
   return /^https?:\/\/[^\s"'<>]+$/i.test(s) ? s : '';
@@ -137,7 +139,7 @@ export function sanitizeCard(input: unknown): Card {
     schedule: arr(o.schedule).slice(0, 12).map((s: Record<string, unknown>) => ({ time: hhmm(s?.time), label: str(s?.label, 80) })),
     x_rsvp: bool(o.x_rsvp), maxPax: Math.max(1, Math.min(20, Math.round(Number(o.maxPax) || 1))), deadline: isoDate(o.deadline),
     x_counter: bool(o.x_counter), x_epass: bool(o.x_epass),
-    x_wishes: bool(o.x_wishes), x_music: bool(o.x_music), music: oneOf(o.music, MUSIC_IDS, 'jazz'),
+    x_wishes: bool(o.x_wishes), x_music: bool(o.x_music), music: oneOf(o.music, MUSIC_IDS, 'sax'), ytMusic: ytLink(o.ytMusic), ytStart: str(o.ytStart, 8).replace(/[^\d:ms]/g, ''),
     x_gallery: bool(o.x_gallery), photos: arr(o.photos).map(mediaUrl).filter(Boolean).slice(0, 6),
     x_gift: bool(o.x_gift), gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '', qr: mediaUrl(o.qr),
     x_wishlist: bool(o.x_wishlist),

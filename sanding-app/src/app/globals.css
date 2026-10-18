@@ -1709,6 +1709,8 @@ tr:last-child td{border-bottom:0}
 @media (prefers-reduced-motion: reduce){.inv .roll,.inv .unroll,.inv .curtain,.inv .cv-gate2 .gate,.inv .hoop2{transition:none}.inv .hangtag2{animation:none}}
 
 /* ===== guest features: wishlist, gift accounts, counter, livestream, gallery, e-pass, effects ===== */
+/* the hidden YouTube player for the couple's own song */
+.inv .yt-host{position:absolute;left:0;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 /* safety net: once a card has opened, no cover may stay on top of the page */
 .inv.opened > .cover{opacity:0!important;pointer-events:none!important;transition:opacity .5s!important}
 .inv .fx{position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none}

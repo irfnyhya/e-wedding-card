@@ -278,7 +278,13 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Permata')}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', ...dim(c.x_music) }}>
                   {Object.entries(Music.tracks).map(([k, t]) => <button key={k} type="button" className="chip" aria-pressed={c.music === k} onClick={() => { setC((o) => ({ ...o, music: k, x_music: true })); dirty.current = true; if (Music.playing()) Music.play(k); }}>{t.label}</button>)}
-                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'jazz'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'sax'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
+                </div>
+                <div className="fieldset" style={dim(c.x_music)}>
+                  <div className="field"><label htmlFor="f-yt">Or your own song: YouTube link</label><input type="url" id="f-yt" placeholder="https://youtu.be/…" value={c.ytMusic} maxLength={200} onChange={(e) => { const v = e.target.value; setC((o) => ({ ...o, ytMusic: v, x_music: v ? true : o.x_music })); dirty.current = true; }} />
+                    <span className="hint">Paste any YouTube link, e.g. a saxophone cover. It plays instead of our track when guests open the card.</span>
+                    {c.ytMusic && !/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)[\w-]{11}/.test(c.ytMusic) && <span className="err-msg">That doesn’t look like a YouTube video link.</span>}</div>
+                  <div className="field"><label htmlFor="f-yts">Start at (optional)</label><input type="text" id="f-yts" placeholder="0:45" value={c.ytStart} maxLength={8} onChange={(e) => set('ytStart', e.target.value)} /><span className="hint">Skip an intro: minutes:seconds.</span></div>
                 </div></div></div>
               <div className="toggle-row"><Toggle label="Photo gallery" checked={c.x_gallery} onChange={(v) => set('x_gallery', v)} /><div className="body"><div className="top"><b>Photo gallery</b>{tag('Permata')}<span className="muted" style={{ fontSize: 12 }}>Up to {MAX_PHOTOS} photos</span></div>
                 <div className="uploads" style={dim(c.x_gallery)}>

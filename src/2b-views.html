@@ -87,7 +87,10 @@
               <label class="check"><input type="checkbox" id="x-epass" name="x_epass"> Give each attending guest an e-pass with a QR code for check-in <span class="tag brass">Diraja</span></label></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-wishes" name="x_wishes" checked><span></span></label><div class="body"><div class="top"><b>Ucapan (wishes wall)</b><span class="tag">Permata</span></div></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-music" name="x_music" checked><span></span></label><div class="body"><div class="top"><b>Background music</b><span class="tag">Permata</span></div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap" id="music-pick"></div></div></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap" id="music-pick"></div>
+              <div class="fieldset"><div class="field"><label for="f-ytMusic">Or your own song: YouTube link</label><input type="url" id="f-ytMusic" name="ytMusic" placeholder="https://youtu.be/…"><span class="hint">Paste any YouTube link, e.g. a saxophone cover. It plays instead of our track when guests open the card.</span></div>
+              <div class="field"><label for="f-ytStart">Start at (optional)</label><input type="text" id="f-ytStart" name="ytStart" placeholder="0:45"><span class="hint">Skip an intro: minutes:seconds.</span></div></div>
+              <p class="err-msg" id="yt-bad" hidden>That doesn’t look like a YouTube video link.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-gallery" name="x_gallery"><span></span></label><div class="body"><div class="top"><b>Photo gallery</b><span class="tag">Permata</span><span class="muted" style="font-size:12px">Up to 6 photos</span></div>
               <div class="uploads" id="gal-uploads"></div></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="x-gift" name="x_gift"><span></span></label><div class="body"><div class="top"><b>Salam kaut (money gift)</b><span class="tag">Permata</span></div>

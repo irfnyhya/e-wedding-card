@@ -9,7 +9,7 @@ const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismil
   hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'walimah',
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',
   schedule:[{time:'11:00',label:'Ketibaan tetamu'},{time:'12:30',label:'Ketibaan pengantin'},{time:'13:00',label:'Makan beradab & bacaan doa'},{time:'16:00',label:'Majlis bersurai'}],
-  x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'jazz',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
+  x_rsvp:true,maxPax:5,deadline:'2026-12-05',x_wishes:true,x_music:true,music:'sax',x_gallery:false,photos:[],x_gift:true,bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317',qr:'',
   x_contacts:true,contacts:[{name:'Ahmad Faizal',role:'Bapa pengantin',phone:'012-345 6789'},{name:'Hafiz',role:'Abang pengantin',phone:'019-876 5432'}],x_guestlinks:false,
   events:[{label:'Majlis Akad Nikah',date:'2026-12-18',start:'20:30',end:'22:00',venue:'Masjid Sultan Salahuddin Abdul Aziz Shah',address:'Persiaran Masjid, Seksyen 14, 40000 Shah Alam, Selangor'}],ogImage:''};
 const SAMPLE_WISHES=[{id:'s1',name:'Mak Ngah Rosnah',msg:'Selamat pengantin baru Aisyah & Aiman. Semoga berkekalan hingga ke jannah.',at:Date.now()-3600e3},{id:'s2',name:'Farah, rakan sekolah',msg:'Tahniah! Tak sabar nak datang. Semoga bahagia selalu.',at:Date.now()-7200e3},{id:'s3',name:'Keluarga Encik Zul',msg:'Barakallahu lakuma. Semoga dimurahkan rezeki.',at:Date.now()-86400e3}];
@@ -130,22 +130,24 @@ function renderInvite(host,o,opts={}){
    <nav class="dock" style="grid-template-columns:repeat(${dock.length},1fr)">${dock.map(([k,ic,lb])=>`<button type="button" data-dock="${k}">${ic}<span>${lb}</span></button>`).join('')}</nav>
   </div>
   ${coverHTML(o,th,L,guest,mode)}
-  ${o.x_music&&o.music?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}`;
+  ${o.x_music&&(o.music||ytIdOf(o.ytMusic))?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}`;
   host.replaceChildren(el);
   const scroller=$('.scroller',el);
   el.__order=o;try{typeof FEATURES!=='undefined'&&FEATURES(el,o,th,L,mode,opts)}catch(e){console.warn('features',e)}
   el.classList.add('skin');try{typeof SKINS!=='undefined'&&SKINS[th.fam]&&SKINS[th.fam](el,o,th,L,mode)}catch(e){console.warn('skin',th.fam,e)}
   const musicBtn=$('[data-music]',el);
-  const setMusicIcon=()=>{if(!musicBtn)return;const on=Music.playing();musicBtn.classList.toggle('playing',on);musicBtn.innerHTML=on?ICON.music:ICON.mute};
+  const yt=o.x_music&&mode!=='thumb'?Tube.attach(el,ytIdOf(o.ytMusic),ytStartOf(o.ytStart)):null;
+  const playSong=()=>yt?Tube.play(yt):Music.play(o.music),stopSong=()=>yt?Tube.pause(yt):Music.stop(),songOn=()=>yt?yt.playing:Music.playing();
+  const setMusicIcon=()=>{if(!musicBtn)return;const on=songOn();musicBtn.classList.toggle('playing',on);musicBtn.innerHTML=on?ICON.music:ICON.mute};
   const timers=[];
   const open=(instant)=>{if(el.classList.contains('opening'))return;el.classList.add('opening');
-    if(musicBtn){musicBtn.hidden=false;if(!instant&&opts.autoplay!==false)Music.play(o.music);setMusicIcon()}
+    if(musicBtn){musicBtn.hidden=false;if(!instant&&opts.autoplay!==false)playSong();setMusicIcon()}
     if(instant||REDUCED){el.classList.add('card-out','opened');return}
     if(th.fam==='sampul'){timers.push(setTimeout(()=>el.classList.add('card-out'),950),setTimeout(()=>el.classList.add('opened'),2100))}
     else timers.push(setTimeout(()=>el.classList.add('opened'),FAM2[th.fam]?.ms||(th.fam==='mihrab'?1250:1000)));};
   $('[data-open]',el)?.addEventListener('click',()=>open(false));
   if(mode==='preview'&&opts.opened)open(true);
-  musicBtn?.addEventListener('click',()=>{Music.playing()?Music.stop():Music.play(o.music);setMusicIcon()});
+  musicBtn?.addEventListener('click',()=>{songOn()?stopSong():playSong();setMusicIcon()});
   el.reopen=()=>{timers.forEach(clearTimeout);el.classList.remove('opening','card-out','opened');scroller.scrollTop=0};
   // countdown
   const cd=$('[data-count]',el);

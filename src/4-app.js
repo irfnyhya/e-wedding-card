@@ -136,7 +136,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -152,6 +152,7 @@ let saveT=null,pvT=null;
 function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===4)renderReview()}
 $('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
+$('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
 function paintPreview(){const host=$('#ed-preview');const old=$('.scroller',host);const st=old?old.scrollTop:0;const opened=$('.inv',host)?.classList.contains('opened');
   renderInvite(host,draft,{mode:'preview',opened:opened??previewOpened});const sc=$('.scroller',host);if(sc)sc.scrollTop=st}
 $('#pv-cover').onclick=()=>{$('#ed-preview .inv')?.reopen?.()};
@@ -161,7 +162,7 @@ function renderTplPick(){$('#tpl-pick').className='tpl-groups';$('#tpl-pick').in
   $$('[data-tpl]').forEach(b=>b.onclick=()=>{draft.template=b.dataset.tpl;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()})}
 function renderMusicPick(){const box=$('#music-pick');box.innerHTML=Object.entries(Music.tracks).map(([k,t])=>`<button type="button" class="chip" data-trk="${k}" aria-pressed="${draft.music===k}">${esc(t.label)}</button>`).join('')+`<button type="button" class="btn btn-ghost btn-sm" id="trk-play">${Music.playing()?'Stop':'Play'}</button>`;
   $$('[data-trk]',box).forEach(b=>b.onclick=()=>{draft.music=b.dataset.trk;if(!draft.x_music){draft.x_music=true;$('#x-music').checked=true}if(Music.playing())Music.play(draft.music);renderMusicPick();changed()});
-  $('#trk-play').onclick=()=>{Music.playing()?Music.stop():Music.play(draft.music||'jazz');renderMusicPick()}}
+  $('#trk-play').onclick=()=>{Music.playing()?Music.stop():Music.play(draft.music||'sax');renderMusicPick()}}
 function renderSched(){const box=$('#sched-rows');box.innerHTML=draft.schedule.map((s,i)=>`<div class="row-line"><input type="time" data-i="${i}" data-k="time" value="${esc(s.time)}" aria-label="Time"><input type="text" data-i="${i}" data-k="label" value="${esc(s.label)}" aria-label="Item"><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove item">✕</button></div>`).join('')||'<p class="muted" style="font-size:13px">No items yet.</p>';
   $$('input',box).forEach(x=>x.oninput=e=>{e.stopPropagation();draft.schedule[x.dataset.i][x.dataset.k]=x.value;changed()});
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.schedule.splice(+b.dataset.del,1);renderSched();changed()})}
