@@ -34,7 +34,10 @@
             <div class="tpl-pick" id="tpl-pick"></div>
             <div class="fieldset">
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-              <div class="field"><label for="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="rtl" placeholder="ع ا"><span class="hint">Shown on the Mihrab doors and Ukiran monogram.</span></div>
+              <div class="field"><label for="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="rtl" lang="ms-Arab" placeholder="ع ا">
+                <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
+                <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
+                <span class="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). "Fill from names" guesses the first letters; check them, e.g. Aisyah starts with ع.</span></div>
             </div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-bismillah" name="bismillah" checked><span></span></label><div class="body"><div class="top"><b>Show Bismillah and doa</b></div><p class="muted" style="font-size:13px">Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-useAccent" name="useAccent"><span></span></label><div class="body"><div class="top"><b>Custom accent colour</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Match the card to your wedding colours.</p><input type="color" id="f-accent" name="accent" value="#c08a2e" style="width:64px;height:36px;border:1px solid var(--line);border-radius:8px;background:none"></div></div>

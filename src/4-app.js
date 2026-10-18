@@ -183,6 +183,24 @@ function renderUploads(){
   $('[data-rmown]',ow)?.addEventListener('click',()=>{draft.ownDesign='';renderUploads();changed()});
   $('#own-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.ownDesign=await shrink(f,1000,'image/jpeg',.7);renderUploads();changed()}catch(err){toast(err.message)}});
 }
+/* Jawi initials: an on-screen letter pad (most phones have no Jawi keyboard) and a best guess from the names */
+const JAWI_KEYS='ا ب ت ث ج چ ح خ د ذ ر ز س ش ص ض ط ظ ع غ ڠ ف ڤ ق ک ݢ ل م ن و ۏ ه ة ء ي ڽ'.split(' ');
+const JAWI_FIRST={a:'ا',b:'ب',c:'چ',d:'د',e:'ا',f:'ف',g:'ݢ',h:'ح',i:'ا',j:'ج',k:'ک',l:'ل',m:'م',n:'ن',o:'ا',p:'ڤ',q:'ق',r:'ر',s:'س',t:'ت',u:'ا',v:'ۏ',w:'و',x:'ک',y:'ي',z:'ز'};
+// common names whose Jawi spelling starts with a different letter than the Rumi guess
+const JAWI_NAME={aisyah:'ع',aishah:'ع',ali:'ع',alia:'ع',aliya:'ع',aliyah:'ع',abdul:'ع',abd:'ع',abdullah:'ع',umar:'ع',uthman:'ع',usman:'ع',ain:'ع',aina:'ع',izzah:'ع',izzati:'ع',iffah:'ع',imran:'ع',isa:'ع',adib:'ا',syafiq:'ش',syahirah:'ش',syazwani:'ش',sharifah:'ش',syed:'س',safiyyah:'ص',sabrina:'ص',solehah:'ص',zahra:'ز',zulaikha:'ز',hakim:'ح',hawa:'ح',harith:'ح',hana:'ه',hani:'ه',hidayah:'ه',taufiq:'ت',tahir:'ط',thahirah:'ط',dhia:'ض',khadijah:'خ',khairul:'خ',ghazali:'غ',qistina:'ق',qaisara:'ق'};
+function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/\s+/)[0]||'';if(!w)return'';
+  if(JAWI_NAME[w])return JAWI_NAME[w];if(w.startsWith('sy'))return'ش';if(w.startsWith('kh'))return'خ';if(w.startsWith('gh'))return'غ';if(w.startsWith('ng'))return'ڠ';if(w.startsWith('ny'))return'ڽ';return JAWI_FIRST[w[0]]||''}
+(()=>{const inp=$('#f-jawi'),kb=$('#jawi-kb'),tg=$('#jawi-toggle');if(!inp||!kb)return;
+  kb.innerHTML=JAWI_KEYS.map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'<button type="button" class="wide" data-k=" ">Space</button><button type="button" class="wide" data-k="del">Delete</button><button type="button" class="wide" data-k="clr">Clear</button>';
+  const put=v=>{inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}))};
+  kb.addEventListener('mousedown',e=>e.preventDefault()); // keep the caret in the field
+  kb.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k,v=inp.value;let st=inp.selectionStart??v.length,en=inp.selectionEnd??v.length;
+    if(k==='clr'){put('');return}
+    if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
+    put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
+  tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
+  $('#jawi-auto').onclick=()=>{const [a,b]=coverNames(draft||{});const v=[jawiInitial(a),jawiInitial(b)].filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}put(v);toast('Jawi initials filled in. Check the letters before you publish.')};
+})();
 function renderGifts(){const box=$('#gift-rows');box.innerHTML=draft.gifts.map((g,i)=>`<div class="row-line c4"><select data-i="${i}" data-k="bank" aria-label="Bank">${BANKS.map(b=>`<option ${b===g.bank?'selected':''}>${esc(b)}</option>`).join('')}</select><input type="text" data-i="${i}" data-k="accName" value="${esc(g.accName)}" placeholder="Account holder" aria-label="Account holder"><input type="text" data-i="${i}" data-k="accNo" value="${esc(g.accNo)}" placeholder="Account or phone no." inputmode="numeric" aria-label="Account number"><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove account" ${draft.gifts.length<2?'disabled':''}>✕</button></div>`).join('');
   $('#add-gift').disabled=draft.gifts.length>=3;
   $$('input,select',box).forEach(x=>x.oninput=x.onchange=e=>{e.stopPropagation();draft.gifts[x.dataset.i][x.dataset.k]=x.value;const g0=draft.gifts[0];Object.assign(draft,{bank:g0.bank,accName:g0.accName,accNo:g0.accNo});changed()});
