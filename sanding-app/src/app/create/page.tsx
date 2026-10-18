@@ -19,7 +19,9 @@ export default async function CreatePage({ searchParams }: PageProps<'/create'>)
   // names typed in "Personalise preview" on the collection carry into the new draft
   const names = typeof sp.bride === 'string' ? parseNames(`${sp.bride} & ${typeof sp.groom === 'string' ? sp.groom : ''}`) : null;
   if (draft && (!sp.fresh || untouched)) {
-    if (template || names) await admin.from('orders').update({ content: sanitizeCard({ ...draft.content, ...(untouched ? namesOverride(names) : {}), ...(template ? { template } : {}) }) }).eq('id', draft.id);
+    // drafts made before the couple photo existed get the sample photo, so the feature is visible
+    const noPhotoYet = !('couplePhoto' in (draft.content || {}));
+    if (template || names || noPhotoYet) await admin.from('orders').update({ content: sanitizeCard({ ...draft.content, ...(noPhotoYet ? { couplePhoto: SAMPLE.couplePhoto } : {}), ...(untouched ? namesOverride(names) : {}), ...(template ? { template } : {}) }) }).eq('id', draft.id);
     redirect(`/editor/${draft.id}`);
   }
   const content = sanitizeCard({ ...SAMPLE, ...namesOverride(names), ...(template ? { template } : {}) });
