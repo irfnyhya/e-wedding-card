@@ -4,7 +4,7 @@ Object.assign(T.en,{tapSeal:'Tap the seal to open',openDoors:'Open',openVellum:'
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================= sample content (used for gallery previews) ================= */
-const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:false,useAccent:false,accent:'#7a1b29',jawi:'',tradition:'general',monoScript:'latin',
+const SAMPLE={id:'sample',slug:'contoh',template:'sampul-merah',lang:'ms',bismillah:false,useAccent:false,accent:'#7a1b29',jawi:'',tradition:'general',monoScript:'latin',couplePhoto:A+'couple-demo.jpg',
   brideFull:'Nur Aisyah Humaira binti Ahmad Faizal',brideShort:'Aisyah',groomFull:'Muhammad Aiman Hakimi bin Rahman',groomShort:'Aiman',
   hosts:'Ahmad Faizal bin Yusof & Siti Khadijah binti Ismail',side:'bride',eventTitle:'kahwin',
   date:'2026-12-19',hijri:'8 Rejab 1448H',start:'11:00',end:'16:00',venue:'Dewan Seri Melati',address:'Jalan Kristal 7/62, Seksyen 7, 40000 Shah Alam, Selangor',dress:'Maroon & gading',

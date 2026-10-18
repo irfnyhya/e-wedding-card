@@ -139,7 +139,7 @@ function FEATURES(el,o,th,L,mode,opts){
   // the couple's photo, framed, at the top of the inside of the card
   const cp=String(o.couplePhoto||'').trim();
   if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
-    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" loading="lazy" decoding="async"></figure></section>`;
+    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async"></figure></section>`;
     intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
