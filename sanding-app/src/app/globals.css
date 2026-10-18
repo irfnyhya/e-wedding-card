@@ -6472,3 +6472,7 @@ input[type=email]:focus,input[type=password]:focus{outline:1px solid var(--fg);b
 .fc-opt[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:2px}
 @media (max-width:900px){.fam-pick{grid-template-columns:repeat(3,minmax(0,1fr))}.fc-row{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:560px){.fam-pick{grid-template-columns:repeat(2,minmax(0,1fr))}.fc-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* no visible scrollbars inside the phone preview or on the step tabs (still scrollable) */
+.inv .scroller,.phone .screen,.phone .screen *,.tabs,#ed-tabs,.ed-tabs{scrollbar-width:none;-ms-overflow-style:none}
+.inv .scroller::-webkit-scrollbar,.phone .screen::-webkit-scrollbar,.phone .screen *::-webkit-scrollbar,.tabs::-webkit-scrollbar,#ed-tabs::-webkit-scrollbar,.ed-tabs::-webkit-scrollbar{display:none;width:0;height:0}

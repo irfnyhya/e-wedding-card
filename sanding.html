@@ -244,6 +244,9 @@ input:focus,select:focus,textarea:focus{outline:1px solid var(--fg);border-color
 .uploads label.add{width:84px;height:84px;border:1px dashed var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:12px;text-align:center}
 .uploads input{display:none}
 .switch-sp{flex:0 0 40px}
+/* no visible scrollbars inside the phone preview or on the step tabs (still scrollable) */
+.inv .scroller,.phone .screen,.phone .screen *,.tabs,#ed-tabs,.ed-tabs{scrollbar-width:none;-ms-overflow-style:none}
+.inv .scroller::-webkit-scrollbar,.phone .screen::-webkit-scrollbar,.phone .screen *::-webkit-scrollbar,.tabs::-webkit-scrollbar,#ed-tabs::-webkit-scrollbar,.ed-tabs::-webkit-scrollbar{display:none;width:0;height:0}
 .jawi-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .jawi-kb{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));min-width:0;max-width:100%;gap:4px;margin-top:8px;padding:8px;border:1px solid var(--line);background:var(--surface);direction:rtl}
 .jawi-kb[hidden]{display:none}
