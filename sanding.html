@@ -714,6 +714,7 @@ tr:last-child td{border-bottom:0}
 .inv .env .tex::after,.inv .env-pocket::after,.inv .env-flap .face::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.9;pointer-events:none}
 .inv .seal{position:absolute;left:50%;top:54%;width:32%;aspect-ratio:1;transform:translate(-50%,-50%);border:0;padding:0;background:var(--seal) center/contain no-repeat;cursor:pointer;z-index:6;transition:transform .5s,opacity .45s;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));display:flex;align-items:center;justify-content:center}
 .inv .seal span{font-family:var(--s);font-size:clamp(20px,7cqi,30px);color:rgba(0,0,0,.28);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.2);margin-top:-2%}
+.inv .seal span.jw{font-family:"Aref Ruqaa","Amiri",serif;direction:rtl;font-size:clamp(22px,7.6cqi,32px);margin-top:0}
 .inv .seal:focus-visible{outline:2px solid var(--envInk);outline-offset:4px;border-radius:50%}
 .inv .env-to{position:absolute;left:0;right:0;top:15%;text-align:center;z-index:5;color:var(--envInk);transition:opacity .3s}
 .inv .env-to .caps{font-size:10px;opacity:.75}
@@ -6872,7 +6873,7 @@ function coverHTML(o,th,L,guest,mode){
       <div class="env-pocket"><div class="fold"></div><div class="emb" style="--m:url(${A}eng-${th.emb}.webp);left:-14%;bottom:-6%;aspect-ratio:${ASP[th.emb]}"><i class="hi"></i><i class="lo"></i></div><div class="emb" style="--m:url(${A}eng-${th.emb}.webp);right:-16%;bottom:-10%;aspect-ratio:${ASP[th.emb]};transform:scaleX(-1);width:54%"><i class="hi"></i><i class="lo"></i></div></div>
       <div class="env-flap"><div class="face"></div></div>
       ${guest?`<div class="env-to"><span class="caps">${L.dear}</span><b>${esc(guest)}</b></div>`:''}
-      <${btnTag} class="seal" ${mode==='thumb'?'':'type="button" data-open'} style="--seal:url(${A}seal-${th.seal}.webp)" aria-label="${L.open}"><span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span></${btnTag}>
+      <${btnTag} class="seal" ${mode==='thumb'?'':'type="button" data-open'} style="--seal:url(${A}seal-${th.seal}.webp)" aria-label="${L.open}">${o.jawi&&String(o.jawi).trim()?`<span class="jw">${esc(String(o.jawi).trim())}</span>`:`<span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span>`}</${btnTag}>
       <div class="env-meta"><span class="caps" style="font-size:13px">${esc(n1)} &amp; ${esc(n2)}</span><span class="hint">${L.tapSeal}</span></div>
     </div></div>`}
   if(th.fam==='mihrab'){

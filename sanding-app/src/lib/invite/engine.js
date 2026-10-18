@@ -227,7 +227,7 @@ function coverHTML(o,th,L,guest,mode){
       <div class="env-pocket"><div class="fold"></div><div class="emb" style="--m:url(${A}eng-${th.emb}.webp);left:-14%;bottom:-6%;aspect-ratio:${ASP[th.emb]}"><i class="hi"></i><i class="lo"></i></div><div class="emb" style="--m:url(${A}eng-${th.emb}.webp);right:-16%;bottom:-10%;aspect-ratio:${ASP[th.emb]};transform:scaleX(-1);width:54%"><i class="hi"></i><i class="lo"></i></div></div>
       <div class="env-flap"><div class="face"></div></div>
       ${guest?`<div class="env-to"><span class="caps">${L.dear}</span><b>${esc(guest)}</b></div>`:''}
-      <${btnTag} class="seal" ${mode==='thumb'?'':'type="button" data-open'} style="--seal:url(${A}seal-${th.seal}.webp)" aria-label="${L.open}"><span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span></${btnTag}>
+      <${btnTag} class="seal" ${mode==='thumb'?'':'type="button" data-open'} style="--seal:url(${A}seal-${th.seal}.webp)" aria-label="${L.open}">${o.jawi&&String(o.jawi).trim()?`<span class="jw">${esc(String(o.jawi).trim())}</span>`:`<span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span>`}</${btnTag}>
       <div class="env-meta"><span class="caps" style="font-size:13px">${esc(n1)} &amp; ${esc(n2)}</span><span class="hint">${L.tapSeal}</span></div>
     </div></div>`}
   if(th.fam==='mihrab'){
