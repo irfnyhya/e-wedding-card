@@ -35,10 +35,13 @@ export default function JawiField({ value, onChange, names, flash }: {
   }
 
   function fill() {
-    const v = names.map(jawiInitial).filter(Boolean).join(' ');
+    const letters = names.map(jawiInitial);
+    const v = letters.filter(Boolean).join(' ');
     if (!v) { flash('Add both cover names first (step 2).'); return; }
+    const how = names.map((n, i) => (n && letters[i] ? `${n.trim().split(/\s+/)[0]} → ${letters[i]}` : '')).filter(Boolean).join(', ');
+    if (v === value.trim()) { flash(`Already filled: ${how}.`); input.current?.focus(); return; }
     caret.current = v.length; onChange(v);
-    flash('Jawi initials filled in. Check the letters before you publish.');
+    flash(`Filled in: ${how}. Check the letters before you publish.`);
   }
 
   return (

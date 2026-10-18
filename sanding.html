@@ -13847,7 +13847,9 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
     if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
     put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
   tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
-  $('#jawi-auto').onclick=()=>{const [a,b]=coverNames(draft||{});const v=[jawiInitial(a),jawiInitial(b)].filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}put(v);toast('Jawi initials filled in. Check the letters before you publish.')};
+  $('#jawi-auto').onclick=()=>{const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
+    const how=nm.map((n,i)=>n&&ls2[i]?`${String(n).trim().split(/\s+/)[0]} → ${ls2[i]}`:'').filter(Boolean).join(', ');
+    if(v===inp.value.trim()){toast(`Already filled: ${how}.`);inp.focus();return}put(v);toast(`Filled in: ${how}. Check the letters before you publish.`)};
 })();
 function renderGifts(){const box=$('#gift-rows');box.innerHTML=draft.gifts.map((g,i)=>`<div class="row-line c4"><select data-i="${i}" data-k="bank" aria-label="Bank">${BANKS.map(b=>`<option ${b===g.bank?'selected':''}>${esc(b)}</option>`).join('')}</select><input type="text" data-i="${i}" data-k="accName" value="${esc(g.accName)}" placeholder="Account holder" aria-label="Account holder"><input type="text" data-i="${i}" data-k="accNo" value="${esc(g.accNo)}" placeholder="Account or phone no." inputmode="numeric" aria-label="Account number"><button type="button" class="icon-btn" data-del="${i}" aria-label="Remove account" ${draft.gifts.length<2?'disabled':''}>✕</button></div>`).join('');
   $('#add-gift').disabled=draft.gifts.length>=3;
