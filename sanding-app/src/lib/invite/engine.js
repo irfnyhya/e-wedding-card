@@ -1070,8 +1070,8 @@ function runEffect(el,kind,accent){
   if(!EFFECTS[kind]||kind==='none'||REDUCED)return;
   const cv=document.createElement('canvas');cv.className='fx';el.appendChild(cv);const g=cv.getContext('2d');let W=0,H=0,dpr=Math.min(2,devicePixelRatio||1);
   const size=()=>{const r=el.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0)};size();
-  const N=kind==='emas'?26:kind==='melur'?20:12,R=Math.random;
-  const mk=(y)=>({x:R()*W,y:y??R()*H,s:kind==='emas'?.6+R()*1.6:kind==='melur'?9+R()*6:6+R()*5,bud:kind==='melur'&&R()<.25,vx:(R()-.5)*.25,vy:kind==='emas'?-(.08+R()*.18):.25+R()*.35,a:R()*6.28,va:(R()-.5)*.02,t:R()*6.28,o:kind==='melur'?.82+R()*.18:.35+R()*.45});
+  const N=kind==='emas'?42:kind==='melur'?20:12,R=Math.random;
+  const mk=(y)=>({x:R()*W,y:y??R()*H,s:kind==='emas'?1+R()*2.2:kind==='melur'?9+R()*6:6+R()*5,bud:kind==='melur'&&R()<.25,vx:(R()-.5)*.25,vy:kind==='emas'?-(.08+R()*.18):.25+R()*.35,a:R()*6.28,va:(R()-.5)*.02,t:R()*6.28,o:kind==='emas'?.7+R()*.3:kind==='melur'?.82+R()*.18:.35+R()*.45});
   const ps=Array.from({length:N},()=>mk());
   const petal=(p)=>{g.save();g.translate(p.x,p.y);g.rotate(p.a);g.scale(1,.45+.55*Math.abs(Math.sin(p.t)));g.globalAlpha=p.o;g.fillStyle=accent;g.beginPath();g.ellipse(0,0,p.s,p.s*.62,0,0,6.28);g.fill();g.globalAlpha=p.o*.35;g.fillStyle='#fff';g.beginPath();g.ellipse(-p.s*.25,-p.s*.15,p.s*.4,p.s*.18,0,0,6.28);g.fill();g.restore()};
   // jasmine (melur): five pointed ivory petals with a fine warm outline and a soft shadow, so it reads on cream paper too; some fall as buds
@@ -1085,7 +1085,11 @@ function runEffect(el,kind,accent){
     g.fillStyle=gr;for(let i=0;i<5;i++){g.rotate(1.2566);pet();g.fill()}
     g.shadowColor='transparent';g.strokeStyle='rgba(140,110,70,.42)';g.lineWidth=.6;for(let i=0;i<5;i++){g.rotate(1.2566);pet();g.stroke();g.beginPath();g.moveTo(0,-sz*.18);g.lineTo(0,-sz*.7);g.strokeStyle='rgba(140,110,70,.18)';g.stroke();g.strokeStyle='rgba(140,110,70,.42)'}
     g.fillStyle='#e9c75a';g.beginPath();g.arc(0,0,sz*.14,0,6.28);g.fill();g.fillStyle='#9fb46a';g.beginPath();g.arc(0,0,sz*.06,0,6.28);g.fill();g.restore()};
-  const dust=(p)=>{const tw=.5+.5*Math.sin(p.t*3);g.globalAlpha=p.o*tw;g.fillStyle='#f3d78a';g.beginPath();g.arc(p.x,p.y,p.s,0,6.28);g.fill();g.globalAlpha=p.o*tw*.25;g.beginPath();g.arc(p.x,p.y,p.s*3.2,0,6.28);g.fill()};
+  // gold dust: warm metallic flecks with a soft halo; the bigger ones flash a four-point glint. Never fades fully between twinkles
+  const dust=(p)=>{const tw=.45+.55*(.5+.5*Math.sin(p.t*2.4)),r=p.s;g.save();g.globalAlpha=p.o*tw*.35;
+    const h=g.createRadialGradient(p.x,p.y,0,p.x,p.y,r*4.5);h.addColorStop(0,'rgba(240,200,110,.9)');h.addColorStop(1,'rgba(240,200,110,0)');g.fillStyle=h;g.beginPath();g.arc(p.x,p.y,r*4.5,0,6.28);g.fill();
+    g.globalAlpha=p.o*tw;g.shadowColor='rgba(90,60,10,.35)';g.shadowBlur=2;const c=g.createRadialGradient(p.x-r*.3,p.y-r*.3,0,p.x,p.y,r);c.addColorStop(0,'#fff4c8');c.addColorStop(.5,'#e3b955');c.addColorStop(1,'#a8781e');g.fillStyle=c;g.beginPath();g.arc(p.x,p.y,r,0,6.28);g.fill();
+    if(r>2.3&&tw>.8){g.shadowColor='transparent';g.globalAlpha=p.o*(tw-.8)*4;g.strokeStyle='#fff0bf';g.lineWidth=.8;const L=r*3.4;g.beginPath();g.moveTo(p.x-L,p.y);g.lineTo(p.x+L,p.y);g.moveTo(p.x,p.y-L);g.lineTo(p.x,p.y+L);g.stroke()}g.restore()};
   let raf,last=0;const ro=new ResizeObserver(size);ro.observe(el);
   const step=(ts)=>{if(!cv.isConnected){cancelAnimationFrame(raf);ro.disconnect();return}raf=requestAnimationFrame(step);if(ts-last<33)return;last=ts;g.clearRect(0,0,W,H);
     for(const p of ps){p.t+=.03;p.a+=p.va;p.x+=p.vx+Math.sin(p.t)*.18;p.y+=p.vy;if(p.y>H+20)Object.assign(p,mk(-20));if(p.y<-20)Object.assign(p,mk(H+20));if(p.x<-20)p.x=W+20;if(p.x>W+20)p.x=-20;
