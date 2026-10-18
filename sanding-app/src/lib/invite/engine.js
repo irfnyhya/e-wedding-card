@@ -1216,8 +1216,16 @@ function FEATURES(el,o,th,L,mode,opts){
   // livestream
   const live=safeUrl(o.livestream);if(live)sec('when')?.insertAdjacentHTML('beforeend',`<div class="live-box"><p class="small it">${L.liveSub}</p><a class="ibtn solid" href="${esc(live)}" target="_blank" rel="noopener">${ICON.play}${L.live}</a></div>`);
   // gallery: swipe strip with dots and a lightbox
-  const gal=$('.gallery',el);if(gal){const imgs=$$('img',gal);gal.classList.add('gal2');gal.insertAdjacentHTML('afterend',`<div class="gal-dots">${imgs.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`);
-    gal.addEventListener('scroll',()=>{const i=Math.round(gal.scrollLeft/gal.clientWidth);$$('.gal-dots i',el).forEach((d,j)=>d.classList.toggle('on',i===j))},{passive:true});
+  const gal=$('.gallery',el);if(gal){const imgs=$$('img',gal);gal.classList.add('gal2');
+    if(imgs.length>1){
+      // the next photo peeks in, with arrows and tappable dots, so it is clear there is more than one (a mouse cannot swipe)
+      gal.classList.add('many');gal.insertAdjacentHTML('afterend',`<div class="gal-nav"><button type="button" class="gal-arr" data-d="-1" aria-label="Previous photo">‹</button><div class="gal-dots">${imgs.map((_,i)=>`<button type="button" class="${i?'':'on'}" aria-label="Photo ${i+1} of ${imgs.length}"></button>`).join('')}</div><button type="button" class="gal-arr" data-d="1" aria-label="Next photo">›</button></div>`);
+      const cur=()=>imgs.reduce((b,im,i)=>Math.abs(im.offsetLeft-gal.scrollLeft-(gal.clientWidth-im.clientWidth)/2)<Math.abs(imgs[b].offsetLeft-gal.scrollLeft-(gal.clientWidth-imgs[b].clientWidth)/2)?i:b,0);
+      const go=i=>{i=Math.max(0,Math.min(imgs.length-1,i));const im=imgs[i];gal.scrollTo({left:im.offsetLeft-(gal.clientWidth-im.clientWidth)/2,behavior:'smooth'})};
+      $$('.gal-dots button',el).forEach((d,j)=>d.addEventListener('click',()=>go(j)));
+      $$('.gal-arr',el).forEach(b=>b.addEventListener('click',()=>go(cur()+ +b.dataset.d)));
+      const sync=()=>{const i=cur();$$('.gal-dots button',el).forEach((d,j)=>d.classList.toggle('on',i===j));const a=$$('.gal-arr',el);a[0].disabled=i===0;a[1].disabled=i===imgs.length-1};
+      gal.addEventListener('scroll',sync,{passive:true});sync()}
     imgs.forEach(im=>im.addEventListener('click',()=>{const bg=document.createElement('div');bg.className='lightbox';bg.innerHTML=`<img src="${esc(im.src)}" alt=""><button type="button" aria-label="Close">✕</button>`;bg.onclick=()=>bg.remove();el.appendChild(bg)}))}
   // several gift accounts
   const gc=$('[data-s="gift"] .giftcard',el);if(gc){const list=giftList(o);const qr=o.qr?`<img class="gift-qr" src="${esc(o.qr)}" alt="DuitNow QR">`:'';
