@@ -36,6 +36,8 @@ export type Card = {
   ogImage: string;
   /** The couple's photo, framed at the top of the card. */
   couplePhoto: string;
+  /** true once the couple has uploaded or removed a photo themselves; until then drafts show the sample */
+  photoChosen?: boolean;
 };
 export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tunang', 'nikah', 'banquet', 'tea', 'ceremony', 'mehndi'] as const;
 export const SECTION_KEYS = ['when', 'count', 'sched', 'gallery', 'doa', 'rsvp', 'wishes', 'gift', 'wishlist', 'contact'];
@@ -164,6 +166,7 @@ export function sanitizeCard(input: unknown): Card {
     secTitles: Object.fromEntries(SECTION_KEYS.map((k) => [k, str((o.secTitles as Record<string, unknown> | undefined)?.[k], 60)]).filter(([, v]) => v)),
     customSecs: arr(o.customSecs).slice(0, 6).map((x: Record<string, unknown>) => ({ title: str(x?.title, 60), text: str(x?.text, 600) })),
     ownDesign: mediaUrl(o.ownDesign),
+    photoChosen: o.photoChosen === true,
     couplePhoto: mediaUrl(o.couplePhoto) || (/^\/?assets\/[\w.-]+$/.test(String(o.couplePhoto ?? '')) ? String(o.couplePhoto) : ''),
     ogImage: mediaUrl(o.ogImage),
   };

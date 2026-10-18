@@ -122,12 +122,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
       if (error) throw error;
       const url = sb.storage.from('card-media').getPublicUrl(path).data.publicUrl;
       dirty.current = true;
-      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : kind === 'couple' ? { ...o, couplePhoto: url } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
+      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : kind === 'couple' ? { ...o, couplePhoto: url, photoChosen: true } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
     } catch (e) { flash((e as Error).message || 'Upload failed.'); } finally { setUploading(null); }
   }
   async function removeMedia(url: string, kind: Media) {
     dirty.current = true;
-    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : kind === 'couple' ? { ...o, couplePhoto: '' } : { ...o, photos: o.photos.filter((p) => p !== url) }));
+    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : kind === 'couple' ? { ...o, couplePhoto: '', photoChosen: true } : { ...o, photos: o.photos.filter((p) => p !== url) }));
     const m = url.match(/\/card-media\/(.+)$/);
     if (m) supabaseBrowser().storage.from('card-media').remove([decodeURIComponent(m[1])]).catch(() => {});
   }
