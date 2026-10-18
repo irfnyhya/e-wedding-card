@@ -278,7 +278,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Permata')}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', ...dim(c.x_music) }}>
                   {Object.entries(Music.tracks).map(([k, t]) => <button key={k} type="button" className="chip" aria-pressed={c.music === k} onClick={() => { setC((o) => ({ ...o, music: k, x_music: true })); dirty.current = true; if (Music.playing()) Music.play(k); }}>{t.label}</button>)}
-                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'musicbox'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'jazz'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
                 </div></div></div>
               <div className="toggle-row"><Toggle label="Photo gallery" checked={c.x_gallery} onChange={(v) => set('x_gallery', v)} /><div className="body"><div className="top"><b>Photo gallery</b>{tag('Permata')}<span className="muted" style={{ fontSize: 12 }}>Up to {MAX_PHOTOS} photos</span></div>
                 <div className="uploads" style={dim(c.x_gallery)}>
