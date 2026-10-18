@@ -94,12 +94,16 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
     return () => { removeEventListener('beforeunload', warn); Music.stop(); };
   }, []);
 
-  // live preview: keeps the cover state and scroll position between repaints
+  // live preview: keeps the cover state and scroll position between repaints,
+  // but a newly picked design starts closed again so its opening can be seen
+  const lastTpl = useRef(c.template);
   useEffect(() => {
     const t = setTimeout(() => {
       const host = preview.current; if (!host) return;
-      const st = host.querySelector('.scroller')?.scrollTop || 0;
-      const opened = host.querySelector('.inv')?.classList.contains('opened') || false;
+      const newDesign = lastTpl.current !== c.template; lastTpl.current = c.template;
+      const st = newDesign ? 0 : host.querySelector('.scroller')?.scrollTop || 0;
+      const opened = !newDesign && (host.querySelector('.inv')?.classList.contains('opened') || false);
+      if (newDesign) Music.stop();
       renderInvite(host, c, { mode: 'preview', opened, guest: c.x_guestlinks ? sampleGuest(c) : '' });
       const sc = host.querySelector('.scroller'); if (sc) sc.scrollTop = st;
     }, 220);
