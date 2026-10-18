@@ -46,7 +46,15 @@ export async function createBill(b: BillInput): Promise<{ billCode: string; paym
   const text = await res.text();
   let billCode = '';
   try { billCode = JSON.parse(text)?.[0]?.BillCode || ''; } catch { /* plain-text error code */ }
-  if (!billCode) throw new Error(`ToyyibPay createBill failed: ${text.slice(0, 200)}`);
+  if (!billCode) {
+    // an empty reply says nothing, so record the HTTP status and whether the key can see the category (never the key itself)
+    let cat = '';
+    try {
+      const r = await fetch(`${tpBase()}/index.php/api/getCategoryDetails`, { method: 'POST', body: new URLSearchParams({ userSecretKey: must('TOYYIBPAY_SECRET_KEY'), categoryCode: must('TOYYIBPAY_CATEGORY_CODE') }), cache: 'no-store' });
+      cat = `category check ${r.status}: ${(await r.text()).trim().slice(0, 160)}`;
+    } catch (e) { cat = `category check failed: ${String(e).slice(0, 100)}`; }
+    throw new Error(`ToyyibPay createBill failed (HTTP ${res.status}, ${tpBase()}, category ${process.env.TOYYIBPAY_CATEGORY_CODE || 'missing'}, key ${(process.env.TOYYIBPAY_SECRET_KEY || '').trim().length} chars): ${text.trim().slice(0, 200) || 'empty reply'} | ${cat}`);
+  }
   return { billCode, paymentUrl: `${tpBase()}/${billCode}` };
 }
 
@@ -67,7 +75,7 @@ export async function checkBill(billCode: string): Promise<{ paid: boolean; amou
 }
 
 export function toyyibCallbackHashOk(p: Record<string, string>) {
-  const secret = process.env.TOYYIBPAY_SECRET_KEY || '';
+  const secret = (process.env.TOYYIBPAY_SECRET_KEY || '').trim();
   if (!secret || !p.hash) return false;
   const h = createHash('md5').update(secret + p.status + p.order_id + p.refno + 'ok').digest('hex');
   return h === p.hash;
@@ -90,7 +98,7 @@ export async function settle(billCode: string): Promise<'paid' | 'pending' | 'un
 }
 
 function must(k: string) {
-  const v = process.env[k];
+  const v = (process.env[k] || '').trim();  // pasted keys often carry a stray space or line break
   if (!v) throw new Error(`${k} is not set`);
   return v;
 }
