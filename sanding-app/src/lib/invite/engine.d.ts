@@ -57,6 +57,7 @@ export function defaultCopy(o: Partial<Card>): any;
 export function plainOf(html: string): string;
 export function greetingFor(o: Partial<Card>): string;
 export const CARD_SECTIONS: [string, (L: any) => string][];
+export const PHOTO_DESIGNS: Set<string>;
 export const DAYS: Record<'ms' | 'en', string[]>;
 export const MONTHS: Record<'ms' | 'en', string[]>;
 export function fmtDate(iso: string, lang: string, withDay?: boolean): string;

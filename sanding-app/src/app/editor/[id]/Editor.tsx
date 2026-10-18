@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, PHOTO_DESIGNS, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -204,6 +204,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   ];
                 })}
               </div></div>
+              {PHOTO_DESIGNS.has(themeOf(c.template).fam) && <div className="foto-note">
+                {c.couplePhoto && <img src={c.couplePhoto} alt="" />}
+                <div><b>This design is built on your photo</b>
+                  <p>{!c.couplePhoto || isDemoPhoto ? 'It shows a sample photo now. Upload yours, a photo of you both.' : 'Using your couple photo. You can change it any time.'}</p>
+                  <label className="btn btn-ghost btn-sm">{uploading === 'couple' ? 'Uploading…' : !c.couplePhoto || isDemoPhoto ? 'Upload your photo' : 'Change photo'}<input type="file" accept="image/*" hidden disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'couple'); }} /></label></div>
+              </div>}
               <div className="more-opts"><div className="section-title" style={{ marginTop: 6 }}><h3>More design options</h3></div>
               <div className="toggle-row"><Toggle label="Show Bismillah and doa" checked={c.bismillah} onChange={(v) => set('bismillah', v)} /><div className="body"><div className="top"><b>Show Bismillah and doa</b></div><p className="muted" style={{ fontSize: 13 }}>Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
               <div className="toggle-row"><Toggle label="Custom accent colour" checked={c.useAccent} onChange={(v) => set('useAccent', v)} /><div className="body"><div className="top"><b>Custom accent colour</b>{tag('Diraja')}</div><p className="muted" style={{ fontSize: 13 }}>Match the card to your wedding colours.</p>

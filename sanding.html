@@ -501,6 +501,7 @@ tr:last-child td{border-bottom:0}
             </div>
             <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
             <div class="fam-scroll"><div class="tpl-pick" id="tpl-pick"></div></div>
+            <div class="foto-note" id="foto-note" hidden></div>
             <div class="more-opts"><div class="section-title" style="margin-top:6px"><h3>More design options</h3></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-bismillah" name="bismillah" checked><span></span></label><div class="body"><div class="top"><b>Show Bismillah and doa</b></div><p class="muted" style="font-size:13px">Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-useAccent" name="useAccent"><span></span></label><div class="body"><div class="top"><b>Custom accent colour</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Match the card to your wedding colours.</p><input type="color" id="f-accent" name="accent" value="#c08a2e" style="width:64px;height:36px;border:1px solid var(--line);border-radius:8px;background:none"></div></div>
@@ -2067,6 +2068,9 @@ tr:last-child td{border-bottom:0}
 .inv .couple-ph{margin:0 auto;width:min(78%,300px);aspect-ratio:4/5;border-radius:999px 999px 6px 6px/150px 150px 6px 6px;overflow:hidden;position:relative;
   box-shadow:0 0 0 1px var(--gold),0 0 0 6px var(--sheet),0 0 0 7px color-mix(in srgb,var(--gold) 60%,transparent),0 14px 28px rgba(0,0,0,.18)}
 .inv .couple-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-note{display:flex;gap:14px;align-items:center;margin:12px 0 4px;padding:12px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.foto-note img{width:64px;height:80px;object-fit:cover;border-radius:6px;flex:none}.foto-note p{font-size:13px;margin:2px 0 8px;opacity:.8}
+.inv .couple-ph.front{width:min(40%,150px);margin:0 auto 14px;flex:none;z-index:2}
 /* Jawi initials seal for designs that do not show them */
 .inv .jawi-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--accent);
   box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px transparent,inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 60%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 10%,transparent),transparent 70%)}
@@ -7238,6 +7242,11 @@ const latticeSq=c=>svgUriSq(`<svg ${NS} width="64" height="64" viewBox="0 0 64 6
 const XI=svgUriSq(`<svg ${NS} width="70" height="70" viewBox="0 0 70 70"><text x="35" y="47" text-anchor="middle" font-size="32" font-weight="700" font-family="serif" fill="#000">囍</text></svg>`);
 const CALLIG='بَارَكَ اللّٰهُ لَكُمَا';
 const SAMPLE_PHOTO=A+'pc-timah.jpg';
+/* the couple's photo if it is a safe image address, else '' */
+function couplePhotoOf(o){const cp=String(o.couplePhoto||'').trim();
+  return cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))?cp:''}
+/* the photo a photo design is built on: the couple photo, else the first gallery photo, else the sample */
+const heroPhotoOf=o=>couplePhotoOf(o)||(o.photos||[]).find(Boolean)||SAMPLE_PHOTO;
 const ev=(o,L)=>esc(L.ev[o.eventTitle]||L.ev.walimah);
 function kframe(gold){return `<div class="kframe"><svg viewBox="0 0 100 150" preserveAspectRatio="none" fill="none" stroke="${gold}"><rect x=".5" y=".5" width="99" height="149" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="3" y="2.2" width="94" height="145.6" stroke-width=".6" vector-effect="non-scaling-stroke"/><path d="M50 8l3 3-3 3-3-3zM50 136l3 3-3 3-3-3z" fill="${gold}" stroke="none"/></svg></div>`}
 
@@ -7253,11 +7262,11 @@ Object.assign(FAM2,{
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-tingkap linen" style="--wood:${th.c.wood};--lat:${latticeSq('#000')}"><${tag} class="win" ${attr} style="border:0;cursor:pointer;font:inherit;display:block"><span class="fan" style="display:block"></span><span class="vista" style="display:block;height:56%;background-image:url(${A}pc-${th.view}.jpg)"><span class="shut l louvre" style="display:block"><i class="knob"></i></span><span class="shut r louvre" style="display:block"><i class="knob"></i></span></span><span class="rail" style="display:block"></span></${tag}>
    <div class="plaque">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="small it">${en?'Tap the shutters to open them':'Sentuh daun tingkap untuk membukanya'}</p></div></div>`}},
  foto:{ms:1200,
-  page(o,th,L){const [n1,n2]=coverNames(o),ph=(o.photos||[]).find(Boolean)||SAMPLE_PHOTO,v=th.v;const en=o.lang==='en';
+  page(o,th,L){const [n1,n2]=coverNames(o),ph=heroPhotoOf(o),v=th.v;const en=o.lang==='en';
    if(v==='majalah')return `<section class="page pg-foto v-majalah"><div class="ph" style="background-image:url(${ph})"></div><div class="shade"></div><p class="mast reveal">${en?'Wedding':'Kahwin'}</p>
     <div class="txt"><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="issue reveal d2"><span>${esc(fmtShort(o.date))}</span><span>${esc(o.venue)}</span></div></div></section>`;
    return `<section class="page pg-foto v-${v}"><div class="ph" style="background-image:url(${ph})"></div><div class="shade"></div><div class="txt"><p class="kicker reveal" style="color:${v==='polaroid'?'var(--accent)':'#fff'}">${ev(o,L)}</p><h1 class="names reveal d1 ${v==='emas'?'foil-text':''}">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const ph=(o.photos||[]).find(Boolean)||SAMPLE_PHOTO,en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${ph})"></i></span><span>${en?'Tap to develop':'Sentuh untuk cuci gambar'}</span></${tag}></div>`}},
+  cover(o,th,L,guest,tag,attr){const ph=heroPhotoOf(o),en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${ph})"></i></span><span>${en?'Tap to develop':'Sentuh untuk cuci gambar'}</span></${tag}></div>`}},
  bahagia:{ms:1200,
   page(o,th,L){const [n1,n2]=coverNames(o),[a,b]=th.fl;return `<section class="page pg-bahagia"><div class="xi-tile foil" style="--xi:${XI}"></div><div class="bh-card tex">${FL(a,'width:56%;left:-14%;top:-6%;transform:rotate(180deg)')}${FL(b,'width:50%;right:-12%;bottom:-6%')}
    <p class="xi ${th.foilXi?'foil-text':''} reveal" style="color:var(--accent)">囍</p><p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
@@ -7870,6 +7879,18 @@ function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"
     if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
     const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
+/* where the couple photo goes on the front page: before the element showing the names (and its kicker), or null */
+const PHOTO_INNER=new Set(['bauhaus','buruj','chinoiserie','editorial','jam','jianzhi','majalah','nouveau','pelamin','piksel','popup','santorini','taman','kaligrafi','tingkap','tipografi','tiket','mihrab']);   // families whose front page has no room; their photo goes inside instead
+const PHOTO_DESIGNS=new Set(['foto']);   // designs built on the couple photo already; no second copy
+function frontPhotoSpot(el,o){
+  const th=themeOf(o.template),pg=$('.scroller > .page',el);if(!pg||PHOTO_INNER.has(th.fam))return null;
+  const n1=(coverNames(o)[0]||'').trim();if(!n1)return null;
+  let hit=$('.names',pg);
+  if(!hit){const all=$$('h1,h2,h3,p,div',pg).filter(x=>x.textContent.includes(n1));hit=all[all.length-1]||null}
+  if(!hit)return null;
+  const prev=hit.previousElementSibling;
+  return prev&&prev.matches('.kicker,p.caps,p.small')&&!prev.textContent.includes(n1)?prev:hit;
+}
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
   // own design as the front page
@@ -7913,10 +7934,14 @@ function FEATURES(el,o,th,L,mode,opts){
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
   // the couple's photo, framed, at the top of the inside of the card
-  const cp=String(o.couplePhoto||'').trim();
-  if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
-    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async"></figure></section>`;
-    intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
+  const cp=couplePhotoOf(o);
+  if(cp&&!PHOTO_DESIGNS.has(th.fam)){
+    const img=`<img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async">`;
+    // on the front page, just above the names, so guests see it first
+    const at=frontPhotoSpot(el,o);
+    if(at)at.insertAdjacentHTML('beforebegin',`<figure class="couple-ph front reveal">${img}</figure>`);
+    else{const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph">${img}</figure></section>`;
+      intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
@@ -13873,7 +13898,7 @@ function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.nam
   renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
-function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
+function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
 $('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
@@ -13909,7 +13934,12 @@ function renderContacts(){const box=$('#contact-rows');box.innerHTML=draft.conta
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.contacts.splice(+b.dataset.del,1);renderContacts();changed()})}
 $('#add-contact').onclick=()=>{if(draft.contacts.length<3){draft.contacts.push({name:'',role:'',phone:''});renderContacts();changed()}};
 function shrink(file,max,type,q){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);res(c.toDataURL(type,q))};img.onerror=()=>rej(new Error('That file is not an image we can read.'));img.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
-function renderUploads(){
+/* photo designs are built on the couple photo, so offer the upload right in the design step */
+function renderFotoNote(){const n=$('#foto-note');if(!n)return;const on=typeof PHOTO_DESIGNS!=='undefined'&&PHOTO_DESIGNS.has(themeOf(draft.template).fam);n.hidden=!on;if(!on)return;
+  const demo=!draft.couplePhoto||/couple-demo\.jpg$/.test(draft.couplePhoto);const key=(draft.couplePhoto||'')+demo;if(n.dataset.k===key)return;n.dataset.k=key;
+  n.innerHTML=`${draft.couplePhoto?`<img src="${esc(draft.couplePhoto)}" alt="">`:''}<div><b>This design is built on your photo</b><p>${demo?'It shows a sample photo now. Upload yours, a landscape or portrait photo of you both.':'Using your couple photo. You can change it any time.'}</p><label class="btn btn-ghost btn-sm">${demo?'Upload your photo':'Change photo'}<input type="file" accept="image/*" hidden id="fn-in"></label></div>`;
+  $('#fn-in',n).addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{draft.couplePhoto=await shrink(f,900,'image/jpeg',.74);renderUploads();changed()}catch(err){toast(err.message)}})}
+function renderUploads(){renderFotoNote();
   const g=$('#gal-uploads');g.innerHTML=draft.photos.map((p,i)=>`<div class="ph"><img src="${p}" alt="Photo ${i+1}"><button type="button" data-rm="${i}" aria-label="Remove photo">✕</button></div>`).join('')+(draft.photos.length<6?`<label class="add" for="gal-in">Add photo<input type="file" id="gal-in" accept="image/*"></label>`:'');
   $$('[data-rm]',g).forEach(b=>b.onclick=()=>{draft.photos.splice(+b.dataset.rm,1);renderUploads();changed()});
   $('#gal-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.photos.push(await shrink(f,560,'image/jpeg',.62));if(!draft.x_gallery){draft.x_gallery=true;$('#x-gallery').checked=true}renderUploads();changed()}catch(err){toast(err.message)}});

@@ -559,6 +559,11 @@ const latticeSq=c=>svgUriSq(`<svg ${NS} width="64" height="64" viewBox="0 0 64 6
 const XI=svgUriSq(`<svg ${NS} width="70" height="70" viewBox="0 0 70 70"><text x="35" y="47" text-anchor="middle" font-size="32" font-weight="700" font-family="serif" fill="#000">囍</text></svg>`);
 const CALLIG='بَارَكَ اللّٰهُ لَكُمَا';
 const SAMPLE_PHOTO=A+'pc-timah.jpg';
+/* the couple's photo if it is a safe image address, else '' */
+function couplePhotoOf(o){const cp=String(o.couplePhoto||'').trim();
+  return cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))?cp:''}
+/* the photo a photo design is built on: the couple photo, else the first gallery photo, else the sample */
+const heroPhotoOf=o=>couplePhotoOf(o)||(o.photos||[]).find(Boolean)||SAMPLE_PHOTO;
 const ev=(o,L)=>esc(L.ev[o.eventTitle]||L.ev.walimah);
 function kframe(gold){return `<div class="kframe"><svg viewBox="0 0 100 150" preserveAspectRatio="none" fill="none" stroke="${gold}"><rect x=".5" y=".5" width="99" height="149" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="3" y="2.2" width="94" height="145.6" stroke-width=".6" vector-effect="non-scaling-stroke"/><path d="M50 8l3 3-3 3-3-3zM50 136l3 3-3 3-3-3z" fill="${gold}" stroke="none"/></svg></div>`}
 
@@ -574,11 +579,11 @@ Object.assign(FAM2,{
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-tingkap linen" style="--wood:${th.c.wood};--lat:${latticeSq('#000')}"><${tag} class="win" ${attr} style="border:0;cursor:pointer;font:inherit;display:block"><span class="fan" style="display:block"></span><span class="vista" style="display:block;height:56%;background-image:url(${A}pc-${th.view}.jpg)"><span class="shut l louvre" style="display:block"><i class="knob"></i></span><span class="shut r louvre" style="display:block"><i class="knob"></i></span></span><span class="rail" style="display:block"></span></${tag}>
    <div class="plaque">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="small it">${en?'Tap the shutters to open them':'Sentuh daun tingkap untuk membukanya'}</p></div></div>`}},
  foto:{ms:1200,
-  page(o,th,L){const [n1,n2]=coverNames(o),ph=(o.photos||[]).find(Boolean)||SAMPLE_PHOTO,v=th.v;const en=o.lang==='en';
+  page(o,th,L){const [n1,n2]=coverNames(o),ph=heroPhotoOf(o),v=th.v;const en=o.lang==='en';
    if(v==='majalah')return `<section class="page pg-foto v-majalah"><div class="ph" style="background-image:url(${esc(ph)})"></div><div class="shade"></div><p class="mast reveal">${en?'Wedding':'Kahwin'}</p>
     <div class="txt"><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="issue reveal d2"><span>${esc(fmtShort(o.date))}</span><span>${esc(o.venue)}</span></div></div></section>`;
    return `<section class="page pg-foto v-${v}"><div class="ph" style="background-image:url(${esc(ph)})"></div><div class="shade"></div><div class="txt"><p class="kicker reveal" style="color:${v==='polaroid'?'var(--accent)':'#fff'}">${ev(o,L)}</p><h1 class="names reveal d1 ${v==='emas'?'foil-text':''}">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const ph=(o.photos||[]).find(Boolean)||SAMPLE_PHOTO,en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${esc(ph)})"></i></span><span>${en?'Tap to develop':'Sentuh untuk cuci gambar'}</span></${tag}></div>`}},
+  cover(o,th,L,guest,tag,attr){const ph=heroPhotoOf(o),en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${esc(ph)})"></i></span><span>${en?'Tap to develop':'Sentuh untuk cuci gambar'}</span></${tag}></div>`}},
  bahagia:{ms:1200,
   page(o,th,L){const [n1,n2]=coverNames(o),[a,b]=th.fl;return `<section class="page pg-bahagia"><div class="xi-tile foil" style="--xi:${XI}"></div><div class="bh-card tex">${FL(a,'width:56%;left:-14%;top:-6%;transform:rotate(180deg)')}${FL(b,'width:50%;right:-12%;bottom:-6%')}
    <p class="xi ${th.foilXi?'foil-text':''} reveal" style="color:var(--accent)">囍</p><p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
@@ -1187,6 +1192,18 @@ function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"
     if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
     const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
+/* where the couple photo goes on the front page: before the element showing the names (and its kicker), or null */
+const PHOTO_INNER=new Set(['bauhaus','buruj','chinoiserie','editorial','jam','jianzhi','majalah','nouveau','pelamin','piksel','popup','santorini','taman','kaligrafi','tingkap','tipografi','tiket','mihrab']);   // families whose front page has no room; their photo goes inside instead
+const PHOTO_DESIGNS=new Set(['foto']);   // designs built on the couple photo already; no second copy
+function frontPhotoSpot(el,o){
+  const th=themeOf(o.template),pg=$('.scroller > .page',el);if(!pg||PHOTO_INNER.has(th.fam))return null;
+  const n1=(coverNames(o)[0]||'').trim();if(!n1)return null;
+  let hit=$('.names',pg);
+  if(!hit){const all=$$('h1,h2,h3,p,div',pg).filter(x=>x.textContent.includes(n1));hit=all[all.length-1]||null}
+  if(!hit)return null;
+  const prev=hit.previousElementSibling;
+  return prev&&prev.matches('.kicker,p.caps,p.small')&&!prev.textContent.includes(n1)?prev:hit;
+}
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
   // own design as the front page
@@ -1230,10 +1247,14 @@ function FEATURES(el,o,th,L,mode,opts){
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
   // the couple's photo, framed, at the top of the inside of the card
-  const cp=String(o.couplePhoto||'').trim();
-  if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
-    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async"></figure></section>`;
-    intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
+  const cp=couplePhotoOf(o);
+  if(cp&&!PHOTO_DESIGNS.has(th.fam)){
+    const img=`<img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async">`;
+    // on the front page, just above the names, so guests see it first
+    const at=frontPhotoSpot(el,o);
+    if(at)at.insertAdjacentHTML('beforebegin',`<figure class="couple-ph front reveal">${img}</figure>`);
+    else{const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph">${img}</figure></section>`;
+      intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
@@ -7082,4 +7103,4 @@ CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.f
 /* needFont() fonts are loaded by src/app/fonts.ts */
 
 
-export {ALL_EVENTS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
+export {ALL_EVENTS,PHOTO_DESIGNS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};

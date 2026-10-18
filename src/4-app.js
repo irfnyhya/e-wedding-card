@@ -151,7 +151,7 @@ function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.nam
   renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
-function changed(){clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
+function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
 $('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
@@ -187,7 +187,12 @@ function renderContacts(){const box=$('#contact-rows');box.innerHTML=draft.conta
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.contacts.splice(+b.dataset.del,1);renderContacts();changed()})}
 $('#add-contact').onclick=()=>{if(draft.contacts.length<3){draft.contacts.push({name:'',role:'',phone:''});renderContacts();changed()}};
 function shrink(file,max,type,q){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);res(c.toDataURL(type,q))};img.onerror=()=>rej(new Error('That file is not an image we can read.'));img.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
-function renderUploads(){
+/* photo designs are built on the couple photo, so offer the upload right in the design step */
+function renderFotoNote(){const n=$('#foto-note');if(!n)return;const on=typeof PHOTO_DESIGNS!=='undefined'&&PHOTO_DESIGNS.has(themeOf(draft.template).fam);n.hidden=!on;if(!on)return;
+  const demo=!draft.couplePhoto||/couple-demo\.jpg$/.test(draft.couplePhoto);const key=(draft.couplePhoto||'')+demo;if(n.dataset.k===key)return;n.dataset.k=key;
+  n.innerHTML=`${draft.couplePhoto?`<img src="${esc(draft.couplePhoto)}" alt="">`:''}<div><b>This design is built on your photo</b><p>${demo?'It shows a sample photo now. Upload yours, a landscape or portrait photo of you both.':'Using your couple photo. You can change it any time.'}</p><label class="btn btn-ghost btn-sm">${demo?'Upload your photo':'Change photo'}<input type="file" accept="image/*" hidden id="fn-in"></label></div>`;
+  $('#fn-in',n).addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{draft.couplePhoto=await shrink(f,900,'image/jpeg',.74);renderUploads();changed()}catch(err){toast(err.message)}})}
+function renderUploads(){renderFotoNote();
   const g=$('#gal-uploads');g.innerHTML=draft.photos.map((p,i)=>`<div class="ph"><img src="${p}" alt="Photo ${i+1}"><button type="button" data-rm="${i}" aria-label="Remove photo">✕</button></div>`).join('')+(draft.photos.length<6?`<label class="add" for="gal-in">Add photo<input type="file" id="gal-in" accept="image/*"></label>`:'');
   $$('[data-rm]',g).forEach(b=>b.onclick=()=>{draft.photos.splice(+b.dataset.rm,1);renderUploads();changed()});
   $('#gal-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.photos.push(await shrink(f,560,'image/jpeg',.62));if(!draft.x_gallery){draft.x_gallery=true;$('#x-gallery').checked=true}renderUploads();changed()}catch(err){toast(err.message)}});

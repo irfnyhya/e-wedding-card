@@ -94,6 +94,18 @@ function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"
     if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
     const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
+/* where the couple photo goes on the front page: before the element showing the names (and its kicker), or null */
+const PHOTO_INNER=new Set(['bauhaus','buruj','chinoiserie','editorial','jam','jianzhi','majalah','nouveau','pelamin','piksel','popup','santorini','taman','kaligrafi','tingkap','tipografi','tiket','mihrab']);   // families whose front page has no room; their photo goes inside instead
+const PHOTO_DESIGNS=new Set(['foto']);   // designs built on the couple photo already; no second copy
+function frontPhotoSpot(el,o){
+  const th=themeOf(o.template),pg=$('.scroller > .page',el);if(!pg||PHOTO_INNER.has(th.fam))return null;
+  const n1=(coverNames(o)[0]||'').trim();if(!n1)return null;
+  let hit=$('.names',pg);
+  if(!hit){const all=$$('h1,h2,h3,p,div',pg).filter(x=>x.textContent.includes(n1));hit=all[all.length-1]||null}
+  if(!hit)return null;
+  const prev=hit.previousElementSibling;
+  return prev&&prev.matches('.kicker,p.caps,p.small')&&!prev.textContent.includes(n1)?prev:hit;
+}
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
   // own design as the front page
@@ -137,10 +149,14 @@ function FEATURES(el,o,th,L,mode,opts){
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
   // the couple's photo, framed, at the top of the inside of the card
-  const cp=String(o.couplePhoto||'').trim();
-  if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
-    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async"></figure></section>`;
-    intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
+  const cp=couplePhotoOf(o);
+  if(cp&&!PHOTO_DESIGNS.has(th.fam)){
+    const img=`<img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" decoding="async">`;
+    // on the front page, just above the names, so guests see it first
+    const at=frontPhotoSpot(el,o);
+    if(at)at.insertAdjacentHTML('beforebegin',`<figure class="couple-ph front reveal">${img}</figure>`);
+    else{const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph">${img}</figure></section>`;
+      intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
