@@ -6529,3 +6529,7 @@ details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
 .sec-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--fg)}
 .sec-row:has(input[type=checkbox]:not(:checked)) input[type=text]{opacity:.45;text-decoration:line-through}
 .csec{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);background:var(--surface)}
+
+/* home: a taste of the collection, then a link to all of it */
+.fam-more{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0 4px;text-align:center}
+.fam-more .muted{font-size:13px}

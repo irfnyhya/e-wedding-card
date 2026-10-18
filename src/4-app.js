@@ -99,13 +99,15 @@ function initHome(){
   tb.insertAdjacentHTML('beforeend',`<img class="prop" src="${A}flower-cabbage-rose.webp" alt="" style="width:38%;right:-9%;bottom:-6%;transform:rotate(-28deg);z-index:3;filter:drop-shadow(0 10px 10px rgba(30,18,10,.35))"><img class="prop" src="${A}seal-merah.webp" alt="" style="width:15%;left:9%;bottom:8%;z-index:3;transform:rotate(18deg);filter:drop-shadow(0 4px 4px rgba(30,18,10,.4))">`);
   // families
   const fams=$('#families');
-  Object.entries(FAMILIES).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k);if(!list.length)return;const card=document.createElement('article');card.className='fam';
+  const famList=Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k));
+  famList.slice(0,8).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k);if(!list.length)return;const card=document.createElement('article');card.className='fam';
     card.innerHTML=`<div class="slot"></div><div><p class="mean">${esc(f.meaning)}</p><h3>${esc(f.name)}</h3></div><p>${esc(f.blurb)}</p><div class="dots" role="group" aria-label="${esc(f.name)} colourways">${list.map((t,i)=>`<button type="button" aria-pressed="${i===0}" aria-label="${esc(t.name)}" data-t="${t.id}" style="background:${dotColor(t)}"></button>`).join('')}<span>${esc(list[0].name)}</span></div>`;
     const slot=$('.slot',card);
     const put=id=>{const m=mini(id,'',k==='sampul'?'cover':'page');m.tabIndex=0;m.setAttribute('role','button');m.setAttribute('aria-label','Open '+themeOf(id).name);const go=()=>{invReturn='home';openInvite({...SAMPLE,template:id},{closeLabel:'← Back'})};m.onclick=go;m.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();go()}};slot.replaceChildren(m)};
     put(list[0].id);
     $$('[data-t]',card).forEach(b=>b.onclick=()=>{$$('[data-t]',card).forEach(x=>x.setAttribute('aria-pressed',x===b));$('.dots span',card).textContent=themeOf(b.dataset.t).name;put(b.dataset.t)});
     fams.append(card)});
+  fams.insertAdjacentHTML('beforeend',`<div class="fam-more"><a class="btn btn-primary" href="#designs" data-go="designs">See all ${famList.length} designs →</a><span class="muted">${THEMES.length} colourways in the full collection</span></div>`);
   // live demo
   const tabs=$('#demo-tabs');tabs.innerHTML=Object.entries(FAMILIES).map(([k,f])=>`<button type="button" data-fam="${k}" aria-pressed="${k===demoFam}">${esc(f.name)}</button>`).join('');
   const paint=()=>{Music.stop();const id=THEMES.find(t=>t.fam===demoFam).id;renderInvite($('#demo-screen'),{...SAMPLE,template:id},{mode:'preview'})};paint();

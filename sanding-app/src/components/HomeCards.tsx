@@ -25,13 +25,16 @@ export function HeroTable() {
 }
 
 /** One column per family, with colourway dots that swap the card shown. */
+/** The home page shows a taste of the collection; the full set lives on /designs. */
+const HOME_FAMILIES = 8;
+
 export function Families() {
   const [pick, setPick] = useState<Record<string, string>>(() =>
     Object.fromEntries(families().map(([k]) => [k, THEMES.find((t) => t.fam === k)!.id])));
   const [open, setOpen] = useState<string | null>(null);
   return (
     <div className="families">
-      {families().map(([k, f]) => {
+      {families().slice(0, HOME_FAMILIES).map(([k, f]) => {
         const list = THEMES.filter((t) => t.fam === k);
         const id = pick[k];
         return (
@@ -50,6 +53,7 @@ export function Families() {
         );
       })}
       {open && <InviteOverlay card={{ ...SAMPLE, template: open }} closeLabel="← Back" onClose={() => setOpen(null)} />}
+      <div className="fam-more"><a className="btn btn-primary" href="/designs">See all {families().length} designs →</a><span className="muted">{THEMES.length} colourways in the full collection</span></div>
     </div>
   );
 }
