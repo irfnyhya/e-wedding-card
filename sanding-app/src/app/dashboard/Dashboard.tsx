@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { coverNames, fmtDate, fmtTime, rsvpCode, swatchBg, T, themeOf, waNum } from '@/lib/invite/engine';
+import { coverNames, fmtDate, fmtTime, greetingFor, rsvpCode, swatchBg, T, themeOf, waNum } from '@/lib/invite/engine';
 import { PKG, SITE_URL, displayLink, needPkg, needsPayment, type Card, type PackageId } from '@/lib/card';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import QrScanner, { canScan } from './QrScanner';
@@ -27,7 +27,7 @@ function remindUrl(o: DashOrder, r: Rsvp) {
   const c = o.content, L = T[c.lang] || T.ms, names = coverNames(c).join(' & '), link = `${SITE_URL}/${o.slug}`;
   const msg = c.lang === 'en'
     ? `Hi ${r.name}, a reminder for ${L.ev[c.eventTitle]} ${names} on ${fmtDate(c.date, 'en')} at ${c.venue}, ${fmtTime(c.start, 'en')}. Your guest code: ${rsvpCode(r.id)}. Card: ${link}`
-    : `Assalamualaikum ${r.name}. Peringatan mesra untuk ${L.ev[c.eventTitle]} ${names} pada ${fmtDate(c.date, 'ms')}, ${fmtTime(c.start, 'ms')} di ${c.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: ${link}`;
+    : `${greetingFor(c)} ${r.name}. Peringatan mesra untuk ${L.ev[c.eventTitle]} ${names} pada ${fmtDate(c.date, 'ms')}, ${fmtTime(c.start, 'ms')} di ${c.venue}. Kod tetamu anda: ${rsvpCode(r.id)}. Kad: ${link}`;
   return `https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(msg)}`;
 }
 

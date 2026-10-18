@@ -105,6 +105,39 @@ const T={
   contact:'Contact',dock:['Calendar','Location','RSVP','Gift','Contact'],addCal:'Save to Google Calendar',maps:'Google Maps',waze:'Waze',
   previewNote:'Preview only. Replies are saved once the card is published.',made:'Digital card by Sanding',ampm:()=>''}
 };
+/* ================= wedding traditions: Malay, Chinese, Indian, General ================= */
+Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
+Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
+const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
+const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
+const TRAD_DEFAULT={malay:{eventTitle:'walimah',bismillah:true,monoScript:'jawi'},chinese:{eventTitle:'banquet',bismillah:false,monoScript:'chinese'},indian:{eventTitle:'ceremony',bismillah:false,monoScript:'tamil'},general:{eventTitle:'kahwin',bismillah:false,monoScript:'latin'}};
+const MONO_SCRIPTS={jawi:'Jawi',latin:'Latin (A & A)',chinese:'中文',tamil:'தமிழ் / हिन्दी'};
+function invHost(h,side,ms,lead){return `${lead}<br><b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`+(ms?`dengan hormatnya menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan ${side==='bride'?'puteri':'putera'} kesayangan kami`:`request the pleasure of your company at the wedding of their beloved ${side==='bride'?'daughter':'son'}`)}
+const TRAD_COPY={
+ chinese:{ms:{salam:'Dengan penuh kegembiraan',doaT:'Ucapan Restu',doa:'Semoga kalian berdua dikurniakan kasih sayang, keharmonian dan kebahagiaan sepanjang hayat. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'With great joy',doaT:'A Blessing',doa:'May you share a lifetime of love, harmony and happiness. 百年好合 · 永结同心',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}},
+ indian:{ms:{salam:'Dengan restu Yang Maha Kuasa',doaT:'Restu',doa:'Semoga ikatan suci ini diberkati dengan kasih sayang, kesejahteraan dan kebahagiaan yang berkekalan.',
+   intro:(h,side)=>side==='couple'?'Dengan restu Yang Maha Kuasa dan keluarga, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan restu Yang Maha Kuasa, kami')},
+  en:{salam:'With the blessings of the Almighty',doaT:'Blessings',doa:'May this sacred union be blessed with love, prosperity and lasting happiness.',
+   intro:(h,side)=>side==='couple'?'With the blessings of the Almighty and our elders, we invite you and your family to celebrate our wedding':invHost(h,side,false,'With the blessings of the Almighty and our elders,')}},
+ general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga kasih sayang kalian kekal mekar selamanya.',
+   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput anda serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+  en:{salam:'Warm greetings',doaT:'A Wish',doa:'May your love grow with every year you share.',
+   intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}}};
+/* the copy a card uses: the language, adjusted for its wedding tradition */
+function copyFor(o){const base=T[o.lang]||T.ms,tr=TRAD_COPY[o.tradition];const L=tr?Object.assign(Object.create(base),tr[o.lang==='en'?'en':'ms']):Object.create(base);
+  // the couple's own wording, when they wrote some
+  const t=k=>String(o[k]||'').trim();
+  if(t('txtSalam'))L.salam=t('txtSalam');
+  if(t('txtDoaT'))L.doaT=esc(t('txtDoaT'));
+  if(t('txtDoa'))L.doa=esc(t('txtDoa')).replace(/\n/g,'<br>');
+  if(t('txtIntro')){const own=t('txtIntro');L.intro=h=>esc(own).replace(/\n/g,'<br>').replace(/\{hosts\}/g,`<b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>`)}
+  return L}
+const defaultCopy=o=>copyFor({...o,txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:''});
+const plainOf=html=>String(html).replace(/<br\s*\/?>/g,'\n').replace(/<b[^>]*>[^<]*<\/b>/,'\n{hosts}\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/[ \t]+\n/g,'\n').replace(/\n{2,}/g,'\n').trim();
+const greetingFor=o=>({chinese:'Salam sejahtera',indian:'Salam sejahtera',general:'Salam sejahtera'}[o.tradition]||'Assalamualaikum');
 function fmtDate(iso,lang,withDay=true){if(!iso)return'';const d=new Date(iso+'T00:00:00');if(isNaN(d))return'';return (withDay?DAYS[lang][d.getDay()]+', ':'')+`${d.getDate()} ${MONTHS[lang][d.getMonth()]} ${d.getFullYear()}`}
 function fmtShort(iso){if(!iso)return'';const [y,m,d]=iso.split('-');return `${d}.${m}.${y}`}
 function fmtTime(t,lang){if(!t)return'';let [h,m]=t.split(':').map(Number);if(lang==='en'){const ap=h>=12?'PM':'AM';const hh=h%12||12;return `${hh}:${String(m).padStart(2,'0')} ${ap}`}const hh=h>12?h-12:h;return `${hh}.${String(m).padStart(2,'0')} ${T.ms.ampm(h)}`}
@@ -258,7 +291,7 @@ const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-l
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
-  const mode=opts.mode||'preview',L=T[o.lang]||T.ms,th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
+  const mode=opts.mode||'preview',L=copyFor(o),th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
   if(o.useAccent&&o.accent){c.accent=o.accent}
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
@@ -298,7 +331,7 @@ function renderInvite(host,o,opts={}){
     <section class="sec" data-s="count"><h2>${L.count}</h2><div class="count" data-count>${L.units.map(u=>`<div><b>0</b><span>${u}</span></div>`).join('')}</div></section>
     ${(o.schedule||[]).filter(s=>s.label).length?`<section class="sec" data-s="sched"><h2>${L.sched}</h2>${orn}<ul class="timeline">${o.schedule.filter(s=>s.label).map(s=>`<li><b>${esc(fmtTime(s.time,o.lang))}</b><span>${esc(s.label)}</span></li>`).join('')}</ul></section>`:''}
     ${o.x_gallery&&photos.length?`<section class="sec" data-s="gallery"><h2>${L.gallery}</h2><div class="gallery">${photos.map(p=>`<img src="${esc(p)}" alt="" loading="lazy">`).join('')}</div></section>`:''}
-    ${o.bismillah?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
+    ${o.bismillah||(o.tradition&&o.tradition!=='malay')||String(o.txtDoa||'').trim()?`<section class="sec" data-s="doa"><h2>${L.doaT}</h2><p class="it">${L.doa}</p></section>`:''}
     ${o.x_rsvp?`<section class="sec" data-s="rsvp"><h2>${L.rsvp}</h2>${deadline?`<p class="small it">${L.rsvpSub(esc(deadline))}</p>`:''}<div data-rsvp style="width:100%;display:flex;justify-content:center"></div></section>`:''}
     ${o.x_wishes?`<section class="sec" data-s="wishes"><h2>${L.wishes}</h2>
       <form data-wishform><input name="name" required maxlength="60" placeholder="${L.name}" aria-label="${L.name}"><textarea name="msg" required maxlength="400" rows="3" placeholder="${L.wishPh}" aria-label="${L.wishPh}"></textarea><button class="submit">${L.sendWish}</button><p class="note" data-wishnote hidden></p></form>
@@ -1139,6 +1172,18 @@ function runEffect(el,kind,accent){
 const SAMPLE_WL=[{name:'Periuk nasi Philips HD3119',link:'https://shopee.com.my',price:'RM189'},{name:'Set cadar king, warna krim',link:'',price:'RM120'},{name:'Cerek elektrik keluli',link:'https://lazada.com.my',price:'RM99'},{name:'Baucar IKEA',link:'https://ikea.com.my',price:'RM100'}];
 Object.assign(SAMPLE,{effect:'none',x_wishlist:true,wishlist:SAMPLE_WL,x_counter:true,livestream:'',gifts:[{bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317'},{bank:'Touch ’n Go eWallet',accName:'Muhammad Aiman Hakimi',accNo:'012-345 6789'}],x_epass:false,ownDesign:''});
 
+/* ---------- card sections the couple can hide, rename or add to ---------- */
+const CARD_SECTIONS=[['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
+const DOCK_FOR={rsvp:'rsvp',gift:'gift',contact:'contact',wishes:'wishes'};
+function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"]`);
+  const hide=new Set(Array.isArray(o.hideSecs)?o.hideSecs:[]),titles=o.secTitles&&typeof o.secTitles==='object'?o.secTitles:{};
+  // the couple's own sections go before RSVP (or at the end)
+  const extra=(Array.isArray(o.customSecs)?o.customSecs:[]).filter(x=>x&&(String(x.title||'').trim()||String(x.text||'').trim())).slice(0,6);
+  const anchor=sec('rsvp')||sec('wishes')||el.querySelector('.sheet .foot');
+  extra.forEach((x,i)=>{const h=`<section class="sec" data-s="custom${i}">${String(x.title||'').trim()?`<h2>${esc(String(x.title).trim())}</h2>`:''}<p>${esc(String(x.text||'').trim()).replace(/\n/g,'<br>')}</p></section>`;anchor?anchor.insertAdjacentHTML('beforebegin',h):el.querySelector('.sheet')?.insertAdjacentHTML('beforeend',h)});
+  CARD_SECTIONS.forEach(([k])=>{const s=sec(k);if(!s)return;
+    if(hide.has(k)){s.remove();const d=DOCK_FOR[k]&&el.querySelector(`.dock [data-dock="${DOCK_FOR[k]}"]`);if(d){d.remove();const n=el.querySelectorAll('.dock button').length;const dk=el.querySelector('.dock');if(dk)dk.style.gridTemplateColumns=`repeat(${n},1fr)`}return}
+    const t=String(titles[k]||'').trim(),h=s.querySelector('h2');if(t&&h)h.textContent=t})}
 /* ---------- the hook renderInvite calls before the family skin ---------- */
 function FEATURES(el,o,th,L,mode,opts){
   const sheet=$('.sheet',el),sec=k=>$(`[data-s="${k}"]`,el),en=o.lang==='en';
@@ -1182,6 +1227,8 @@ function FEATURES(el,o,th,L,mode,opts){
   const rs=sec('rsvp');if(rs&&o.x_counter){rs.insertAdjacentHTML('beforeend',`<div class="att"><div><b data-att-yes>0</b><span>${L.going}</span></div><div><b data-att-no>0</b><span>${L.notGoing}</span></div></div>`);
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
+  // the couple's section choices: hidden sections, renamed headings, their own sections
+  try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
   if(mode!=='thumb'&&o.effect&&o.effect!=='none')requestAnimationFrame(()=>runEffect(el,o.effect,o.effect==='kelopak'?(th.c.accent||'#b5475d'):th.c.gold));
 }
@@ -7028,4 +7075,4 @@ CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.f
 /* needFont() fonts are loaded by src/app/fonts.ts */
 
 
-export {$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
+export {CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};

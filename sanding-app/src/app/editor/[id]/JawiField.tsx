@@ -5,8 +5,9 @@ import { JAWI_DIGITS, JAWI_KEYS, jawiInitial } from '@/lib/jawi';
 const MAX = 12; // matches sanitizeCard's jawi limit
 
 /** Jawi initials input with a toggleable on-screen letter pad that types at the caret, and "Fill from names". */
-export default function JawiField({ value, onChange, names, flash }: {
+export default function JawiField({ value, onChange, names, flash, script = 'jawi', onScript, scripts }: {
   value: string; onChange: (v: string) => void; names: [string, string]; flash: (m: string) => void;
+  script?: string; onScript?: (k: string) => void; scripts?: Record<string, string>;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -35,6 +36,8 @@ export default function JawiField({ value, onChange, names, flash }: {
   }
 
   function fill() {
+    if (script === 'latin') { const v = names.map((n) => (n || 'A').trim()[0] || 'A').join(' & '); caret.current = v.length; onChange(v); flash(`Filled in: ${v}.`); return; }
+    if (script !== 'jawi') { flash(script === 'chinese' ? 'Type the Chinese characters with your phone keyboard, e.g. 囍 or your surnames 李 王.' : 'Type the letters with your phone keyboard, e.g. அ & அ.'); input.current?.focus(); return; }
     const letters = names.map(jawiInitial);
     const v = letters.filter(Boolean).join(' ');
     if (!v) { flash('Add both cover names first (step 2).'); return; }
@@ -46,21 +49,22 @@ export default function JawiField({ value, onChange, names, flash }: {
 
   return (
     <div className="field">
-      <label htmlFor="f-jawi">Jawi initials (optional)</label>
-      <input ref={input} type="text" id="f-jawi" dir="rtl" lang="ms-Arab" placeholder="ع ا" maxLength={MAX} value={value} onChange={(e) => onChange(e.target.value)} />
+      <label htmlFor="f-jawi">Monogram initials (optional)</label>
+      {scripts && onScript && <div className="chips" role="group" aria-label="Monogram script" style={{ marginBottom: 8 }}>{Object.entries(scripts).map(([k, l]) => <button key={k} type="button" className="chip" aria-pressed={script === k} onClick={() => { onScript(k); if (k !== 'jawi') setOpen(false); }}>{l}</button>)}</div>}
+      <input ref={input} type="text" id="f-jawi" dir="auto" placeholder={({ jawi: 'ع ا', latin: 'A & A', chinese: '囍 or 李 王', tamil: 'அ & அ' } as Record<string, string>)[script] || 'ع ا'} maxLength={MAX} value={value} onChange={(e) => onChange(e.target.value)} />
       <div className="jawi-tools">
         <button type="button" className="btn btn-ghost btn-sm" onClick={fill}>Fill from names</button>
-        <button type="button" className="btn btn-ghost btn-sm" aria-expanded={open} aria-controls="jawi-kb" onClick={() => { setOpen((o) => !o); input.current?.focus(); }}>Jawi keyboard</button>
+        {script === 'jawi' && <button type="button" className="btn btn-ghost btn-sm" aria-expanded={open} aria-controls="jawi-kb" onClick={() => { setOpen((o) => !o); input.current?.focus(); }}>Jawi keyboard</button>}
       </div>
       {/* mousedown is cancelled so the input keeps focus and its caret while letters are tapped */}
-      <div className="jawi-kb" id="jawi-kb" hidden={!open} role="group" aria-label="Jawi letters" onMouseDown={(e) => e.preventDefault()}>
+      <div className="jawi-kb" id="jawi-kb" hidden={!open || script !== 'jawi'} role="group" aria-label="Jawi letters" onMouseDown={(e) => e.preventDefault()}>
         <div className="jawi-digits">{JAWI_DIGITS.map((k) => <button key={k} type="button" aria-label={k} onClick={() => press(k)}>{k}</button>)}</div>
         {JAWI_KEYS.map((k) => <button key={k} type="button" aria-label={k} onClick={() => press(k)}>{k}</button>)}
         <button type="button" className="wide" onClick={() => press(' ')}>Space</button>
         <button type="button" className="wide" onClick={() => press('del')}>Delete</button>
         <button type="button" className="wide" onClick={() => press('clr')}>Clear</button>
       </div>
-      <span className="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). The top row is Jawi numbers.</span>
+      <span className="hint">Shown on the cover of designs with a monogram and as a small seal inside the card. On the Jawi keyboard, the top row is Jawi numbers.</span>
     </div>
   );
 }

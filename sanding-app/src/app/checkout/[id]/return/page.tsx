@@ -6,7 +6,7 @@ import { currentUser } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { settle } from '@/lib/payments';
 import { PKG, SITE_URL, displayLink, rm, sanitizeCard, type PackageId } from '@/lib/card';
-import { coverNames, fmtDate, T } from '@/lib/invite/engine';
+import { coverNames, fmtDate, greetingFor, T } from '@/lib/invite/engine';
 
 export const metadata = { title: 'Payment' };
 export const dynamic = 'force-dynamic';
@@ -47,7 +47,7 @@ export default async function ReturnPage({ params, searchParams }: PageProps<'/c
   }
 
   const url = `${SITE_URL}/${o!.slug}`;
-  const wa = `https://wa.me/?text=${encodeURIComponent(`Assalamualaikum. Dengan segala hormatnya kami menjemput anda ke ${T[card.lang].ev[card.eventTitle]} ${names} pada ${fmtDate(card.date, 'ms')}. Kad jemputan: ${url}`)}`;
+  const wa = `https://wa.me/?text=${encodeURIComponent(`${greetingFor(card)}. Dengan segala hormatnya kami menjemput anda ke ${T[card.lang].ev[card.eventTitle]} ${names} pada ${fmtDate(card.date, 'ms')}. Kad jemputan: ${url}`)}`;
   return (
     <>
       <SiteHeader />

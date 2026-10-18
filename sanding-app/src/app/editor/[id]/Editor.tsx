@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { coverNames, EFFECTS, FAMILIES, Music, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, MONO_SCRIPTS, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, TRAD_DEFAULT, TRAD_EVENTS, TRADITIONS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -13,7 +13,7 @@ import { blankEvent, MAX_EXTRA_EVENTS, type EventItem } from '@/lib/events';
 type Props = { orderId: string; userId: string; initial: Card; status: 'draft' | 'live'; paidPkg: PackageId | null; addonPaid: boolean; slug: string | null };
 type Media = 'photo' | 'qr' | 'own' | 'og';
 const MAX_PHOTOS = 6;
-const TABS = ['Design', 'Couple', 'Majlis', 'Extras', 'Review'];
+const TABS = ['Design', 'Couple', 'Majlis', 'Content', 'Extras', 'Review'];
 const sampleGuest = (c: Card) => (c.lang === 'en' ? 'Mr Ahmad & family' : 'Encik Ahmad & keluarga');
 
 /** Resizes an image in the browser before upload so cards stay light on mobile data. */
@@ -140,6 +140,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const setWish = (wishlist: WishItem[]) => set('wishlist', wishlist);
   const setEv = (i: number, k: keyof EventItem, v: string) => set('events', c.events.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   const L = T[c.lang];
+  const script = c.monoScript || TRAD_DEFAULT[c.tradition || 'malay'].monoScript;
+  const evOpts = Array.from(new Set([...(TRAD_EVENTS[c.tradition || 'malay'] || []), c.eventTitle]));
+  const dflt = defaultCopy(c);
+  const LC = copyFor(c);
+  const hidden = new Set(c.hideSecs || []);
+  const setCs = (cs: Card['customSecs']) => set('customSecs', cs);
 
   async function proceed() {
     const miss = missingField(c);
@@ -170,9 +176,14 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
           <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
             {tab === 0 && <div className="panel on">
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
+              <div className="field" style={{ marginBottom: 14 }}><span className="lbl">Wedding tradition</span>
+                <div className="chips" role="group" aria-label="Wedding tradition">{Object.entries(TRADITIONS).map(([k, l]) => (
+                  <button key={k} type="button" className="chip" aria-pressed={c.tradition === k} onClick={() => { if (k === c.tradition) return; const d = TRAD_DEFAULT[k];
+                    dirty.current = true; setC((o) => ({ ...o, tradition: k as Card['tradition'], eventTitle: d.eventTitle as Card['eventTitle'], bismillah: d.bismillah, monoScript: d.monoScript as Card['monoScript'], jawi: d.monoScript !== 'jawi' && /[\u0600-\u06FF]/.test(o.jawi) ? '' : o.jawi })); }}>{l}</button>))}</div>
+                <span className="hint">Sets the greeting, wording, event titles and monogram. You can change any of them after.</span></div>
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
+                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} script={script} onScript={(k) => set('monoScript', k as Card['monoScript'])} scripts={MONO_SCRIPTS} />
               </div>
               <p className="muted" style={{ fontSize: 13, margin: '-4px 0 14px' }}>Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
               <div className="fam-scroll"><div className="fam-pick">
@@ -231,7 +242,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="fieldset">
                 <div className="field full"><label htmlFor="f-hosts">Host names (usually the parents)</label><input type="text" id="f-hosts" value={c.hosts} maxLength={200} onChange={(e) => set('hosts', e.target.value)} /><span className="hint">Shown in the invitation: &ldquo;Dengan penuh kesyukuran, kami …&rdquo;</span></div>
                 <div className="field"><label htmlFor="f-side">Whose majlis is this?</label><select id="f-side" value={c.side} onChange={(e) => set('side', e.target.value as Card['side'])}><option value="bride">Bride&apos;s family</option><option value="groom">Groom&apos;s family</option><option value="couple">The couple</option></select></div>
-                <div className="field"><label htmlFor="f-ev">Event title</label><select id="f-ev" value={c.eventTitle} onChange={(e) => set('eventTitle', e.target.value as Card['eventTitle'])}><option value="walimah">Walimatul Urus</option><option value="kahwin">Majlis Perkahwinan</option><option value="bertandang">Majlis Bertandang</option><option value="resepsi">Majlis Resepsi</option><option value="tunang">Majlis Pertunangan</option><option value="nikah">Majlis Akad Nikah</option></select></div>
+                <div className="field"><label htmlFor="f-ev">Event title</label><select id="f-ev" value={c.eventTitle} onChange={(e) => set('eventTitle', e.target.value as Card['eventTitle'])}>{evOpts.map((k) => <option key={k} value={k}>{T.ms.ev[k]}{c.lang === 'en' ? ` · ${T.en.ev[k]}` : ''}</option>)}</select></div>
               </div>
             </div>}
 
@@ -276,6 +287,30 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
             </div>}
 
             {tab === 3 && <div className="panel on">
+              <p className="muted">Choose what your card shows, rename the headings, and write in your own words. The phone shows every change.</p>
+              <div className="section-title"><h3>Sections</h3><span className="muted" style={{ fontSize: 12 }}>Untick to hide · type to rename</span></div>
+              <div className="rows">{CARD_SECTIONS.map(([k, f]) => (
+                <label key={k} className="sec-row"><input type="checkbox" checked={!hidden.has(k)} onChange={(e) => { const h = new Set(hidden); if (e.target.checked) h.delete(k); else h.add(k); set('hideSecs', [...h]); }} />
+                  <input type="text" value={c.secTitles?.[k] || ''} placeholder={plainOf(f(LC) || '')} maxLength={60} aria-label="Heading" onChange={(e) => set('secTitles', { ...(c.secTitles || {}), [k]: e.target.value })} /></label>))}</div>
+              <div className="section-title"><h3>Your own sections</h3><button type="button" className="btn btn-ghost btn-sm" disabled={(c.customSecs || []).length >= 6} onClick={() => setCs([...(c.customSecs || []), { title: '', text: '' }])}>Add section</button></div>
+              <p className="muted" style={{ fontSize: 13, margin: '-6px 0 10px' }}>E.g. parking, dress code note, our story, a thank-you. Shown before the RSVP.</p>
+              <div className="rows">{(c.customSecs || []).length ? (c.customSecs || []).map((x, i) => (
+                <div key={i} className="csec"><div className="row-line" style={{ gridTemplateColumns: '1fr auto' }}>
+                  <input type="text" value={x.title} placeholder="Title, e.g. Parking" maxLength={60} aria-label="Section title" onChange={(e) => setCs(c.customSecs.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
+                  <button type="button" className="icon-btn" aria-label="Remove section" onClick={() => setCs(c.customSecs.filter((_, j) => j !== i))}>✕</button></div>
+                  <textarea rows={3} value={x.text} maxLength={600} placeholder="What guests should know" aria-label="Section text" onChange={(e) => setCs(c.customSecs.map((y, j) => (j === i ? { ...y, text: e.target.value } : y)))} /></div>))
+                : <p className="muted" style={{ fontSize: 13 }}>None yet.</p>}</div>
+              <div className="section-title"><h3>Wording</h3><button type="button" className="btn btn-ghost btn-sm" onClick={() => { dirty.current = true; setC((o) => ({ ...o, txtSalam: '', txtIntro: '', txtDoaT: '', txtDoa: '' })); }}>Reset to default</button></div>
+              <p className="muted" style={{ fontSize: 13, margin: '-6px 0 12px' }}>Leave a box empty to use the default for your tradition and language. In the invitation text, <code>{'{hosts}'}</code> is replaced by the host names.</p>
+              <div className="fieldset">
+                <div className="field full"><label htmlFor="f-ts">Greeting</label><input type="text" id="f-ts" value={c.txtSalam} maxLength={120} placeholder={dflt.salam} onChange={(e) => set('txtSalam', e.target.value)} /></div>
+                <div className="field full"><label htmlFor="f-ti">Invitation text</label><textarea id="f-ti" rows={4} value={c.txtIntro} maxLength={600} placeholder={plainOf(dflt.intro('{hosts}', c.side))} onChange={(e) => set('txtIntro', e.target.value)} /></div>
+                <div className="field"><label htmlFor="f-tdt">Closing title</label><input type="text" id="f-tdt" value={c.txtDoaT} maxLength={60} placeholder={plainOf(dflt.doaT)} onChange={(e) => set('txtDoaT', e.target.value)} /></div>
+                <div className="field full"><label htmlFor="f-td">Closing blessing / doa</label><textarea id="f-td" rows={3} value={c.txtDoa} maxLength={500} placeholder={plainOf(dflt.doa)} onChange={(e) => set('txtDoa', e.target.value)} /></div>
+              </div>
+            </div>}
+
+            {tab === 4 && <div className="panel on">
               <p className="muted">Turn on what you need. The package updates to the smallest one that covers your choices.</p>
               <div className="toggle-row"><Toggle label="RSVP" checked={c.x_rsvp} onChange={(v) => set('x_rsvp', v)} /><div className="body"><div className="top"><b>RSVP</b>{tag('Asas')}</div>
                 <div className="fieldset" style={dim(c.x_rsvp)}>
@@ -348,7 +383,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="toggle-row"><Toggle label="Personal guest links" checked={c.x_guestlinks} onChange={(v) => set('x_guestlinks', v)} /><div className="body"><div className="top"><b>Personal guest links</b>{tag('Diraja')}</div><p className="muted" style={{ fontSize: 13 }}>Put each guest&apos;s name on the cover. Also unlocks CSV export.</p></div></div>
             </div>}
 
-            {tab === 4 && <div className="panel on">
+            {tab === 5 && <div className="panel on">
               <div className="summary"><dl>
                 {([['Design', `${FAMILIES[themeOf(c.template).fam].name} · ${themeOf(c.template).name}`], ['Couple', `${c.brideShort || '—'} & ${c.groomShort || '—'}`], ['Event', L.ev[c.eventTitle]], ['Date', fmtDate(c.date, c.lang) || '—'],
                   ['Time', `${fmtTime(c.start, c.lang)} – ${fmtTime(c.end, c.lang)}`], ['Venue', c.venue || '—'], ...(c.events.length ? [['More sessions', c.events.map((e) => [e.label, e.date && fmtDate(e.date, c.lang), e.venue].filter(Boolean).join(', ')).join(' · ')]] : []), ['Language', c.lang === 'en' ? 'English' : 'Bahasa Melayu'],
@@ -364,11 +399,11 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               </div>
             </div>}
 
-            {tab === 4 && !live && <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>Your draft is saved to your account as you type. Previewing is free; the card goes live at its link only after payment. <button type="button" style={{ textDecoration: 'underline', padding: 0, border: 0, background: 'none', color: 'var(--fg)', cursor: 'pointer', font: 'inherit' }} onClick={laterPay}>Save and pay later</button></p>}
+            {tab === 5 && !live && <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>Your draft is saved to your account as you type. Previewing is free; the card goes live at its link only after payment. <button type="button" style={{ textDecoration: 'underline', padding: 0, border: 0, background: 'none', color: 'var(--fg)', cursor: 'pointer', font: 'inherit' }} onClick={laterPay}>Save and pay later</button></p>}
             <div className="foot-nav">
               <button type="button" className="btn btn-ghost" style={{ visibility: tab ? 'visible' : 'hidden' }} onClick={() => { setTab(tab - 1); scrollTo({ top: 0 }); }}>Back</button>
-              <button type="button" className="btn btn-primary" onClick={() => { if (tab < 4) { setTab(tab + 1); scrollTo({ top: 0 }); } else proceed(); }}>
-                {tab < 4 ? 'Next' : covered ? 'Save changes' : live ? 'Upgrade and pay' : 'Continue to payment'}
+              <button type="button" className="btn btn-primary" onClick={() => { if (tab < 5) { setTab(tab + 1); scrollTo({ top: 0 }); } else proceed(); }}>
+                {tab < 5 ? 'Next' : covered ? 'Save changes' : live ? 'Upgrade and pay' : 'Continue to payment'}
               </button>
             </div>
           </form>

@@ -26,10 +26,17 @@ export type Card = {
   x_contacts: boolean; contacts: Contact[];
   x_guestlinks: boolean;
   effect: string; ownDesign: string;
+  /** Wedding tradition: sets greeting, wording, event titles and monogram script. */
+  tradition: 'malay' | 'chinese' | 'indian' | 'general'; monoScript: 'jawi' | 'latin' | 'chinese' | 'tamil' | '';
+  /** The couple's own wording; empty = the tradition's default. */
+  txtSalam: string; txtIntro: string; txtDoaT: string; txtDoa: string;
+  /** Content step: hidden sections, renamed headings and the couple's own sections. */
+  hideSecs: string[]; secTitles: Record<string, string>; customSecs: { title: string; text: string }[];
   /** Custom image for the WhatsApp / social link preview (og:image), 1200×630. */
   ogImage: string;
 };
-export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tunang', 'nikah'] as const;
+export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tunang', 'nikah', 'banquet', 'tea', 'ceremony', 'mehndi'] as const;
+export const SECTION_KEYS = ['when', 'count', 'sched', 'gallery', 'doa', 'rsvp', 'wishes', 'gift', 'wishlist', 'contact'];
 /** Own-design front page add-on, on top of the package price. */
 export const ADDON_OWN = 10;
 export type PackageId = 'asas' | 'premium' | 'diraja';
@@ -148,6 +155,12 @@ export function sanitizeCard(input: unknown): Card {
     contacts: arr(o.contacts).slice(0, 3).map((c: Record<string, unknown>) => ({ name: str(c?.name, 60), role: str(c?.role, 60), phone: str(c?.phone, 20) })),
     x_guestlinks: bool(o.x_guestlinks),
     effect: oneOf(o.effect, Object.keys(EFFECTS), 'none'),
+    tradition: oneOf(o.tradition, ['malay', 'chinese', 'indian', 'general'] as const, 'malay'),
+    monoScript: oneOf(o.monoScript, ['', 'jawi', 'latin', 'chinese', 'tamil'] as const, ''),
+    txtSalam: str(o.txtSalam, 120), txtIntro: str(o.txtIntro, 600), txtDoaT: str(o.txtDoaT, 60), txtDoa: str(o.txtDoa, 500),
+    hideSecs: arr(o.hideSecs).filter((k): k is string => typeof k === 'string' && SECTION_KEYS.includes(k)),
+    secTitles: Object.fromEntries(SECTION_KEYS.map((k) => [k, str((o.secTitles as Record<string, unknown> | undefined)?.[k], 60)]).filter(([, v]) => v)),
+    customSecs: arr(o.customSecs).slice(0, 6).map((x: Record<string, unknown>) => ({ title: str(x?.title, 60), text: str(x?.text, 600) })),
     ownDesign: mediaUrl(o.ownDesign),
     ogImage: mediaUrl(o.ogImage),
   };
