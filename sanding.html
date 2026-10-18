@@ -194,6 +194,31 @@ input:focus,select:focus,textarea:focus{outline:1px solid var(--fg);border-color
 .tpl-pick button{border:1px solid var(--line);padding:0;background:var(--surface);cursor:pointer;text-align:left;border-radius:2px;overflow:hidden}
 .tpl-pick button[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:2px}
 .tpl-pick .sw{height:58px}
+/* design picker v2: one tile per design, colours open underneath */
+.fam-pick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;grid-auto-flow:row dense}
+.fam-tile{border:1px solid var(--line);background:var(--surface);padding:0 0 10px;cursor:pointer;text-align:left;border-radius:2px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.fam-tile:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(30,18,10,.18)}
+.fam-tile[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:2px}
+.fam-tile .mini,.fc-opt .mini{position:relative;pointer-events:none}
+.ft-name{font-family:var(--f-display);font-size:19px;font-style:italic;padding:8px 10px 0}
+.ft-mean{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:2px 10px 0}
+.fam-colours{grid-column:1/-1;border:1px solid var(--line);background:var(--sunk);padding:14px;display:flex;flex-direction:column;gap:12px}
+.fc-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.fc-head b{font-family:var(--f-display);font-size:22px;font-style:italic;font-weight:400}
+.fc-head span{font-size:13px;color:var(--muted)}
+.fc-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.fc-opt{border:1px solid var(--line);background:var(--surface);padding:0 0 6px;cursor:pointer;border-radius:2px;overflow:hidden;display:flex;flex-direction:column;font-size:12px;text-align:left}
+.fc-opt span{padding:5px 7px 0}
+.fc-opt[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:2px}
+@media (max-width:900px){.fam-pick{grid-template-columns:repeat(3,minmax(0,1fr))}.fc-row{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.fam-pick{grid-template-columns:repeat(2,minmax(0,1fr))}.fc-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* design picker: real miniature cards instead of colour swatches */
+.tpl-pick{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tpl-pick .mini{position:relative;pointer-events:none}
+.tpl-pick button{transition:transform .15s,box-shadow .15s}
+.tpl-pick button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(30,18,10,.18)}
+@media (max-width:560px){.tpl-pick{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
 .tpl-pick .nm{padding:6px 8px;font-size:12px}
 @media (max-width:560px){.tpl-group{grid-template-columns:1fr}}
 .toggle-row{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line)}
@@ -443,6 +468,7 @@ tr:last-child td{border-bottom:0}
           <!-- 1 design -->
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
+            <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
             <div class="tpl-pick" id="tpl-pick"></div>
             <div class="fieldset">
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
@@ -13740,9 +13766,21 @@ function paintPreview(){const host=$('#ed-preview');const old=$('.scroller',host
   renderInvite(host,draft,{mode:'preview',opened:opened??previewOpened});const sc=$('.scroller',host);if(sc)sc.scrollTop=st}
 $('#pv-cover').onclick=()=>{$('#ed-preview .inv')?.reopen?.()};
 $('#pv-full').onclick=$('#mobile-preview').onclick=()=>{invReturn='create';openInvite(clone(draft),{closeLabel:'← Back to editor',guest:draft.x_guestlinks?(draft.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):''})};
-function renderTplPick(){$('#tpl-pick').className='tpl-groups';$('#tpl-pick').innerHTML=Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>`<div class="tpl-group"><h4>${esc(f.name)}<small>${esc(f.meaning)}</small></h4><div class="tpl-pick">${THEMES.filter(t=>t.fam===k).map(t=>`<button type="button" data-tpl="${t.id}" aria-pressed="${themeOf(draft.template).id===t.id}">${swatchEl(t)}<div class="nm">${esc(t.name)}</div></button>`).join('')}</div></div>`).join('');
-  $('#tpl-current').textContent=themeOf(draft.template).desc;
-  $$('[data-tpl]').forEach(b=>b.onclick=()=>{draft.template=b.dataset.tpl;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()})}
+// design picker: one real mini card per design; tapping it opens that design's colours underneath
+let openFam=null;
+function miniFor(tpl,fam){const d=document.createElement('div');d.className='mini';d.innerHTML='<div class="scale"></div>';
+  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
+function pickDesign(id){draft.template=id;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
+function renderTplPick(){const box=$('#tpl-pick'),cur=themeOf(draft.template);if(openFam===null)openFam=cur.fam;box.className='fam-pick';box.innerHTML='';
+  $('#tpl-current').textContent=cur.desc;
+  Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k),mine=cur.fam===k,shown=mine?cur:list[0];
+    const b=document.createElement('button');b.type='button';b.className='fam-tile';b.setAttribute('aria-pressed',mine);b.setAttribute('aria-expanded',openFam===k);
+    b.append(miniFor(shown.id,k));b.insertAdjacentHTML('beforeend',`<span class="ft-name">${esc(f.name)}</span><span class="ft-mean">${esc(f.meaning)} · ${list.length} colours</span>`);
+    b.onclick=()=>{openFam=openFam===k?'':k;if(!mine)pickDesign(list[0].id);else renderTplPick()};box.append(b);
+    if(openFam===k){const p=document.createElement('div');p.className='fam-colours';p.setAttribute('role','group');p.setAttribute('aria-label',f.name+' colours');
+      p.innerHTML=`<div class="fc-head"><b>${esc(f.name)}</b><span>${esc(f.blurb)}</span></div><div class="fc-row"></div>`;
+      list.forEach(t=>{const o=document.createElement('button');o.type='button';o.className='fc-opt';o.setAttribute('aria-pressed',cur.id===t.id);o.append(miniFor(t.id,k));o.insertAdjacentHTML('beforeend',`<span>${esc(t.name)}</span>`);o.onclick=()=>pickDesign(t.id);$('.fc-row',p).append(o)});
+      box.append(p)}})}
 function renderMusicPick(){const box=$('#music-pick');box.innerHTML=Object.entries(Music.tracks).map(([k,t])=>`<button type="button" class="chip" data-trk="${k}" aria-pressed="${draft.music===k}">${esc(t.label)}</button>`).join('')+`<button type="button" class="btn btn-ghost btn-sm" id="trk-play">${Music.playing()?'Stop':'Play'}</button>`;
   $$('[data-trk]',box).forEach(b=>b.onclick=()=>{draft.music=b.dataset.trk;if(!draft.x_music){draft.x_music=true;$('#x-music').checked=true}if(Music.playing())Music.play(draft.music);renderMusicPick();changed()});
   $('#trk-play').onclick=()=>{Music.playing()?Music.stop():Music.play(draft.music||'sax');renderMusicPick()}}

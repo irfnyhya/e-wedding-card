@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { coverNames, EFFECTS, FAMILIES, Music, renderInvite, swatchEl, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
+import { coverNames, EFFECTS, FAMILIES, Music, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
+import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
 import { supabaseBrowser } from '@/lib/supabase/client';
@@ -66,6 +67,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const [full, setFull] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [openFam, setOpenFam] = useState<string | null>(() => themeOf(initial.template).fam);
   const preview = useRef<HTMLDivElement>(null);
   const dirty = useRef(false);
   const latest = useRef(c);
@@ -168,20 +170,28 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
           <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
             {tab === 0 && <div className="panel on">
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
-              <div className="tpl-groups">
-                {families().map(([k, f]) => (
-                  <div className="tpl-group" key={k}>
-                    <h4>{f.name}<small>{f.meaning}</small></h4>
-                    <div className="tpl-pick">
-                      {THEMES.filter((t) => t.fam === k).map((t) => (
-                        <button key={t.id} type="button" aria-pressed={themeOf(c.template).id === t.id} onClick={() => set('template', t.id)}>
-                          <div dangerouslySetInnerHTML={{ __html: swatchEl(t) }} />
-                          <div className="nm">{t.name}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <p className="muted" style={{ fontSize: 13, margin: '-4px 0 14px' }}>Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
+              <div className="fam-pick">
+                {families().map(([k, f]) => {
+                  const list = THEMES.filter((t) => t.fam === k);
+                  const cur = themeOf(c.template), mine = cur.fam === k, shown = mine ? cur : list[0];
+                  const face = k === 'sampul' ? 'cover' : 'page';
+                  const names = { brideShort: c.brideShort, groomShort: c.groomShort, side: c.side, lang: c.lang };
+                  return [
+                    <button key={k} type="button" className="fam-tile" aria-pressed={mine} aria-expanded={openFam === k}
+                      onClick={() => { setOpenFam((o) => (o === k ? null : k)); if (!mine) set('template', list[0].id); }}>
+                      <Mini template={shown.id} face={face} extra={names} />
+                      <span className="ft-name">{f.name}</span><span className="ft-mean">{f.meaning} · {list.length} colours</span>
+                    </button>,
+                    openFam === k && <div key={k + '-c'} className="fam-colours" role="group" aria-label={`${f.name} colours`}>
+                      <div className="fc-head"><b>{f.name}</b><span>{f.blurb}</span></div>
+                      <div className="fc-row">{list.map((t) => (
+                        <button key={t.id} type="button" className="fc-opt" aria-pressed={cur.id === t.id} onClick={() => set('template', t.id)}>
+                          <Mini template={t.id} face={face} extra={names} /><span>{t.name}</span>
+                        </button>))}</div>
+                    </div>,
+                  ];
+                })}
               </div>
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>

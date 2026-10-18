@@ -157,9 +157,21 @@ function paintPreview(){const host=$('#ed-preview');const old=$('.scroller',host
   renderInvite(host,draft,{mode:'preview',opened:opened??previewOpened});const sc=$('.scroller',host);if(sc)sc.scrollTop=st}
 $('#pv-cover').onclick=()=>{$('#ed-preview .inv')?.reopen?.()};
 $('#pv-full').onclick=$('#mobile-preview').onclick=()=>{invReturn='create';openInvite(clone(draft),{closeLabel:'← Back to editor',guest:draft.x_guestlinks?(draft.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):''})};
-function renderTplPick(){$('#tpl-pick').className='tpl-groups';$('#tpl-pick').innerHTML=Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>`<div class="tpl-group"><h4>${esc(f.name)}<small>${esc(f.meaning)}</small></h4><div class="tpl-pick">${THEMES.filter(t=>t.fam===k).map(t=>`<button type="button" data-tpl="${t.id}" aria-pressed="${themeOf(draft.template).id===t.id}">${swatchEl(t)}<div class="nm">${esc(t.name)}</div></button>`).join('')}</div></div>`).join('');
-  $('#tpl-current').textContent=themeOf(draft.template).desc;
-  $$('[data-tpl]').forEach(b=>b.onclick=()=>{draft.template=b.dataset.tpl;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()})}
+// design picker: one real mini card per design; tapping it opens that design's colours underneath
+let openFam=null;
+function miniFor(tpl,fam){const d=document.createElement('div');d.className='mini';d.innerHTML='<div class="scale"></div>';
+  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
+function pickDesign(id){draft.template=id;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
+function renderTplPick(){const box=$('#tpl-pick'),cur=themeOf(draft.template);if(openFam===null)openFam=cur.fam;box.className='fam-pick';box.innerHTML='';
+  $('#tpl-current').textContent=cur.desc;
+  Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k),mine=cur.fam===k,shown=mine?cur:list[0];
+    const b=document.createElement('button');b.type='button';b.className='fam-tile';b.setAttribute('aria-pressed',mine);b.setAttribute('aria-expanded',openFam===k);
+    b.append(miniFor(shown.id,k));b.insertAdjacentHTML('beforeend',`<span class="ft-name">${esc(f.name)}</span><span class="ft-mean">${esc(f.meaning)} · ${list.length} colours</span>`);
+    b.onclick=()=>{openFam=openFam===k?'':k;if(!mine)pickDesign(list[0].id);else renderTplPick()};box.append(b);
+    if(openFam===k){const p=document.createElement('div');p.className='fam-colours';p.setAttribute('role','group');p.setAttribute('aria-label',f.name+' colours');
+      p.innerHTML=`<div class="fc-head"><b>${esc(f.name)}</b><span>${esc(f.blurb)}</span></div><div class="fc-row"></div>`;
+      list.forEach(t=>{const o=document.createElement('button');o.type='button';o.className='fc-opt';o.setAttribute('aria-pressed',cur.id===t.id);o.append(miniFor(t.id,k));o.insertAdjacentHTML('beforeend',`<span>${esc(t.name)}</span>`);o.onclick=()=>pickDesign(t.id);$('.fc-row',p).append(o)});
+      box.append(p)}})}
 function renderMusicPick(){const box=$('#music-pick');box.innerHTML=Object.entries(Music.tracks).map(([k,t])=>`<button type="button" class="chip" data-trk="${k}" aria-pressed="${draft.music===k}">${esc(t.label)}</button>`).join('')+`<button type="button" class="btn btn-ghost btn-sm" id="trk-play">${Music.playing()?'Stop':'Play'}</button>`;
   $$('[data-trk]',box).forEach(b=>b.onclick=()=>{draft.music=b.dataset.trk;if(!draft.x_music){draft.x_music=true;$('#x-music').checked=true}if(Music.playing())Music.play(draft.music);renderMusicPick();changed()});
   $('#trk-play').onclick=()=>{Music.playing()?Music.stop():Music.play(draft.music||'sax');renderMusicPick()}}
