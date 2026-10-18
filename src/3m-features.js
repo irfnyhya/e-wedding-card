@@ -82,7 +82,7 @@ const SAMPLE_WL=[{name:'Periuk nasi Philips HD3119',link:'https://shopee.com.my'
 Object.assign(SAMPLE,{effect:'none',x_wishlist:true,wishlist:SAMPLE_WL,x_counter:true,livestream:'',gifts:[{bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317'},{bank:'Touch ’n Go eWallet',accName:'Muhammad Aiman Hakimi',accNo:'012-345 6789'}],x_epass:false,ownDesign:''});
 
 /* ---------- card sections the couple can hide, rename or add to ---------- */
-const CARD_SECTIONS=[['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
+const CARD_SECTIONS=[['photo',L=>L.lang==='en'?'Couple photo':'Gambar pengantin'],['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
 const DOCK_FOR={rsvp:'rsvp',gift:'gift',contact:'contact',wishes:'wishes'};
 function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"]`);
   const hide=new Set(Array.isArray(o.hideSecs)?o.hideSecs:[]),titles=o.secTitles&&typeof o.secTitles==='object'?o.secTitles:{};
@@ -136,6 +136,11 @@ function FEATURES(el,o,th,L,mode,opts){
   const rs=sec('rsvp');if(rs&&o.x_counter){rs.insertAdjacentHTML('beforeend',`<div class="att"><div><b data-att-yes>0</b><span>${L.going}</span></div><div><b data-att-no>0</b><span>${L.notGoing}</span></div></div>`);
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
+  // the couple's photo, framed, at the top of the inside of the card
+  const cp=String(o.couplePhoto||'').trim();
+  if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
+    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" loading="lazy" decoding="async"></figure></section>`;
+    intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover

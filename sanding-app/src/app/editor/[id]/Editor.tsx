@@ -11,7 +11,7 @@ import { supabaseBrowser } from '@/lib/supabase/client';
 import { blankEvent, MAX_EXTRA_EVENTS, type EventItem } from '@/lib/events';
 
 type Props = { orderId: string; userId: string; initial: Card; status: 'draft' | 'live'; paidPkg: PackageId | null; addonPaid: boolean; slug: string | null };
-type Media = 'photo' | 'qr' | 'own' | 'og';
+type Media = 'photo' | 'qr' | 'own' | 'og' | 'couple';
 const MAX_PHOTOS = 6;
 const TABS = ['Design', 'Couple', 'Majlis', 'Content', 'Extras', 'Review'];
 const sampleGuest = (c: Card) => (c.lang === 'en' ? 'Mr Ahmad & family' : 'Encik Ahmad & keluarga');
@@ -115,19 +115,19 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   async function upload(file: File, kind: Media) {
     setUploading(kind);
     try {
-      const blob = kind === 'qr' ? await shrink(file, 480, 'image/png') : kind === 'own' ? await shrink(file, 1600, 'image/jpeg', 0.8) : kind === 'og' ? await crop(file, 1200, 630) : await shrink(file, 1080, 'image/jpeg', 0.75);
+      const blob = kind === 'qr' ? await shrink(file, 480, 'image/png') : kind === 'own' ? await shrink(file, 1600, 'image/jpeg', 0.8) : kind === 'og' ? await crop(file, 1200, 630) : kind === 'couple' ? await shrink(file, 1200, 'image/jpeg', 0.8) : await shrink(file, 1080, 'image/jpeg', 0.75);
       const path = `${userId}/${orderId}/${kind}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}.${kind === 'qr' ? 'png' : 'jpg'}`;
       const sb = supabaseBrowser();
       const { error } = await sb.storage.from('card-media').upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
       if (error) throw error;
       const url = sb.storage.from('card-media').getPublicUrl(path).data.publicUrl;
       dirty.current = true;
-      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
+      setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : kind === 'couple' ? { ...o, couplePhoto: url } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
     } catch (e) { flash((e as Error).message || 'Upload failed.'); } finally { setUploading(null); }
   }
   async function removeMedia(url: string, kind: Media) {
     dirty.current = true;
-    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : { ...o, photos: o.photos.filter((p) => p !== url) }));
+    setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : kind === 'couple' ? { ...o, couplePhoto: '' } : { ...o, photos: o.photos.filter((p) => p !== url) }));
     const m = url.match(/\/card-media\/(.+)$/);
     if (m) supabaseBrowser().storage.from('card-media').remove([decodeURIComponent(m[1])]).catch(() => {});
   }
@@ -231,6 +231,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-gf">Full name</label><input type="text" id="f-gf" value={c.groomFull} maxLength={120} onChange={(e) => set('groomFull', e.target.value)} /></div>
                 <div className="field"><label htmlFor="f-gs">Name on cover</label><input type="text" id="f-gs" value={c.groomShort} maxLength={40} onChange={(e) => set('groomShort', e.target.value)} /></div>
+              </div>
+              <div className="section-title"><h3>Couple photo</h3><span className="muted" style={{ fontSize: 12 }}>Optional</span></div>
+              <p className="muted" style={{ fontSize: 13, margin: '-6px 0 10px' }}>Shown in an arched frame at the top of the card, right after it opens. Portrait photos work best.</p>
+              <div className="uploads">
+                {c.couplePhoto ? <div className="ph tall"><img src={c.couplePhoto} alt="Couple photo" /><button type="button" aria-label="Remove couple photo" onClick={() => removeMedia(c.couplePhoto, 'couple')}>✕</button></div>
+                  : <label className="add" style={{ height: 150 }}>{uploading === 'couple' ? 'Uploading…' : 'Add photo'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'couple'); }} /></label>}
               </div>
               <div className="section-title"><h3>Hosts</h3></div>
               <div className="fieldset">

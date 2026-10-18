@@ -34,6 +34,8 @@ export type Card = {
   hideSecs: string[]; secTitles: Record<string, string>; customSecs: { title: string; text: string }[];
   /** Custom image for the WhatsApp / social link preview (og:image), 1200×630. */
   ogImage: string;
+  /** The couple's photo, framed at the top of the card. */
+  couplePhoto: string;
 };
 export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tunang', 'nikah', 'banquet', 'tea', 'ceremony', 'mehndi'] as const;
 export const SECTION_KEYS = ['when', 'count', 'sched', 'gallery', 'doa', 'rsvp', 'wishes', 'gift', 'wishlist', 'contact'];
@@ -162,6 +164,7 @@ export function sanitizeCard(input: unknown): Card {
     secTitles: Object.fromEntries(SECTION_KEYS.map((k) => [k, str((o.secTitles as Record<string, unknown> | undefined)?.[k], 60)]).filter(([, v]) => v)),
     customSecs: arr(o.customSecs).slice(0, 6).map((x: Record<string, unknown>) => ({ title: str(x?.title, 60), text: str(x?.text, 600) })),
     ownDesign: mediaUrl(o.ownDesign),
+    couplePhoto: mediaUrl(o.couplePhoto) || (/^\/?assets\/[\w.-]+$/.test(String(o.couplePhoto ?? '')) ? String(o.couplePhoto) : ''),
     ogImage: mediaUrl(o.ogImage),
   };
 }

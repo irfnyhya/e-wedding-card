@@ -518,6 +518,9 @@ tr:last-child td{border-bottom:0}
               <div class="field"><label for="f-groomFull">Full name</label><input type="text" id="f-groomFull" name="groomFull"></div>
               <div class="field"><label for="f-groomShort">Name on cover</label><input type="text" id="f-groomShort" name="groomShort"></div>
             </div>
+            <div class="section-title"><h3>Couple photo</h3><span class="muted" style="font-size:12px">Optional</span></div>
+            <p class="muted" style="font-size:13px;margin:-6px 0 10px">Shown in an arched frame at the top of the card, right after it opens. Portrait photos work best.</p>
+            <div class="uploads" id="couple-upload"></div>
             <div class="section-title"><h3>Hosts</h3></div>
             <div class="fieldset">
               <div class="field full"><label for="f-hosts">Host names (usually the parents)</label><input type="text" id="f-hosts" name="hosts"><span class="hint">Shown in the invitation: "Dengan penuh kesyukuran, kami …"</span></div>
@@ -2057,6 +2060,11 @@ tr:last-child td{border-bottom:0}
 </style>
 <style>
 /* ===== guest features: wishlist, gift accounts, counter, livestream, gallery, e-pass, effects ===== */
+/* the couple's photo: an arched, gilt-edged frame that follows the design's colours */
+.inv [data-s="photo"]{padding-top:34px;padding-bottom:10px}
+.inv .couple-ph{margin:0 auto;width:min(78%,300px);aspect-ratio:4/5;border-radius:999px 999px 6px 6px/150px 150px 6px 6px;overflow:hidden;position:relative;
+  box-shadow:0 0 0 1px var(--gold),0 0 0 6px var(--sheet),0 0 0 7px color-mix(in srgb,var(--gold) 60%,transparent),0 14px 28px rgba(0,0,0,.18)}
+.inv .couple-ph img{width:100%;height:100%;object-fit:cover;display:block}
 /* Jawi initials seal for designs that do not show them */
 .inv .jawi-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--accent);
   box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px transparent,inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 60%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 10%,transparent),transparent 70%)}
@@ -6778,6 +6786,7 @@ const T={
 /* ================= wedding traditions: Malay, Chinese, Indian, General ================= */
 Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
 Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
+Object.assign(T.ms,{lang:'ms'});Object.assign(T.en,{lang:'en'});
 const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
 const ALL_EVENTS=['kahwin','walimah','resepsi','bertandang','nikah','tunang','banquet','tea','ceremony','mehndi'];
 const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};
@@ -7847,7 +7856,7 @@ const SAMPLE_WL=[{name:'Periuk nasi Philips HD3119',link:'https://shopee.com.my'
 Object.assign(SAMPLE,{effect:'none',x_wishlist:true,wishlist:SAMPLE_WL,x_counter:true,livestream:'',gifts:[{bank:'Maybank',accName:'Nur Aisyah Humaira',accNo:'1621 8840 3317'},{bank:'Touch ’n Go eWallet',accName:'Muhammad Aiman Hakimi',accNo:'012-345 6789'}],x_epass:false,ownDesign:''});
 
 /* ---------- card sections the couple can hide, rename or add to ---------- */
-const CARD_SECTIONS=[['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
+const CARD_SECTIONS=[['photo',L=>L.lang==='en'?'Couple photo':'Gambar pengantin'],['when',L=>L.when],['count',L=>L.count],['sched',L=>L.sched],['gallery',L=>L.gallery],['doa',L=>L.doaT],['rsvp',L=>L.rsvp],['wishes',L=>L.wishes],['gift',L=>L.gift],['wishlist',L=>L.wl],['contact',L=>L.contact]];
 const DOCK_FOR={rsvp:'rsvp',gift:'gift',contact:'contact',wishes:'wishes'};
 function applyContent(el,o){const sec=k=>el.querySelector(`.sheet [data-s="${k}"]`);
   const hide=new Set(Array.isArray(o.hideSecs)?o.hideSecs:[]),titles=o.secTitles&&typeof o.secTitles==='object'?o.secTitles:{};
@@ -7901,6 +7910,11 @@ function FEATURES(el,o,th,L,mode,opts){
   const rs=sec('rsvp');if(rs&&o.x_counter){rs.insertAdjacentHTML('beforeend',`<div class="att"><div><b data-att-yes>0</b><span>${L.going}</span></div><div><b data-att-no>0</b><span>${L.notGoing}</span></div></div>`);
     const set=(y,n)=>{const a=$('[data-att-yes]',el),b=$('[data-att-no]',el);if(a){a.textContent=y;b.textContent=n}};
     if(opts.subscribeRsvps){const un=opts.subscribeRsvps(list=>{if(!rs.isConnected){un&&un();return}const yes=list.filter(r=>r.attending);set(yes.reduce((s,r)=>s+(+r.pax||0),0),list.length-yes.length)})}else set(mode==='preview'?128:0,mode==='preview'?9:0)}
+  // the couple's photo, framed, at the top of the inside of the card
+  const cp=String(o.couplePhoto||'').trim();
+  if(cp&&(/^https?:\/\//.test(cp)||/^\/?assets\/[\w.-]+$/.test(cp)||/^data:image\//.test(cp))&&!/["'<>\s()\;]/.test(cp.replace(/^data:image\/[a-z]+;base64,/,''))){
+    const intro=sec('intro');const h=`<section class="sec" data-s="photo"><figure class="couple-ph"><img src="${esc(cp)}" alt="${esc(coverNames(o).join(' & '))}" loading="lazy" decoding="async"></figure></section>`;
+    intro?intro.insertAdjacentHTML('beforebegin',h):$('.sheet',el)?.insertAdjacentHTML('afterbegin',h)}
   // the couple's section choices: hidden sections, renamed headings, their own sections
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
@@ -13842,7 +13856,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -13898,6 +13912,9 @@ function renderUploads(){
   const q=$('#qr-upload');q.innerHTML=draft.qr?`<div class="ph"><img src="${draft.qr}" alt="DuitNow QR"><button type="button" data-rmqr aria-label="Remove QR">✕</button></div>`:`<label class="add" for="qr-in">Upload QR<input type="file" id="qr-in" accept="image/*"></label>`;
   $('[data-rmqr]',q)?.addEventListener('click',()=>{draft.qr='';renderUploads();changed()});
   $('#qr-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.qr=await shrink(f,320,'image/png');renderUploads();changed()}catch(err){toast(err.message)}});
+  const cu=$('#couple-upload');cu.innerHTML=draft.couplePhoto?`<div class="ph tall"><img src="${esc(draft.couplePhoto)}" alt="Couple photo"><button type="button" data-rmcp aria-label="Remove couple photo">✕</button></div>`:`<label class="add" for="cp-in" style="height:150px">Add photo<input type="file" id="cp-in" accept="image/*"></label>`;
+  $('[data-rmcp]',cu)?.addEventListener('click',()=>{draft.couplePhoto='';renderUploads();changed()});
+  $('#cp-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.couplePhoto=await shrink(f,900,'image/jpeg',.74);renderUploads();changed()}catch(err){toast(err.message)}});
   const ow=$('#own-upload');ow.innerHTML=draft.ownDesign?`<div class="ph tall"><img src="${draft.ownDesign}" alt="Your design"><button type="button" data-rmown aria-label="Remove your design">✕</button></div>`:`<label class="add" for="own-in" style="height:150px">Upload artwork<input type="file" id="own-in" accept="image/*"></label>`;
   $('[data-rmown]',ow)?.addEventListener('click',()=>{draft.ownDesign='';renderUploads();changed()});
   $('#own-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.ownDesign=await shrink(f,1000,'image/jpeg',.7);renderUploads();changed()}catch(err){toast(err.message)}});

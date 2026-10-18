@@ -29,6 +29,7 @@ const T={
 /* ================= wedding traditions: Malay, Chinese, Indian, General ================= */
 Object.assign(T.ms.ev,{banquet:'Majlis Makan Malam Perkahwinan',tea:'Majlis Minum Teh',ceremony:'Majlis Perkahwinan',mehndi:'Malam Mehndi'});
 Object.assign(T.en.ev,{banquet:'Wedding Banquet',tea:'Tea Ceremony',ceremony:'Wedding Ceremony',mehndi:'Mehndi Night'});
+Object.assign(T.ms,{lang:'ms'});Object.assign(T.en,{lang:'en'});
 const TRADITIONS={malay:'Malay',chinese:'Chinese',indian:'Indian',general:'General'};
 const ALL_EVENTS=['kahwin','walimah','resepsi','bertandang','nikah','tunang','banquet','tea','ceremony','mehndi'];
 const TRAD_EVENTS={malay:['walimah','kahwin','bertandang','resepsi','tunang','nikah'],chinese:['banquet','tea','kahwin','tunang'],indian:['ceremony','mehndi','resepsi','tunang'],general:['kahwin','resepsi','tunang']};

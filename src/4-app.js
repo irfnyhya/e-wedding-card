@@ -136,7 +136,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -192,6 +192,9 @@ function renderUploads(){
   const q=$('#qr-upload');q.innerHTML=draft.qr?`<div class="ph"><img src="${draft.qr}" alt="DuitNow QR"><button type="button" data-rmqr aria-label="Remove QR">✕</button></div>`:`<label class="add" for="qr-in">Upload QR<input type="file" id="qr-in" accept="image/*"></label>`;
   $('[data-rmqr]',q)?.addEventListener('click',()=>{draft.qr='';renderUploads();changed()});
   $('#qr-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.qr=await shrink(f,320,'image/png');renderUploads();changed()}catch(err){toast(err.message)}});
+  const cu=$('#couple-upload');cu.innerHTML=draft.couplePhoto?`<div class="ph tall"><img src="${esc(draft.couplePhoto)}" alt="Couple photo"><button type="button" data-rmcp aria-label="Remove couple photo">✕</button></div>`:`<label class="add" for="cp-in" style="height:150px">Add photo<input type="file" id="cp-in" accept="image/*"></label>`;
+  $('[data-rmcp]',cu)?.addEventListener('click',()=>{draft.couplePhoto='';renderUploads();changed()});
+  $('#cp-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.couplePhoto=await shrink(f,900,'image/jpeg',.74);renderUploads();changed()}catch(err){toast(err.message)}});
   const ow=$('#own-upload');ow.innerHTML=draft.ownDesign?`<div class="ph tall"><img src="${draft.ownDesign}" alt="Your design"><button type="button" data-rmown aria-label="Remove your design">✕</button></div>`:`<label class="add" for="own-in" style="height:150px">Upload artwork<input type="file" id="own-in" accept="image/*"></label>`;
   $('[data-rmown]',ow)?.addEventListener('click',()=>{draft.ownDesign='';renderUploads();changed()});
   $('#own-in')?.addEventListener('change',async e=>{e.stopPropagation();const f=e.target.files[0];if(!f)return;try{draft.ownDesign=await shrink(f,1000,'image/jpeg',.7);renderUploads();changed()}catch(err){toast(err.message)}});
