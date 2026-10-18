@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, MONO_SCRIPTS, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, TRAD_DEFAULT, ALL_EVENTS } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -140,7 +140,6 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
   const setWish = (wishlist: WishItem[]) => set('wishlist', wishlist);
   const setEv = (i: number, k: keyof EventItem, v: string) => set('events', c.events.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   const L = T[c.lang];
-  const script = c.monoScript || TRAD_DEFAULT[c.tradition || 'malay'].monoScript;
   const evOpts = Array.from(new Set([...ALL_EVENTS, c.eventTitle]));
   const dflt = defaultCopy(c);
   const LC = copyFor(c);
@@ -178,7 +177,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} script={script} onScript={(k) => set('monoScript', k as Card['monoScript'])} scripts={MONO_SCRIPTS} />
+                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
               </div>
               <p className="muted" style={{ fontSize: 13, margin: '-4px 0 14px' }}>Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
               <div className="fam-scroll"><div className="fam-pick">

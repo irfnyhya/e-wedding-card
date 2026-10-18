@@ -212,8 +212,7 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
     if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
     put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
   tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
-  $('#jawi-auto').onclick=()=>{const scr=draft.monoScript||TRAD_DEFAULT[draft.tradition||'malay'].monoScript;if(scr==='latin'){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}.`);return}
-    if(scr!=='jawi'){toast(scr==='chinese'?'Type the Chinese characters with your phone keyboard, e.g. 囍 or your surnames 李 王.':'Type the letters with your phone keyboard, e.g. அ & அ.');inp.focus();return}
+  $('#jawi-auto').onclick=()=>{if(kb.hidden){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}. Open the Jawi keyboard first to fill Jawi letters instead.`);return}
     const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
     const how=nm.map((n,i)=>n&&ls2[i]?`${String(n).trim().split(/\s+/)[0]} → ${ls2[i]}`:'').filter(Boolean).join(', ');
     if(v===inp.value.trim()){toast(`Already filled: ${how}.`);inp.focus();return}put(v);toast(`Filled in: ${how}. Check the letters before you publish.`)};
@@ -224,10 +223,9 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
   $$('#trad-pick [data-trad]')&&$$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
     if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
     fillForm();changed()});
-  $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
+  if($('#mono-pick'))$('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
   $$('#mono-pick [data-mono]').forEach(b=>b.onclick=()=>{draft.monoScript=b.dataset.mono;renderTradition();changed()});
-  $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
-  $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
+  $('#f-jawi').placeholder='A & A  or  ع ا';
   // event titles that fit the tradition
   const sel=$('#f-eventTitle'),keep=ALL_EVENTS.includes(draft.eventTitle)?draft.eventTitle:'kahwin';
   sel.innerHTML=ALL_EVENTS.map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;

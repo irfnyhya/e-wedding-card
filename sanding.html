@@ -492,10 +492,10 @@ tr:last-child td{border-bottom:0}
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
               <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-              <div class="field"><label for="f-jawi">Monogram initials (optional)</label><div class="chips" id="mono-pick" role="group" aria-label="Monogram script" style="margin-bottom:8px"></div><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="ع ا">
+              <div class="field"><label for="f-jawi">Monogram initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="ع ا">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
-                <span class="hint" id="mono-hint">Shown on the cover of designs with a monogram and as a small seal inside the card. "Fill from names" guesses the letters; check them.</span></div>
+                <span class="hint" id="mono-hint">Type initials in any script, e.g. A &amp; A, ع ا or 囍. Shown on the cover of designs with a monogram and as a small seal inside the card. On the Jawi keyboard, the top row is Jawi numbers.</span></div>
             </div>
             <p class="muted" style="font-size:13px;margin:-4px 0 14px">Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
             <div class="fam-scroll"><div class="tpl-pick" id="tpl-pick"></div></div>
@@ -13918,8 +13918,7 @@ function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normali
     if(k==='del'){if(st===en&&st>0)st--;put(v.slice(0,st)+v.slice(en));inp.setSelectionRange(st,st);return}
     put(v.slice(0,st)+k+v.slice(en));inp.setSelectionRange(st+k.length,st+k.length)});
   tg.onclick=()=>{kb.hidden=!kb.hidden;tg.setAttribute('aria-expanded',!kb.hidden);if(!kb.hidden)inp.focus()};
-  $('#jawi-auto').onclick=()=>{const scr=draft.monoScript||TRAD_DEFAULT[draft.tradition||'malay'].monoScript;if(scr==='latin'){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}.`);return}
-    if(scr!=='jawi'){toast(scr==='chinese'?'Type the Chinese characters with your phone keyboard, e.g. 囍 or your surnames 李 王.':'Type the letters with your phone keyboard, e.g. அ & அ.');inp.focus();return}
+  $('#jawi-auto').onclick=()=>{if(kb.hidden){const [x,y]=K.initials(draft);put(`${x} & ${y}`);toast(`Filled in: ${x} & ${y}. Open the Jawi keyboard first to fill Jawi letters instead.`);return}
     const nm=coverNames(draft||{}),ls2=nm.map(jawiInitial),v=ls2.filter(Boolean).join(' ');if(!v){toast('Add both cover names first (step 2).');return}
     const how=nm.map((n,i)=>n&&ls2[i]?`${String(n).trim().split(/\s+/)[0]} → ${ls2[i]}`:'').filter(Boolean).join(', ');
     if(v===inp.value.trim()){toast(`Already filled: ${how}.`);inp.focus();return}put(v);toast(`Filled in: ${how}. Check the letters before you publish.`)};
@@ -13930,10 +13929,9 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
   $$('#trad-pick [data-trad]')&&$$('#trad-pick [data-trad]').forEach(b=>b.onclick=()=>{const k=b.dataset.trad;if(k===tr)return;Object.assign(draft,{tradition:k,...TRAD_DEFAULT[k]});
     if(TRAD_DEFAULT[k].monoScript!=='jawi'&&/[\u0600-\u06FF]/.test(draft.jawi||''))draft.jawi='';
     fillForm();changed()});
-  $('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
+  if($('#mono-pick'))$('#mono-pick').innerHTML=Object.entries(MONO_SCRIPTS).map(([k,l])=>`<button type="button" class="chip" data-mono="${k}" aria-pressed="${ms===k}">${l}</button>`).join('');
   $$('#mono-pick [data-mono]').forEach(b=>b.onclick=()=>{draft.monoScript=b.dataset.mono;renderTradition();changed()});
-  $('#jawi-toggle').hidden=ms!=='jawi';if(ms!=='jawi')$('#jawi-kb').hidden=true;
-  $('#f-jawi').placeholder={jawi:'ع ا',latin:'A & A',chinese:'囍 or 李 王',tamil:'அ & அ'}[ms];
+  $('#f-jawi').placeholder='A & A  or  ع ا';
   // event titles that fit the tradition
   const sel=$('#f-eventTitle'),keep=ALL_EVENTS.includes(draft.eventTitle)?draft.eventTitle:'kahwin';
   sel.innerHTML=ALL_EVENTS.map(k=>`<option value="${k}">${esc(T.ms.ev[k])}${draft.lang==='en'?' · '+esc(T.en.ev[k]):''}</option>`).join('');sel.value=keep;draft.eventTitle=keep;
