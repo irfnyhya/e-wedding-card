@@ -289,7 +289,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
               {r && !ro && <button className="btn btn-ghost btn-sm" onClick={() => release(r.item_key)}>Release</button>}
             </div>
           );
-        })}</div> : <div className="empty"><span className="tag">Premium</span><b>Gift wishlist</b><p className="muted" style={{ maxWidth: '46ch' }}>List the gifts you would like; guests reserve one so nobody brings the same thing. Turn on Gift wishlist in Edit, then Extras.</p></div>)}
+        })}</div> : <div className="empty"><span className="tag">Kencana</span><b>Gift wishlist</b><p className="muted" style={{ maxWidth: '46ch' }}>List the gifts you would like; guests reserve one so nobody brings the same thing. Turn on Gift wishlist in Edit, then Extras.</p></div>)}
 
         {tab === 'checkin' && (epass ? <>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
