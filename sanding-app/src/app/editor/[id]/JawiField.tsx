@@ -48,7 +48,7 @@ export default function JawiField({ value, onChange, names, flash }: {
   return (
     <div className="field">
       <label htmlFor="f-jawi">Monogram initials (optional)</label>
-      <input ref={input} type="text" id="f-jawi" dir="auto" placeholder="A & A  or  ع ا" maxLength={MAX} value={value} onChange={(e) => onChange(e.target.value)} />
+      <input ref={input} type="text" id="f-jawi" dir="auto" placeholder="Empty = default (first letters of your names)" maxLength={MAX} value={value} onChange={(e) => onChange(e.target.value)} />
       <div className="jawi-tools">
         <button type="button" className="btn btn-ghost btn-sm" onClick={fill}>Fill from names</button>
         <button type="button" className="btn btn-ghost btn-sm" aria-expanded={open} aria-controls="jawi-kb" onClick={() => { setOpen((o) => !o); input.current?.focus(); }}>Jawi keyboard</button>
@@ -61,7 +61,7 @@ export default function JawiField({ value, onChange, names, flash }: {
         <button type="button" className="wide" onClick={() => press('del')}>Delete</button>
         <button type="button" className="wide" onClick={() => press('clr')}>Clear</button>
       </div>
-      <span className="hint">Type initials in any script, e.g. A &amp; A, ع ا or 囍. Shown on the cover of designs with a monogram and as a small seal inside the card. On the Jawi keyboard, the top row is Jawi numbers.</span>
+      <span className="hint"><b>Leave it empty to use the default</b>, the first letters of your names (A &amp; A). Or type your own in any script, e.g. A &amp; A, ع ا or 囍. Shown on the cover of designs with a monogram and as a small seal inside the card. On the Jawi keyboard, the top row is Jawi numbers.</span>
     </div>
   );
 }
