@@ -262,7 +262,7 @@ details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
 .inv .scroller::-webkit-scrollbar,.phone .screen::-webkit-scrollbar,.phone .screen *::-webkit-scrollbar,.tabs::-webkit-scrollbar,#ed-tabs::-webkit-scrollbar,.ed-tabs::-webkit-scrollbar{display:none;width:0;height:0}
 .jawi-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .jawi-kb{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));min-width:0;max-width:100%;gap:4px;margin-top:8px;padding:8px;border:1px solid var(--line);background:var(--surface);direction:rtl}
-.jawi-kb[hidden]{display:none}
+.jawi-kb[hidden]{display:none}.jawi-kb .jawi-digits{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;padding-bottom:6px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
 .jawi-kb button{font-family:"Amiri",serif;font-size:20px;line-height:1;padding:8px 0;border:1px solid var(--line);background:var(--bg);cursor:pointer;border-radius:4px}
 .jawi-kb button:hover{border-color:var(--fg)}
 .jawi-kb button.wide{grid-column:span 3;font-family:var(--f-body);font-size:12px;letter-spacing:.06em}
@@ -13831,7 +13831,7 @@ const JAWI_NAME={aisyah:'ع',aishah:'ع',ali:'ع',alia:'ع',aliya:'ع',aliyah:'�
 function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/\s+/)[0]||'';if(!w)return'';
   if(JAWI_NAME[w])return JAWI_NAME[w];if(w.startsWith('sy'))return'ش';if(w.startsWith('kh'))return'خ';if(w.startsWith('gh'))return'غ';if(w.startsWith('ng'))return'ڠ';if(w.startsWith('ny'))return'ڽ';return JAWI_FIRST[w[0]]||''}
 (()=>{const inp=$('#f-jawi'),kb=$('#jawi-kb'),tg=$('#jawi-toggle');if(!inp||!kb)return;
-  kb.innerHTML=JAWI_KEYS.map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'<button type="button" class="wide" data-k=" ">Space</button><button type="button" class="wide" data-k="del">Delete</button><button type="button" class="wide" data-k="clr">Clear</button>';
+  kb.innerHTML='<div class="jawi-digits">'+'١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ ٠'.split(' ').map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'</div>'+JAWI_KEYS.map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'<button type="button" class="wide" data-k=" ">Space</button><button type="button" class="wide" data-k="del">Delete</button><button type="button" class="wide" data-k="clr">Clear</button>';
   const put=v=>{inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}))};
   kb.addEventListener('mousedown',e=>e.preventDefault()); // keep the caret in the field
   kb.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k,v=inp.value;let st=inp.selectionStart??v.length,en=inp.selectionEnd??v.length;

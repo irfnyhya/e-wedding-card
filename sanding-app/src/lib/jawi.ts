@@ -1,6 +1,7 @@
 // Jawi initials helpers, ported from the prototype (src/4-app.js): the letters for an on-screen pad
 // (most phones have no Jawi keyboard) and a best guess of a name's first Jawi letter.
 
+export const JAWI_DIGITS = '١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ ٠'.split(' ');
 export const JAWI_KEYS = 'ا ب ت ث ج چ ح خ د ذ ر ز س ش ص ض ط ظ ع غ ڠ ف ڤ ق ک ݢ ل م ن و ۏ ه ة ء ي ڽ'.split(' ');
 
 const JAWI_FIRST: Record<string, string> = { a: 'ا', b: 'ب', c: 'چ', d: 'د', e: 'ا', f: 'ف', g: 'ݢ', h: 'ح', i: 'ا', j: 'ج', k: 'ک', l: 'ل', m: 'م', n: 'ن', o: 'ا', p: 'ڤ', q: 'ق', r: 'ر', s: 'س', t: 'ت', u: 'ا', v: 'ۏ', w: 'و', x: 'ک', y: 'ي', z: 'ز' };

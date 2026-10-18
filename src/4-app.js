@@ -204,7 +204,7 @@ const JAWI_NAME={aisyah:'ع',aishah:'ع',ali:'ع',alia:'ع',aliya:'ع',aliyah:'�
 function jawiInitial(name){const w=String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/\s+/)[0]||'';if(!w)return'';
   if(JAWI_NAME[w])return JAWI_NAME[w];if(w.startsWith('sy'))return'ش';if(w.startsWith('kh'))return'خ';if(w.startsWith('gh'))return'غ';if(w.startsWith('ng'))return'ڠ';if(w.startsWith('ny'))return'ڽ';return JAWI_FIRST[w[0]]||''}
 (()=>{const inp=$('#f-jawi'),kb=$('#jawi-kb'),tg=$('#jawi-toggle');if(!inp||!kb)return;
-  kb.innerHTML=JAWI_KEYS.map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'<button type="button" class="wide" data-k=" ">Space</button><button type="button" class="wide" data-k="del">Delete</button><button type="button" class="wide" data-k="clr">Clear</button>';
+  kb.innerHTML='<div class="jawi-digits">'+'١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ ٠'.split(' ').map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'</div>'+JAWI_KEYS.map(k=>`<button type="button" data-k="${k}" aria-label="${k}">${k}</button>`).join('')+'<button type="button" class="wide" data-k=" ">Space</button><button type="button" class="wide" data-k="del">Delete</button><button type="button" class="wide" data-k="clr">Clear</button>';
   const put=v=>{inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}))};
   kb.addEventListener('mousedown',e=>e.preventDefault()); // keep the caret in the field
   kb.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k,v=inp.value;let st=inp.selectionStart??v.length,en=inp.selectionEnd??v.length;

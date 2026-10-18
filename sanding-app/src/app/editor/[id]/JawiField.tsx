@@ -1,6 +1,6 @@
 'use client';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { JAWI_KEYS, jawiInitial } from '@/lib/jawi';
+import { JAWI_DIGITS, JAWI_KEYS, jawiInitial } from '@/lib/jawi';
 
 const MAX = 12; // matches sanitizeCard's jawi limit
 
@@ -51,12 +51,13 @@ export default function JawiField({ value, onChange, names, flash }: {
       </div>
       {/* mousedown is cancelled so the input keeps focus and its caret while letters are tapped */}
       <div className="jawi-kb" id="jawi-kb" hidden={!open} role="group" aria-label="Jawi letters" onMouseDown={(e) => e.preventDefault()}>
+        <div className="jawi-digits">{JAWI_DIGITS.map((k) => <button key={k} type="button" aria-label={k} onClick={() => press(k)}>{k}</button>)}</div>
         {JAWI_KEYS.map((k) => <button key={k} type="button" aria-label={k} onClick={() => press(k)}>{k}</button>)}
         <button type="button" className="wide" onClick={() => press(' ')}>Space</button>
         <button type="button" className="wide" onClick={() => press('del')}>Delete</button>
         <button type="button" className="wide" onClick={() => press('clr')}>Clear</button>
       </div>
-      <span className="hint">Shown on the Mihrab doors and Ukiran monogram.</span>
+      <span className="hint">Shown on the Islamic-style covers (Mihrab, Ukiran, Songket, Kaligrafi). The top row is Jawi numbers.</span>
     </div>
   );
 }
