@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { EFFECTS, FAMILIES, Music, renderInvite, swatchEl, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
+import { coverNames, EFFECTS, FAMILIES, Music, renderInvite, swatchEl, T, THEMES, themeOf, fmtDate, fmtTime } from '@/lib/invite/engine';
+import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { blankEvent, MAX_EXTRA_EVENTS, type EventItem } from '@/lib/events';
@@ -180,7 +181,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               </div>
               <div className="fieldset">
                 <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
-                <div className="field"><label htmlFor="f-jawi">Jawi initials (optional)</label><input type="text" id="f-jawi" dir="rtl" placeholder="ع ا" maxLength={12} value={c.jawi} onChange={(e) => set('jawi', e.target.value)} /><span className="hint">Shown on the Mihrab doors and Ukiran monogram.</span></div>
+                <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
               </div>
               <div className="toggle-row"><Toggle label="Show Bismillah and doa" checked={c.bismillah} onChange={(v) => set('bismillah', v)} /><div className="body"><div className="top"><b>Show Bismillah and doa</b></div><p className="muted" style={{ fontSize: 13 }}>Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
               <div className="toggle-row"><Toggle label="Custom accent colour" checked={c.useAccent} onChange={(v) => set('useAccent', v)} /><div className="body"><div className="top"><b>Custom accent colour</b>{tag('Diraja')}</div><p className="muted" style={{ fontSize: 13 }}>Match the card to your wedding colours.</p>
