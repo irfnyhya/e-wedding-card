@@ -24,13 +24,13 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
 
 /* ================= packages ================= */
 const PKGS=[
- {id:'asas',name:'Asas',price:29,days:60,feats:['Any design with its own opening','Bahasa Melayu or English','Waze, Google Maps & livestream link','Countdown, Google, Apple & Outlook calendar','RSVP with pax limit, deadline and notes','Petal, gold dust or jasmine effect','Card opens counted in your dashboard','Online for 60 days']},
- {id:'premium',name:'Permata',price:59,days:120,feats:['Everything in Asas','Ucapan wall with moderation','Background music','Swipe gallery, up to 6 photos','Salam kaut: 3 accounts & DuitNow QR','Gift wishlist with reservations','Live attendance count on the card','Contacts with call & WhatsApp','Online for 120 days']},
- {id:'diraja',name:'Diraja',price:99,days:365,feats:['Everything in Permata','Personal guest links with names','Guest e-pass with QR check-in on the day','WhatsApp reminders to every guest','Custom accent colour','Guest list CSV export','Online for 1 year']}];
+ {id:'asas',name:'Asas',price:29,days:365,feats:['Any design with its own opening','Bahasa Melayu or English','Waze, Google Maps & livestream link','Countdown, Google, Apple & Outlook calendar','RSVP with pax limit, deadline and notes','Petal, gold dust or jasmine effect','Background music or your own YouTube song','Card opens counted in your dashboard','Online for 1 year, edit any time']},
+ {id:'premium',name:'Permata',price:59,days:365,feats:['Everything in Asas','Ucapan wall with moderation','Personal guest links with names','Swipe gallery, up to 6 photos','Salam kaut: 3 accounts & DuitNow QR','Gift wishlist with reservations','Live attendance count on the card','Contacts with call & WhatsApp']},
+ {id:'diraja',name:'Diraja',price:99,days:365,feats:['Everything in Permata','Guest e-pass with QR check-in on the day','WhatsApp reminders to every guest','Custom accent colour','Guest list CSV export']}];
 const ADDON_OWN=10;
 const PKG=Object.fromEntries(PKGS.map(p=>[p.id,p]));const rank=id=>PKGS.findIndex(p=>p.id===id);
-function needPkg(o){const why={diraja:[],premium:[]};if(o.x_guestlinks)why.diraja.push('guest links');if(o.useAccent)why.diraja.push('custom colour');if(o.x_epass)why.diraja.push('e-pass check-in');
-  [['x_wishes','ucapan'],['x_music','music'],['x_gallery','gallery'],['x_gift','salam kaut'],['x_contacts','contacts'],['x_wishlist','wishlist'],['x_counter','attendance count']].forEach(([k,l])=>o[k]&&why.premium.push(l));
+function needPkg(o){const why={diraja:[],premium:[]};if(o.useAccent)why.diraja.push('custom colour');if(o.x_epass)why.diraja.push('e-pass check-in');
+  [['x_guestlinks','guest links'],['x_wishes','ucapan'],['x_gallery','gallery'],['x_gift','salam kaut'],['x_contacts','contacts'],['x_wishlist','wishlist'],['x_counter','attendance count']].forEach(([k,l])=>o[k]&&why.premium.push(l));
   const id=why.diraja.length?'diraja':why.premium.length?'premium':'asas';return{id,why:(why.diraja.length?why.diraja:why.premium)}}
 const BANKS=['Maybank','CIMB Bank','Bank Islam','Public Bank','RHB Bank','Hong Leong Bank','AmBank','Bank Rakyat','BSN','Bank Muamalat','Affin Bank','Alliance Bank','Touch ’n Go eWallet'];
 
@@ -399,8 +399,8 @@ function drawDetail(){
     if(scanStop&&!$('#ci-cam video')){scanStop();scanStop=null}
   }else{
     const names=ls.get('sanding-guests-'+o.id,'');
-    tb.innerHTML=diraja?`<div class="field"><label for="d-guests">Guest names, one per line</label><textarea id="d-guests" rows="5" placeholder="Pak Long Hashim & keluarga&#10;Cikgu Rohani">${esc(names)}</textarea></div><div id="d-glinks" class="rows" style="margin-top:14px"></div>`
-      :`<div class="empty"><span class="tag brass">Diraja</span><b>Personal guest links</b><p class="muted" style="max-width:46ch">Put each guest's name on the cover of their card. Upgrade this card to Diraja from Edit, then Extras.</p></div>`;
+    tb.innerHTML=rank(o.package)>=1?`<div class="field"><label for="d-guests">Guest names, one per line</label><textarea id="d-guests" rows="5" placeholder="Pak Long Hashim & keluarga&#10;Cikgu Rohani">${esc(names)}</textarea></div><div id="d-glinks" class="rows" style="margin-top:14px"></div>`
+      :`<div class="empty"><span class="tag">Permata</span><b>Personal guest links</b><p class="muted" style="max-width:46ch">Put each guest's name on the cover of their card. Upgrade this card to Permata from Edit, then Extras.</p></div>`;
     const draw=()=>{const list=$('#d-guests').value.split('\n').map(s=>s.trim()).filter(Boolean);ls.set('sanding-guests-'+o.id,$('#d-guests').value);
       $('#d-glinks').innerHTML=list.map((n,i)=>{const tok=n.replace(/[^A-Za-z0-9.\- ]/g,'').trim().replace(/\s+/g,'_');const link=`sanding.my/${o.slug}~${tok}`;const wa=`https://wa.me/?text=${encodeURIComponent(`Kepada ${n}, dengan segala hormatnya kami menjemput anda ke majlis kami. Kad jemputan: https://${link}`)}`;
         return`<div class="order-item" style="cursor:default"><span class="t"><b>${esc(n)}</b><span>${esc(link)}</span></span><button class="btn btn-ghost btn-sm" data-gopen="${esc(tok)}">Preview</button><a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a></div>`}).join('')||'<p class="muted" style="font-size:13px">Links appear here as you type names.</p>';

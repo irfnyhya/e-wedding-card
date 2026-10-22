@@ -330,7 +330,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   <label className="check"><input type="checkbox" checked={c.x_epass} onChange={(e) => set('x_epass', e.target.checked)} /> Give each attending guest an e-pass with a QR code for check-in {tag('Diraja')}</label>
                 </div></div></div>
               <div className="toggle-row"><Toggle label="Ucapan" checked={c.x_wishes} onChange={(v) => set('x_wishes', v)} /><div className="body"><div className="top"><b>Ucapan (wishes wall)</b>{tag('Permata')}</div></div></div>
-              <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Permata')}</div>
+              <div className="toggle-row"><Toggle label="Background music" checked={c.x_music} onChange={(v) => { set('x_music', v); if (!v) { Music.stop(); setPlaying(false); } }} /><div className="body"><div className="top"><b>Background music</b>{tag('Asas')}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', ...dim(c.x_music) }}>
                   {Object.entries(Music.tracks).map(([k, t]) => <button key={k} type="button" className="chip" aria-pressed={c.music === k} onClick={() => { setC((o) => ({ ...o, music: k, x_music: true })); dirty.current = true; if (Music.playing()) Music.play(k); }}>{t.label}</button>)}
                   <button type="button" className="btn btn-ghost btn-sm" onClick={() => { if (Music.playing()) { Music.stop(); setPlaying(false); } else { Music.play(c.music || 'sax'); setPlaying(true); } }}>{playing ? 'Stop' : 'Play'}</button>
@@ -388,7 +388,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                     </div>
                   ))}
                 </div></div></div>
-              <div className="toggle-row"><Toggle label="Personal guest links" checked={c.x_guestlinks} onChange={(v) => set('x_guestlinks', v)} /><div className="body"><div className="top"><b>Personal guest links</b>{tag('Diraja')}</div><p className="muted" style={{ fontSize: 13 }}>Put each guest&apos;s name on the cover. Also unlocks CSV export.</p></div></div>
+              <div className="toggle-row"><Toggle label="Personal guest links" checked={c.x_guestlinks} onChange={(v) => set('x_guestlinks', v)} /><div className="body"><div className="top"><b>Personal guest links</b>{tag('Permata')}</div><p className="muted" style={{ fontSize: 13 }}>Put each guest&apos;s name on the cover of their own link.</p></div></div>
             </div>}
 
             {tab === 5 && <div className="panel on">

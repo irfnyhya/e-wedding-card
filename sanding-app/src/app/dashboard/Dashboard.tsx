@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { coverNames, fmtDate, fmtTime, greetingFor, rsvpCode, swatchBg, T, themeOf, waNum } from '@/lib/invite/engine';
-import { PKG, SITE_URL, displayLink, needPkg, needsPayment, type Card, type PackageId } from '@/lib/card';
+import { PKG, SITE_URL, rank, displayLink, needPkg, needsPayment, type Card, type PackageId } from '@/lib/card';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import QrScanner, { canScan } from './QrScanner';
 
@@ -122,6 +122,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
   const tot = rsvps.length || 1;
   const days = o ? Math.ceil((new Date(o.content.date + 'T00:00:00+08:00').getTime() - now) / 864e5) : 0;
   const diraja = o?.package === 'diraja';
+  const guestLinks = rank(o?.package) >= 1; // Permata and up
   const guestName = (id: string | null) => guests.find((g) => g.id === id)?.name || '—';
   const needsUpgrade = o && o.status === 'live' && needsPayment(o.content, o.package, o.addon_own);
   const epass = diraja && !!o?.content.x_epass;
@@ -307,7 +308,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           </table></div> : <div className="empty"><b>{q ? 'No guest matches' : 'No attending guests yet'}</b></div>}
         </> : <div className="empty"><span className="tag brass">Diraja</span><b>Check guests in on the day</b><p className="muted" style={{ maxWidth: '48ch' }}>Every attending guest gets an e-pass with a QR code. At the reception desk, scan it with this page or search by name or code, and watch the pax count fill up. Turn on the e-pass in Edit, then Extras, then RSVP.</p></div>)}
 
-        {tab === 'links' && (diraja ? <>
+        {tab === 'links' && (guestLinks ? <>
           {!ro && <><div className="field"><label htmlFor="d-guests">Guest names, one per line</label><textarea id="d-guests" rows={5} placeholder={'Pak Long Hashim & keluarga\nCikgu Rohani'} value={guestText} onChange={(e) => setGuestText(e.target.value)} /></div>
           <div style={{ marginTop: 10 }}><button className="btn btn-primary btn-sm" onClick={saveGuests}>Save guest links</button></div></>}
           <div className="rows" style={{ marginTop: 14 }}>
@@ -318,7 +319,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
                 <Link className="btn btn-ghost btn-sm" href={`/${o.slug}/${g.token}`} target="_blank">Preview</Link><a className="btn btn-ghost btn-sm" href={wa} target="_blank" rel="noopener">WhatsApp</a></div>;
             }) : <p className="muted" style={{ fontSize: 13 }}>Type names above and save to get a link for each guest.</p>}
           </div>
-        </> : <div className="empty"><span className="tag brass">Diraja</span><b>Personal guest links</b><p className="muted" style={{ maxWidth: '46ch' }}>Put each guest&apos;s name on the cover of their card. Turn on Personal guest links in Edit, then Extras, and pay the upgrade.</p></div>)}
+        </> : <div className="empty"><span className="tag">Permata</span><b>Personal guest links</b><p className="muted" style={{ maxWidth: '46ch' }}>Put each guest&apos;s name on the cover of their card. Turn on Personal guest links in Edit, then Extras, and pay the upgrade.</p></div>)}
 
         {tab === 'family' && !ro && <>
           <p className="muted" style={{ maxWidth: '60ch', fontSize: 14 }}>Let parents or siblings follow RSVPs, ucapan, the wishlist and check-ins from their own phone. They get read-only access: they cannot edit the card, hide ucapan or delete replies.</p>

@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import type { NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { fail, json, ownOrder, sameOrigin } from '@/lib/api';
+import { rank } from '@/lib/card';
 
 const token = () => Array.from(randomBytes(8), (b) => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
 
@@ -10,7 +11,7 @@ export async function PUT(req: NextRequest, ctx: RouteContext<'/api/orders/[id]/
   if (!sameOrigin(req)) return fail('Bad origin.', 403);
   const r = await ownOrder((await ctx.params).id);
   if ('res' in r) return r.res;
-  if (r.order.package !== 'diraja') return fail('Personal guest links come with the Diraja package.', 402);
+  if (rank(r.order.package) < 1) return fail('Personal guest links come with the Permata package.', 402);
   const body = await req.json().catch(() => ({}));
   const names: string[] = Array.isArray(body.names) ? [...new Set<string>(body.names.map((n: unknown) => String(n).trim().slice(0, 80)).filter(Boolean))].slice(0, 1000) : [];
   const admin = supabaseAdmin();

@@ -46,19 +46,18 @@ export const ADDON_OWN = 10;
 export type PackageId = 'asas' | 'premium' | 'diraja';
 
 export const PKGS: { id: PackageId; name: string; price: number; days: number; feats: string[] }[] = [
-  { id: 'asas', name: 'Asas', price: 29, days: 60, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Card opens counted in your dashboard', 'Online for 60 days'] },
-  { id: 'premium', name: 'Permata', price: 59, days: 120, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Background music', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp', 'Online for 120 days'] },
-  { id: 'diraja', name: 'Diraja', price: 99, days: 365, feats: ['Everything in Permata', 'Personal guest links with names', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export', 'Online for 1 year'] },
+  { id: 'asas', name: 'Asas', price: 29, days: 365, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Background music or your own YouTube song', 'Card opens counted in your dashboard', 'Online for 1 year, edit any time'] },
+  { id: 'premium', name: 'Permata', price: 59, days: 365, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Personal guest links with names', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp'] },
+  { id: 'diraja', name: 'Diraja', price: 99, days: 365, feats: ['Everything in Permata', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export'] },
 ];
 export const PKG = Object.fromEntries(PKGS.map((p) => [p.id, p])) as Record<PackageId, (typeof PKGS)[number]>;
 export const rank = (id: string | null | undefined) => PKGS.findIndex((p) => p.id === id); // -1 for none
 
 export function needPkg(o: Partial<Card>): { id: PackageId; why: string[] } {
   const why = { diraja: [] as string[], premium: [] as string[] };
-  if (o.x_guestlinks) why.diraja.push('guest links');
   if (o.useAccent) why.diraja.push('custom colour');
   if (o.x_epass) why.diraja.push('e-pass check-in');
-  ([['x_wishes', 'ucapan'], ['x_music', 'music'], ['x_gallery', 'gallery'], ['x_gift', 'salam kaut'], ['x_contacts', 'contacts'], ['x_wishlist', 'wishlist'], ['x_counter', 'attendance count']] as const)
+  ([['x_guestlinks', 'guest links'], ['x_wishes', 'ucapan'], ['x_gallery', 'gallery'], ['x_gift', 'salam kaut'], ['x_contacts', 'contacts'], ['x_wishlist', 'wishlist'], ['x_counter', 'attendance count']] as const)
     .forEach(([k, l]) => o[k] && why.premium.push(l));
   const id: PackageId = why.diraja.length ? 'diraja' : why.premium.length ? 'premium' : 'asas';
   return { id, why: why.diraja.length ? why.diraja : why.premium };
@@ -68,8 +67,8 @@ export function needPkg(o: Partial<Card>): { id: PackageId; why: string[] } {
 export function gate(c: Card, pkg: string | null, addonOwn = false): Card {
   const r = rank(pkg);
   const out = { ...c };
-  if (r < 1) { out.x_wishes = false; out.x_music = false; out.x_gallery = false; out.x_gift = false; out.x_contacts = false; out.x_wishlist = false; out.x_counter = false; }
-  if (r < 2) { out.useAccent = false; out.x_guestlinks = false; out.x_epass = false; }
+  if (r < 1) { out.x_wishes = false; out.x_guestlinks = false; out.x_gallery = false; out.x_gift = false; out.x_contacts = false; out.x_wishlist = false; out.x_counter = false; }
+  if (r < 2) { out.useAccent = false; out.x_epass = false; }
   if (!addonOwn) out.ownDesign = '';
   return out;
 }
