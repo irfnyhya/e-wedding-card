@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import SiteHeader from '@/components/SiteHeader';
 import { currentUser } from '@/lib/supabase/server';
 import { missingField, needsPayment, sanitizeCard, type PackageId } from '@/lib/card';
-import { provider } from '@/lib/payments';
+import { isSandbox, provider } from '@/lib/payments';
 import Checkout from './Checkout';
 
 export const metadata = { title: 'Checkout' };
@@ -24,7 +24,7 @@ export default async function CheckoutPage({ params }: PageProps<'/checkout/[id]
           <p className="eyebrow">Checkout</p>
           <h1 style={{ marginTop: 10, fontSize: 'clamp(28px,4vw,40px)' }}>{o.status === 'live' ? 'Upgrade your card' : 'Publish your card'}</h1>
         </div>
-        <Checkout orderId={o.id} card={card} paidPkg={o.package as PackageId | null} addonPaid={o.addon_own} slug={o.slug} gateway={provider()} />
+        <Checkout orderId={o.id} card={card} paidPkg={o.package as PackageId | null} addonPaid={o.addon_own} slug={o.slug} gateway={provider()} sandbox={isSandbox()} />
       </main>
     </>
   );

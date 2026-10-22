@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { coverNames, fmtDate, swatchBg, themeOf } from '@/lib/invite/engine';
 import { PKG, PROMOS, displayLink, quote, rm, slugProblem, slugify, type Card, type PackageId } from '@/lib/card';
 
-type Props = { orderId: string; card: Card; paidPkg: PackageId | null; addonPaid: boolean; slug: string | null; gateway: 'toyyibpay' | 'mock' };
+type Props = { orderId: string; card: Card; paidPkg: PackageId | null; addonPaid: boolean; slug: string | null; gateway: 'toyyibpay' | 'mock'; sandbox: boolean };
 
-export default function Checkout({ orderId, card, paidPkg, addonPaid, slug: fixedSlug, gateway }: Props) {
+export default function Checkout({ orderId, card, paidPkg, addonPaid, slug: fixedSlug, gateway, sandbox }: Props) {
   const [slug, setSlug] = useState(fixedSlug || slugify(coverNames(card).join('-')));
   const [promoIn, setPromoIn] = useState('');
   const [promo, setPromo] = useState('');
@@ -56,7 +56,7 @@ export default function Checkout({ orderId, card, paidPkg, addonPaid, slug: fixe
           <p>You&apos;ll pay on {gateway === 'toyyibpay' ? 'ToyyibPay' : 'the payment page'} with <b>FPX online banking</b>: choose your bank there and approve the payment in your banking app.</p>
           {gateway === 'mock'
             ? <p className="demo-note">Local test mode: the payment page is a stand-in for the gateway and nothing is charged. Set PAYMENT_PROVIDER=toyyibpay to use the ToyyibPay sandbox.</p>
-            : process.env.NEXT_PUBLIC_PAYMENT_SANDBOX !== 'false' && <p className="demo-note">ToyyibPay sandbox: use the test bank on the FPX page. No real money moves.</p>}
+              : sandbox && <p className="demo-note">ToyyibPay sandbox: use the test bank on the FPX page. No real money moves.</p>}
           {err && <p className="err-msg">{err}</p>}
         </div>
       </div>

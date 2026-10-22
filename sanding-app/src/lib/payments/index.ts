@@ -9,7 +9,9 @@ import { SITE_URL } from '@/lib/card';
 export type Provider = 'toyyibpay' | 'mock';
 export const provider = (): Provider => (process.env.PAYMENT_PROVIDER === 'toyyibpay' ? 'toyyibpay' : 'mock');
 
-const tpBase = () => (process.env.TOYYIBPAY_SANDBOX === 'false' ? 'https://toyyibpay.com' : 'https://dev.toyyibpay.com');
+/** true unless TOYYIBPAY_SANDBOX is 'false': the same switch picks the gateway host and the checkout note */
+export const isSandbox = () => (process.env.TOYYIBPAY_SANDBOX || '').trim() !== 'false';
+const tpBase = () => (isSandbox() ? 'https://dev.toyyibpay.com' : 'https://toyyibpay.com');
 
 export type BillInput = {
   paymentId: string; orderId: string; amountCents: number; name: string; description: string;
