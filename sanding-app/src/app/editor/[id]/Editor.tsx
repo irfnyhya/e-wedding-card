@@ -125,6 +125,12 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
       setC((o) => (kind === 'qr' ? { ...o, qr: url } : kind === 'own' ? { ...o, ownDesign: url } : kind === 'og' ? { ...o, ogImage: url } : kind === 'couple' ? { ...o, couplePhoto: url, photoChosen: true } : { ...o, photos: [...o.photos, url].slice(0, MAX_PHOTOS), x_gallery: true }));
     } catch (e) { flash((e as Error).message || 'Upload failed.'); } finally { setUploading(null); }
   }
+  /** Several gallery photos picked at once: uploads them one after another, up to the free slots. */
+  async function uploadPhotos(files: File[]) {
+    const room = MAX_PHOTOS - c.photos.length;
+    if (files.length > room) flash(`Only ${room} more photo${room === 1 ? '' : 's'} fit (up to ${MAX_PHOTOS}). Added the first ${room}.`);
+    for (const f of files.slice(0, room)) await upload(f, 'photo');
+  }
   async function removeMedia(url: string, kind: Media) {
     dirty.current = true;
     setC((o) => (kind === 'qr' ? { ...o, qr: '' } : kind === 'own' ? { ...o, ownDesign: '' } : kind === 'og' ? { ...o, ogImage: '' } : kind === 'couple' ? { ...o, couplePhoto: '', photoChosen: true } : { ...o, photos: o.photos.filter((p) => p !== url) }));
@@ -344,7 +350,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="toggle-row"><Toggle label="Photo gallery" checked={c.x_gallery} onChange={(v) => set('x_gallery', v)} /><div className="body"><div className="top"><b>Photo gallery</b>{tag('Permata')}<span className="muted" style={{ fontSize: 12 }}>Up to {MAX_PHOTOS} photos</span></div>
                 <div className="uploads" style={dim(c.x_gallery)}>
                   {c.photos.map((p, i) => <div className="ph" key={p}><img src={p} alt={`Photo ${i + 1}`} /><button type="button" aria-label="Remove photo" onClick={() => removeMedia(p, 'photo')}>✕</button></div>)}
-                  {c.photos.length < MAX_PHOTOS && <label className="add">{uploading === 'photo' ? 'Uploading…' : 'Add photo'}<input type="file" accept="image/*" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) upload(f, 'photo'); }} /></label>}
+                  {c.photos.length < MAX_PHOTOS && <label className="add">{uploading === 'photo' ? 'Uploading…' : <>Add photos<br /><small>pick several at once</small></>}<input type="file" accept="image/*" multiple disabled={!!uploading} onChange={(e) => { const fs = Array.from(e.target.files || []); e.target.value = ''; if (fs.length) uploadPhotos(fs); }} /></label>}
                 </div></div></div>
               <div className="toggle-row"><Toggle label="Salam kaut" checked={c.x_gift} onChange={(v) => set('x_gift', v)} /><div className="body"><div className="top"><b>Salam kaut (money gift)</b>{tag('Permata')}</div>
                 <div className="fieldset" style={dim(c.x_gift)}>
