@@ -78,10 +78,11 @@ export default function Home() {
               <details><summary>Where do I see RSVPs and ucapan?</summary><p>In My cards. Replies and wishes appear as soon as guests send them, with the total pax attending. Diraja adds a CSV export and WhatsApp reminders.</p></details>
               <details><summary>Do guests need to install anything?</summary><p>No. The card opens in any phone browser, straight from WhatsApp, Telegram or Instagram.</p></details>
               <details><summary>Can we have two cards, for nikah and bertandang?</summary><p>Yes. Each card has its own link, date, venue and RSVP list, and is paid separately.</p></details>
+              <p className="faq-contact">Still have a question? WhatsApp or call Irfan Hakimi at <a href="https://wa.me/60184090065?text=Hi%20Sanding%2C%20saya%20ada%20soalan%20tentang%20kad%20kahwin%20digital." target="_blank" rel="noopener">018-409 0065</a>.</p>
             </div>
           </div>
         </section>
-        <footer className="site-foot"><div className="wrap"><span className="wm-small">Sanding</span><span>Botanical plates courtesy of the Cleveland Museum of Art and Wikimedia Commons; Malaya postcards c.1906–1930. All public domain. <Link href="/contoh">See a sample card</Link></span></div></footer>
+        <footer className="site-foot"><div className="wrap"><span className="wm-small">Sanding</span><span>Questions? <a href="https://wa.me/60184090065?text=Hi%20Sanding%2C%20saya%20ada%20soalan%20tentang%20kad%20kahwin%20digital." target="_blank" rel="noopener">WhatsApp 018-409 0065</a> (Irfan Hakimi). Botanical plates courtesy of the Cleveland Museum of Art and Wikimedia Commons; Malaya postcards c.1906–1930. All public domain. <Link href="/contoh">See a sample card</Link></span></div></footer>
       </main>
     </>
   );
