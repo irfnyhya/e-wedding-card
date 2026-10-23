@@ -69,10 +69,15 @@ export default function Home() {
           <div className="wrap two">
             <div><p className="eyebrow">Soalan</p><h2>Questions couples ask</h2></div>
             <div className="faq">
-              <details><summary>Can I change details after paying?</summary><p>Yes. Open My cards, choose Edit and save. Guests see the change the next time they open the card. A bigger package charges only the difference.</p></details>
+              <details><summary>How do I make a card?</summary><p>Tap Create a card, pick a design and fill in the steps: names, majlis details and the extras you want. The phone preview shows exactly what guests will see. Your draft saves as you go.</p></details>
+              <details><summary>How do I pay?</summary><p>Once with FPX online banking through ToyyibPay, from any Malaysian bank. No subscription and no hidden fees. Your card goes live the moment the payment is approved.</p></details>
+              <details><summary>Which package do I need?</summary><p>The package sets itself from the features you turn on, and the price shows before you pay. Upgrade later and pay only the difference.</p></details>
+              <details><summary>How long does my card stay online?</summary><p>One year from payment on every package, and you can edit it any time during that year.</p></details>
+              <details><summary>Can I change details after paying?</summary><p>Yes. Open My cards, choose Edit and save. Guests see the change the next time they open the card.</p></details>
+              <details><summary>How do I send the card to guests?</summary><p>Copy your link or tap Share on WhatsApp right after paying; the link is always in My cards too. With Permata and up, each guest can get a personal link with their name on the cover.</p></details>
+              <details><summary>Where do I see RSVPs and ucapan?</summary><p>In My cards. Replies and wishes appear as soon as guests send them, with the total pax attending. Diraja adds a CSV export and WhatsApp reminders.</p></details>
               <details><summary>Do guests need to install anything?</summary><p>No. The card opens in any phone browser, straight from WhatsApp, Telegram or Instagram.</p></details>
-              <details><summary>Can we have two cards, for nikah and bertandang?</summary><p>Yes. Each card has its own date, venue and RSVP list.</p></details>
-              <details><summary>Where do the flowers come from?</summary><p>They are hand-coloured botanical plates by Pierre-Joseph Redouté and his contemporaries, printed in the early 1800s and now in the public domain.</p></details>
+              <details><summary>Can we have two cards, for nikah and bertandang?</summary><p>Yes. Each card has its own link, date, venue and RSVP list, and is paid separately.</p></details>
             </div>
           </div>
         </section>
