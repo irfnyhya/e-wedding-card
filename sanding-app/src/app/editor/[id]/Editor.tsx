@@ -416,6 +416,8 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
             {tab === 5 && !live && <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>Your draft is saved to your account as you type. Previewing is free; the card goes live at its link only after payment. <button type="button" style={{ textDecoration: 'underline', padding: 0, border: 0, background: 'none', color: 'var(--fg)', cursor: 'pointer', font: 'inherit' }} onClick={laterPay}>Save and pay later</button></p>}
             <div className="foot-nav">
               <button type="button" className="btn btn-ghost" style={{ visibility: tab ? 'visible' : 'hidden' }} onClick={() => { setTab(tab - 1); scrollTo({ top: 0 }); }}>Back</button>
+              {/* phones have no preview column, so the preview sits between Back and Next instead of floating over Next */}
+              <button type="button" className="btn btn-ghost mob-only" onClick={() => setFull(true)}>Preview</button>
               <button type="button" className="btn btn-primary" onClick={() => { if (tab < 5) { setTab(tab + 1); scrollTo({ top: 0 }); } else proceed(); }}>
                 {tab < 5 ? 'Next' : covered ? 'Save changes' : live ? 'Upgrade and pay' : 'Continue to payment'}
               </button>
@@ -430,7 +432,6 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
           </div>
         </aside>
       </div>
-      <button type="button" className="btn btn-primary mobile-preview on" onClick={() => setFull(true)}>Preview card</button>
       {full && <InviteOverlay card={c} opts={{ guest: c.x_guestlinks ? sampleGuest(c) : '' }} closeLabel="← Back to editor" onClose={() => setFull(false)} />}
       <div className={`toast ${toast ? 'on' : ''}`} role="status" aria-live="polite">{toast}</div>
     </div>

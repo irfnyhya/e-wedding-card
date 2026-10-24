@@ -6552,3 +6552,6 @@ details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
 .site-head .btn .xs-hide{display:inline}
 @media (max-width:720px){.site-head .wrap{gap:6px}.tabs{flex-wrap:wrap;overflow:visible;gap:0}.tabs button{flex:1 1 33%;padding:10px 6px;font-size:13px;text-align:center}.tabs button .ix{margin-right:4px;font-size:15px}}
 @media (max-width:400px){.site-head .btn .xs-hide{display:none}.brand .wm{font-size:22px}}
+
+.foot-nav .mob-only{display:none}
+@media (max-width:940px){.foot-nav .mob-only{display:inline-flex}.foot-nav{gap:8px}.foot-nav .btn{padding-inline:18px}}
