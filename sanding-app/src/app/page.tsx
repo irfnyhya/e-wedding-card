@@ -29,7 +29,7 @@ export default function Home() {
             <h1>Invitations your guests <em>open</em>, not scroll&nbsp;past.</h1>
             <p className="lead">{DESIGNS} designs in {FAMILY_COUNT} families, on real paper, silk and velvet, with flowers from Redouté&apos;s botanical plates. Guests break a wax seal, open carved doors, unwrap songket or turn over an old postcard of Malaya. Then they RSVP, leave an ucapan and find the venue on the same card.</p>
             <div className="ctas"><Link className="btn btn-primary" href="/create?fresh=1">Create your card</Link><Link className="btn btn-link" href="/designs">See the collection &rarr;</Link></div>
-            <p className="fine">From RM29 &middot; Bahasa Melayu or English &middot; ready in five minutes</p>
+            <p className="fine">From RM{Math.min(...PKGS.map((p) => p.price))} &middot; Bahasa Melayu or English &middot; ready in five minutes</p>
           </div>
           <HeroTable />
         </div>
