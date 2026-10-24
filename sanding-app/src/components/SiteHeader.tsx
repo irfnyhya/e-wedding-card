@@ -17,7 +17,7 @@ export default async function SiteHeader({ current }: { current?: 'designs' | 'd
           {user
             ? <form action="/auth/signout" method="post" className="hide-sm"><button className="linklike" type="submit">Log out</button></form>
             : <Link href="/login" className="hide-sm">Log in</Link>}
-          <Link href="/create?fresh=1" className="btn btn-primary btn-sm">Create a card</Link>
+          <Link href="/create?fresh=1" className="btn btn-primary btn-sm">Create<span className="xs-hide"> a card</span></Link>
         </nav>
       </div>
     </header>
