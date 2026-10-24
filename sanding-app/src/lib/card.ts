@@ -46,9 +46,9 @@ export const ADDON_OWN = 10;
 export type PackageId = 'asas' | 'premium' | 'diraja';
 
 export const PKGS: { id: PackageId; name: string; price: number; days: number; feats: string[] }[] = [
-  { id: 'asas', name: 'Asas', price: 2, days: 365, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Background music or your own YouTube song', 'Card opens counted in your dashboard', 'Online for 1 year, edit any time'] },
-  { id: 'premium', name: 'Permata', price: 4, days: 365, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Personal guest links with names', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp'] },
-  { id: 'diraja', name: 'Diraja', price: 6, days: 365, feats: ['Everything in Permata', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export'] },
+  { id: 'asas', name: 'Asas', price: 19, days: 365, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Background music or your own YouTube song', 'Card opens counted in your dashboard', 'Online for 1 year, edit any time'] },
+  { id: 'premium', name: 'Permata', price: 39, days: 365, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Personal guest links with names', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp'] },
+  { id: 'diraja', name: 'Diraja', price: 69, days: 365, feats: ['Everything in Permata', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export'] },
 ];
 export const PKG = Object.fromEntries(PKGS.map((p) => [p.id, p])) as Record<PackageId, (typeof PKGS)[number]>;
 export const rank = (id: string | null | undefined) => PKGS.findIndex((p) => p.id === id); // -1 for none
