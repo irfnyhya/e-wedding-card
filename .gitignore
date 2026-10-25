@@ -19,3 +19,6 @@ __pycache__/
 qa/
 qa-*.html
 .build-*/
+
+# marketing footage and ad images stay local
+marketing/
