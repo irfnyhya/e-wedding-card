@@ -1,0 +1,95 @@
+/* ===== marmar (round 7): a polished marble tablet on linen, gilded lettering cut into the stone ===== */
+.inv .mm-linen{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .mm-linen::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.3}
+.inv .mm-linen::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 30% 20%,rgba(255,255,255,.4),transparent 65%),linear-gradient(180deg,transparent 55%,rgba(40,30,20,.12))}
+.inv .mm-foil{background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay}
+
+/* the tablet: stone colour; the marble texture stretched along the grain and turned to the diagonal (tinted:
+   darkened on pale stones, inverted to pale veins on dark ones); a few long veins; gold for some; a polish */
+.inv .mm-tab{position:relative;border-radius:5px;overflow:hidden;color:var(--ink);isolation:isolate;
+  background:radial-gradient(ellipse 120% 80% at 20% 10%,rgba(255,255,255,.12),transparent 60%),var(--stone);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 2px 2px 1px rgba(255,255,255,.3),inset -2px -2px 2px rgba(0,0,0,.18),
+    0 2px 0 color-mix(in srgb,var(--stone) 78%,#000),0 4px 0 color-mix(in srgb,var(--stone) 62%,#000),0 5px 2px rgba(0,0,0,.2),0 26px 34px -14px rgba(30,22,14,.5)}
+.inv .mm-tab::before,.inv .mm-co::before{content:"";position:absolute;left:-70%;top:-40%;width:240%;height:180%;z-index:0;pointer-events:none;
+  background:url(assets/marble.jpg) 0 0/900px 300px;transform:rotate(58deg);mix-blend-mode:multiply;opacity:.5}
+.inv .mm-dk .mm-tab::before,.inv .mm-dk .mm-co::before{filter:invert(1);mix-blend-mode:screen;opacity:.22}
+.inv .mm-tab::after,.inv .mm-co::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 58% 42% at 50% 52%,color-mix(in srgb,var(--stone) 40%,transparent),transparent 90%),var(--veins) center/cover}
+.inv .mm-tab > *{z-index:1}
+.inv .mm-co > *{position:relative;z-index:1}
+.inv .mm-gv{position:absolute;inset:0;background:url(assets/foil.jpg) 0 0/220px,var(--gold);background-blend-mode:overlay;-webkit-mask:var(--gveins) center/cover;mask:var(--gveins) center/cover;opacity:.9}
+.inv .mm-sheen{position:absolute;inset:0;background:linear-gradient(118deg,transparent 20%,rgba(255,255,255,.22) 32%,transparent 44%,transparent 62%,rgba(255,255,255,.1) 70%,transparent 78%);pointer-events:none}
+.inv .mm-frame{position:absolute;inset:6.5%;padding:1px;background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);filter:drop-shadow(0 1px 0 rgba(255,255,255,.25))}
+.inv .mm-frame::after{content:"";position:absolute;inset:5px;border:1px solid transparent}
+.inv .mm-in{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16% 13%;min-height:100%}
+/* letters cut into the stone and filled with gold leaf */
+.inv .mm-k,.inv .mm-names,.inv .mm-date,.inv .mm-names span{color:transparent;background:url(assets/foil.jpg) 0 0/180px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 -.6px 0 rgba(0,0,0,.4)) drop-shadow(0 .7px 0 rgba(255,255,255,.45))}
+.inv .mm-tab .mm-k,.inv .mm-tab .mm-names,.inv .mm-tab .mm-date,.inv .mm-tab .mm-names span{background:url(assets/foil.jpg) 0 0/180px,color-mix(in srgb,var(--gold) 68%,#241500);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text}
+.inv .mm-dk .mm-k,.inv .mm-dk .mm-names,.inv .mm-dk .mm-date,.inv .mm-dk .mm-names span{background:url(assets/foil.jpg) 0 0/180px,linear-gradient(100deg,var(--gold),color-mix(in srgb,var(--gold) 50%,#fff3d0) 40%,var(--gold) 70%);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 -.6px 0 rgba(0,0,0,.6)) drop-shadow(0 .6px 0 rgba(255,255,255,.18))}
+.inv .mm-k{font-family:"Cinzel",serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;font-weight:600}
+.inv .mm-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(38px,12cqi,48px);line-height:1;margin:14px 0 8px;display:flex;flex-direction:column;align-items:center}
+.inv .mm-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;margin:4px 0}
+.inv .mm-rule{display:block;width:44px;height:1px;margin:6px 0 12px;background:url(assets/foil.jpg) 0 0/100px,var(--gold);background-blend-mode:overlay}
+.inv .mm-date{font-family:"Cinzel",serif;font-size:11px;letter-spacing:.28em;font-weight:600}
+.inv .mm-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:6px;color:var(--ink);opacity:.85}
+
+/* cover */
+.inv .cv-marmar2{overflow:hidden;transition:opacity .5s ease .9s}
+.inv .mm-stage{position:absolute;left:11%;right:11%;top:9%;transition:transform 1.25s cubic-bezier(.3,.1,.2,1)}
+.inv .mm-stage .mm-tab{aspect-ratio:.7;transition:box-shadow 1.25s}
+.inv .mm-foot{position:absolute;left:0;right:0;bottom:6.5%;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .35s}
+.inv .mm-to{text-align:center}
+.inv .mm-to small{display:block;font-family:"Cinzel",serif;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .mm-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:27px;line-height:1.25}
+.inv .mm-open{cursor:pointer;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:color-mix(in srgb,var(--ground) 60%,transparent);color:var(--pagefg);padding:12px 34px;border-radius:999px;
+  font-family:"Cinzel",serif;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase}
+.inv.opening .mm-stage{transform:translateY(-4%) scale(1.07)}
+.inv.opening .mm-stage .mm-tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 2px 2px 1px rgba(255,255,255,.3),inset -2px -2px 2px rgba(0,0,0,.18),
+    0 2px 0 color-mix(in srgb,var(--stone) 78%,#000),0 4px 0 color-mix(in srgb,var(--stone) 62%,#000),0 6px 4px rgba(0,0,0,.15),0 60px 60px -20px rgba(30,22,14,.4)}
+.inv.opening .mm-foot{opacity:0}
+.inv.opening .cv-marmar2{opacity:0}
+
+/* page: the tablet and three marble coasters */
+.inv .pg-marmar2{background:var(--ground);color:var(--pagefg);padding:40px 0 96px;overflow:hidden}
+.inv .pg-marmar2 > .reveal,.inv .mm-coasters{position:relative;z-index:2}
+.inv .mm-tab.big{min-height:clamp(380px,110cqi,440px);display:flex}
+.inv .mm-tab.big .mm-in{flex:1;padding:14% 12%}
+.inv .mm-tab .couple-ph{width:50%;margin:0 auto 12px;box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 70%,transparent),0 8px 14px -6px rgba(0,0,0,.4)}
+.inv .mm-coasters{display:flex;justify-content:center;gap:10px;margin-top:-22px;width:92%}
+.inv .mm-co{flex:0 0 auto;width:min(29%,104px);aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--ink);
+  position:relative;overflow:hidden;isolation:isolate;background:var(--stone);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 0 0 0 6px transparent,inset 0 0 0 7px color-mix(in srgb,var(--gold) 70%,transparent),0 2px 0 color-mix(in srgb,var(--stone) 70%,#000),0 12px 16px -6px rgba(30,22,14,.45)}
+.inv .mm-co:nth-child(1){transform:rotate(-4deg) translateY(6px)}
+.inv .mm-co:nth-child(3){transform:rotate(5deg) translateY(4px)}
+.inv .mm-co small{font-family:"Cinzel",serif;font-size:7px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+.inv .mm-co b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:21px;line-height:1.1;color:var(--accent);text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.inv .mm-dk .mm-co b{text-shadow:0 1px 2px rgba(0,0,0,.5)}
+
+/* skin: thin polished stone cards with faint veins; overrides the old marble skin */
+.fam-marmar .scroller{background:var(--ground)}
+.fam-marmar .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.22}
+.fam-marmar.cardsecs .sec{position:relative;color:var(--ink);border-radius:4px;overflow:hidden;
+  background:radial-gradient(ellipse at 30% 0,rgba(255,255,255,.18),transparent 60%),var(--stone);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.25),0 2px 0 color-mix(in srgb,var(--stone) 72%,#000),0 16px 24px -12px rgba(30,22,14,.45)}
+.fam-marmar.mm-dark.cardsecs .sec{background:radial-gradient(ellipse at 30% 0,rgba(255,255,255,.08),transparent 60%),var(--stone)}
+.fam-marmar.cardsecs .sec+.sec::before,.fam-marmar.cardsecs .sec::before{content:"";display:block;position:absolute;inset:0;margin:0;width:auto;height:auto;background:var(--veins) center/cover;opacity:.45;pointer-events:none;z-index:0}
+.fam-marmar.cardsecs .sec > *{position:relative;z-index:1}
+.fam-marmar .sec,.fam-marmar .sec p,.fam-marmar .info b{color:var(--ink)}
+.fam-marmar .sec h2{font-family:"Cinzel",serif;font-style:normal;font-weight:600;letter-spacing:.24em;font-size:16px;text-transform:uppercase;color:transparent;
+  background:url(assets/foil.jpg) 0 0/200px,color-mix(in srgb,var(--gold) 68%,#241500);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 -.6px 0 rgba(0,0,0,.35))}
+.fam-marmar.mm-dark .sec h2{background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text}
+.fam-marmar .info,.fam-marmar .info > div{border:0!important;background:none!important}
+.fam-marmar .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:13px 6px!important}
+.fam-marmar .info > div:last-child{border-bottom:0!important}
+.fam-marmar .info span{color:var(--accent)}
+.fam-marmar .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--gold) 70%,transparent);color:var(--ink);background:transparent}
+.fam-marmar input,.fam-marmar select,.fam-marmar textarea{background:color-mix(in srgb,var(--stone) 80%,#fff 20%);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-marmar.mm-dark input,.fam-marmar.mm-dark select,.fam-marmar.mm-dark textarea{background:rgba(0,0,0,.22)}
+.fam-marmar .seg button{color:var(--ink)}
+.fam-marmar .sec .seg button[aria-pressed="true"],.fam-marmar .sec button.submit{background:var(--gold)!important;color:#1d1a16!important;border-color:var(--gold)!important}
+.fam-marmar .dock{background:color-mix(in srgb,var(--stone) 95%,transparent);backdrop-filter:blur(6px)}
+.fam-marmar .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .mm-stage,.inv .mm-stage .mm-tab{transition:none}.inv .cv-marmar2{transition:opacity .3s}}

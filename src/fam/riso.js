@@ -1,70 +1,61 @@
-/* riso: a two-colour risograph poster. Each ink is its own layer (halftone screens at different angles, speckled coverage),
-   overprinting where they meet, slightly out of register. Cover: on tap the two layers slide into register, then the sheet slides away.
-   Page: a riso poster with the names. Skin: overprinted grainy headings and halftone corners. */
-needFont('Bricolage+Grotesque:opsz,wght@12..96,400..800');
-const BG="'Bricolage Grotesque', sans-serif",MONO="'IBM Plex Mono', monospace";
-let uid=0;
-const fit=(s,max,fs,k=.6)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-// halftone dots on a rotated screen inside a box; f(x,y) -> 0..1 dot size
-function ht(x0,y0,w,h,step,ang,maxR,f){let d='';const a=ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),cx=x0+w/2,cy=y0+h/2,R=Math.hypot(w,h)/2+step;
-  for(let i=-R;i<=R;i+=step)for(let j=-R;j<=R;j+=step){const x=cx+i*ca-j*sa,y=cy+i*sa+j*ca;if(x<x0||x>x0+w||y<y0||y>y0+h)continue;const t=f(x,y);if(t<=.04)continue;
-    const r=+Math.min(maxR,maxR*Math.sqrt(Math.min(1,t))).toFixed(1);if(r<.3)continue;d+=`M${(x-r).toFixed(1)} ${y.toFixed(1)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`}
-  return d}
-const flower=(cx,cy,r,rot=0)=>Array.from({length:5},(_,i)=>`<ellipse cx="${cx}" cy="${(cy-r*.55).toFixed(1)}" rx="${(r*.36).toFixed(1)}" ry="${(r*.55).toFixed(1)}" transform="rotate(${rot+i*72} ${cx} ${cy})"/>`).join('');
-const leaf=(x,y,l,rot)=>`<path d="M0 0C${l*.3} ${-l*.28} ${l*.7} ${-l*.28} ${l} 0C${l*.7} ${l*.28} ${l*.3} ${l*.28} 0 0Z" transform="translate(${x} ${y}) rotate(${rot})"/>`;
-// paper speckle: ink drops out where the noise is high, like a riso drum running a little dry
-const inkF=(id,seed)=>`<filter id="${id}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="1" seed="${seed}" result="n"/><feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.9" result="m"/><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="${seed+7}" result="b"/><feColorMatrix in="b" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.75" result="bm"/><feComposite in="m" in2="bm" operator="in" result="mm"/><feComposite in="SourceGraphic" in2="mm" operator="in"/></filter>`;
-function layers(o,th,L,guest,mode){const c=th.c,u=++uid,[n1,n2]=coverNames(o),en=o.lang==='en',A=c.accent,B=c.gold;
-  const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=String(d.getFullYear());
-  const N1=(n1||'').toUpperCase(),N2=(n2||'').toUpperCase(),f1=fit(N1,262,64),f2=fit(N2,232,64);
-  const page=mode==='page';const H=page?560:600;
-  // ink one (accent): halftone sun, flowers, overprint blocks
-  const sunY=page?150:168,sunX=page?196:178;
-  const a=`<svg class="rs-l rs-a" viewBox="0 0 300 ${H}" aria-hidden="true"><defs>${inkF('ra'+u,3+u%5)}</defs><g filter="url(#ra${u})" fill="${A}"><g fill="none" stroke="${A}" stroke-width=".7"><circle cx="150" cy="14" r="4.2"/><path d="M143 14h14M150 7v14"/><circle cx="14" cy="${H-14}" r="4.2"/><path d="M7 ${H-14}h14M14 ${H-21}v14"/></g>
-   <path d="${ht(sunX-112,sunY-112,224,224,5.6,15,2.7,(x,y)=>{const r=Math.hypot(x-sunX,y-sunY)/112;return r>1?0:1.08-r*.95})}"/>
-   <circle cx="${sunX}" cy="${sunY}" r="46"/>
-   <g transform="translate(${page?262:34} ${page?268:92})">${flower(0,0,26,8)}</g><g transform="translate(${page?78:262} ${page?40:300})">${flower(0,0,15,30)}</g><g transform="translate(${page?260:250} ${page?312:52})">${flower(0,0,12,-10)}</g>
-   <rect x="${page?14:18}" y="${page?268:316}" width="${page?150:120}" height="${page?54:58}"/>
-   <path d="${ht(170,H-210,130,210,5,15,2.4,(x,y)=>1.1-Math.hypot(300-x,H-y)/165)}"/>
-   ${page?`<text x="14" y="214" class="rs-big" font-size="118">${dd}</text>`:`<text x="282" y="${H-38}" text-anchor="end" class="rs-big" font-size="64">${dd}.${mm}</text>`}
-   <path d="M${page?20:22} ${page?236:278}h${page?132:96}" stroke="${A}" stroke-width="5"/>
-  </g></svg>`;
-  // ink two (gold slot = second drum): type, rings, rules, info
-  const ny=page?300:356;
-  const b=`<svg class="rs-l rs-b" viewBox="0 0 300 ${H}" aria-hidden="true"><defs>${inkF('rb'+u,11+u%5)}</defs><g filter="url(#rb${u})" fill="${B}"><g fill="none" stroke="${B}" stroke-width=".7"><circle cx="150" cy="14" r="4.2"/><path d="M143 14h14M150 7v14"/><circle cx="14" cy="${H-14}" r="4.2"/><path d="M7 ${H-14}h14M14 ${H-21}v14"/></g>
-   <g transform="translate(0 ${page?26:0})"><text x="22" y="36" class="rs-mono" font-size="8.6">${en?'INVITATION':'KAD JEMPUTAN'} &#8212; NO.${dd}/${mm}</text><text x="278" y="36" text-anchor="end" class="rs-mono" font-size="8.6">${yy}</text>
-   <rect x="22" y="44" width="256" height="2.2"/></g>
-   <g fill="none" stroke="${B}" stroke-width="6.5"><circle cx="${sunX-24}" cy="${sunY+6}" r="40"/><circle cx="${sunX+26}" cy="${sunY+6}" r="40"/></g>
-   <path d="M${sunX-24} ${sunY-48}l8 9-8 9-8-9z"/><path d="M${sunX-36} ${sunY-48}h24" stroke="${B}" stroke-width="1.6"/>
-   <g>${[[34,92],[262,300],[250,52]].slice(0,page?0:3).map(([x,y],i)=>`<circle cx="${x+2}" cy="${y-1}" r="${[7,4.5,3.6][i]}"/>`).join('')}${page?`<circle cx="264" cy="267" r="7"/><circle cx="80" cy="39" r="4.5"/><circle cx="262" cy="311" r="3.6"/>`:''}</g>
-   ${page?'':`<g stroke="${B}" stroke-width="1.6" fill="none"><path d="M${page?40:34} ${page?104:118}C${page?44:38} ${page?150:170} ${page?30:26} ${page?190:200} ${page?36:30} ${page?230:262}"/></g>
-   ${leaf(31,166,22,-30)}${leaf(29,198,18,200)}`}
-   <text x="20" y="${ny-58}" class="rs-mono" font-size="9">${ev(o,L).toUpperCase()}</text>
-   <text x="18" y="${ny}" class="rs-name" font-size="${f1.toFixed(1)}">${esc(N1)}</text>
-   <text x="18" y="${(ny+f2*.92+4).toFixed(1)}" class="rs-name" font-size="${f2.toFixed(1)}"><tspan class="rs-amp" font-size="${(f2*.7).toFixed(1)}">&amp;</tspan>${esc(N2)}</text>
-   <g class="rs-info"><rect x="22" y="${H-150}" width="${page?150:160}" height="1.4"/>
-    <text x="22" y="${H-134}" class="rs-mono" font-size="8">${en?'DATE':'TARIKH'}</text><text x="22" y="${H-120}" class="rs-val" font-size="12.5">${esc(fmtDate(o.date,o.lang))}</text>
-    <text x="22" y="${H-102}" class="rs-mono" font-size="8">${en?'TIME':'MASA'}</text><text x="22" y="${H-88}" class="rs-val" font-size="12.5">${esc(fmtTime(o.start,o.lang))}${o.end?' &#8211; '+esc(fmtTime(o.end,o.lang)):''}</text>
-    <text x="22" y="${H-70}" class="rs-mono" font-size="8">${en?'VENUE':'TEMPAT'}</text><text x="22" y="${H-56}" class="rs-val" font-size="12.5">${esc(o.venue)}</text>
-    ${guest?`<text x="22" y="${H-34}" class="rs-mono" font-size="8">${en?'FOR':'KEPADA'}</text><text x="${en?50:64}" y="${H-34}" class="rs-val rs-g" font-size="11">${esc(guest)}</text>`:''}</g>
-   ${page?'':`<text x="280" y="${H-14}" text-anchor="end" class="rs-mono" font-size="6.5">${en?'printed in two inks':'dicetak dua warna'} &#183; riso</text>`}
-  </g></svg>`;
-  return a+b}
-FAMILY({key:'riso',name:'Risograf',meaning:'Two-colour riso print',
-  blurb:'A two-colour risograph poster in fluorescent ink, halftones and speckled grain, slightly out of register; the inks slide into register and the sheet slides away.',
-  fonts:{d:BG,s:BG,b:BG},ms:1400,
-  page(o,th,L){return `<section class="page pg-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-sheet">${layers(o,th,L,'','page')}<i class="rs-grain"></i></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-table"></div>
-    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Open invitation':'Buka Jemputan'} &#8594;</span></${tag}></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--blend',th.c.blend||'multiply');$$('.sheet > .sec',el).forEach((s,i)=>{s.classList.add(i%2?'rs-odd':'rs-even');const h=$('h2',s);if(h)h.setAttribute('data-t',h.textContent)})},
+/* riso (redesign): a true two-ink risograph print. A pair of bullfinches on a blossoming branch (Kubo Shunman, c. 1815,
+   public domain) separated into two inks: the warm ink takes the birds' breasts and the buds, the key ink takes the line.
+   Each ink is stochastic grain, slightly out of register, overprinting where they meet, on toothy paper.
+   Cover: the poster pinned flat; tap "Buka Jemputan" and it is lifted away. Page: the same print with the details set in mono.
+   Skin: riso cards: paper grain, serif headings with a misregistered second ink, key-ink hairlines. */
+needFont('Instrument+Serif:ital@0;1');
+let rsN=0;
+// the art crop: the two birds, the branch and the blossoms, without the poem
+const RS_VB='0 470 690 628';
+// one ink: alpha is pulled from the picture by a colour matrix, then dithered against fine noise like a riso drum
+const rsInk=(id,m,seed,col,blur=0)=>`<filter id="${id}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+  <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${m}" result="a"/>
+  <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="1" seed="${seed}" result="t"/>
+  <feColorMatrix in="t" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="n"/>
+  <feComposite in="a" in2="n" operator="arithmetic" k1="0" k2="3.4" k3="-3.4" k4=".62" result="d"/>
+  ${blur?`<feGaussianBlur in="d" stdDeviation="${blur}" result="d"/>`:''}
+  <feFlood flood-color="${col}"/><feComposite in2="d" operator="in"/></filter>`;
+function rsArt(c,cls=''){const u=++rsN,A=c.accent,B=c.gold;
+  // warm ink: (R - B) of the print; key ink: darkness of the print
+  const warm='4.6 0 -4.6 0 -.62',key='-1.05 -1.05 -1.05 0 1.98';
+  return `<svg class="rs2-art ${cls}" viewBox="${RS_VB}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    ${rsInk('rsa'+u,warm,11+u,A)}${rsInk('rsb'+u,key,29+u,B)}
+    <filter id="rsf${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="1" seed="${5+u}" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="n"/>
+      <feComposite in="SourceAlpha" in2="n" operator="arithmetic" k1="0" k2="1" k3="-3.4" k4=".78" result="d"/><feFlood flood-color="${A}"/><feComposite in2="d" operator="in"/></filter></defs>
+    <g class="rs2-ink a"><circle cx="455" cy="700" r="196" fill="#000" filter="url(#rsf${u})"/>
+      <image href="${A_}pd-asia-3.jpg" width="1000" height="1098" filter="url(#rsa${u})"/></g>
+    <g class="rs2-ink b"><image href="${A_}pd-asia-3.jpg" width="1000" height="1098" filter="url(#rsb${u})"/></g></svg>`}
+const A_=A;
+const rsDate=o=>{const d=new Date((o.date||'2026-01-01')+'T00:00:00');return [String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),String(d.getFullYear())]};
+FAMILY({key:'riso',name:'Risograf',meaning:'Two-ink riso print',
+  blurb:'A two-ink risograph print of two bullfinches on a blossoming branch, grainy and a touch out of register, with the names set large in a fine serif.',
+  fonts:{d:"'Instrument Serif', serif",s:"'Instrument Serif', serif",b:"'IBM Plex Mono', monospace"},ms:1300,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',[d,m,y]=rsDate(o);
+    const rows=[[en?'Date':'Tarikh',fmtDate(o.date,o.lang)],[en?'Time':'Masa',[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ')],[en?'Venue':'Tempat',o.venue]].filter(r=>r[1]);
+    return `<section class="page pg-riso2${th.c.blend==='screen'?' rs2-dark':''}"><div class="rs2-poster reveal">
+      <div class="rs2-head"><span>${en?'Invitation':'Kad Jemputan'}</span><span>No. ${d}${m}</span><span>${y}</span></div>
+      ${rsArt(th.c,'pg')}
+      <div class="rs2-body"><p class="rs2-k kicker">${ev(o,L)}</p><h1 class="rs2-names">${esc(n1)}<span><i>&amp;</i> ${esc(n2)}</span></h1>
+      <dl class="rs2-rows">${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${o.hijri?`<p class="rs2-hj">${esc(o.hijri)}</p>`:''}</div>
+      <i class="rs2-grain"></i></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',[d,m,y]=rsDate(o);
+    return `<div class="cover cv-riso2${th.c.blend==='screen'?' rs2-dark':''}"><div class="rs2-wall"></div>
+      <div class="rs2-poster">
+        <div class="rs2-head"><span>${en?'Invitation':'Kad Jemputan'}</span><span>No. ${d}${m}</span><span>${y}</span></div>
+        ${rsArt(th.c,'cv')}
+        <div class="rs2-body"><p class="rs2-k">${ev(o,L)}</p><p class="rs2-names">${esc(n1)}<span><i>&amp;</i> ${esc(n2)}</span></p>
+        <p class="rs2-date">${d} · ${m} · ${y}</p>${guest?`<p class="rs2-to"><small>${L.dear}</small> ${esc(guest)}</p>`:''}</div>
+        <i class="rs2-grain"></i></div>
+      <div class="rs2-foot"><${tag} class="rs2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('rs2-dark',th.c.blend==='screen')},
   themes:[
-    {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4',line:'rgba(0,120,191,.35)'}},
-    {k:'merah',n:'Merah Teal',desc:'Bright red and teal on chalk',c:{ground:'#d9d4c8',sheet:'#f2ede2',ink:'#00646a',accent:'#ff665e',gold:'#00838a',pagefg:'#23302f',line:'rgba(0,131,138,.35)'}},
-    {k:'kuning',n:'Kuning',desc:'Yellow and medium blue',c:{ground:'#24304f',sheet:'#f7f2e6',ink:'#25418a',accent:'#ffd400',gold:'#3255a4',pagefg:'#f7f2e6',line:'rgba(50,85,164,.35)'}},
-    {k:'oren',n:'Oren Hijau',desc:'Fluorescent orange and green',c:{ground:'#e6e1d4',sheet:'#f4efe4',ink:'#00753f',accent:'#ff6c2f',gold:'#00a95c',pagefg:'#22301f',line:'rgba(0,169,92,.35)'}},
-    {k:'ungu',n:'Ungu',desc:'Purple and fluorescent pink on lilac',c:{ground:'#2c2438',sheet:'#efe9ef',ink:'#5a4290',accent:'#ff48b0',gold:'#765ba7',pagefg:'#efe9ef',line:'rgba(118,91,167,.35)'}},
-    {k:'emas',n:'Emas Marun',desc:'Burgundy and sunflower on cream',c:{ground:'#efe5d3',sheet:'#f6eddc',ink:'#7a3b5e',accent:'#ffb511',gold:'#914e72',pagefg:'#3b2230',line:'rgba(145,78,114,.35)'}},
-    {k:'hitam',n:'Hitam',desc:'Pink and yellow on black stock',c:{ground:'#0e0e10',sheet:'#1d1d21',ink:'#ffe800',accent:'#ff48b0',gold:'#ffe800',blend:'screen',pagefg:'#f2efe8',line:'rgba(255,232,0,.35)'}},
-    {k:'laut',n:'Laut',desc:'Coral and mint on navy stock',c:{ground:'#0f1428',sheet:'#1d2340',ink:'#9be3df',accent:'#ff7477',gold:'#82d8d5',blend:'screen',pagefg:'#eef2f6',line:'rgba(130,216,213,.35)'}},
+    {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4'}},
+    {k:'merah',n:'Merah Teal',desc:'Bright red and teal on chalk',c:{ground:'#d4cfc3',sheet:'#f2ede2',ink:'#005f66',accent:'#ff665e',gold:'#00838a',pagefg:'#23302f'}},
+    {k:'kuning',n:'Kuning',desc:'Yellow and medium blue',c:{ground:'#24304f',sheet:'#f7f2e6',ink:'#25418a',accent:'#ffc400',gold:'#3255a4',pagefg:'#f7f2e6'}},
+    {k:'oren',n:'Oren Hijau',desc:'Fluorescent orange and green',c:{ground:'#e2ddd0',sheet:'#f4efe4',ink:'#00703c',accent:'#ff6c2f',gold:'#00a95c',pagefg:'#22301f'}},
+    {k:'ungu',n:'Ungu',desc:'Purple and fluorescent pink on lilac',c:{ground:'#2c2438',sheet:'#efe9ef',ink:'#4f3a85',accent:'#ff48b0',gold:'#765ba7',pagefg:'#efe9ef'}},
+    {k:'emas',n:'Emas Marun',desc:'Burgundy and sunflower on cream',c:{ground:'#e9dfcc',sheet:'#f6eddc',ink:'#7a3b5e',accent:'#ffb511',gold:'#914e72',pagefg:'#3b2230'}},
+    {k:'hitam',n:'Hitam',desc:'Pink and yellow on black stock',c:{ground:'#0e0e10',sheet:'#1d1d21',ink:'#ffe800',accent:'#ff48b0',gold:'#ffe800',blend:'screen',pagefg:'#f2efe8'}},
+    {k:'laut',n:'Laut',desc:'Coral and mint on navy stock',c:{ground:'#0f1428',sheet:'#1d2340',ink:'#9be3df',accent:'#ff7477',gold:'#82d8d5',blend:'screen',pagefg:'#eef2f6'}},
   ]});

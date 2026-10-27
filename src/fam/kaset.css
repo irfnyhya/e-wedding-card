@@ -1,95 +1,107 @@
-/* ===== kaset ===== */
-.inv .cv-kaset{background:var(--ground);overflow:hidden;transition:opacity .5s 1.05s}
-.inv .cv-kaset .kaset-desk,.inv .pg-kaset .kaset-desk{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 40%,color-mix(in srgb,var(--ground) 84%,#fff),var(--ground) 60%,color-mix(in srgb,var(--ground) 80%,#000))}
-.inv .cv-kaset .kaset-desk::after,.inv .pg-kaset .kaset-desk::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/300px;mix-blend-mode:soft-light;opacity:.55}
-.inv .kaset-top{position:absolute;top:6%;left:0;right:0;text-align:center;z-index:2;font-family:var(--d);font-size:9.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--pagefg);opacity:.8;transition:opacity .4s}
-.inv .kaset-stage{position:absolute;left:50%;top:10.5%;width:min(70%,276px);aspect-ratio:70/109;transform:translateX(-46%);perspective:1500px;container-type:size;z-index:3}
-.inv .kaset-edge{position:absolute;left:0;top:0;bottom:0;left:-7.5%;width:7.5%;top:0;bottom:0;clip-path:polygon(0 2.6%,100% 0,100% 100%,0 97.4%);background:linear-gradient(90deg,transparent 18%,var(--gold) 18% 21%,transparent 21% 79%,var(--gold) 79% 82%,transparent 82%),var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:14% 0 11%;overflow:hidden;filter:brightness(.78)}
-.inv .kaset-edge span,.inv .kaset-edge b{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--d);font-size:7.5px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--sheet);white-space:nowrap}
-.inv .kaset-edge b{font-weight:400;font-size:7px;opacity:.85}
-.inv .kaset-edge .kaset-glass{border-radius:0}
-.inv .kaset-tray{position:absolute;inset:0;transform:translateZ(-4px);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.06)),color-mix(in srgb,var(--sheet) 22%,transparent);box-shadow:0 26px 34px -12px rgba(0,0,0,.55),0 4px 10px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.45),inset 0 0 0 4px rgba(255,255,255,.08)}
-.inv .kaset-post{position:absolute;left:47.7%;width:6cqw;aspect-ratio:1;margin-left:-3cqw;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.7),rgba(255,255,255,.15) 60%,rgba(0,0,0,.1));box-shadow:0 0 0 1px rgba(255,255,255,.4)}
-.inv .kaset-post.a{top:36%}.inv .kaset-post.b{top:60%}
-.inv .kaset-tape{position:absolute;left:50%;top:50%;width:92cqh;aspect-ratio:200/128;transform:translate(-50%,-50%) rotate(-90deg);transition:transform 1s .42s cubic-bezier(.45,0,.2,1);filter:drop-shadow(2px 0 3px rgba(0,0,0,.3))}
-.inv .kaset-cas{display:block;width:100%;height:auto}
-.inv .kaset-lid{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:0 50%;transform:translateZ(1px);transition:transform .95s cubic-bezier(.5,0,.2,1)}
-.inv .kaset-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden}
-.inv .kaset-face.back{transform:rotateY(180deg);background:linear-gradient(118deg,rgba(255,255,255,.3),rgba(255,255,255,.06))}
-.inv .kaset-spine{position:absolute;left:0;top:0;bottom:0;width:11%;background:linear-gradient(90deg,transparent 78%,var(--gold) 78% 82%,transparent 82% 87%,var(--gold) 87% 89%,transparent 89%),var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:inset -1px 0 0 rgba(0,0,0,.25)}
-.inv .kaset-spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--d);font-size:7.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--sheet);white-space:nowrap;margin-right:2px}
-.inv .kaset-jc{position:absolute;left:0;right:0;top:0;bottom:0;background:var(--sheet);padding:12px 13px 10px 12px;color:var(--ink);display:flex;flex-direction:column;text-align:left;isolation:isolate}
-.inv .kaset-jc::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.6;z-index:-1}
-.inv .kaset-jhd{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--d);font-size:6.6px;letter-spacing:.24em;text-transform:uppercase;opacity:.75}
-.inv .kaset-jhd b{font-size:11px;letter-spacing:.06em;font-weight:600;color:var(--accent);opacity:1}
-.inv .kaset-band{display:flex;align-items:center;gap:8px;margin:7px -13px 4px -12px;padding:6px 12px;background:var(--accent);color:var(--sheet)}
-.inv .kaset-band i{flex:1;height:7px;background:var(--pin) 0 0/10px 2.5px}
-.inv .kaset-band span{font-family:var(--d);font-size:10px;font-weight:500;letter-spacing:.5em;text-transform:uppercase;padding-left:.5em}
-.inv .kaset-lab{font-family:var(--d);font-size:6.4px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin:9px 0 0}
-.inv .kaset-ln{font-family:"Caveat",cursive;font-weight:600;font-size:17px;line-height:1.15;color:var(--pen);border-bottom:1px solid color-mix(in srgb,var(--ink) 22%,transparent);padding:2px 2px 0;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.inv .kaset-ln.nm{font-size:clamp(26px,9.4cqw,32px);line-height:1.05;transform:rotate(-1.2deg);transform-origin:0 100%}
-.inv .kaset-ln.nm span{font-size:.7em;opacity:.8}
-.inv .kaset-ln.tr{font-size:15.5px;font-weight:400}
-.inv .kaset-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid color-mix(in srgb,var(--gold) 70%,transparent);font-family:var(--d);font-size:6.5px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
-.inv .kaset-reel{width:16px;height:16px;border-radius:50%;border:1px solid var(--accent);background:radial-gradient(circle,var(--accent) 0 2.6px,transparent 3px),conic-gradient(from 0deg,transparent 0 50deg,color-mix(in srgb,var(--accent) 45%,transparent) 50deg 60deg,transparent 60deg 110deg,color-mix(in srgb,var(--accent) 45%,transparent) 110deg 120deg,transparent 120deg 170deg,color-mix(in srgb,var(--accent) 45%,transparent) 170deg 180deg,transparent 180deg 230deg,color-mix(in srgb,var(--accent) 45%,transparent) 230deg 240deg,transparent 240deg 290deg,color-mix(in srgb,var(--accent) 45%,transparent) 290deg 300deg,transparent 300deg 350deg,color-mix(in srgb,var(--accent) 45%,transparent) 350deg 360deg)}
-.inv .kaset-glass{position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:3;background:linear-gradient(118deg,rgba(255,255,255,.42),rgba(255,255,255,.07) 20%,transparent 32%,transparent 66%,rgba(255,255,255,.1) 80%,rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),inset 0 0 0 3.5px rgba(255,255,255,.14),inset 0 0 0 4.5px rgba(0,0,0,.1)}
-.inv .kaset-glass::before,.inv .kaset-glass::after{content:"";position:absolute;left:5%;right:5%;height:2px;border-radius:2px;background:rgba(255,255,255,.35)}
-.inv .kaset-glass::before{top:5px}.inv .kaset-glass::after{bottom:5px}
-.inv .kaset-tap{position:absolute;inset:0;z-index:6;transform:translateZ(3px);border:0;padding:0;margin:0;background:none;cursor:pointer;border-radius:5px}
-.inv .kaset-bot{position:absolute;left:0;right:0;bottom:10%;z-index:2;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;gap:12px;align-items:center;transition:opacity .4s}
-.inv .kaset-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column;gap:3px}
-.inv .kaset-to b{font-family:"Caveat",cursive;font-style:normal;font-weight:600;font-size:24px}
-.inv .kaset-hint{font-family:var(--d);font-size:9px;letter-spacing:.32em;text-transform:uppercase;opacity:.6;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--pagefg) 30%,transparent)}
-.inv.opening .kaset-lid{transform:translateZ(1px) rotateY(-118deg)}
-.inv.opening .kaset-tape{transform:translate(-50%,-50%) translateY(-22cqh) rotate(-90deg)}
-.inv.opening .kaset-top,.inv.opening .kaset-bot{opacity:0}
-.inv.opening .kaset-tap{pointer-events:none}
-.inv.opening .cv-kaset{opacity:0}
-/* page: the cassette label above the unfolded J-card */
-.inv .pg-kaset{background:var(--ground);padding:30px 16px 40px;gap:14px}
-.inv .pg-kaset > :not(.kaset-desk){position:relative;z-index:2}
-.inv .pg-kaset > .kicker{color:var(--pagefg);opacity:.85}
-.inv .kaset-pcas{width:100%;max-width:352px;transform:rotate(-2deg);filter:drop-shadow(0 16px 16px rgba(0,0,0,.32)) drop-shadow(0 2px 3px rgba(0,0,0,.2))}
-.inv .kaset-inlay{width:100%;max-width:336px;background:var(--sheet);padding:12px 14px 12px 32px;color:var(--ink);text-align:left;box-shadow:0 14px 24px -10px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.15);isolation:isolate;transform:rotate(1deg)}
-.inv .kaset-inlay::before{content:"";position:absolute;left:0;top:0;bottom:0;width:18px;background:linear-gradient(90deg,transparent 70%,var(--gold) 70% 76%,transparent 76% 84%,var(--gold) 84% 88%,transparent 88%),var(--accent)}
-.inv .kaset-inlay::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.6;z-index:-1}
-.inv .kaset-ihd{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--d);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;padding-bottom:7px;border-bottom:1.5px solid var(--ink)}
-.inv .kaset-ihd span:last-child{opacity:.7;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.inv .kaset-side{background:var(--accent);color:var(--sheet);padding:3px 7px;font-weight:600;white-space:nowrap}
-.inv .kaset-list{list-style:none;margin:0;padding:0}
-.inv .kaset-list li{display:grid;grid-template-columns:24px 1fr auto;align-items:baseline;gap:6px;padding:5px 0 3px;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
-.inv .kaset-list li > b{font-family:var(--d);font-size:9px;font-weight:600;color:var(--accent);letter-spacing:.06em}
-.inv .kaset-list li span{display:flex;align-items:baseline;gap:7px;min-width:0}
-.inv .kaset-list small{font-family:var(--d);font-size:6.6px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;white-space:nowrap}
-.inv .kaset-list em{font-family:"Caveat",cursive;font-style:normal;font-weight:600;font-size:clamp(16px,5cqi,19px);line-height:1.1;color:var(--pen);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.inv .kaset-list li > i{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:9.5px;opacity:.55}
-.inv .kaset-list li.kaset-sep{display:block;padding:9px 0 4px;border-bottom:1.5px solid var(--ink)}
-.inv .kaset-list li.kaset-sep span{font-family:var(--d);font-size:7.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600}
-.inv .kaset-addr{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;opacity:.75;margin:8px 0 0}
-/* skin: J-card panels, track-number headings, tape-counter countdown */
-.fam-kaset .scroller{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 60%)}
-.fam-kaset.cardsecs .sec{background:repeating-linear-gradient(180deg,transparent 0 27px,color-mix(in srgb,var(--ink) 7%,transparent) 27px 28px),var(--sheet);padding:34px 22px 30px 40px;border-radius:2px;box-shadow:0 14px 24px -12px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.15)}
-.fam-kaset .kaset-sec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:20px;background:linear-gradient(90deg,transparent 70%,var(--gold) 70% 76%,transparent 76% 84%,var(--gold) 84% 88%,transparent 88%),var(--accent)}
-.fam-kaset .sec h2{align-self:stretch;display:flex;align-items:baseline;gap:10px;text-align:left;padding-bottom:7px;border-bottom:1.5px solid var(--ink);font-family:var(--d);color:var(--ink)}
-.fam-kaset .kaset-no{font-size:11px;font-weight:600;letter-spacing:.06em;background:var(--accent);color:var(--sheet);padding:3px 7px 2px}
-.fam-kaset .kaset-ht{flex:1;font-size:11.5px;letter-spacing:.24em;font-weight:500}
-.fam-kaset .kaset-dur{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:11px;letter-spacing:.04em;opacity:.55}
-.fam-kaset .sec .rule{width:220px;height:16px;background:var(--strip) center/contain no-repeat;margin:4px auto}
-.fam-kaset .sec .rule::before,.fam-kaset .sec .rule::after,.fam-kaset .sec .rule i{display:none}
-.fam-kaset .info,.fam-kaset .info > div{border-color:color-mix(in srgb,var(--ink) 20%,transparent)}
-.fam-kaset .info span,.fam-kaset .count span,.fam-kaset label{font-family:var(--d);letter-spacing:.2em}
-.fam-kaset .info b{font-family:"Caveat",cursive;font-weight:600;font-size:21px;color:var(--pen)}
-.fam-kaset .count{gap:6px}
-.fam-kaset .count div{background:#1f1c1a;border-radius:3px;padding:8px 2px 6px;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)}
-.fam-kaset .count div + div{border-left:0}
-.fam-kaset .count b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:#f3eee2;font-size:26px}
-.fam-kaset .count span{color:#f3eee2;opacity:.6;font-size:8.5px}
-.fam-kaset .timeline b{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
-.fam-kaset .timeline span{font-family:"Caveat",cursive;font-size:20px;line-height:1.1;color:var(--pen)}
-.fam-kaset .submit{font-family:var(--d);letter-spacing:.3em;background:var(--accent)}
-.fam-kaset .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+/* ===== kaset (cassette in a clear case, product shot on linen) ===== */
+.inv .ks-linen{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 45% 38%,rgba(255,255,255,.26),transparent 72%),var(--ground);overflow:hidden}
+.inv .ks-linen::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/180px;mix-blend-mode:multiply;opacity:.42}
+.inv .ks-dark .ks-linen{background:radial-gradient(ellipse 70% 55% at 45% 38%,rgba(255,255,255,.09),transparent 72%),var(--ground)}
+.inv .ks-dark .ks-linen::after{mix-blend-mode:soft-light;opacity:.6}
+.inv .ks-k{font-family:"Jost",sans-serif;font-weight:400;font-size:9.5px;letter-spacing:.44em;text-transform:uppercase}
+.inv .ks-cas{display:block;width:100%;height:auto;overflow:visible}
+
+/* the J-card front: the painting, then a cloth band with the names */
+.inv .ks-jc{position:absolute;inset:2.6% 3% 2.6% 7.5%;background:var(--artbg);overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.25)}
+.inv .ks-art{position:absolute;left:0;right:0;top:0;height:67%;background:var(--art) var(--artpos)/var(--artsize) no-repeat,var(--artbg)}
+.inv .ks-band{position:absolute;left:0;right:0;bottom:0;height:33%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;color:var(--bandink);
+  background:url(assets/paper.jpg) 0 0/160px,var(--board);background-blend-mode:multiply;border-top:.5px solid rgba(0,0,0,.2)}
+.inv .ks-ser{font-family:"Jost",sans-serif;font-size:7.5px;letter-spacing:.34em;text-transform:uppercase;opacity:.82}
+.inv .ks-nm{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(19px,6.4cqi,26px);line-height:1.05;padding:0 8px}
+.inv .ks-nm span{font-weight:400;opacity:.8}
+.inv .ks-dt{font-family:"Jost",sans-serif;font-size:7.5px;letter-spacing:.4em;opacity:.82;padding-left:.4em}
+
+/* cover: the case lies on linen, lit from the top left */
+.inv .cv-kaset2{background:var(--ground);overflow:hidden;transition:opacity .45s 1.15s}
+.inv .ks-top{position:absolute;top:7.5%;left:0;right:0;text-align:center;z-index:3;color:var(--pagefg);opacity:.8;transition:opacity .4s}
+.inv .ks-case{position:absolute;left:17.5%;width:65%;top:13.5%;aspect-ratio:70/110;z-index:2;perspective:1300px;transform:rotate(-2.5deg)}
+.inv .ks-tray{position:absolute;inset:0;border-radius:5px;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.08)),color-mix(in srgb,var(--ground) 82%,#fff);
+  box-shadow:0 30px 40px -16px rgba(20,14,8,.55),0 4px 10px rgba(20,14,8,.25),inset 0 0 0 1px rgba(255,255,255,.5),inset 0 0 0 4px rgba(255,255,255,.08)}
+.inv .ks-dark .ks-tray{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.04)),color-mix(in srgb,var(--ground) 85%,#fff);box-shadow:0 30px 44px -14px rgba(0,0,0,.85),0 4px 10px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.3)}
+.inv .ks-ridge{position:absolute;left:6%;right:6%;top:5%;bottom:5%;border:1px solid rgba(255,255,255,.35);border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.inv .ks-in{position:absolute;left:50%;top:50%;width:93cqi;transform:translate(-50%,-50%) rotate(90deg);filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.inv .ks-lid{position:absolute;inset:0;transform-origin:0 50%;transform-style:preserve-3d;transition:transform 1.3s cubic-bezier(.45,.05,.2,1)}
+.inv .ks-face,.inv .ks-back{position:absolute;inset:0;border-radius:5px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.inv .ks-face{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),inset 0 0 0 2px rgba(0,0,0,.08)}
+.inv .ks-back{transform:rotateY(180deg);background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+.inv .ks-gloss{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,.1) 0%,transparent 22%,transparent 30%,rgba(255,255,255,.3) 37%,rgba(255,255,255,.06) 44%,transparent 49%,transparent 72%,rgba(255,255,255,.14) 78%,transparent 84%)}
+/* the hinge along the left edge: moulded ribs in clear plastic */
+.inv .ks-hinge{position:absolute;left:0;top:0;bottom:0;width:6.5%;background:repeating-linear-gradient(180deg,rgba(255,255,255,.5) 0 1px,rgba(255,255,255,.05) 1px 4px),linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.08));
+  border-right:1px solid rgba(0,0,0,.12)}
+.inv .ks-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .ks-to{text-align:center}
+.inv .ks-to small{display:block;font-family:"Jost",sans-serif;font-size:9px;letter-spacing:.34em;text-transform:uppercase;opacity:.7}
+.inv .ks-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:23px}
+.inv .ks-open{border:1px solid color-mix(in srgb,var(--pagefg) 42%,transparent);background:transparent;color:var(--pagefg);cursor:pointer;padding:13px 36px;border-radius:999px;
+  font-family:"Jost",sans-serif;font-weight:400;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase}
+/* opening: the lid swings open on its hinge */
+.inv.opening .ks-top,.inv.opening .ks-foot{opacity:0}
+.inv.opening .ks-lid{transform:rotateY(-158deg)}
+.inv.opening .cv-kaset2{opacity:0}
+
+/* page: the J-card unfolded on linen, the tape laid across its front */
+.inv .pg-kaset2{background:var(--ground);color:var(--pagefg);justify-content:flex-start;padding:30px 0 92px;gap:0}
+.inv .pg-kaset2 > :not(.ks-linen){position:relative;z-index:2}
+.inv .ks-unf{width:86%;max-width:350px;display:flex;flex-direction:column;transform:rotate(-.6deg);box-shadow:0 22px 34px -14px rgba(20,14,8,.5),0 2px 5px rgba(20,14,8,.2)}
+.inv .ks-dark .ks-unf{box-shadow:0 24px 40px -12px rgba(0,0,0,.85),0 2px 5px rgba(0,0,0,.4)}
+.inv .ks-panel{position:relative}
+.inv .ks-front{height:96px;background:var(--artbg)}
+.inv .ks-front .ks-art{height:100%}
+.inv .ks-spine{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;color:var(--bandink);
+  background:url(assets/paper.jpg) 0 0/160px,var(--board);background-blend-mode:multiply;font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(0,0,0,.18)}
+.inv .ks-spine b{display:none}
+.inv .ks-flap{background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;color:var(--ink);padding:16px 20px 14px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.1)}
+.inv .ks-flap .ks-k{color:var(--accent)}
+.inv .ks-flap .couple-ph.front{width:26%;margin-bottom:10px}
+.inv .ks-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(32px,10cqi,42px);line-height:1.05;color:var(--ink);margin:8px 0 6px}
+.inv .ks-names span{font-weight:400;font-size:.7em;color:var(--gold)}
+.inv .ks-date{font-family:"Jost",sans-serif;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+.inv .ks-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;margin-top:4px}
+.inv .ks-side{align-self:stretch;margin-top:11px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--ink) 22%,transparent);text-align:left;font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--accent)}
+.inv .ks-tr{list-style:none;margin:4px 0 0;padding:0;align-self:stretch;font-family:"Cormorant Garamond",serif;font-size:15px}
+.inv .ks-tr li{display:flex;align-items:baseline;gap:10px;padding:2px 0;text-align:left;border-bottom:.5px solid color-mix(in srgb,var(--ink) 12%,transparent)}
+.inv .ks-tr li:last-child{border-bottom:0}
+.inv .ks-tr b{font-family:"Jost",sans-serif;font-weight:400;font-size:9px;color:var(--accent);width:10px;flex:none}
+.inv .ks-tr span{flex:1}
+.inv .ks-tr i{font-family:"Jost",sans-serif;font-style:normal;font-size:9px;letter-spacing:.08em;opacity:.7;white-space:nowrap}
+.inv .ks-pills{display:flex;gap:8px;margin-top:12px}
+.inv .ks-pill{padding:10px 20px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent);text-decoration:none;font-family:"Jost",sans-serif;font-size:9.5px;letter-spacing:.28em;text-transform:uppercase}
+.inv .ks-ptape{position:absolute!important;top:56px;right:-3%;width:50%;max-width:210px;transform:rotate(8deg);filter:drop-shadow(0 10px 10px rgba(20,14,8,.35)) drop-shadow(0 2px 2px rgba(20,14,8,.25))}
+
+/* skin: J-card panels with a printed band and fold lines */
+.fam-kaset .scroller{background:var(--ground)}
+.fam-kaset .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/180px;mix-blend-mode:multiply;opacity:.35}
+.fam-kaset.ks-dark .scroller::before{mix-blend-mode:soft-light;opacity:.55}
+.fam-kaset.cardsecs .sec{background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:1px;padding-top:0;overflow:hidden;
+  box-shadow:0 16px 26px -14px rgba(20,14,8,.45),0 1px 3px rgba(20,14,8,.15)}
+.fam-kaset.ks-dark.cardsecs .sec{box-shadow:0 18px 30px -12px rgba(0,0,0,.8)}
+.fam-kaset .sec p.ks-strip{align-self:stretch;margin:0 -26px 6px!important;width:auto;max-width:none;padding:9px 18px;line-height:1.2;display:flex;justify-content:space-between;align-items:center;color:var(--bandink);
+  background:url(assets/paper.jpg) 0 0/160px,var(--board);background-blend-mode:multiply;font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.34em;text-transform:uppercase}
+.fam-kaset .ks-strip b{font-weight:400;letter-spacing:.2em}
+.fam-kaset .sec h2{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;text-transform:none;letter-spacing:0;font-size:28px;color:var(--ink)}
+.fam-kaset .sec > .rule{width:100%;gap:0;color:color-mix(in srgb,var(--ink) 30%,transparent)}
+.fam-kaset .sec > .rule::before,.fam-kaset .sec > .rule::after{height:0;border-top:1px dashed currentColor;background:none;opacity:1}
+.fam-kaset .sec > .rule i{display:none}
+.fam-kaset .info,.fam-kaset .info > div{border:0!important;background:none!important}
+.fam-kaset .info > div{border-bottom:1px dashed color-mix(in srgb,var(--ink) 22%,transparent)!important;padding:13px 6px!important}
+.fam-kaset .info > div:last-child{border-bottom:0!important}
+.fam-kaset .info span{color:var(--accent);font-family:"Jost",sans-serif;letter-spacing:.24em}
+.fam-kaset .count div{background:none!important;border:0!important;border-left:1px dashed color-mix(in srgb,var(--ink) 25%,transparent)!important}
+.fam-kaset .count div:first-child{border-left:0!important}
+.fam-kaset .count b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:30px;color:var(--ink)}
+.fam-kaset .count span{font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.24em;color:var(--accent)}
+.fam-kaset .timeline b{color:var(--accent);font-family:"Jost",sans-serif;font-weight:400}
+.fam-kaset .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-kaset .seg button[aria-pressed="true"],.fam-kaset button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
+.fam-kaset input,.fam-kaset select,.fam-kaset textarea{background:rgba(255,255,255,.55);color:var(--ink)}
+.fam-kaset .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(6px)}
 .fam-kaset .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .kaset-lid,.inv .kaset-tape,.inv .cv-kaset{transition:none}}
-.inv .kaset-jc::before{content:"";position:absolute;inset:5px;border:1px solid color-mix(in srgb,var(--gold) 75%,transparent);pointer-events:none}
-.inv .kaset-vol{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;text-align:center;margin:2px 0 0;opacity:.8}
-.inv .kaset-reels{display:block;width:62%;margin:auto auto 6px;height:auto;opacity:.95}
+@media (prefers-reduced-motion: reduce){.inv .ks-lid{transition:none}}

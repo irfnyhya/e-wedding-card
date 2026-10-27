@@ -1,0 +1,76 @@
+/* ===== herb (redesign) ===== */
+.inv .hb2-table{position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 45% 35%,rgba(255,255,255,.18),transparent 70%),radial-gradient(ellipse 100% 60% at 50% 115%,rgba(0,0,0,.18),transparent 70%),var(--ground)}
+.inv .hb2-table::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/360px;mix-blend-mode:multiply;opacity:.55}
+/* the mounting sheet */
+.inv .hb2-sheet{position:absolute;left:8%;right:8%;top:12.5%;aspect-ratio:.7;z-index:3;color:var(--ink);transform:rotate(-1.2deg);
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.4),transparent 60%),radial-gradient(ellipse at 90% 100%,rgba(150,120,70,.1),transparent 50%),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,normal,multiply,normal;
+  box-shadow:0 1px 1px rgba(40,30,20,.25),0 16px 26px -10px rgba(40,30,20,.42),inset 0 0 0 1px rgba(255,255,255,.5);border-radius:1px}
+.inv.hb2-dark .hb2-sheet,.inv .cv-herb2.hb2-dk .hb2-sheet{box-shadow:0 1px 1px rgba(0,0,0,.4),0 18px 30px -8px rgba(0,0,0,.6)}
+.inv .hb2-no{position:absolute;left:7%;top:4.5%;font-family:"Special Elite",monospace;font-size:10px;letter-spacing:.08em;color:var(--ink);opacity:.75}
+.inv .hb2-stamp{position:absolute;right:5%;top:3%;width:23%;color:var(--accent);opacity:.62;transform:rotate(-14deg);mix-blend-mode:multiply;z-index:3;
+  -webkit-mask:url(assets/paper.jpg) 0 0/90px;mask:url(assets/paper.jpg) 0 0/90px luminance}
+.inv .hb2-plant{position:absolute;left:10%;right:20%;top:6%;height:58%;z-index:1}
+.inv .hb2-plant > .hb2-pl{position:absolute;inset:0;background:center top/contain no-repeat;mix-blend-mode:multiply;filter:saturate(.9) sepia(.12) contrast(1.02);
+  -webkit-mask:linear-gradient(#000 86%,transparent 97%);mask:linear-gradient(#000 86%,transparent 97%)}
+/* washi tape: translucent, faintly striped, with torn ends */
+.inv .hb2-tape{position:absolute;height:5.6%;z-index:2;mix-blend-mode:multiply;opacity:.9;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 3px,transparent 3px 7px),linear-gradient(180deg,rgba(255,255,255,.25),transparent 40%,rgba(0,0,0,.06)),var(--tape)}
+/* the typed label */
+.inv .hb2-label{position:relative;z-index:3;background:url(assets/paper.jpg) 0 0/240px,#fffdf8;background-blend-mode:multiply;border:1px solid color-mix(in srgb,var(--ink) 70%,transparent);
+  outline:1px solid color-mix(in srgb,var(--ink) 35%,transparent);outline-offset:-4px;box-shadow:0 1px 2px rgba(40,30,20,.22);padding:10px 12px 8px;text-align:left;font-family:"Special Elite",monospace;color:var(--ink)}
+.inv .hb2-label p{display:flex;gap:8px;align-items:baseline;border-bottom:1px dotted color-mix(in srgb,var(--ink) 40%,transparent);padding:4px 0 3px;font-size:11px;line-height:1.35}
+.inv .hb2-label p:last-child{border-bottom:0}
+.inv .hb2-label small{flex:0 0 auto;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;min-width:44px}
+.inv .hb2-label b{font-weight:400}
+.inv .hb2-cl{position:absolute;right:5%;bottom:4.5%;width:70%;transform:rotate(.8deg)}
+.inv .hb2-k{font-family:"Special Elite",monospace;font-size:9px!important;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);border:0!important;display:block!important;text-align:center;padding:2px 0 0!important}
+.inv .hb2-cn{display:block!important;text-align:center;font-family:"Cormorant Garamond",serif!important;font-style:italic;font-size:clamp(22px,7cqi,27px)!important;line-height:1.1!important;color:var(--ink);padding:2px 0 6px!important}
+.inv .hb2-cn span,.inv .hb2-names span{color:var(--accent)}
+.inv .hb2-to{display:block!important;text-align:center}
+.inv .hb2-to small{display:block;min-width:0}
+.inv .hb2-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px}
+.inv .hb2-open{position:absolute;left:50%;bottom:9.5%;transform:translateX(-50%);z-index:4;cursor:pointer;padding:13px 34px;border-radius:999px;border:1px solid color-mix(in srgb,var(--pagefg) 40%,transparent);
+  background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--ink);font-family:"Special Elite",monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(30,20,10,.45);transition:opacity .35s}
+
+/* cover and opening: the sheet is drawn aside */
+.inv .cv-herb2{background:transparent;overflow:hidden;transition:opacity .4s .95s}
+.inv .cv-herb2 .hb2-table{transition:opacity .55s .35s}
+.inv.opening .cv-herb2 .hb2-table{opacity:0}
+.inv .cv-herb2 .hb2-sheet{transition:transform 1.15s cubic-bezier(.6,0,.3,1),box-shadow 1.1s}
+.inv.opening .cv-herb2 .hb2-sheet{transform:translate(-118%,3%) rotate(-9deg)}
+.inv.opening .hb2-open{opacity:0}
+.inv.opening .cv-herb2{opacity:0}
+
+/* page */
+.inv .pg-herb2{background:var(--ground);color:var(--pagefg);padding:34px 16px 98px;gap:18px;overflow:hidden}
+.inv .pg-herb2 > :not(.hb2-table){position:relative;z-index:2}
+.inv .hb2-big{position:relative;left:auto;right:auto;top:auto;width:88%;max-width:350px;aspect-ratio:auto;padding:150px 18px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;transform:rotate(-.8deg)}
+.inv .hb2-big .hb2-plant{left:6%;right:30%;top:14px;height:150px}
+.inv .hb2-big .hb2-stamp{width:21%;top:30px;right:7%}
+.inv .hb2-big .couple-ph.front{margin-top:-10px}
+.inv .hb2-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(34px,10.5cqi,42px);line-height:1.08;margin:6px 0 12px;color:var(--ink)}
+.inv .hb2-big .hb2-k{font-size:10px!important}
+.inv .hb2-big .hb2-label{width:100%;transform:rotate(.6deg)}
+.inv .hb2-pill{padding:12px 30px;border-radius:999px;background:var(--sheet);color:var(--ink);text-decoration:none;font-family:"Special Elite",monospace;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;box-shadow:0 6px 14px -6px rgba(30,20,10,.4)}
+
+/* skin: mounting-paper cards held by a strip of washi tape */
+.fam-herb .scroller{background:var(--ground)}
+.fam-herb .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/360px;mix-blend-mode:multiply;opacity:.5}
+.fam-herb.cardsecs .sec{position:relative;background:url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:multiply;-webkit-mask:none;mask:none;padding:46px 24px 30px;border-radius:1px;
+  box-shadow:0 1px 1px rgba(40,30,20,.2),0 12px 22px -10px rgba(40,30,20,.4)}
+.fam-herb.hb2-dk.cardsecs .sec{box-shadow:0 1px 1px rgba(0,0,0,.4),0 14px 24px -8px rgba(0,0,0,.6)}
+.fam-herb.cardsecs .sec:nth-child(odd){transform:rotate(-.5deg)}
+.fam-herb.cardsecs .sec:nth-child(even){transform:rotate(.45deg)}
+.fam-herb .sec::before{top:-9px;width:96px;height:24px;opacity:.82;mix-blend-mode:multiply;transform:translateX(-50%) rotate(-3deg);
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 3px,transparent 3px 7px),var(--tape);clip-path:polygon(3% 0,97% 4%,100% 30%,96% 55%,100% 80%,97% 100%,2% 96%,0 70%,4% 45%,0 18%)}
+.fam-herb .sec h2{font-family:"Special Elite",monospace;font-weight:400;font-size:15px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 55%,transparent);padding:0 2px 6px;transform:none}
+.fam-herb .sec,.fam-herb .sec p{color:var(--ink)}
+.fam-herb .info,.fam-herb .info > div{border:0!important;background:none!important}
+.fam-herb .info > div{border-bottom:1px dotted color-mix(in srgb,var(--ink) 40%,transparent)!important;padding:12px 6px!important}
+.fam-herb .info > div:last-child{border-bottom:0!important}
+.fam-herb .info span{color:var(--accent)}
+.fam-herb .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+.fam-herb .seg button[aria-pressed="true"],.fam-herb button.submit{background:var(--ink)!important;color:var(--sheet)!important}
+.fam-herb .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(6px)}
+.fam-herb .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .cv-herb2 .hb2-sheet{transition:none}}

@@ -1,0 +1,87 @@
+/* ===== songket (round 7) ===== */
+.inv .sg-defs{position:absolute;width:0;height:0;overflow:hidden}
+/* the photographed cloth, recoloured by the duotone filter */
+.inv .sg-weave{position:absolute;inset:0;background:url(assets/pd-textile-2.jpg) 92% 50%/auto 100% no-repeat;filter:var(--sgfx)}
+.inv .sg-sheen{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 20%,rgba(255,255,255,.16) 34%,rgba(255,255,255,0) 46%,rgba(0,0,0,.18) 70%,rgba(255,255,255,.08) 88%),url(assets/silk.jpg) 0 0/200px;
+  background-blend-mode:normal,soft-light;mix-blend-mode:soft-light}
+.inv .sg-k{font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.36em;text-transform:uppercase;font-weight:500}
+
+/* cover */
+.inv .cv-songket2{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
+.inv .sg-table{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 35% 25%,rgba(255,255,255,.22),transparent 60%),radial-gradient(ellipse at 50% 55%,transparent 45%,rgba(40,25,15,.18)),url(assets/linen.jpg) 0 0/200px,var(--ground);background-blend-mode:normal,normal,soft-light,normal}
+.inv .sg-top{position:absolute;top:8.5%;left:0;right:0;text-align:center;color:var(--pagefg);opacity:1;transition:opacity .35s}
+.inv .sg-parcel{position:absolute;left:14%;right:14%;top:15%;aspect-ratio:.74;transition:transform 1s cubic-bezier(.55,0,.25,1) .4s,opacity .5s .85s}
+.inv .sg-cloth,.inv .sg-under{position:absolute;inset:0;border-radius:7px 7px 6px 6px/5px 5px 6px 6px;overflow:hidden}
+.inv .sg-cloth{box-shadow:0 24px 34px -14px rgba(25,15,8,.55),0 4px 10px rgba(25,15,8,.3)}
+/* two folds of the same cloth peeking out below: the stack of a folded kain */
+.inv .sg-under{background:var(--cloth);overflow:visible}
+.inv .sg-under::before{content:"";position:absolute;inset:0;border-radius:inherit;background:url(assets/pd-textile-2.jpg) 30% 0/auto 260% no-repeat;filter:var(--sgfx) brightness(.72)}
+.inv .sg-under.a{transform:translate(1.5%,1.6%);box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.inv .sg-under.b{transform:translate(-1%,3.1%);box-shadow:0 14px 26px -10px rgba(25,15,8,.6)}
+/* rounded fold along the top and the left edge */
+.inv .sg-fold{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 3%,rgba(0,0,0,.28) 6.5%,transparent 10%),
+  linear-gradient(90deg,rgba(255,255,255,.16),transparent 4%),linear-gradient(270deg,rgba(0,0,0,.35),transparent 6%),linear-gradient(0deg,rgba(0,0,0,.3),transparent 7%)}
+/* the paper band that holds it */
+.inv .sg-band{position:absolute;left:-2.5%;right:-2.5%;top:50%;height:31%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);
+  background:linear-gradient(90deg,rgba(0,0,0,.2),transparent 3.5%,transparent 96.5%,rgba(0,0,0,.2)),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 7px 10px -4px rgba(25,15,8,.45),0 -1px 2px rgba(25,15,8,.2);transition:transform .7s cubic-bezier(.5,0,.75,0),opacity .45s .25s}
+.inv .sg-band::before{content:"";position:absolute;left:6%;right:6%;top:9px;bottom:9px;border-top:1px solid color-mix(in srgb,var(--gold) 75%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 75%,transparent);pointer-events:none}
+.inv .sg-band .sg-k{font-size:8.5px;letter-spacing:.32em;color:var(--accent)}
+.inv .sg-bn{font-family:"Pinyon Script",cursive;font-size:clamp(25px,8.2cqi,34px);line-height:1.1;margin:5px 0 3px;color:var(--ink)}
+.inv .sg-bn span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .sg-bd{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.3em;color:var(--accent)}
+.inv .sg-foot{position:absolute;left:0;right:0;bottom:6.5%;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);text-align:center;transition:opacity .35s}
+.inv .sg-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;opacity:.9}
+.inv .sg-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px;line-height:1.3}
+.inv .sg-open{border:1px solid color-mix(in srgb,var(--pagefg) 45%,transparent);background:transparent;color:var(--pagefg);cursor:pointer;padding:13px 38px;border-radius:999px;
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase}
+/* opening: the band slips off, the cloth lifts away */
+.inv.opening .sg-top,.inv.opening .sg-foot{opacity:0}
+.inv.opening .sg-band{transform:translateY(120%);opacity:0}
+.inv.opening .sg-parcel{transform:translateY(-125%) rotate(-2deg);opacity:0}
+.inv.opening .cv-songket2{opacity:0}
+
+/* page: the card lying on the open cloth */
+.inv .pg-songket2{background:var(--cloth);color:var(--ink);padding:40px 22px 112px;gap:22px;overflow:hidden}
+.inv .sg-bed{position:absolute;inset:0;overflow:hidden}
+.inv .sg-bed .sg-weave{background-position:78% 50%}
+.inv .sg-bed::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 45%,rgba(0,0,0,.05),rgba(0,0,0,.45))}
+.inv .sg-cardw{position:relative;z-index:2;width:88%;max-width:350px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.5))}
+.inv .sg-card{padding:10px;background:var(--sheet) url(assets/paper.jpg) 0 0/240px;background-blend-mode:multiply;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .sg-cin{border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-5px;padding:26px 16px 24px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.inv .sg-cin .sg-k{color:var(--accent)}
+.inv .sg-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(40px,12.5cqi,52px);line-height:1;margin:12px 0 6px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .sg-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:3px 0}
+.inv .sg-rule{display:block;width:120px;height:9px;margin:8px 0 10px;background:linear-gradient(var(--gold),var(--gold)) 0 50%/44px 1px no-repeat,linear-gradient(var(--gold),var(--gold)) 100% 50%/44px 1px no-repeat}
+.inv .sg-rule::before{content:"";display:block;width:7px;height:7px;margin:1px auto;transform:rotate(45deg);border:1px solid var(--gold)}
+.inv .sg-date{font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.inv .sg-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin-top:4px}
+.inv .sg-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;margin-top:10px}
+.inv .sg-pill{position:relative;z-index:2;align-self:center;flex:0 0 auto;width:auto!important;padding:12px 34px;border-radius:999px;background:var(--sheet);color:var(--accent);text-decoration:none;
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+
+/* skin: paper cards on linen, each edged with a strip of the woven cloth; overrides the old songket skin */
+.fam-songket .scroller{background:url(assets/linen.jpg) 0 0/200px,var(--ground);background-blend-mode:soft-light}
+.fam-songket .sheet{background:transparent!important;color:var(--ink)!important}
+.fam-songket.cardsecs .sec{position:relative;color:var(--ink);background:var(--sheet) url(assets/paper.jpg) 0 0/240px;background-blend-mode:multiply;border-radius:2px;padding-top:44px!important;overflow:hidden;
+  box-shadow:0 12px 22px -8px rgba(25,15,8,.35),0 1px 2px rgba(25,15,8,.2)}
+.fam-songket .sec+.sec{padding-top:44px!important}
+.fam-songket.cardsecs .sec::before,.fam-songket .sec+.sec::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;-webkit-mask:none;mask:none;background:url(assets/pd-textile-2.jpg) 0 0/560px auto repeat-x;filter:var(--sgfx);opacity:1;
+  box-shadow:none}
+.fam-songket.cardsecs .sec::after{content:"";position:absolute;left:0;right:0;top:16px;height:6px;background:linear-gradient(rgba(25,15,8,.22),transparent);pointer-events:none}
+.fam-songket .sec h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:15px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent)}
+.fam-songket .sec,.fam-songket .sec p,.fam-songket .info b{color:var(--ink)}
+.fam-songket .info,.fam-songket .info > div{border:0!important;background:none!important}
+.fam-songket .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:13px 6px!important}
+.fam-songket .info > div:last-child{border-bottom:0!important}
+.fam-songket .info span{color:var(--accent);opacity:.85}
+.fam-songket .info b,.fam-songket .count b{color:var(--ink)}
+.fam-songket .ibtn{color:var(--accent);border-color:color-mix(in srgb,var(--gold) 60%,transparent);border-radius:999px;background:transparent}
+.fam-songket .ibtn,.fam-songket .seg button,.fam-songket form input,.fam-songket form select,.fam-songket form textarea{color:var(--ink);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-songket .seg button[aria-pressed="true"],.fam-songket button.submit,.fam-songket .submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-songket .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-songket .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .sg-parcel,.inv .sg-band{transition:none}}

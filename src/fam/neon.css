@@ -1,87 +1,105 @@
-/* ===== neon ===== */
-.inv .cv-neon{background:transparent;overflow:hidden;transition:opacity .6s .95s}
-.inv .nn-wall{position:absolute;inset:0;background:var(--wallp),var(--ground)}
-.inv .nn-wall::before{content:"";position:absolute;inset:0;background:url(assets/crackle.png) 0 0/260px;mix-blend-mode:multiply;opacity:.16}
-.inv .nn-wall::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 50% 30%,transparent 30%,rgba(0,0,0,.55)),linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 70%,rgba(0,0,0,.4))}
-.inv .nn-spot{position:absolute;left:10%;right:10%;top:-12%;height:70%;background:radial-gradient(ellipse 50% 60% at 50% 20%,rgba(255,240,220,.16),transparent 70%);pointer-events:none}
-.inv .nn-light{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.22;background:radial-gradient(ellipse 60% 34% at 50% 32%,var(--gold),transparent 70%);transition:opacity .5s .3s}
-.inv .cv-neon .nn-light{background:radial-gradient(ellipse 55% 16% at 50% 17%,var(--gold),transparent 70%),radial-gradient(ellipse 70% 36% at 50% 31%,var(--accent),transparent 70%);opacity:.1}
-.inv.opening .cv-neon .nn-light{opacity:.6}
-.inv .nn-cs{position:absolute;top:8.5%;left:50%;width:min(88%,360px);transform:translateX(-50%);z-index:2}
-.inv .nn-sign{display:block;width:100%;height:auto;overflow:visible;position:relative;z-index:2}
-.inv .nn-sign .nn-sc{font-family:"Sacramento",cursive}
-.inv .nn-sign .nn-tn{font-family:"Tilt Neon",sans-serif;letter-spacing:.18em}
-.inv .nn-glass{opacity:.7}
-.inv .nn-glass2{opacity:.35}
-.inv .nn-line .nn-on,.inv .nn-line .nn-core{opacity:0}
-.inv .nn-line.on .nn-on{opacity:.95}
-.inv .nn-line.on .nn-core{opacity:.75}
-.inv.opening .cv-neon .nn-line:not(.on) .nn-on,.inv.opening .cv-neon .nn-line:not(.on) .nn-core{animation:nnOn .75s .1s linear forwards}
-@keyframes nnOn{0%{opacity:0}14%{opacity:1}22%{opacity:.12}36%{opacity:.12}48%{opacity:1}100%{opacity:1}}
-.inv .nn-cable{position:absolute;left:50%;top:97%;width:40px;height:min(60vh,420px);margin-left:-20px;z-index:1;pointer-events:none;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.5))}
-.inv .nn-plaque{position:relative;z-index:3;margin:0 auto;width:min(76%,300px);padding:14px 18px 12px;border-radius:3px;text-align:center;color:#2e2210;
-  background:linear-gradient(100deg,rgba(255,255,255,0) 0 20%,rgba(255,255,255,.35) 32%,rgba(255,255,255,0) 44%),repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,rgba(0,0,0,.05) 1px 3px),linear-gradient(160deg,color-mix(in srgb,var(--plate) 70%,#fff),var(--plate) 45%,color-mix(in srgb,var(--plate) 70%,#000));
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),inset 0 0 0 4px color-mix(in srgb,var(--plate) 80%,#000),inset 0 0 0 5px rgba(255,255,255,.25),0 6px 10px rgba(0,0,0,.5)}
-.inv .cv-neon .nn-plaque{position:absolute;left:50%;top:63.5%;transform:translateX(-50%);transition:opacity .4s}
-.inv .nn-plaque .s{position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff8e0,color-mix(in srgb,var(--plate) 60%,#000));box-shadow:0 1px 1px rgba(0,0,0,.4)}
-.inv .nn-plaque .s::after{content:"";position:absolute;left:1px;right:1px;top:3px;height:1px;background:rgba(0,0,0,.45);transform:rotate(35deg)}
-.inv .nn-plaque .s.l{left:7px}.inv .nn-plaque .s.r{right:7px}
-.inv .nn-to{margin:0 0 6px;font-family:"Jost",sans-serif;font-size:clamp(8px,2.4cqi,10px);letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.45)}
-.inv .nn-to b{display:block;font-family:"Sacramento",cursive;font-weight:400;font-size:clamp(22px,7cqi,28px);letter-spacing:0;text-transform:none;line-height:1.1}
-.inv .nn-pl{margin:0;display:flex;flex-direction:column;gap:2px;font-family:"Tilt Neon",sans-serif;font-size:clamp(9px,2.9cqi,11.5px);letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.45),0 -1px 0 rgba(0,0,0,.25)}
-.inv .nn-sw{position:absolute;left:0;right:0;bottom:4.5%;z-index:3;display:flex;align-items:center;justify-content:center;gap:12px;transition:opacity .4s}
-.inv .nn-sw span{font-family:"Tilt Neon",sans-serif;font-size:clamp(9px,2.6cqi,11px);letter-spacing:.24em;text-transform:uppercase;color:var(--pagefg);opacity:.85}
-.inv .nn-switch{border:0;padding:0;background:none;cursor:pointer;display:block}
-.inv .nn-plate{position:relative;display:block;width:42px;height:64px;border-radius:5px;background:linear-gradient(160deg,#f6f3ec,#d8d2c6);box-shadow:inset 0 -2px 2px rgba(0,0,0,.15),inset 0 1px 0 #fff,0 4px 8px rgba(0,0,0,.45)}
-.inv .nn-tog{position:absolute;left:50%;top:50%;width:12px;height:24px;margin:-12px 0 0 -6px;border-radius:3px;background:linear-gradient(180deg,#cfc8bb,#f8f5ef 45%,#e7e1d6);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 2px 0 rgba(0,0,0,.25);transform:perspective(60px) rotateX(-22deg);transition:transform .18s}
-.inv .nn-plate .sc{position:absolute;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#9b958a)}
-.inv .nn-plate .sc.t{top:5px}.inv .nn-plate .sc.b{bottom:5px}
-.inv.opening .nn-tog{transform:perspective(60px) rotateX(22deg)}
-.inv.opening .cv-neon{opacity:0}
-.inv.opening .nn-sw,.inv.opening .cv-neon .nn-plaque{opacity:0;transition-delay:.5s}
+/* ===== neon (round 7): script neon on a plaster wall at dusk, brass plaque ===== */
+/* the wall: plaster colour, paper grain, faint old cracks, a cool dusk fall-off from the top and a deep vignette; the sign lights a pool around itself */
+.inv .nn-wall{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 85% 30% at 50% var(--gy,30%),color-mix(in srgb,var(--accent) 30%,transparent),transparent 72%),
+  radial-gradient(ellipse 60% 18% at 50% calc(var(--gy,30%) + 2%),color-mix(in srgb,var(--accent) 22%,transparent),transparent 80%),
+  url(assets/paper.jpg) 0 0/340px,
+  radial-gradient(ellipse 40% 30% at 22% 70%,rgba(0,0,0,.18),transparent),radial-gradient(ellipse 50% 26% at 80% 18%,rgba(255,255,255,.05),transparent),
+  var(--wall);background-blend-mode:screen,screen,multiply,normal,normal,normal}
+.inv .nn-wall::before{content:"";position:absolute;inset:0;background:url(assets/crackle.png) 30px 60px/700px;opacity:.06}
+.inv .nn-wall::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 110% 75% at 50% var(--gy,30%),transparent 25%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.85)),linear-gradient(180deg,rgba(40,60,110,.16),transparent 30%)}
+.inv .nn-day .nn-wall::after{background:radial-gradient(ellipse 120% 80% at 50% var(--gy,30%),transparent 35%,rgba(70,55,40,.22)),linear-gradient(180deg,rgba(255,255,255,.25),transparent 40%)}
+.inv .nn-day .nn-wall::before{display:none}
+
+/* the sign: monoline script tube, white-hot core, coloured glow, a faint shadow of the glass on the wall */
+.inv .nn-sign{position:relative;text-align:center;font-family:"Sacramento",cursive;line-height:.92;padding:4% 0}
+.inv .nn-tube{font-size:var(--fs);color:color-mix(in srgb,var(--accent) 30%,#fff);-webkit-text-stroke:.5px color-mix(in srgb,var(--accent) 20%,#fff);white-space:nowrap;
+  text-shadow:0 0 1px #fff,0 0 3px var(--accent),0 0 8px var(--accent),0 0 18px var(--accent),0 0 38px color-mix(in srgb,var(--accent) 70%,transparent),0 0 70px color-mix(in srgb,var(--accent) 45%,transparent),0 14px 10px rgba(0,0,0,.45);
+  animation:nnHum 7s ease-in-out infinite alternate}
+.inv .nn-amp{font-size:calc(var(--fs) * .5);line-height:1;margin:-.1em 0 -.05em;color:color-mix(in srgb,var(--gold) 40%,#fff);-webkit-text-stroke:.4px color-mix(in srgb,var(--gold) 30%,#fff);
+  text-shadow:0 0 2px var(--gold),0 0 7px var(--gold),0 0 16px var(--gold),0 0 32px color-mix(in srgb,var(--gold) 50%,transparent),0 10px 8px rgba(0,0,0,.4)}
+@keyframes nnHum{from{opacity:.93}to{opacity:1}}
+/* little glass stand-offs holding the tube off the wall */
+.inv .nn-clip{position:absolute;width:5px;height:5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.75),rgba(255,255,255,.15) 60%,transparent 70%);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.inv .nn-day .nn-tube{color:color-mix(in srgb,var(--accent) 55%,#fff);-webkit-text-stroke:.6px var(--accent);
+  text-shadow:0 0 2px var(--accent),0 0 8px color-mix(in srgb,var(--accent) 60%,transparent),0 0 22px color-mix(in srgb,var(--accent) 35%,transparent),0 12px 8px rgba(60,40,30,.22)}
+.inv .nn-day .nn-amp{color:color-mix(in srgb,var(--gold) 55%,#fff);-webkit-text-stroke:.5px var(--gold);text-shadow:0 0 2px var(--gold),0 0 9px color-mix(in srgb,var(--gold) 55%,transparent),0 9px 7px rgba(60,40,30,.2)}
+.inv .nn-day .nn-clip{background:radial-gradient(circle at 35% 35%,#fff,rgba(255,255,255,.4) 60%,transparent 70%);box-shadow:0 2px 3px rgba(60,40,30,.3)}
+
+/* the brass plaque: brushed foil, bevel, two slotted screws, engraved lettering, lit from above by the sign */
+.inv .nn-plaque{position:relative;padding:15px 34px 14px;border-radius:2px;text-align:center;
+  background:linear-gradient(175deg,rgba(255,250,235,.3),transparent 35%,rgba(0,0,0,.16)),repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 1px,transparent 1px 2px,rgba(60,40,10,.06) 2px 3px,transparent 3px 5px),linear-gradient(100deg,#7a5c2c,#cfae66 22%,#9f8045 45%,#e6cd92 68%,#a8874a 86%,#7d5f2e);filter:brightness(.86) saturate(.9);
+  box-shadow:inset 0 0 0 1px rgba(255,238,195,.5),inset 0 0 0 4px rgba(80,55,20,.12),inset 0 0 0 5px rgba(255,236,190,.28),0 12px 18px -6px rgba(0,0,0,.75),0 2px 3px rgba(0,0,0,.55)}
+.inv .nn-day .nn-plaque{filter:none;box-shadow:inset 0 0 0 1px rgba(255,238,195,.5),inset 0 0 0 4px rgba(80,55,20,.12),inset 0 0 0 5px rgba(255,236,190,.28),0 10px 16px -6px rgba(60,40,20,.4),0 2px 3px rgba(60,40,20,.3)}
+.inv .nn-plaque::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 28%,transparent),transparent 55%);mix-blend-mode:soft-light;pointer-events:none}
+.inv .nn-screw{position:absolute;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+  background:linear-gradient(35deg,transparent 44%,rgba(60,40,10,.75) 45% 56%,transparent 57%),radial-gradient(circle at 35% 30%,#f6e3ac,#a8853f 60%,#6a4f22);box-shadow:0 1px 1px rgba(0,0,0,.45)}
+.inv .nn-eng{color:#2a1c06;font-family:"Cormorant Garamond",serif;text-shadow:0 1px 0 rgba(255,240,200,.5),0 -1px 0 rgba(40,25,5,.35)}
+.inv .nn-pk{font-size:10.5px;font-weight:700;letter-spacing:.34em;text-transform:uppercase}
+.inv .nn-pd{font-size:15px;font-weight:700;letter-spacing:.2em;margin-top:5px;text-transform:uppercase}
+.inv .nn-pt{font-size:11px;font-weight:600;letter-spacing:.22em;margin-top:4px;text-transform:uppercase}
+.inv .nn-pv{font-size:15.5px;font-style:italic;font-weight:600;margin-top:3px}
+
+/* cover */
+.inv .cv-neon2{--gy:31%;background:var(--ground);overflow:hidden;transition:opacity .7s .55s}
+.inv .nn-stage{position:absolute;left:0;right:0;top:12%;z-index:2;transition:transform 1.2s cubic-bezier(.4,0,.2,1),filter 1s}
+.inv .nn-plq{position:absolute;left:50%;top:52%;width:min(66%,270px);transform:translateX(-50%);z-index:2;transition:opacity .4s}
+.inv .nn-foot{position:absolute;left:0;right:0;bottom:7%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:16px;color:var(--pagefg);transition:opacity .4s}
+.inv .nn-to{text-align:center}
+.inv .nn-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.7}
+.inv .nn-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:.02em}
+.inv .nn-open{border:1px solid color-mix(in srgb,var(--accent) 50%,transparent);background:rgba(0,0,0,.28);color:color-mix(in srgb,var(--accent) 25%,#fff);cursor:pointer;
+  padding:14px 40px;border-radius:999px;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:0 0 18px -4px color-mix(in srgb,var(--accent) 45%,transparent)}
+.inv .nn-day .nn-open{background:rgba(255,255,255,.5);color:var(--ink);border-color:color-mix(in srgb,var(--ink) 35%,transparent);box-shadow:none}
+/* opening: the tube brightens, the view rises with it and the wall gives way to the page */
+.inv.opening .nn-plq,.inv.opening .nn-foot{opacity:0}
+.inv.opening .nn-stage{transform:translateY(-4%) scale(1.12);filter:brightness(1.5)}
+.inv.opening .cv-neon2{opacity:0}
+
 /* page */
-.inv .pg-neon{background:var(--ground);color:var(--pagefg);padding:62px 18px 84px;justify-content:flex-start;gap:18px}
-.inv .pg-neon > *{position:relative;z-index:2}
-.inv .pg-neon > .nn-wall,.inv .pg-neon > .nn-light{position:absolute;z-index:0}
-.inv .pg-neon .nn-light{opacity:.4;background:radial-gradient(ellipse 60% 30% at 50% 30%,var(--accent),transparent 70%)}
-.inv .nn-ps{width:min(88%,350px)}
-.inv .pg-neon .nn-line .nn-on{opacity:.95}.inv .pg-neon .nn-line .nn-core{opacity:.75}
-.inv .pg-neon .nn-plaque{width:min(86%,330px)}
-.inv .nn-host{margin:0;font-family:"Jost",sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.85;max-width:30ch;line-height:1.6}
-.inv .nn-host b{display:block;font-weight:400;letter-spacing:.08em;text-transform:none;font-size:13px}
-/* skin: dark cards, neon-tube heading frames */
-.fam-neon .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 72%,transparent),color-mix(in srgb,var(--ground) 72%,transparent)),var(--wallp),var(--ground)}
-.fam-neon.cardsecs .sec{background:var(--sheet);color:var(--ink);border-radius:16px;padding:40px 22px 34px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 30px -12px rgba(0,0,0,.7);overflow:hidden}
-.fam-neon.cardsecs .sec::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%);pointer-events:none}
-.fam-neon .sec > *{position:relative}
-.fam-neon .sec h2{font-family:"Tilt Neon",sans-serif;font-size:16px;letter-spacing:.24em;color:color-mix(in srgb,var(--accent) 35%,#fff);padding:10px 18px 9px 22px;border:2px solid color-mix(in srgb,var(--accent) 55%,#fff);border-radius:14px;
-  text-shadow:0 0 3px var(--accent),0 0 10px var(--accent),0 0 22px var(--accent);box-shadow:0 0 4px var(--accent),0 0 14px color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 6px var(--accent),inset 0 0 14px color-mix(in srgb,var(--accent) 40%,transparent)}
-.fam-neon .nn-hl{display:block;width:44px;height:3px;border-radius:3px;background:color-mix(in srgb,var(--gold) 45%,#fff);box-shadow:0 0 4px var(--gold),0 0 12px var(--gold)}
-.fam-neon .sec .orn,.fam-neon .sec .rule{display:none}
-.fam-neon .info{border-color:var(--line)}
-.fam-neon .info > div{border-color:var(--line)}
-.fam-neon .info span{font-family:"Tilt Neon",sans-serif;color:var(--gold);opacity:.9;text-shadow:0 0 6px color-mix(in srgb,var(--gold) 60%,transparent)}
-.fam-neon .ibtn{border:1.5px solid color-mix(in srgb,var(--accent) 60%,#fff);border-radius:99px;color:var(--ink);box-shadow:0 0 6px color-mix(in srgb,var(--accent) 60%,transparent),inset 0 0 6px color-mix(in srgb,var(--accent) 35%,transparent)}
+.inv .pg-neon2{--gy:30%;background:var(--ground);color:var(--pagefg);padding:50px 22px 100px;gap:16px;overflow:hidden}
+.inv .pg-neon2 > :not(.nn-wall){position:relative;z-index:2}
+.inv .nn-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;opacity:.85}
+.inv .nn-plates{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.inv .nn-plate{position:relative;padding:10px 16px 9px;border-radius:2px;text-decoration:none;font-family:"Cormorant Garamond",serif;font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#2a1c06;
+  text-shadow:0 1px 0 rgba(255,240,200,.5);background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 1px,transparent 1px 2px,rgba(60,40,10,.06) 2px 3px,transparent 3px 5px),linear-gradient(100deg,#7a5c2c,#cfae66 22%,#9f8045 45%,#e6cd92 68%,#a8874a 86%,#7d5f2e);filter:brightness(.9);
+  box-shadow:inset 0 0 0 1px rgba(255,238,195,.5),0 8px 12px -5px rgba(0,0,0,.7)}
+.inv .nn-day .nn-plate{filter:none;box-shadow:inset 0 0 0 1px rgba(255,238,195,.5),0 6px 10px -5px rgba(60,40,20,.4)}
+
+/* skin: dark plaster cards with a brass hairline; the heading is a small lit script */
+.fam-neon .scroller{background:var(--ground)}
+.fam-neon .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/340px,var(--wall);background-blend-mode:multiply;opacity:.55}
+.fam-neon.cardsecs .sec{position:relative;background:url(assets/paper.jpg) 0 0/340px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:2px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,#c9a560 45%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 6px color-mix(in srgb,#c9a560 22%,transparent),0 16px 28px -10px rgba(0,0,0,.7)}
+.fam-neon .sec h2{font-family:"Sacramento",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:38px;line-height:1.1;color:color-mix(in srgb,var(--accent) 30%,#fff);
+  text-shadow:0 0 2px var(--accent),0 0 9px var(--accent),0 0 22px color-mix(in srgb,var(--accent) 55%,transparent)}
+.fam-neon .sec,.fam-neon .sec p,.fam-neon .info b{color:var(--ink)}
+.fam-neon .info,.fam-neon .info > div{border:0!important;background:none!important}
+.fam-neon .info > div{border-bottom:1px solid color-mix(in srgb,#c9a560 28%,transparent)!important;padding:13px 6px!important}
+.fam-neon .info > div:last-child{border-bottom:0!important}
+.fam-neon .info span,.fam-neon .timeline b,.fam-neon form label{color:color-mix(in srgb,#d9b878 80%,var(--ink));font-family:"Cormorant Garamond",serif;letter-spacing:.2em}
+.fam-neon .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:color-mix(in srgb,var(--accent) 30%,#fff);text-shadow:0 0 8px color-mix(in srgb,var(--accent) 60%,transparent)}
+.fam-neon .count div + div,.fam-neon .timeline li,.fam-neon .wish,.fam-neon .contact,.fam-neon .note{border-color:color-mix(in srgb,#c9a560 25%,transparent)!important}
+.fam-neon .ibtn{color:var(--ink);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:999px;background:transparent}
 .fam-neon .ibtn svg{color:var(--accent)}
-.fam-neon .count div + div{border-color:var(--line)}
-.fam-neon .count b{font-family:"Tilt Neon",sans-serif;color:color-mix(in srgb,var(--accent) 35%,#fff);text-shadow:0 0 4px var(--accent),0 0 14px var(--accent)}
-.fam-neon .timeline li{border-color:var(--line)}
-.fam-neon .timeline b{font-family:"Tilt Neon",sans-serif;color:var(--gold)}
-.fam-neon form label{font-family:"Tilt Neon",sans-serif;color:var(--gold)}
-.fam-neon form input,.fam-neon form select,.fam-neon form textarea{color:var(--ink);border-color:rgba(255,255,255,.22)}
-.fam-neon form select option{background:var(--sheet);color:var(--ink)}
-.fam-neon .seg button{color:var(--ink);border-color:rgba(255,255,255,.22);border-radius:99px}
-.fam-neon .seg button[aria-pressed="true"]{background:transparent;color:#fff;border-color:color-mix(in srgb,var(--accent) 60%,#fff);box-shadow:0 0 6px var(--accent),inset 0 0 8px var(--accent);text-shadow:0 0 6px var(--accent)}
-.fam-neon .submit{background:transparent;color:#fff;border:2px solid color-mix(in srgb,var(--gold) 55%,#fff);border-radius:99px;font-family:"Tilt Neon",sans-serif;box-shadow:0 0 6px var(--gold),inset 0 0 8px var(--gold);text-shadow:0 0 6px var(--gold)}
-.fam-neon .note{border-color:var(--line)}
-.fam-neon .wish{border-color:var(--line)}
-.fam-neon .wish b{font-family:"Tilt Neon",sans-serif;color:var(--accent)}
-.fam-neon .giftcard{border-color:var(--line);outline-color:var(--line);border-radius:12px}
-.fam-neon .giftcard .acc{font-family:"Tilt Neon",sans-serif;color:#fff;text-shadow:0 0 6px var(--gold)}
-.fam-neon .contact{border-color:var(--line)}
-.fam-neon .person{font-family:"Sacramento",cursive;text-transform:none;letter-spacing:0;font-size:34px;color:color-mix(in srgb,var(--accent) 35%,#fff);text-shadow:0 0 8px var(--accent)}
-.fam-neon .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);border-top:1px solid color-mix(in srgb,var(--accent) 50%,transparent);box-shadow:0 -2px 12px color-mix(in srgb,var(--accent) 30%,transparent)}
-.fam-neon .dock button{color:var(--ink);font-family:"Tilt Neon",sans-serif}
-.fam-neon .music-btn{background:var(--sheet);color:var(--accent)}
-.fam-neon .foot{color:var(--pagefg);font-family:"Tilt Neon",sans-serif}
-@media (prefers-reduced-motion: reduce){.inv.opening .cv-neon .nn-line:not(.on) .nn-on,.inv.opening .cv-neon .nn-line:not(.on) .nn-core{animation:none;opacity:1}.inv .cv-neon,.inv .nn-light{transition:none}}
+.fam-neon input,.fam-neon select,.fam-neon textarea{background:rgba(255,255,255,.05);color:var(--ink);border-color:color-mix(in srgb,#c9a560 35%,transparent)}
+.fam-neon select option{background:var(--sheet);color:var(--ink)}
+.fam-neon .seg button{color:var(--ink);border-radius:999px;font-weight:600;border:1px solid color-mix(in srgb,#c9a560 35%,transparent)!important}
+.fam-neon .seg button[aria-pressed="true"],.fam-neon button.submit{color:#14100e!important;background:color-mix(in srgb,var(--accent) 45%,#fff)!important;border-color:transparent!important;box-shadow:0 0 14px -2px color-mix(in srgb,var(--accent) 60%,transparent)}
+.fam-neon .wish b,.fam-neon .person{color:color-mix(in srgb,var(--accent) 45%,#fff)}
+.fam-neon .giftcard{border-color:color-mix(in srgb,#c9a560 35%,transparent);outline-color:color-mix(in srgb,#c9a560 20%,transparent);background:transparent}
+.fam-neon .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--ink);backdrop-filter:blur(6px);border-top:1px solid color-mix(in srgb,#c9a560 25%,transparent)}
+.fam-neon .dock button{color:var(--pagefg)}
+.fam-neon .foot{color:var(--pagefg)}
+/* limewash (kapur): a light wall, so the cards are pale and the script is the colour itself */
+.fam-neon.nn-day .scroller::before{opacity:.8}
+.fam-neon.nn-day.cardsecs .sec{box-shadow:inset 0 0 0 1px color-mix(in srgb,#a8864a 45%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 6px color-mix(in srgb,#a8864a 22%,transparent),0 14px 24px -12px rgba(60,40,20,.35)}
+.fam-neon.nn-day .sec h2{color:var(--accent);text-shadow:0 0 6px color-mix(in srgb,var(--accent) 35%,transparent)}
+.fam-neon.nn-day .info span,.fam-neon.nn-day .timeline b,.fam-neon.nn-day form label{color:#8a6a34}
+.fam-neon.nn-day .count b,.fam-neon.nn-day .wish b,.fam-neon.nn-day .person{color:var(--accent);text-shadow:none}
+.fam-neon.nn-day input,.fam-neon.nn-day select,.fam-neon.nn-day textarea{background:rgba(255,255,255,.6)}
+.fam-neon.nn-day .seg button[aria-pressed="true"],.fam-neon.nn-day button.submit{color:#fff!important;background:var(--accent)!important;box-shadow:none}
+@media (prefers-reduced-motion: reduce){.inv .nn-tube{animation:none}.inv .nn-stage,.inv .cv-neon2{transition:none}}
+.inv .pg-neon2 .nn-plaque{padding:12px 30px 11px}
+.inv .pg-neon2 .nn-pd{font-size:13.5px}

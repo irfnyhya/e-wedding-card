@@ -1,56 +1,51 @@
-/* muzium: a gallery wall under a track spotlight. A carved gilt frame holds an abstract colour-field painting,
-   a wall placard beside it, a brass-post rope barrier in front. Opening: the spotlight brightens and the frame fades.
-   Page: the placard, the couple as "the work", the date and venue as provenance. Skin: museum-placard labels. */
-let mzN=0;
-// carved gilt corner: scrolls and a shell fan, gold gradient with a dark tooled line
-function mzCorner(c,u){const sh=Array.from({length:7},(_,i)=>{const a=(-90+i*15)*Math.PI/180+Math.PI/4*0;const r=13;return `<path d="M15 15L${(15+Math.cos((i*15)*Math.PI/180)*r).toFixed(1)} ${(15+Math.sin((i*15)*Math.PI/180)*r).toFixed(1)}" />`}).join('');
-  return `<svg class="muzium-cn" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mzg${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2c4"/><stop offset=".3" stop-color="${c.gold}"/><stop offset=".62" stop-color="#7a5820"/><stop offset="1" stop-color="${c.gold}"/></linearGradient></defs>
-   <g fill="url(#mzg${u})" stroke="#4a3412" stroke-width=".6" stroke-linejoin="round">
-    <path d="M2 2H44C38 4 34 8 33 13C32 19 37 22 40 19C43 16 40 12 37 14C38 9 43 7 49 8C42 11 41 20 35 24C29 28 22 24 20 20C17 26 22 31 18 36C14 41 8 40 8 46C7 40 4 38 2 38Z"/>
-    <path d="M10 10C18 6 27 8 30 14C26 12 20 12 16 16C12 20 12 26 14 30C8 27 6 18 10 10Z" opacity=".95"/>
-    <circle cx="11" cy="11" r="3.2"/><path d="M44 2C50 3 54 6 56 10C52 8 48 8 46 9Z"/><path d="M2 44C3 50 6 54 10 56C8 52 8 48 9 46Z"/></g>
-   <g fill="none" stroke="#fff2c4" stroke-opacity=".55" stroke-width=".5">${sh}</g></svg>`}
-function mzPainting(){return `<span class="muzium-canvas"><i class="muzium-b a"></i><i class="muzium-b b"></i><i class="muzium-b c"></i><i class="muzium-tex"></i></span>`}
-function mzFrame(c,u,small){return `<span class="muzium-frame${small?' sm':''}"><i class="muzium-bead"></i><i class="muzium-cove"></i><i class="muzium-slip"></i>${mzPainting()}
-  ${['tl','tr','bl','br'].map(k=>`<i class="muzium-cw ${k}">${mzCorner(c,u)}</i>`).join('')}<i class="muzium-crest t"></i><i class="muzium-crest b"></i></span>`}
-const MZ_CREST=svgUriSq(`<svg ${NS} viewBox="0 0 60 24"><path d="M30 2C34 8 40 10 48 9C44 13 38 14 34 13C36 17 40 19 46 19C40 23 33 21 30 16C27 21 20 23 14 19C20 19 24 17 26 13C22 14 16 13 12 9C20 10 26 8 30 2Z"/></svg>`);
-function mzPlacard(o,L,big){const [n1,n2]=coverNames(o),en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),ok=!isNaN(d);
-  const acc=ok?`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`:'';
-  if(!big)return `<span class="muzium-pl"><b>${esc(n1)} &amp; ${esc(n2)}</b><small>${en?'Malaysia, b.':'Malaysia, l.'} ${ok?d.getFullYear():''}</small><i>${ev(o,L)}</i><small>${en?'Love, prayers and blessings on canvas':'Kasih, doa dan restu di atas kanvas'}</small><em>No. ${acc}</em></span>`;
-  return `<div class="muzium-plc"><p class="muzium-acc"><span>No. ${acc}</span><span>${en?'Gallery':'Galeri'} 1</span></p>
-   <h1 class="names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1><p class="muzium-orig">${en?'The bride and groom · Malaysia, b.':'Pengantin · Malaysia, l.'} ${ok?d.getFullYear():''}</p>
-   <p class="muzium-title"><i>${ev(o,L)}</i>, ${ok?d.getFullYear():''}</p><p class="muzium-med">${en?'Love, prayers and blessings on the canvas of life':'Kasih, doa dan restu di atas kanvas kehidupan'}</p>
-   <p class="muzium-lab">${en?'Provenance':'Provenans'}</p><p class="muzium-txt">${en?'On view':'Dipamerkan pada'} ${esc(fmtDate(o.date,o.lang))}${o.hijri?` (${esc(o.hijri)})`:''}, ${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}, ${en?'at':'di'} <b>${esc(o.venue)}</b>${o.address?`, ${esc(o.address)}`:''}.</p>
-   ${o.hosts?`<p class="muzium-lab">${en?'Courtesy of':'Ihsan'}</p><p class="muzium-txt">${esc(o.hosts)}</p>`:''}
-   <p class="muzium-note">${en?'Your presence completes the collection.':'Kehadiran anda melengkapkan koleksi ini.'}</p></div>`}
-
-FAMILY({key:'muzium',name:'Muzium',meaning:'Gallery painting',
-  blurb:'A carved gilt frame under a gallery spotlight, an abstract painting and a wall placard; the light brightens, the frame fades, and the placard names the couple as the work.',
-  fonts:{d:"'Jost', sans-serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
-  page(o,th,L){const c=th.c,en=o.lang==='en',u=++mzN;
-    return `<section class="page pg-muzium" style="--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--crest:${MZ_CREST}"><div class="muzium-wall"></div><i class="muzium-pool"></i>
-     <p class="muzium-wt reveal">${en?'Exhibition':'Pameran'} · <b>${ev(o,L)}</b></p>
-     <div class="muzium-mini reveal d1">${mzFrame(c,u,true)}</div>
-     <div class="reveal d2 muzium-plw">${mzPlacard(o,L,true)}</div></section>`},
-  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',u=++mzN,[n1,n2]=coverNames(o);
-    return `<div class="cover cv-muzium" style="--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--crest:${MZ_CREST}"><div class="muzium-wall"></div>
-     <i class="muzium-rail"></i><i class="muzium-lamp"></i><i class="muzium-cone"></i><i class="muzium-pool"></i><i class="muzium-glow"></i>
-     <div class="muzium-head"><p class="muzium-ex">${en?'Exhibition':'Pameran'}</p><p class="muzium-ttl">${ev(o,L)}</p><p class="muzium-who">${esc(n1)} &amp; ${esc(n2)}</p></div>
-     <${tag} class="muzium-tap" ${attr} aria-label="${L.open}">${mzFrame(c,u,false)}</${tag}>
-     ${mzPlacard(o,L,false)}
-     <i class="muzium-floor"></i><i class="muzium-post l"></i><i class="muzium-post r"></i><svg class="muzium-rope" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="${c.rope}" stroke-width="7" stroke-linecap="round"/><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="3 4" transform="translate(0 -1.5)"/></svg>
-     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),y=isNaN(d)?'':d.getFullYear();
-    el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p3',c.p3);
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('muzium-sec');const h=$('h2',s);if(!h)return;
-      h.innerHTML=`<span class="muzium-hp"><em>No. ${y}.${String(i+1).padStart(2,'0')}</em><b>${h.innerHTML}</b><i>${ev(o,L)}, ${y}</i></span>`})},
+/* muzium: a quiet gallery wall. One public-domain painting in a carved gilt frame under a brass picture light,
+   the couple's names set as the exhibition title, and a museum wall label with the date, time and venue.
+   Cover: tap "Buka Jemputan" and the view walks along the wall to the next room.
+   Page: the next wall: the couple photo framed like a gallery print (or the painting again), the names and a
+   wall text, with small room signs that lead to the details. Skin: white museum text panels on the wall colour. */
+const GM_ART={
+  'still-1':['Rachel Ruysch','Still Life with Flowers','c. 1750'],'still-2':['Jan Davidsz. de Heem','Vase of Flowers','c. 1670'],
+  'still-3':['Abraham Mignon','Flowers in a Metal Vase','c. 1670'],'still-4':['Rachel Ruysch','Flowers in a Glass Vase','1686'],
+  'paint-monet-irises':['Claude Monet',"The Artist's Garden in Giverny",'1900'],'paint-monet-poppies':['Claude Monet','Poppy Field (Giverny)','1890–91'],
+  'paint-hassam-island':['Childe Hassam','The Island Garden','1892'],'paint-hassam-water':['Childe Hassam','The Water Garden','1909'],
+  'paint-hokusai-fuji':['Katsushika Hokusai','Fine Wind, Clear Weather','c. 1830–31']};
+/* photographed carved gilt frames (Met Museum, CC0); the opening of each, as % of the image */
+const GM_FR={2:{ar:'900/1204',o:'left:15.6%;top:11.5%;width:69.4%;height:76.3%'},3:{ar:'900/1097',o:'left:15.3%;top:12.1%;width:69.6%;height:75.7%'}};
+const gmFrame=(c,cls='')=>{const f=GM_FR[c.fr]||GM_FR[2];return `<span class="gm-frame ${cls}" style="aspect-ratio:${f.ar}"><span class="gm-canvas" style="${f.o}"><img src="${A}pd-${c.art}.jpg" alt="" style="object-position:${c.pos||'50% 50%'}"><i class="gm-varnish"></i></span><img class="gm-gilt" src="${A}pd-frame-${c.fr||2}.webp" alt=""></span>`};
+const gmCredit=c=>{const a=GM_ART[c.art];return a?`${esc(a[0])}, <i>${esc(a[1])}</i>, ${esc(a[2])}`:''};
+FAMILY({key:'muzium',name:'Galeri',meaning:'Museum gallery wall',
+  blurb:'A gallery wall with one real painting in a gilt frame under a warm picture light, the names as the exhibition title and the details on a museum label.',
+  fonts:{d:"'Jost', sans-serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',photo=typeof couplePhotoOf==='function'&&couplePhotoOf(o);
+    return `<section class="page pg-muzium"><i class="gm-wall"></i><i class="gm-glow gm-pglow"></i>
+      ${photo?'':`<div class="gm-pframe reveal"><i class="gm-lamp"></i>${gmFrame(c)}</div>`}
+      <p class="gm-k kicker reveal d1">${ev(o,L)}</p>
+      <h1 class="names gm-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+      <p class="gm-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>
+      ${o.hosts?`<p class="gm-intro reveal d2">${en?`${esc(o.hosts)} warmly invite you to celebrate with us.`:`${esc(o.hosts)} menjemput tuan/puan meraikan hari bahagia ini bersama kami.`}</p>`:''}
+      <nav class="gm-signs reveal d3"><a data-go="when" href="#"><small>${en?'Room 1':'Bilik 1'}</small>${en?'Details':'Butiran'}<i>&rarr;</i></a>${o.x_rsvp?`<a data-go="rsvp" href="#"><small>${en?'Room 2':'Bilik 2'}</small>RSVP<i>&rarr;</i></a>`:''}<a data-go="loc" href="#"><small>${en?'Way in':'Arah'}</small>${en?'Map':'Lokasi'}<i>&rarr;</i></a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',y=String(o.date||'').slice(0,4);
+    return `<div class="cover cv-muzium"><div class="gm-room"><i class="gm-wall"></i><i class="gm-glow"></i>
+      <div class="gm-title"><p class="gm-k">${ev(o,L)}</p><p class="gm-tn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="gm-hang"><i class="gm-lamp"></i>${gmFrame(c)}</div>
+      <div class="gm-label"><b>${esc(n1)} &amp; ${esc(n2)}</b><em>${ev(o,L)}, ${esc(y)}</em>
+        <span>${esc(fmtDate(o.date,o.lang))} · ${esc(fmtTime(o.start,o.lang))}</span><span>${esc(o.venue)}</span>
+        ${guest?`<span class="gm-for">${L.dear} <strong>${esc(guest)}</strong></span>`:''}
+        <small>${en?'On the wall':'Di dinding'}: ${gmCredit(c)}</small></div>
+      </div>
+      <${tag} class="gm-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th){K.cards(el);el.classList.toggle('gm-dark',!!th.c.dark);const sc=$('.scroller',el),en=o.lang==='en';
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.dataset.room=(en?'Room ':'Bilik ')+(i+1)});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'hijau',n:'Hijau Galeri',desc:'Museum-green wall, terracotta canvas',c:{ground:'#2f4a40',sheet:'#f7f4ee',ink:'#22201c',accent:'#a5482f',gold:'#c9a24f',pagefg:'#efe9dc',p1:'#b0503a',p2:'#e2b46a',p3:'#3d2a2a',rope:'#6e1a22'}},
-    {k:'merah',n:'Merah',desc:'Oxblood wall, blue and sand canvas',c:{ground:'#5a1e22',sheet:'#f8f4ec',ink:'#241c1a',accent:'#1f3a5a',gold:'#d0aa58',pagefg:'#f3e6d6',p1:'#1f3a5a',p2:'#d9c39a',p3:'#7a2a24',rope:'#1e2a3c'}},
-    {k:'putih',n:'Putih',desc:'White gallery, blue and ochre canvas',c:{ground:'#e9e6e0',sheet:'#ffffff',ink:'#22201d',accent:'#2e4a6b',gold:'#c39a4c',pagefg:'#2a2622',p1:'#2e4a6b',p2:'#d7a541',p3:'#a33b2e',rope:'#7a1f28'}},
-    {k:'nila',n:'Nila',desc:'Navy wall, rust and cream canvas',c:{ground:'#1d2a44',sheet:'#f7f4ee',ink:'#1e2230',accent:'#b0563a',gold:'#d2ac60',pagefg:'#ece6d8',p1:'#c2603e',p2:'#ead7b5',p3:'#2a3f5f',rope:'#7a2228'}},
-    {k:'kelabu',n:'Kelabu',desc:'Slate wall, ochre and teal canvas',c:{ground:'#5f5e5a',sheet:'#f7f5f0',ink:'#22211f',accent:'#3b5a54',gold:'#cfaa5c',pagefg:'#f1ece2',p1:'#d4a64a',p2:'#3b5a54',p3:'#e8dcc4',rope:'#2c2a28'}},
-    {k:'jambu',n:'Jambu',desc:'Blush wall, plum and peach canvas',c:{ground:'#d4b2ac',sheet:'#fffaf7',ink:'#2e2224',accent:'#7a2f3f',gold:'#b88f4e',pagefg:'#3a2628',p1:'#7a2f3f',p2:'#e8c9a8',p3:'#4a5a4e',rope:'#5a1f2c'}},
-    {k:'hitam',n:'Hitam',desc:'Black wall, deep red and gold canvas',c:{ground:'#171616',sheet:'#f6f2ea',ink:'#1d1b18',accent:'#8a2f2a',gold:'#cfa75c',pagefg:'#ece4d4',p1:'#8a2f2a',p2:'#c49a52',p3:'#2d2b28',rope:'#5c1a1e'}},
-    {k:'sage',n:'Sage',desc:'Sage wall, forest and wheat canvas',c:{ground:'#949f88',sheet:'#fbf9f2',ink:'#1f241c',accent:'#2f4a3a',gold:'#c3a058',pagefg:'#1f241c',p1:'#2f4a3a',p2:'#e3cfa0',p3:'#9a4a30',rope:'#2f4a3a'}},
+    {k:'hijau',n:'Hijau Galeri',desc:'Museum-green wall, Dutch flower painting',c:{ground:'#2f4a40',sheet:'#f8f5ee',ink:'#22201c',accent:'#2f4a40',gold:'#c9a24f',pagefg:'#efe9dc',art:'still-2',fr:2,pos:'50% 40%',dark:1}},
+    {k:'merah',n:'Merah',desc:'Oxblood wall, Dutch flower painting',c:{ground:'#5a1e22',sheet:'#f8f4ec',ink:'#241c1a',accent:'#5a1e22',gold:'#d0aa58',pagefg:'#f3e6d6',art:'still-1',fr:3,pos:'50% 35%',dark:1}},
+    {k:'putih',n:'Putih',desc:'White gallery, Monet poppy field',c:{ground:'#e9e6e0',sheet:'#ffffff',ink:'#22201d',accent:'#6b4a2e',gold:'#c39a4c',pagefg:'#2a2622',art:'paint-monet-poppies',fr:2,pos:'50% 60%'}},
+    {k:'nila',n:'Nila',desc:'Navy wall, Hokusai red Fuji',c:{ground:'#1d2a44',sheet:'#f7f4ee',ink:'#1e2230',accent:'#1d2a44',gold:'#d2ac60',pagefg:'#ece6d8',art:'paint-hokusai-fuji',fr:3,pos:'50% 50%',dark:1}},
+    {k:'kelabu',n:'Kelabu',desc:'Slate wall, Hassam water garden',c:{ground:'#5f5e5a',sheet:'#f7f5f0',ink:'#22211f',accent:'#3b5a54',gold:'#cfaa5c',pagefg:'#f1ece2',art:'paint-hassam-water',fr:2,pos:'50% 50%',dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Blush wall, Hassam island garden',c:{ground:'#d9bcb5',sheet:'#fffaf7',ink:'#2e2224',accent:'#7a2f3f',gold:'#b88f4e',pagefg:'#3a2628',art:'paint-hassam-island',fr:3,pos:'50% 50%'}},
+    {k:'hitam',n:'Hitam',desc:'Black wall, Dutch flower painting',c:{ground:'#171616',sheet:'#f6f2ea',ink:'#1d1b18',accent:'#3a2a1c',gold:'#cfa75c',pagefg:'#ece4d4',art:'still-3',fr:3,pos:'50% 35%',dark:1}},
+    {k:'sage',n:'Sage',desc:'Sage wall, Monet iris garden',c:{ground:'#a3ac97',sheet:'#fbf9f2',ink:'#1f241c',accent:'#2f4a3a',gold:'#c3a058',pagefg:'#1f241c',art:'paint-monet-irises',fr:2,pos:'50% 50%'}},
   ]});

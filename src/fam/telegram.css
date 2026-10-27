@@ -1,0 +1,101 @@
+/* ===== telegram (redesign) ===== */
+/* linen desk cloth with a soft pool of light */
+.inv .tl-cloth{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 46%,rgba(255,248,230,.16),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.28)),url(assets/linen.jpg) 0 0/220px,var(--ground);background-blend-mode:normal,normal,soft-light,normal}
+.inv .tl-k{font-family:"Old Standard TT",serif;font-size:10px;letter-spacing:.42em;text-transform:uppercase}
+/* the form paper: aged cream with an engraved band of interlocking rings and a hairline inside it */
+.inv .tl-paper{position:relative;background:radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(120,84,30,.16)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);padding:16px}
+.inv .tl-paper::before{content:"";position:absolute;inset:7px;background:var(--accent);opacity:.75;pointer-events:none;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg fill='none' stroke='%23000' stroke-width='.5'%3E%3Ccircle cx='0' cy='0' r='4'/%3E%3Ccircle cx='8' cy='0' r='4'/%3E%3Ccircle cx='0' cy='8' r='4'/%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3Ccircle cx='4' cy='4' r='4'/%3E%3C/g%3E%3C/svg%3E") 0 0/6px 6px;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg fill='none' stroke='%23000' stroke-width='.5'%3E%3Ccircle cx='0' cy='0' r='4'/%3E%3Ccircle cx='8' cy='0' r='4'/%3E%3Ccircle cx='0' cy='8' r='4'/%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3Ccircle cx='4' cy='4' r='4'/%3E%3C/g%3E%3C/svg%3E") 0 0/6px 6px}
+.inv .tl-paper::after{content:"";position:absolute;inset:13px;pointer-events:none;border:1px solid color-mix(in srgb,var(--accent) 70%,transparent);outline:.5px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px;
+  background:radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(120,84,30,.14)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal}
+.inv .tl-paper > *{position:relative;z-index:1}
+.inv .tl-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding:8px 10px 7px;border-bottom:1px solid color-mix(in srgb,var(--accent) 65%,transparent);color:var(--accent)}
+.inv .tl-head span{font-family:"Old Standard TT",serif;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.inv .tl-head b{font-family:"Old Standard TT",serif;font-weight:400;font-size:clamp(15px,4.6cqi,19px);letter-spacing:.24em;text-transform:uppercase;padding-left:.24em}
+.inv .tl-strip{display:inline-block;font-family:"Special Elite",monospace;font-size:clamp(10px,2.95cqi,11.5px);letter-spacing:.04em;line-height:1.25;color:var(--ink);padding:3px 7px 2px;
+  background:color-mix(in srgb,var(--sheet) 40%,#fff);box-shadow:0 1px 1.5px rgba(60,40,20,.28),0 0 0 .5px rgba(60,40,20,.12);transform:rotate(var(--r,0deg))}
+.inv .tl-stamp{color:var(--stamp);mix-blend-mode:multiply;opacity:.86}
+
+/* cover */
+.inv .cv-telegram2{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
+.inv .tl-top{position:absolute;top:10%;left:0;right:0;text-align:center;color:var(--pagefg);z-index:2;transition:opacity .4s}
+.inv .tl-top .tl-k{opacity:.8}
+.inv .tl-cn{font-family:"Old Standard TT",serif;font-style:italic;font-size:clamp(32px,10cqi,42px);line-height:1.1;margin-top:12px;padding:0 18px}
+.inv .tl-cn span{font-size:.62em;opacity:.7}
+.inv .tl-cd{font-family:"Old Standard TT",serif;font-size:11px;letter-spacing:.36em;margin-top:12px;opacity:.85}
+.inv .tl-cd::before{content:"";display:block;width:34px;height:1px;background:currentColor;opacity:.5;margin:0 auto 12px}
+.inv .tl-stage{position:absolute;left:7%;right:7%;top:39%;aspect-ratio:1.62;z-index:3}
+.inv .tl-env{position:absolute;inset:0;z-index:2;transform:rotate(-1.6deg);border-radius:2px;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 30%,rgba(90,60,20,.10)),radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(110,74,26,.22)),url(assets/paper.jpg) 0 0/220px,var(--env);background-blend-mode:normal,normal,multiply,normal;
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 26px 34px -14px rgba(0,0,0,.55),0 4px 8px rgba(0,0,0,.22);transition:transform 1s cubic-bezier(.5,0,.75,0) .2s,opacity .5s .7s}
+.inv .tl-env::after{content:"";position:absolute;inset:5px;border:.5px solid color-mix(in srgb,var(--accent) 55%,transparent);pointer-events:none}
+.inv .tl-mast{position:absolute;left:7%;top:11%;color:var(--accent);display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.inv .tl-mast small{font-family:"Old Standard TT",serif;font-size:7px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.inv .tl-mast b{font-family:"Old Standard TT",serif;font-weight:400;font-size:clamp(18px,5.6cqi,23px);letter-spacing:.26em;text-transform:uppercase;margin:3px 0 4px;padding-bottom:4px;border-bottom:1px solid currentColor;box-shadow:0 2px 0 -1px var(--env),0 3px 0 -1px currentColor}
+.inv .tl-mast i{font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.06em;margin-top:5px}
+/* glassine window with the guest's name typed on the telegram behind it */
+.inv .tl-win{position:absolute;left:7%;bottom:12%;width:57%;height:33%;border-radius:3px;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 6%;
+  background:linear-gradient(115deg,rgba(255,255,255,.4),rgba(255,255,255,.12) 40%,rgba(255,255,255,.28) 60%,rgba(255,255,255,.08)),color-mix(in srgb,var(--sheet) 82%,var(--env));
+  box-shadow:inset 0 0 0 1px rgba(90,60,25,.18),inset 0 1px 3px rgba(90,60,25,.25)}
+.inv .tl-win small{font-family:"Special Elite",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);opacity:.62}
+.inv .tl-win span{font-family:"Special Elite",monospace;font-size:clamp(11px,3.5cqi,13.5px);letter-spacing:.05em;color:var(--ink);line-height:1.25;opacity:.9}
+.inv .tl-stamp.cv{position:absolute;right:5%;bottom:7%;width:31%;transform:rotate(-14deg)}
+/* the telegram tucked inside, rising out when opened */
+.inv .tl-inside{position:absolute;inset:3% 3%;overflow:hidden;z-index:1;transition:transform 1.15s cubic-bezier(.3,.1,.2,1) .15s;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35))}
+.inv .tl-inside .tl-paper{padding:14px 14px 22px;text-align:center;height:100%}
+.inv .tl-inside .tl-k{font-size:7.5px;color:var(--accent);margin-top:14px}
+.inv .tl-in-n{font-family:"Old Standard TT",serif;font-style:italic;font-size:clamp(22px,7cqi,28px);margin:6px 0 10px}
+.inv .tl-in-n span{font-size:.62em;opacity:.7}
+.inv .tl-foot{position:absolute;left:0;right:0;bottom:9%;z-index:4;display:flex;justify-content:center;transition:opacity .35s}
+.inv .tl-open{border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);background:color-mix(in srgb,var(--ground) 70%,transparent);color:var(--pagefg);cursor:pointer;padding:14px 40px;border-radius:999px;
+  font-family:"Old Standard TT",serif;font-size:11.5px;letter-spacing:.3em;text-transform:uppercase;box-shadow:0 8px 20px -6px rgba(0,0,0,.35);backdrop-filter:blur(3px)}
+/* opening: the envelope sinks away, the telegram rises out of it */
+.inv.opening .tl-top,.inv.opening .tl-foot{opacity:0}
+.inv.opening .tl-env{transform:translateY(95cqh) rotate(-4deg);opacity:0}
+.inv.opening .tl-inside{transform:translateY(-34%) scale(1.12) rotate(.8deg)}
+.inv.opening .cv-telegram2{opacity:0}
+
+/* page: the telegram form */
+.inv .pg-telegram2{background:var(--ground);padding:30px 16px 120px;gap:18px;overflow:hidden}
+.inv .pg-telegram2 > :not(.tl-cloth){position:relative;z-index:2}
+.inv .pg-telegram2 .tl-form{width:94%;max-width:370px;transform:rotate(-.8deg);filter:drop-shadow(0 18px 20px rgba(0,0,0,.4)) drop-shadow(0 2px 3px rgba(0,0,0,.2))}
+.inv .pg-telegram2 .tl-paper{padding:18px 18px 26px;text-align:center}
+.inv .tl-boxes{display:grid;grid-template-columns:1.3fr .8fr .9fr;margin:0 2px;border-bottom:.5px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.inv .tl-boxes span{display:flex;flex-direction:column;gap:2px;padding:6px 6px 5px;text-align:left;font-family:"Special Elite",monospace;font-size:10px;letter-spacing:.04em;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.inv .tl-boxes span + span{border-left:.5px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.inv .tl-boxes i{font-family:"Old Standard TT",serif;font-style:italic;font-size:8.5px;letter-spacing:.04em;color:var(--accent)}
+.inv .tl-to{display:flex;align-items:baseline;gap:8px;justify-content:flex-start;text-align:left;margin:12px 6px 0;font-family:"Special Elite",monospace;font-size:12px;letter-spacing:.05em;color:var(--ink);
+  border-bottom:.5px dotted color-mix(in srgb,var(--accent) 65%,transparent);padding-bottom:4px}
+.inv .tl-to i{font-family:"Old Standard TT",serif;font-style:italic;font-size:10px;color:var(--accent);letter-spacing:.04em}
+.inv .pg-telegram2 .tl-k{color:var(--accent);margin-top:16px}
+.inv .tl-names{font-family:"Old Standard TT",serif;font-weight:400;font-style:italic;font-size:clamp(32px,9.6cqi,40px);line-height:1.08;margin:8px 4px 14px;color:var(--ink)}
+.inv .tl-names span{font-size:.6em;color:var(--accent)}
+.inv .tl-strips{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:0 4px;text-align:left}
+.inv .tl-hj{font-family:"Old Standard TT",serif;font-style:italic;font-size:12px;margin-top:12px;opacity:.75}
+.inv .tl-stamp.pg{position:absolute;right:-10px;bottom:-30px;width:29%;transform:rotate(-12deg);z-index:2}
+.inv .tl-pill{align-self:center;flex:0 0 auto;width:auto!important;padding:13px 36px;border-radius:999px;border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);color:var(--pagefg);text-decoration:none;
+  font-family:"Old Standard TT",serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;background:color-mix(in srgb,var(--ground) 70%,transparent)}
+
+/* skin: telegram-form cards on the linen cloth */
+.fam-telegram .scroller{background:url(assets/linen.jpg) 0 0/220px,var(--ground);background-blend-mode:soft-light,normal}
+.fam-telegram.cardsecs .sec{background:radial-gradient(ellipse at 50% 30%,transparent 60%,rgba(120,84,30,.12)),url(assets/paper.jpg) 0 0/260px,var(--sheet)!important;background-blend-mode:normal,multiply,normal!important;
+  font-family:"Old Standard TT",serif;color:var(--ink);border:0!important;border-radius:1px;
+  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 7.5px color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 0 10px transparent,inset 0 0 0 10.5px color-mix(in srgb,var(--accent) 45%,transparent),0 14px 22px -8px rgba(0,0,0,.4)!important}
+.fam-telegram .sec h2{font-family:"Old Standard TT",serif;font-weight:400;font-size:17px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);background:none!important;box-shadow:none!important;padding:0 0 10px!important;
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 60%,transparent)}
+.fam-telegram .sec h2::after{content:none!important}
+.fam-telegram .sec p{font-family:"Old Standard TT",serif;font-size:15px;text-transform:none;letter-spacing:0}
+.fam-telegram .info,.fam-telegram .info > div{border:0!important;background:none!important}
+.fam-telegram .info > div{border-bottom:.5px dotted color-mix(in srgb,var(--accent) 60%,transparent)!important;padding:13px 6px!important}
+.fam-telegram .info > div:last-child{border-bottom:0!important}
+.fam-telegram .info span{font-family:"Special Elite",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.fam-telegram .info b{font-family:"Old Standard TT",serif;font-weight:400;color:var(--ink)}
+.fam-telegram .count b{font-family:"Special Elite",monospace;font-weight:400;color:var(--ink)}
+.fam-telegram .timeline b{font-family:"Special Elite",monospace;font-weight:400;color:var(--accent)}
+.fam-telegram .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent);background:transparent;font-family:"Old Standard TT",serif}
+.fam-telegram input,.fam-telegram select,.fam-telegram textarea{font-family:"Special Elite",monospace;background:color-mix(in srgb,var(--sheet) 50%,#fff);color:var(--ink)}
+.fam-telegram .seg button[aria-pressed="true"],.fam-telegram button.submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-telegram .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-telegram .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .tl-env,.inv .tl-inside{transition:none}}

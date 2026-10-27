@@ -172,4 +172,27 @@ function FEATURES(el,o,th,L,mode,opts){
 }
 /* the .ics button works in every mode */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;const inv=b.closest('.inv');const o=inv&&inv.__order;if(!o)return;saveFile(`majlis-${o.slug||'sanding'}.ics`,icsText(o),'text/calendar')});
+
+/* ================= immersive reading: sections unfold as guests scroll, the front page drifts, the dock steps aside ================= */
+function IMMERSIVE(el,o,th,mode){
+  if(mode==='thumb')return;
+  const sc=$('.scroller',el);if(!sc)return;
+  const secs=$$('.sheet > .sec',el);
+  if(REDUCED||typeof IntersectionObserver==='undefined'||mode!=='live'){secs.forEach(s=>s.classList.add('in'));return}
+  el.classList.add('immersive');
+  secs.forEach(s=>s.classList.add('sr'));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{root:sc,threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  secs.forEach(s=>io.observe(s));
+  // reading progress, front-page drift and the dock stepping aside while reading down
+  const bar=document.createElement('i');bar.className='read-bar';el.appendChild(bar);
+  const cue=document.createElement('div');cue.className='scroll-cue';cue.setAttribute('aria-hidden','true');cue.innerHTML='<i></i>';el.appendChild(cue);
+  const pg=$('.scroller > .page',el),dock=$('.dock',el);let last=0,ticking=false;
+  sc.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;
+    const y=sc.scrollTop,max=Math.max(1,sc.scrollHeight-sc.clientHeight);
+    bar.style.transform=`scaleX(${Math.min(1,y/max)})`;
+    if(pg){const h=pg.offsetHeight||1,p=Math.min(1,y/h);pg.style.setProperty('--drift',(y*.28).toFixed(1)+'px');pg.style.setProperty('--fade',(1-p*.85).toFixed(3))}
+    if(y>40)cue.classList.add('gone');
+    if(dock){if(y>last+6&&y>160)dock.classList.add('away');else if(y<last-6||y<160)dock.classList.remove('away')}
+    last=y})},{passive:true});
+}
 </script>

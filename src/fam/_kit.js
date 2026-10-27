@@ -5,6 +5,8 @@ const FAM_FONTS=new Set();
 function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" value, e.g. 'Press+Start+2P' or 'Playfair+Display:ital,wght@0,400;1,400'
 /* FAMILY({key,name,meaning,blurb,fonts:{d,s,b},ms,page,cover,skin,themes:[{k,n,desc?,c:{ground,sheet,ink,accent,gold,cover,...},extra?}]}) */
 function FAMILY(f){
+  // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
+  if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
   FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts};
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;

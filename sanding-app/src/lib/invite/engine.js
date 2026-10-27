@@ -350,12 +350,13 @@ function renderInvite(host,o,opts={}){
   const scroller=$('.scroller',el);
   el.__order=o;try{typeof FEATURES!=='undefined'&&FEATURES(el,o,th,L,mode,opts)}catch(e){console.warn('features',e)}
   el.classList.add('skin');try{typeof SKINS!=='undefined'&&SKINS[th.fam]&&SKINS[th.fam](el,o,th,L,mode)}catch(e){console.warn('skin',th.fam,e)}
+  try{typeof IMMERSIVE!=='undefined'&&IMMERSIVE(el,o,th,mode)}catch(e){console.warn('immersive',e)}
   const musicBtn=$('[data-music]',el);
   const yt=o.x_music&&mode!=='thumb'?Tube.attach(el,ytIdOf(o.ytMusic),ytStartOf(o.ytStart)):null;
   const playSong=()=>yt?Tube.play(yt):Music.play(o.music),stopSong=()=>yt?Tube.pause(yt):Music.stop(),songOn=()=>yt?yt.playing:Music.playing();
   const setMusicIcon=()=>{if(!musicBtn)return;const on=songOn();musicBtn.classList.toggle('playing',on);musicBtn.innerHTML=on?ICON.music:ICON.mute};
   const timers=[];
-  const open=(instant)=>{if(el.classList.contains('opening'))return;el.classList.add('opening');
+  const open=(instant)=>{if(el.classList.contains('opening'))return;el.classList.add('opening');if(!instant)try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}
     if(musicBtn){musicBtn.hidden=false;if(!instant&&opts.autoplay!==false)playSong();setMusicIcon()}
     if(instant||REDUCED){el.classList.add('card-out','opened');return}
     if(th.fam==='sampul'){timers.push(setTimeout(()=>el.classList.add('card-out'),950),setTimeout(()=>el.classList.add('opened'),2100))}
@@ -1271,6 +1272,29 @@ function FEATURES(el,o,th,L,mode,opts){
 /* the .ics button works in every mode */
 typeof document!=='undefined'&&document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;const inv=b.closest('.inv');const o=inv&&inv.__order;if(!o)return;saveFile(`majlis-${o.slug||'sanding'}.ics`,icsText(o),'text/calendar')});
 
+/* ================= immersive reading: sections unfold as guests scroll, the front page drifts, the dock steps aside ================= */
+function IMMERSIVE(el,o,th,mode){
+  if(mode==='thumb')return;
+  const sc=$('.scroller',el);if(!sc)return;
+  const secs=$$('.sheet > .sec',el);
+  if(REDUCED||typeof IntersectionObserver==='undefined'||mode!=='live'){secs.forEach(s=>s.classList.add('in'));return}
+  el.classList.add('immersive');
+  secs.forEach(s=>s.classList.add('sr'));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{root:sc,threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  secs.forEach(s=>io.observe(s));
+  // reading progress, front-page drift and the dock stepping aside while reading down
+  const bar=document.createElement('i');bar.className='read-bar';el.appendChild(bar);
+  const cue=document.createElement('div');cue.className='scroll-cue';cue.setAttribute('aria-hidden','true');cue.innerHTML='<i></i>';el.appendChild(cue);
+  const pg=$('.scroller > .page',el),dock=$('.dock',el);let last=0,ticking=false;
+  sc.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;
+    const y=sc.scrollTop,max=Math.max(1,sc.scrollHeight-sc.clientHeight);
+    bar.style.transform=`scaleX(${Math.min(1,y/max)})`;
+    if(pg){const h=pg.offsetHeight||1,p=Math.min(1,y/h);pg.style.setProperty('--drift',(y*.28).toFixed(1)+'px');pg.style.setProperty('--fade',(1-p*.85).toFixed(3))}
+    if(y>40)cue.classList.add('gone');
+    if(dock){if(y>last+6&&y>160)dock.classList.add('away');else if(y<last-6||y<160)dock.classList.remove('away')}
+    last=y})},{passive:true});
+}
+
 /* ================= kit for the families in src/fam (rounds 6+) =================
    Each src/fam/<key>.js runs inside its own (()=>{ ... })() so its consts stay private.
    Use FAMILY() to register; it fills FAMILIES, THEMES, FAM2 and SKINS in one call. */
@@ -1278,6 +1302,8 @@ const FAM_FONTS=new Set();
 function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" value, e.g. 'Press+Start+2P' or 'Playfair+Display:ital,wght@0,400;1,400'
 /* FAMILY({key,name,meaning,blurb,fonts:{d,s,b},ms,page,cover,skin,themes:[{k,n,desc?,c:{ground,sheet,ink,accent,gold,cover,...},extra?}]}) */
 function FAMILY(f){
+  // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
+  if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
   FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts};
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;
@@ -1297,6 +1323,80 @@ const K={
   uri:svgUriSq,   // svg string -> url('data:...') safe inside style="" attributes
   foilBg:'url(/assets/foil.jpg) 0 0/240px,var(--gold)',
 };
+
+
+/* ===== family: akhbar ===== */
+try{(()=>{
+/* akhbar: a 1950s Malayan broadsheet, folded in half and lying on the table. Blackletter masthead, a dateline
+   between double rules, the names as the headline, an engraved view of old Malaya (public-domain postcard, redrawn as
+   line engraving) and the announcement set in justified columns with a drop cap.
+   Cover: the folded paper; tap it and the lower half unfolds towards you.
+   Page: the whole front page, crease and all; the couple photo runs as a halftone under the dateline.
+   Skin: newsprint clippings on the table, each headed like a column with a small spot-colour kicker. */
+const NW_CAP={kl:['Pejabat Percetakan Kerajaan, Kuala Lumpur','Government Printing Office, Kuala Lumpur'],masjid:["Masjid Dato' Dagang, 1930","Masjid Dato' Dagang, 1930"],
+  pinang:['Pantai di Pulau Pinang','The shore at Penang'],pasar:['Pasar Besar, Kuala Lumpur','Central Market, Kuala Lumpur']};
+const nwSk=(c,en,cls='',f='figure',fc='figcaption')=>`<${f} class="nw-fig ${cls}"><i class="nw-sk" style="--sk:url(${A}sk-${c.sk}.webp)"></i><${fc} class="nw-cap">${esc(NW_CAP[c.sk][en?1:0])}</${fc}></${f}>`;
+const nwRoman=n=>{const r=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,t] of r)while(n>=v){s+=t;n-=v}return s};
+function nwLead(o,en){const [n1,n2]=coverNames(o),h=esc(o.hosts||''),t=esc(fmtTime(o.start,o.lang)),v=esc(o.venue||''),d=esc(fmtDate(o.date,o.lang));
+  return en?[`With joy and gratitude, ${h||'the family'} invite you and your family to the wedding of ${esc(n1)} and ${esc(n2)}.`,
+      `The celebration will be held on ${d}, from ${t}, at ${v}. Your presence and prayers would mean a great deal to us.`]
+    :[`Dengan penuh kesyukuran, ${h||'keluarga kami'} menjemput tuan/puan sekeluarga ke majlis perkahwinan ${esc(n1)} dan ${esc(n2)}.`,
+      `Majlis akan berlangsung pada ${d}, mulai ${t}, di ${v}. Kehadiran dan doa restu tuan/puan amat kami hargai.`]}
+const nwMast=(o,L,en)=>{const y=new Date((o.date||'2026-01-01')+'T00:00:00').getFullYear()||2026;
+  return `<div class="nw-ears"><span class="nw-ear">${en?'Special<br>edition':'Edisi<br>khas'}</span><span class="nw-mast" style="font-size:${en?7.2:9.4}cqi">${en?'The Wedding Times':'Berita Kahwin'}</span><span class="nw-ear">${en?'Price:<br>your prayers':'Harga:<br>doa restu'}</span></div>
+  <div class="nw-date"><span>${en?'No. 1':'Bil. 1'}</span><span>${esc(fmtDate(o.date,o.lang))}</span><span>${o.hijri?esc(o.hijri):(en?'Vol. ':'Jilid ')+nwRoman(y-1949)}</span></div>`};
+FAMILY({key:'akhbar',name:'Akhbar',meaning:'Newspaper front page',
+  blurb:'A 1950s Malayan broadsheet folded on the table: blackletter masthead, the names as the headline and an engraved view of old Malaya. It unfolds to open.',
+  fonts:{d:"'Old Standard TT', serif",s:"'Old Standard TT', serif",b:"'Old Standard TT', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c,[p1,p2]=nwLead(o,en),photo=typeof couplePhotoOf==='function'&&couplePhotoOf(o);
+    return `<section class="page pg-akhbar2"><i class="nw-tex"></i><i class="nw-crease"></i>
+      <header class="nw-head reveal">${nwMast(o,L,en)}</header>
+      ${photo?'':nwSk(c,en,'reveal d1')}
+      <p class="nw-k kicker reveal d1">${ev(o,L)}</p>
+      <h1 class="names nw-h reveal d1">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+      <p class="nw-deck reveal d2">${en?'To be wed on':'Akan diijabkabulkan pada'} ${esc(fmtDate(o.date,o.lang))}</p>
+      <div class="nw-cols reveal d2">
+        <div class="nw-story"><p><b class="nw-dc">${esc((p1.replace(/<[^>]+>/g,'')||'D')[0])}</b>${p1.slice(1)}</p><p>${p2}</p></div>
+        <div class="nw-side">
+          <a class="nw-box" data-go="when" href="#"><small>${en?'Details':'Butiran majlis'}</small><b>${esc(fmtTime(o.start,o.lang))}</b><span>${esc(o.venue)}</span><em>${en?'Read more':'Baca lanjut'} &rsaquo;</em></a>
+          ${o.x_rsvp?`<a class="nw-ad" data-go="rsvp" href="#"><small>${en?'Notice':'Notis'}</small><b>RSVP</b><span>${en?'Kindly reply':'Sila maklumkan kehadiran'}</span></a>`:''}
+        </div>
+      </div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c,[p1,p2]=nwLead(o,en);
+    const sched=(o.schedule||[]).slice(0,4).map(s=>`<span class="nw-li"><b>${esc(fmtTime(s.time,o.lang))}</b> ${esc(s.label)}</span>`).join('');
+    return `<div class="cover cv-akhbar2"><i class="nw-table"></i>
+      <${tag} class="nw-paper" ${attr} aria-label="${L.open}">
+        <span class="nw-half nw-top"><i class="nw-tex"></i>${nwMast(o,L,en)}
+          <span class="nw-k">${ev(o,L)}</span>
+          <span class="nw-h">${esc(n1)} <span>&amp;</span> ${esc(n2)}</span>
+          <span class="nw-deck">${en?'To be wed on':'Akan diijabkabulkan pada'} ${esc(fmtDate(o.date,o.lang))}</span>
+          <span class="nw-row"><span class="nw-lc">${nwSk(c,en,'','span','span')}<span class="nw-sh">${en?'Programme':'Aturcara'}</span>${sched}</span><span class="nw-story"><span class="nw-p"><b class="nw-dc">${esc((p1.replace(/<[^>]+>/g,'')||'D')[0])}</b>${p1.slice(1)}</span><span class="nw-p">${p2}</span><span class="nw-box2"><small>${en?'Venue':'Tempat'}</small><b>${esc(o.venue)}</b>${o.address?`<i>${esc(o.address)}</i>`:''}</span></span></span>
+          <i class="nw-foldshade"></i></span>
+        <span class="nw-half nw-bot"><i class="nw-tex"></i>
+          <span class="nw-row2"><span class="nw-col"><span class="nw-sh">${en?'Date':'Tarikh'}</span><span class="nw-p">${esc(fmtDate(o.date,o.lang))}<br>${esc(fmtTime(o.start,o.lang))}${o.end?' – '+esc(fmtTime(o.end,o.lang)):''}</span></span>
+          <span class="nw-col"><span class="nw-sh">${en?'Venue':'Tempat'}</span><span class="nw-p">${esc(o.venue)}<br>${esc(o.address||'')}</span></span></span>
+          <span class="nw-notice">${en?'Your presence is our honour':'Kehadiran tuan/puan penyeri majlis kami'}</span></span>
+      </${tag}>
+      <div class="nw-foot">${guest?`<p class="nw-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="nw-open">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
+  skin(el,o,th){K.cards(el);const en=o.lang==='en',sc=$('.scroller',el);
+    const KK=en?{intro:'Announcement',when:'Details',count:'Countdown',sched:'Programme',gallery:'Pictures',doa:'Prayer',rsvp:'Reply form',wishes:'Letters',gift:'Notices',wishlist:'Notices',contact:'Enquiries'}
+      :{intro:'Pengumuman',when:'Butiran majlis',count:'Detik demi detik',sched:'Jadual',gallery:'Gambar',doa:'Doa',rsvp:'Borang jawapan',wishes:'Surat pembaca',gift:'Notis',wishlist:'Notis',contact:'Pertanyaan'};
+    $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h)h.dataset.kicker=KK[s.dataset.s]||(en?'News':'Berita')});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Brown ink on newsprint, linen tablecloth',c:{ground:'#d6cab4',sheet:'#f2ece0',ink:'#1e1a15',accent:'#7a5a2a',gold:'#b08a4a',pagefg:'#2a231b',sk:'kl'}},
+    {k:'nila',n:'Nila',desc:'Navy ink on newsprint, dark table',c:{ground:'#1a2235',sheet:'#f1ede3',ink:'#1a2238',accent:'#2c4a7c',gold:'#c9a65e',pagefg:'#ece6d8',sk:'masjid'}},
+    {k:'marun',n:'Marun',desc:'Maroon spot colour, walnut table',c:{ground:'#33171a',sheet:'#f3ede1',ink:'#1e1816',accent:'#7a1b29',gold:'#c9a25a',pagefg:'#f0e4d6',sk:'pinang'}},
+    {k:'zamrud',n:'Zamrud',desc:'Green spot colour, dark green table',c:{ground:'#11281f',sheet:'#f1eee3',ink:'#18201b',accent:'#1f5a40',gold:'#c8a65e',pagefg:'#e6ece6',sk:'masjid'}},
+    {k:'jambu',n:'Merah Jambu',desc:'Rose spot colour, blush tablecloth',c:{ground:'#e2cbc5',sheet:'#f6f0e8',ink:'#2a1e20',accent:'#a3465f',gold:'#c09a74',pagefg:'#3a2628',sk:'pinang'}},
+    {k:'sage',n:'Sage',desc:'Olive ink, sage tablecloth',c:{ground:'#c5ccba',sheet:'#f3f1e8',ink:'#1f251c',accent:'#55654b',gold:'#a8955a',pagefg:'#252b22',sk:'masjid'}},
+    {k:'hitam',n:'Hitam',desc:'Black ink and red masthead rules, ebony table',c:{ground:'#151413',sheet:'#efe9de',ink:'#171513',accent:'#8e1f2c',gold:'#c9a65e',pagefg:'#ece5d8',sk:'pasar'}},
+    {k:'terakota',n:'Terakota',desc:'Rust spot colour, teak table',c:{ground:'#44261b',sheet:'#f4ece0',ink:'#22180f',accent:'#a24a22',gold:'#d2a468',pagefg:'#f3e6d8',sk:'kl'}},
+  ]});
+
+})()}catch(e){console.error("family akhbar failed",e)}
 
 
 /* ===== family: akrilik ===== */
@@ -1340,6 +1440,48 @@ FAMILY({key:'akrilik',name:'Akrilik',meaning:'Acrylic card',
   ]});
 
 })()}catch(e){console.error("family akrilik failed",e)}
+
+
+/* ===== family: akuarel ===== */
+try{(()=>{
+/* akuarel (redesign): an impressionist painting (Monet, Hassam, Hokusai; public domain) laid on cold-press paper as a loose
+   wash that bleeds out into the white, wrapped with a woven silk rose ribbon (Met, CC0) and a small paper tag.
+   Cover: tap the ribbon's tag ("Buka Jemputan"); the ribbon slips off and the card lifts towards the guest.
+   Page: the painted card with the names set in a quiet italic. Skin: cold-press cards topped with a strip of the same wash. */
+const aqWash=(th,cls='')=>`<div class="aq2-wash aq2-bleed ${cls}"><i style="background-image:url(${A}pd-paint-${th.pt}.jpg);background-position:${th.pos}"></i></div><div class="aq2-wash ${cls}"><i style="background-image:url(${A}pd-paint-${th.pt}.jpg);background-position:${th.pos}"></i></div>`;
+FAMILY({key:'akuarel',name:'Akuarel',meaning:'Watercolour wash',
+  blurb:'A painted garden bleeding across cold-press paper, wrapped in a silk rose ribbon. The ribbon slips off when guests open the card.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1350,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-akuarel2${th.c.dark?' aq2-dkc':''}"><div class="aq2-ground"></div>
+      <div class="aq2-card aq2-big reveal">${aqWash(th)}
+        <div class="aq2-txt"><p class="aq2-k kicker">${ev(o,L)}</p><h1 class="aq2-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="aq2-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="aq2-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <a class="aq2-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-akuarel2${th.c.dark?' aq2-dkc':''}"><div class="aq2-ground"></div>
+      <div class="aq2-card">${aqWash(th)}
+        <div class="aq2-txt"><p class="aq2-k">${ev(o,L)}</p><p class="aq2-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="aq2-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+        ${guest?`<p class="aq2-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}</div>
+        <${tag} class="aq2-band" ${attr}><span class="aq2-rib"></span><span class="aq2-tag">${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--paint',`url(${A}pd-paint-${th.pt}.jpg)`);el.style.setProperty('--ppos',th.pos);el.classList.toggle('aq2-dk',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    // [key, name, desc, ground, ink, accent, wash tint, painting, position, dark]
+    ...[['terakota','Terakota','Monet’s poppy field on terracotta','#efe1d5','#33261f','#9c4a30','#d98a6a','monet-poppies','50% 100%'],
+    ['biru','Biru','Hokusai’s summer sky in indigo','#e2e7ee','#22293a','#1d3b6e','#8fa9cf','hokusai-fuji','50% 2%'],
+    ['sage','Sage','Hassam’s water garden in sage','#e5e8dc','#2c3327','#3e5a3f','#b8c6a6','hassam-water','50% 28%'],
+    ['lavender','Lavender','Monet’s irises at Giverny','#e9e5ef','#2f2a3c','#5d4a8a','#c7b8e6','monet-irises','50% 72%'],
+    ['pic','Pic','Hassam’s poppies in peach','#f4e4da','#3a2a26','#a3465f','#f4b99b','hassam-island','50% 42%'],
+    ['laut','Laut','Hassam’s lily pond on deep teal','#163636','#1f2f2f','#0f5656','#8cc5bd','hassam-water','50% 86%',1],
+    ['pandan','Pandan','Hassam’s water garden in pandan green','#e3e7d8','#26302a','#0d4a32','#7fa36a','hassam-water','50% 55%'],
+    ['kopi','Kopi Susu','Hassam’s poppies on walnut','#382a22','#33271f','#6b4a3a','#c9a982','hassam-island','50% 82%',1],
+    ['hujan','Biru Hujan','Monet’s irises in rain-blue','#dfe4e9','#26303a','#3a5570','#6f8aa6','monet-irises','50% 22%'],
+    ['fajar','Fajar','Hassam’s poppies at dawn','#f5e3dd','#3a2530','#a3465f','#f0a46c','hassam-island','50% 12%'],
+    ].map(([k,n,desc,ground,ink,accent,wash,pt,pos,dark])=>({k,n,desc,c:{ground,sheet:'#fdfbf7',ink,accent,gold:wash,wash1:wash,pagefg:dark?'#f2eee6':ink,dark:dark?1:0},extra:{pt,pos}}))]});
+
+})()}catch(e){console.error("family akuarel failed",e)}
 
 
 /* ===== family: alhambra ===== */
@@ -1492,6 +1634,74 @@ FAMILY({key:'alhambra',name:'Alhambra',meaning:'Nasrid palace arch',
 })()}catch(e){console.error("family alhambra failed",e)}
 
 
+/* ===== family: anyaman ===== */
+try{(()=>{
+/* anyaman: a mengkuang mat, plaited on the diagonal with dyed strips, rolled up and tied with cord, a paper tag hanging from it.
+   The weave is drawn strip by strip: a 2/2 twill where every visible stretch of strip is shaded darker where it dips under its
+   neighbour, with fine fibre lines along its length.
+   Cover: tap "Buka Jemputan", the tag drops away and the mat unrolls down the screen.
+   Page: the unrolled mat with the card laid on it. Skin: paper cards on the mat, each with a woven band along the top. */
+needFont('Marcellus');
+let ayN=0;
+const a2=v=>+v.toFixed(2);
+// one repeat of the plait: 16 x 16 strips, s units each; returns the <pattern> body (colours + shading), axis-aligned
+function ayTile(c,s=7){const P=16,r=rng(7);const nat=['#dcbd7e','#d3b273','#e0c48a','#cfac6c','#d8b878','#e3c78e'];
+  const dyeAt={3:c.dye,4:c.dye,11:c.dye,12:c.dye,8:c.dye2},col=i=>dyeAt[i]||nat[Math.floor(r()*nat.length)];
+  const rows=Array.from({length:P},(_,j)=>col(j)),cols=Array.from({length:P},(_,i)=>col(i));
+  let g='';
+  for(let j=0;j<P;j++)for(let i=0;i<P;i++){const h=(((i-j)%4)+4)%4<2;g+=`<rect x="${i*s}" y="${j*s}" width="${s}" height="${s}" fill="${h?rows[j]:cols[i]}"/>`}
+  // shading: each visible stretch spans two cells; darker at both ends, a sheen in the middle, a hairline gap along its sides
+  let sh='';const H=(x,y)=>`<rect x="${x}" y="${y}" width="${2*s}" height="${s}" fill="url(#ayh)"/><path d="M${x} ${y+s*.3}h${2*s}M${x} ${y+s*.64}h${2*s}" stroke="#6a4a20" stroke-width=".22" opacity=".4"/>`,
+    V=(x,y)=>`<rect x="${x}" y="${y}" width="${s}" height="${2*s}" fill="url(#ayv)"/><path d="M${x+s*.32} ${y}v${2*s}M${x+s*.66} ${y}v${2*s}" stroke="#6a4a20" stroke-width=".22" opacity=".4"/>`;
+  for(let j=0;j<P;j++)for(let i=0;i<P;i++){const m=(((i-j)%4)+4)%4;
+    if(m===0)sh+=H(i*s,j*s);if(m===1&&i===0)sh+=H(-s,j*s);
+    if(m===3)sh+=V(i*s,j*s);if(m===2&&j===0)sh+=V(i*s,-s)}
+  return {P:P*s,body:`<linearGradient id="ayh"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset=".16" stop-color="#000" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity=".2"/><stop offset=".84" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
+    <linearGradient id="ayv" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset=".16" stop-color="#000" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity=".2"/><stop offset=".84" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>`,
+    cells:g,shade:sh}}
+// the mat as an inline svg filling its box, plaited on the diagonal
+const ayMat=(c,cls='ay-mat',scale=1)=>{const u=++ayN,t=ayTile(c);
+  return `<svg class="${cls}" ${NS} preserveAspectRatio="none"><defs>${t.body}<pattern id="ayp${u}" width="${t.P}" height="${t.P}" patternUnits="userSpaceOnUse" patternTransform="rotate(45) scale(${scale})">${t.cells}${t.shade}</pattern></defs><rect width="100%" height="100%" fill="url(#ayp${u})"/></svg>`};
+// the same weave as a CSS tile for the skin (the diagonal lattice repeats every P*sqrt2 on both axes)
+const ayTileUri=c=>{const t=ayTile(c,6),T=a2(t.P*Math.SQRT2);
+  return {T,uri:K.uri(`<svg ${NS} width="${T}" height="${T}" viewBox="0 0 ${T} ${T}"><defs>${t.body}<pattern id="q" width="${t.P}" height="${t.P}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">${t.cells}${t.shade}</pattern></defs><rect width="${T}" height="${T}" fill="url(#q)"/></svg>`)}};
+const ayGo=(el)=>{const sc=$('.scroller',el);
+  $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))};
+const ayVars=c=>`--dye:${c.dye};--cord:${c.cord||c.dye}`;
+FAMILY({key:'anyaman',name:'Tikar Mengkuang',meaning:'Woven mat',
+  blurb:'A plaited mengkuang mat with dyed strips, rolled up and tied with cord, a paper tag hanging from it. It unrolls to open.',
+  fonts:{d:"'Marcellus', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-anyaman2" style="${ayVars(c)}">${ayMat(c,'ay-mat ay-bg',1.25)}<div class="ay-light"></div>
+      <div class="ay-card reveal"><i class="ay-eye"></i>
+        <p class="ay-k kicker">${ev(o,L)}</p>
+        <h1 class="ay-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="ay-rule"></i>
+        <p class="ay-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="ay-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="ay-ven">${esc(o.venue)}</p>`:''}
+        <a class="ay-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-anyaman2" style="${ayVars(c)}"><div class="ay-floor"></div>
+      <p class="ay-k ay-top">${ev(o,L)}</p>
+      <div class="ay-flat">${ayMat(c,'ay-mat',1)}<div class="ay-flatshade"></div></div>
+      <div class="ay-roll">${ayMat(c,'ay-mat',.9)}<i class="ay-cyl"></i><i class="ay-end"></i><i class="ay-cord" style="left:16%"></i><i class="ay-cord" style="left:80%"></i></div>
+      <div class="ay-tag"><i class="ay-string"></i><i class="ay-eye"></i><p class="ay-tn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ay-td">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="ay-foot">${guest?`<p class="ay-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ay-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const t=ayTileUri(th.c);el.style.setProperty('--weave',t.uri);el.style.setProperty('--wt',t.T+'px');ayGo(el)},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Natural mengkuang with brown strips',c:{ground:'#ece3cf',sheet:'#fbf7ee',ink:'#2e2620',accent:'#5a3e22',gold:'#a8844a',pagefg:'#3a2c20',dye:'#8a6034',dye2:'#4a3220',cord:'#6a4a2a'}},
+    {k:'nila',n:'Nila',desc:'Indigo strips, gold cord',c:{ground:'#1c263c',sheet:'#fbf7ee',ink:'#2a2a30',accent:'#1d2b4a',gold:'#c9a25a',pagefg:'#ece4d2',dye:'#2c4472',dye2:'#16203a',cord:'#c9a25a'}},
+    {k:'marun',n:'Marun',desc:'Maroon strips, maroon cord',c:{ground:'#36121a',sheet:'#fbf6ec',ink:'#33241f',accent:'#5a1524',gold:'#c4974e',pagefg:'#f2e4d6',dye:'#7e1f30',dye2:'#2a1612',cord:'#8a2434'}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald strips, natural cord',c:{ground:'#11302a',sheet:'#fbf7ee',ink:'#24302a',accent:'#0f3d2e',gold:'#c4a258',pagefg:'#e8ecdc',dye:'#1f5a44',dye2:'#2a1a14',cord:'#c8ab6e'}},
+    {k:'jambu',n:'Merah Jambu',desc:'Rose strips on a blush floor',c:{ground:'#eed8d2',sheet:'#fffaf6',ink:'#3a2a2e',accent:'#7a3a4a',gold:'#b88a6a',pagefg:'#5a2e3a',dye:'#c4687a',dye2:'#7a3a4a',cord:'#b45a6c'}},
+    {k:'sage',n:'Sage',desc:'Sage strips on a pale floor',c:{ground:'#e1e3d4',sheet:'#fcfaf2',ink:'#2c3027',accent:'#3e4a38',gold:'#a89462',pagefg:'#2e3628',dye:'#6f8466',dye2:'#3e4a38',cord:'#55684c'}},
+    {k:'hitam',n:'Hitam',desc:'Black strips, red cord',c:{ground:'#191716',sheet:'#fbf7ee',ink:'#221f1d',accent:'#161414',gold:'#c4a058',pagefg:'#ece6da',dye:'#252120',dye2:'#a3263a',cord:'#a3263a'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta strips, dark cord',c:{ground:'#45201a',sheet:'#fcf6ec',ink:'#33241c',accent:'#6b2e1c',gold:'#c99a5e',pagefg:'#f2e2d2',dye:'#a84a28',dye2:'#2a1a14',cord:'#3a2016'}},
+  ]});
+
+})()}catch(e){console.error("family anyaman failed",e)}
+
+
 /* ===== family: azulejo ===== */
 try{(()=>{
 /* azulejo: a wall of Portuguese blue-and-white pattern tiles (padrao, four-tile repeat) with a baroque framed
@@ -1596,99 +1806,170 @@ FAMILY({key:'azulejo',name:'Azulejo',meaning:'Portuguese tiles',
 })()}catch(e){console.error("family azulejo failed",e)}
 
 
+/* ===== family: baldu ===== */
+try{(()=>{
+/* baldu: a velvet keepsake box, the names hot-foiled in gold on the lid, tied with a satin ribbon in a flat knot.
+   Cover: tap "Buka Jemputan", the ribbon slips off, the lid lifts away and the satin-lined tray with the card comes forward.
+   Page: looking down into the open box: velvet walls, ivory satin lining, the card resting inside.
+   Skin: paper cards on velvet, a satin ribbon caught across one corner of each. */
+const bdHex=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)*(1-t)+parseInt(b.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('');
+const bdGo=(el)=>{const sc=$('.scroller',el);
+  $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))};
+const bdVars=c=>`--vel:${c.vel};--rib:${c.rib}`;
+const bdRibbon=()=>`<div class="bd-ribbon"><i class="bd-band"></i><i class="bd-tail t1"></i><i class="bd-tail t2"></i><i class="bd-knot"></i></div>`;
+// [key, name, description, velvet, ribbon, light?]
+const BD=[['wain','Merah Wain','Wine velvet, ivory satin','#5a1424','#efe4d0'],['zamrud','Zamrud','Emerald velvet, gold satin','#13483a','#d9bf86'],
+  ['diraja','Biru Diraja','Royal blue velvet, gold satin','#1c2c5e','#d9bf86'],['champagne','Champagne','Champagne velvet, ivory satin','#c4ad8c','#f8f2e8',1],
+  ['hitam','Hitam','Black velvet, wine satin','#1d1b1c','#8a2232'],['sage','Sage','Sage velvet, cream satin','#66755a','#f1ebdc'],
+  ['biru-lembut','Biru Lembut','Soft blue velvet, cream satin','#5c7594','#efe4cc'],['ungu','Ungu','Plum velvet, gold satin','#47213f','#d9bf86'],
+  ['terakota','Terakota','Terracotta velvet, cream satin','#8a3e28','#efe2c8'],['merah-jambu','Merah Jambu','Dusty rose velvet, pearl satin','#b67a80','#fbf3ee',1],
+  ['mauve','Mauve Zaitun','Mauve velvet, olive satin','#6a3248','#a3a16a'],['pic','Pic Sage','Sage velvet, peach satin','#55654c','#efb08f'],
+  ['kunyit','Kunyit Nila','Indigo velvet, turmeric satin','#1e2d52','#e0a832'],['lavender','Lavender Arang','Charcoal velvet, lavender satin','#3c3a42','#b3a6d8'],
+  ['karang','Teal Karang','Teal velvet, coral satin','#0d4e4e','#ef8a72'],['pandan','Pandan','Pandan velvet, gold satin','#14573c','#d6b450'],
+  ['kopi','Kopi Susu','Coffee velvet, milky satin','#4a3226','#d8bc98'],['hujan','Biru Hujan','Rain-blue velvet, mist satin','#2c4258','#b4c4d2'],
+  ['fajar','Fajar','Aubergine velvet, apricot satin','#562a44','#f2a876']];
+FAMILY({key:'baldu',name:'Kotak Baldu',meaning:'Velvet keepsake box',
+  blurb:'A velvet keepsake box with your names foiled in gold on the lid, tied with a satin ribbon. The lid lifts to show the card inside.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-baldu2" style="${bdVars(c)}"><div class="bd-surface"></div>
+      <div class="bd-tray reveal"><div class="bd-lining">
+        <div class="bd-card"><p class="bd-k kicker">${ev(o,L)}</p>
+          <h1 class="bd-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+          <i class="bd-rule"></i>
+          <p class="bd-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="bd-hj">${esc(o.hijri)}</p>`:''}
+          ${o.venue?`<p class="bd-ven">${esc(o.venue)}</p>`:''}
+          <a class="bd-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-baldu2${c.light?' bd-light':''}" style="${bdVars(c)}"><div class="bd-surface"></div>
+      <div class="bd-stage"><div class="bd-body"></div>
+        <div class="bd-inside"><div class="bd-icard"><p class="bd-k">${ev(o,L)}</p><p class="bd-in">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div></div>
+        <div class="bd-lid"><div class="bd-top"><div class="bd-foil"><p class="bd-k">${ev(o,L)}</p><p class="bd-fn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="bd-fd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>${bdRibbon()}</div><div class="bd-edge"></div></div></div>
+      <div class="bd-foot">${guest?`<p class="bd-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="bd-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.style.setProperty('--rib',th.c.rib);bdGo(el)},
+  themes:BD.map(([k,n,desc,vel,rib,light])=>({k,n,desc,c:light
+    ?{ground:bdHex(vel,'#ffffff',.72),sheet:'#fffbf4',ink:'#2e2622',accent:bdHex(vel,'#000000',.5),gold:'#b08a46',pagefg:bdHex(vel,'#000000',.62),vel,rib,cover:vel,light:1}
+    :{ground:bdHex(vel,'#000000',.6),sheet:'#fbf7ef',ink:'#2e2622',accent:bdHex(vel,'#000000',.15),gold:'#d6b06a',pagefg:'#f1e8d8',vel,rib,cover:vel}}))});
+
+})()}catch(e){console.error("family baldu failed",e)}
+
+
+/* ===== family: batik ===== */
+try{(()=>{
+/* batik: a folded length of hand-drawn batik (a 19th-century Javanese sarong, public domain) held by a paper band with the names.
+   Cover: tap "Buka Jemputan", the band slips off and the cloth opens out to fill the screen.
+   Page: the batik laid out flat, a deckled card resting on it. Skin: paper cards with a strip of the batik border down one edge.
+   Most colourways re-dye the cloth in one colour (like indigo or soga batik); a few keep the cloth's own colours. */
+const BK_IMG=`${A}pd-textile-3.jpg`;
+const bkGo=(el)=>{const sc=$('.scroller',el);
+  $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+    if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+    const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))};
+// a gradient map (dark dye -> dye -> unbleached cotton) turns the photo into a two-tone batik in the colourway's dye
+const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255);
+const bkDuo=th=>{const c=th.c;if(!c.dye)return '';const d=hx(c.dye),k=d.map(v=>v*.32),w=hx(c.cotton||'#efe5cf'),m=d.map((v,i)=>v*.55+w[i]*.12);
+  const f=i=>`tableValues="${[k[i],d[i]*.85,d[i]*.55+w[i]*.45,w[i]*.97,w[i]].map(v=>Math.min(1,v).toFixed(3)).join(' ')}"`;
+  return `<svg class="bk-svg" width="0" height="0" aria-hidden="true"><filter id="bkd-${th.k}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".3 .59 .11 0 0 .3 .59 .11 0 0 .3 .59 .11 0 0 0 0 0 1 0"/><feComponentTransfer><feFuncR type="table" ${f(0)}/><feFuncG type="table" ${f(1)}/><feFuncB type="table" ${f(2)}/></feComponentTransfer></filter></svg>`};
+const bkVars=th=>{const c=th.c;return `--duo:${c.dye?`url(#bkd-${th.k})`:'none'};--fold:${c.dye||'#6e2a20'};--band:${c.band||c.sheet}`};
+FAMILY({key:'batik',name:'Batik Tulis',meaning:'Hand-drawn batik',
+  blurb:'A folded length of hand-drawn batik held by a paper band with your names. The band slips off and the cloth opens out.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-batik2" style="${bkVars(th)}">${bkDuo(th)}<div class="bk-cloth bk-flat"></div><div class="bk-dim"></div>
+      <div class="bk-card reveal"><div class="bk-cin">
+        <p class="bk-k kicker">${ev(o,L)}</p>
+        <h1 class="bk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="bk-rule"></i>
+        <p class="bk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="bk-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="bk-ven">${esc(o.venue)}</p>`:''}
+        <a class="bk-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-batik2" style="${bkVars(th)}">${bkDuo(th)}<div class="bk-table"></div>
+      <p class="bk-k bk-top">${ev(o,L)}</p>
+      <div class="bk-stage"><div class="bk-under"><div class="bk-cloth"></div></div><div class="bk-fold"><div class="bk-cloth"></div><i class="bk-crease"></i></div>
+        <div class="bk-band"><p class="bk-bn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="bk-bd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+      <div class="bk-foot">${guest?`<p class="bk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="bk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--duo',th.c.dye?`url(#bkd-${th.k})`:'none');bkGo(el)},
+  themes:[
+    {k:'nila',n:'Nila',desc:'Indigo batik, ivory band',c:{ground:'#18223f',sheet:'#fbf6ea',ink:'#26262b',accent:'#1f2e5c',gold:'#b8955a',pagefg:'#efe7d6',dye:'#2a4a8c'}},
+    {k:'marun',n:'Marun',desc:'The cloth in its own madder red and green',c:{ground:'#3a1016',sheet:'#fbf5ea',ink:'#2c2420',accent:'#6e1d27',gold:'#b8914f',pagefg:'#f1e6d4'}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald batik, ivory band',c:{ground:'#0f2b22',sheet:'#fbf7ec',ink:'#24292a',accent:'#1d4a3a',gold:'#b8975a',pagefg:'#ece6d4',dye:'#2c6a52'}},
+    {k:'soga',n:'Soga',desc:'Soga-brown batik, cream band',c:{ground:'#3a2416',sheet:'#fbf4e6',ink:'#2e241c',accent:'#6a3e22',gold:'#b8904f',pagefg:'#f1e5cf',dye:'#8a5228'}},
+    {k:'hitam',n:'Hitam',desc:'Charcoal batik, ivory band',c:{ground:'#131212',sheet:'#f8f4ec',ink:'#232120',accent:'#2a2725',gold:'#b49456',pagefg:'#ece6da',dye:'#4a4744'}},
+    {k:'gading',n:'Gading',desc:'Indigo batik on ivory linen',c:{ground:'#ece4d4',sheet:'#fdfaf3',ink:'#2a2a30',accent:'#24366a',gold:'#a88b55',pagefg:'#24304e',dye:'#2c4a8a'}},
+    {k:'mauve',n:'Mauve Zaitun',desc:'Mauve batik, olive-cream band',c:{ground:'#3b2230',sheet:'#f8f3ea',ink:'#2e2629',accent:'#6b3c55',gold:'#a89660',pagefg:'#efe4e8',dye:'#8a5a76'}},
+    {k:'pic',n:'Pic Sage',desc:'Sage batik, peach band',c:{ground:'#3c4637',sheet:'#fcf3ea',ink:'#2c2e28',accent:'#4f5d47',gold:'#c08f68',pagefg:'#eee9dc',dye:'#6f8466',band:'#f6e2d2'}},
+    {k:'kunyit',n:'Kunyit Nila',desc:'Turmeric and indigo batik',c:{ground:'#1a2440',sheet:'#fcf6e8',ink:'#26262b',accent:'#1d2b4a',gold:'#c99630',pagefg:'#f1e6cc',dye:'#c08a1e'}},
+    {k:'lavender',n:'Lavender Arang',desc:'Lavender-grey batik on charcoal',c:{ground:'#2b2a31',sheet:'#f8f6f6',ink:'#2a2930',accent:'#4e4a62',gold:'#a8a08a',pagefg:'#ebe8f0',dye:'#7c74a4'}},
+    {k:'karang',n:'Teal Karang',desc:'Teal batik, coral band',c:{ground:'#0c3434',sheet:'#fdf4ee',ink:'#2a2a2a',accent:'#0f4f4f',gold:'#d08a6e',pagefg:'#ecefe8',dye:'#1f7a78',band:'#f8ddd2'}},
+    {k:'pandan',n:'Pandan',desc:'Pandan-green batik, gold band',c:{ground:'#0f3324',sheet:'#fbf7e8',ink:'#232a24',accent:'#14533a',gold:'#c6a24a',pagefg:'#eef0de',dye:'#3a8a52'}},
+    {k:'kopi',n:'Kopi Susu',desc:'The cloth in its own colours, on coffee brown',c:{ground:'#2e2019',sheet:'#fbf5ea',ink:'#2e241c',accent:'#5a3a28',gold:'#b8935e',pagefg:'#f1e6d4'}},
+    {k:'hujan',n:'Biru Hujan',desc:'Rain-blue batik, pearl band',c:{ground:'#1f2f40',sheet:'#f8f8f5',ink:'#25292e',accent:'#2c4560',gold:'#a8a593',pagefg:'#e9eef2',dye:'#5a7a9a'}},
+    {k:'fajar',n:'Fajar',desc:'Dawn-rose batik, apricot band',c:{ground:'#3a1c2c',sheet:'#fdf4ec',ink:'#2e2428',accent:'#6a2e4a',gold:'#d0a070',pagefg:'#f6e6e2',dye:'#a85a6e',band:'#fbe4d2'}},
+  ]});
+
+})()}catch(e){console.error("family batik failed",e)}
+
+
 /* ===== family: bauhaus ===== */
 try{(()=>{
-/* bauhaus: a printed geometric poster (circle, half and quarter discs, bars, construction grid) on off-white stock.
-   Cover: the poster taped to a wall; on tap the shapes slide home into a locked composition, then the poster lifts away.
-   Page: a full-bleed poster with the names set lowercase in a geometric grotesque. Skin: numbered geometric heading blocks. */
-needFont('Jost:wght@300;400;500;600;700;800');
-const F="'Jost', sans-serif",MONO="'IBM Plex Mono', monospace";
-// a halftone of circles inside a disc, darker towards (dx,dy); one path for all dots
-function dots(cx,cy,R,step,dx,dy,maxR,bias=.15){let d='';const a=.26,ca=Math.cos(a),sa=Math.sin(a);
-  for(let i=-R-step;i<=R+step;i+=step)for(let j=-R-step;j<=R+step;j+=step){const x=i*ca-j*sa,y=i*sa+j*ca;if(x*x+y*y>(R-1)*(R-1))continue;
-    const t=Math.max(0,Math.min(1,((x*dx+y*dy)/R+bias)/(1+bias)));const r=maxR*Math.pow(t,1.15);if(r<.28)continue;
-    const X=(cx+x-r).toFixed(1),Y=(cy+y).toFixed(1);d+=`M${X} ${Y}a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(2*r).toFixed(2)} 0a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(-2*r).toFixed(2)} 0`}
-  return d}
-const fit=(s,max,fs,k=.56)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-const reg=(x,y,c)=>`<g fill="none" stroke="${c}" stroke-width=".55"><circle cx="${x}" cy="${y}" r="3.4"/><path d="M${x-6} ${y}h12M${x} ${y-6}v12"/></g>`;
-const crop=(x,y,sx,sy,c)=>`<path d="M${x+sx*3} ${y}h${sx*9}M${x} ${y+sy*3}v${sy*9}" stroke="${c}" stroke-width=".5" fill="none"/>`;
-function strip(c,x,y){const cols=[c.ink,c.accent,c.gold,c.c3];return `<g>${cols.map((k,i)=>`<rect x="${x+i*9}" y="${y}" width="8" height="5" fill="${k}"/>`).join('')}
-  <rect x="${x+36}" y="${y}" width="8" height="5" fill="${c.ink}" opacity=".7"/>
-  <rect x="${x+45}" y="${y}" width="8" height="5" fill="${c.ink}" opacity=".45"/></g>`}
-let uid=0;
-function poster(o,th,L,guest){const c=th.c,u=++uid,[n1,n2]=coverNames(o),en=o.lang==='en';
-  const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0');
-  const f1=fit(n1,236,50),f2=fit('& '+n2,236,50);
-  const grid=Array.from({length:7},(_,i)=>`M${20+i*43.3} 46V504`).join('')+Array.from({length:12},(_,i)=>`M20 ${46+i*41.3}H280`).join('');
-  return `<svg class="bh-art" viewBox="0 0 300 520" aria-hidden="true">
-  <defs><clipPath id="bhc${u}"><circle cx="188" cy="146" r="88"/></clipPath><clipPath id="bhq${u}"><rect x="0" y="0" width="300" height="520"/></clipPath></defs>
-  <path d="${grid}" stroke="${c.ink}" stroke-width=".35" opacity=".16" fill="none"/>
-  ${crop(20,20,-1,-1,c.ink)}${crop(280,20,1,-1,c.ink)}${crop(20,500,-1,1,c.ink)}${crop(280,500,1,1,c.ink)}
-  ${reg(150,9,c.ink)}${reg(150,511,c.ink)}${strip(c,224,7)}
-  <text x="20" y="13" class="bh-mono" fill="${c.ink}" font-size="5.4">${en?'proof 01 · offset litho':'pruf 01 · cetakan offset'}</text>
-  <g class="bh-s bh-arcs" fill="none" stroke="${c.ink}" stroke-width=".5" stroke-dasharray="1.5 2.5" opacity=".5"><circle cx="280" cy="520" r="138"/><circle cx="280" cy="520" r="152"/><circle cx="188" cy="146" r="101"/><path d="M188 36V258M78 146H298" stroke-dasharray="none" opacity=".55"/></g>
-  <g class="bh-s bh-circ"><circle cx="188" cy="146" r="88" fill="${c.accent}"/><path d="${dots(188,146,88,4.6,-.62,.78,2.25,.05)}" fill="${c.ink}" opacity=".78"/>
-   <circle cx="188" cy="146" r="56" fill="none" stroke="${c.sheet}" stroke-width=".8" opacity=".7"/><circle cx="188" cy="146" r="3" fill="${c.sheet}"/></g>
-  <rect x="20" y="52" width="10" height="210" fill="${c.ink}"/>
-  <text class="bh-cap" transform="translate(13 258) rotate(-90)" fill="${c.ink}" font-size="6.6">${ev(o,L)} &#8212; ${esc(fmtShort(o.date))}</text>
-  <g class="bh-s bh-half"><path d="M34 262a58 58 0 0 1 116 0Z" fill="${c.c3}"/><path d="M56 262a36 36 0 0 1 72 0" fill="none" stroke="${c.sheet}" stroke-width="5"/><path d="M71 262a21 21 0 0 1 42 0Z" fill="${c.ink}"/></g>
-  <rect x="20" y="262" width="260" height="13" fill="${c.ink}"/>
-  <g class="bh-s bh-sq"><rect x="236" y="284" width="22" height="22" fill="${c.accent}"/><rect x="262" y="284" width="18" height="22" fill="none" stroke="${c.ink}" stroke-width="1"/></g>
-  <circle cx="212" cy="295" r="5.5" fill="${c.ink}"/>
-  <text x="20" y="36" class="bh-k" fill="${c.ink}" font-size="8.4">${en?'invitation':'kad jemputan'}</text>
-  <text x="280" y="36" text-anchor="end" class="bh-mono" fill="${c.ink}" font-size="7.6">no. ${dd} / ${mm}</text>
-  <path d="M20 42H280" stroke="${c.ink}" stroke-width="1.3"/>
-  <text x="18" y="334" class="bh-name" fill="${c.ink}" font-size="${f1.toFixed(1)}">${esc(n1)}</text>
-  <text x="18" y="${(334+f2*.98).toFixed(1)}" class="bh-name" fill="${c.ink}" font-size="${f2.toFixed(1)}"><tspan fill="${c.accent}">&amp;</tspan> ${esc(n2)}</text>
-  <g class="bh-s bh-quart" clip-path="url(#bhq${u})"><path d="M280 404a116 116 0 0 0-116 116H280Z" fill="${c.gold}"/><path d="M280 438a82 82 0 0 0-82 82" fill="none" stroke="${c.sheet}" stroke-width=".7" opacity=".6"/>
-   <text x="272" y="500" text-anchor="end" class="bh-num" fill="${c.sheet}" font-size="34">${dd}<tspan font-size="16" dx="2">.${mm}</tspan></text></g>
-  <path d="M20 414H190" stroke="${c.ink}" stroke-width=".8"/>
-  <g class="bh-info" fill="${c.ink}"><text x="20" y="431" class="bh-lab" font-size="6.4">${en?'date':'tarikh'}</text><text x="62" y="431" class="bh-val" font-size="9.4">${esc(fmtDate(o.date,o.lang))}</text>
-   <text x="20" y="447" class="bh-lab" font-size="6.4">${en?'time':'masa'}</text><text x="62" y="447" class="bh-val" font-size="9.4">${esc(fmtTime(o.start,o.lang))}</text>
-   <text x="20" y="463" class="bh-lab" font-size="6.4">${en?'venue':'tempat'}</text><text x="62" y="463" class="bh-val" font-size="9.4">${esc(o.venue)}</text></g>
-  ${guest?`<path d="M20 474H150" stroke="${c.ink}" stroke-width=".5" opacity=".5"/><text x="20" y="488" class="bh-lab" fill="${c.ink}" font-size="6.4">${en?'for':'kepada'}</text><text x="62" y="488" class="bh-val bh-guest" fill="${c.accent}" font-size="9.6">${esc(guest)}</text>`:''}
-  </svg>`}
-function pageArt(o,th){const c=th.c,u=++uid;const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0');
-  return `<svg class="bh-part" viewBox="0 0 350 292" aria-hidden="true"><defs><clipPath id="bpq${u}"><rect width="350" height="292"/></clipPath></defs>
-  <g fill="none" stroke="${c.ink}" stroke-width=".5" stroke-dasharray="1.5 2.5" opacity=".5"><circle cx="0" cy="0" r="138"/><circle cx="0" cy="0" r="152"/><circle cx="236" cy="128" r="118"/><path d="M236 0V280M100 128H350" stroke-dasharray="none" opacity=".5"/></g>
-  <g clip-path="url(#bpq${u})"><path d="M0 0H122A122 122 0 0 1 0 122Z" fill="${c.c3}"/><path d="M0 92A92 92 0 0 0 92 0" fill="none" stroke="${c.sheet}" stroke-width="5"/></g>
-  <circle cx="236" cy="128" r="104" fill="${c.accent}"/><path d="${dots(236,128,104,4.8,-.6,.8,2.4,.05)}" fill="${c.ink}" opacity=".78"/>
-  <circle cx="236" cy="128" r="66" fill="none" stroke="${c.sheet}" stroke-width=".8" opacity=".7"/><circle cx="236" cy="128" r="3.2" fill="${c.sheet}"/>
-  <text x="14" y="226" class="bh-num" fill="${c.ink}" font-size="118" letter-spacing="-6">${dd}</text>
-  <rect x="0" y="232" width="350" height="14" fill="${c.ink}"/>
-  <path d="M150 232a46 46 0 0 1 92 0Z" fill="${c.gold}"/><path d="M168 232a28 28 0 0 1 56 0" fill="none" stroke="${c.sheet}" stroke-width="4"/>
-  <rect x="300" y="254" width="22" height="22" fill="${c.accent}"/><rect x="326" y="254" width="22" height="22" fill="none" stroke="${c.ink}"/><circle cx="284" cy="265" r="6" fill="${c.ink}"/>
-  <text x="14" y="264" class="bh-mono" fill="${c.ink}" font-size="8">${esc(fmtShort(o.date))}</text></svg>`}
-const SH=['circ','quart','tri','sq','half','bar'];
-FAMILY({key:'bauhaus',name:'Bauhaus',meaning:'Geometric print poster',
-  blurb:'A printed Bauhaus poster of discs, half-discs and bars on off-white stock, the names set lowercase; the shapes lock into place and the poster lifts away.',
-  fonts:{d:F,s:F,b:F},ms:1450,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-bauhaus" style="--c3:${c.c3}"><i class="bh-grid"></i><i class="bh-grain"></i>
-    <header class="bh-hd reveal"><span>${en?'invitation':'kad jemputan'}</span><span>${ev(o,L)}</span><span>${esc(String(new Date((o.date||'2026')+'T00:00:00').getFullYear()))}</span></header>
-    <div class="bh-pa reveal d1">${pageArt(o,th)}</div>
-    <h1 class="names bh-nm reveal d1">${esc(n1)}<span class="amp"><em>&amp;</em> ${esc(n2)}</span></h1>
-    <p class="bh-host reveal d2"><span>${en?'hosted by':'anjuran'}</span>${esc(o.hosts||'')}</p>
-    <div class="bh-row reveal d2"><div><span>${en?'date':'tarikh'}</span><b>${esc(fmtDate(o.date,o.lang))}</b></div><div><span>${en?'time':'masa'}</span><b>${esc(fmtTime(o.start,o.lang))}</b></div><div class="w"><span>${en?'venue':'tempat'}</span><b>${esc(o.venue)}</b></div></div>
-    <footer class="bh-ft reveal d3"><i style="background:var(--ink)"></i><i style="background:var(--accent)"></i><i style="background:var(--gold)"></i><i style="background:var(--c3)"></i><span>${esc(o.hijri||'')}</span></footer></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-bauhaus" style="--c3:${th.c.c3}"><div class="bh-wall"></div>
-    <p class="bh-wtop">${en?'Kindly open':'Sila buka'} <b>&#8212;</b> ${ev(o,L)}</p>
-    <${tag} class="bh-poster" ${attr} aria-label="${L.open}"><i class="bh-tape l"></i><i class="bh-tape r"></i>${poster(o,th,L,guest)}<i class="bh-grain"></i></${tag}>
-    <p class="bh-hint"><i></i>${en?'Open invitation':'Buka Jemputan'}<i></i></p></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--c3',th.c.c3);
-    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(!h)return;s.classList.add('bh-sec');
-      h.insertAdjacentHTML('afterbegin',`<i class="bh-tile t-${SH[i%SH.length]}"></i><b class="bh-no">${String(i+1).padStart(2,'0')}</b>`);
-      s.insertAdjacentHTML('afterbegin','<i class="bh-cbar"></i>')})},
+/* bauhaus: a letterpress card in the manner of a 1920s Dessau print. Two inks and black on soft cotton stock:
+   one large disc, one black bar, one small square, everything else is type on a strict grid.
+   Cover: a folded card lying on the table; tap it and the front panel swings open on its fold.
+   Page: the inside spread, the disc carried over, names in light lowercase Jost, a spec table set like a colophon.
+   Skin: cotton-paper cards, each headed by a black bar, a small coloured square and a light lowercase title. */
+needFont('Jost:ital,wght@0,300;0,400;0,500;1,300;1,400');
+const pad=n=>String(n).padStart(2,'0');
+const bhD=o=>{const d=new Date((o.date||'2026-01-01')+'T00:00:00');return isNaN(d)?{dd:'',mm:'',yy:''}:{dd:pad(d.getDate()),mm:pad(d.getMonth()+1),yy:String(d.getFullYear())}};
+// names are set large: shrink long ones so each fits one line of the card
+const bhFs=(n1,n2,max,k)=>Math.min(max,k/Math.max(5,(n1||'').length,(n2||'').length+2));
+FAMILY({key:'bauhaus',name:'Bauhaus',meaning:'Modernist letterpress card',
+  blurb:'A folded letterpress card in the 1920s Bauhaus manner: one disc, one black bar and the names set in light lowercase. The front swings open on its fold.',
+  fonts:{d:"'Jost', sans-serif",s:"'Jost', sans-serif",b:"'Jost', sans-serif"},ms:1350,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',{dd,mm,yy}=bhD(o),fs=bhFs(n1,n2,21,108);
+    return `<section class="page pg-bauhaus${th.c.dark?' bx-dk':''}" style="--c3:${th.c.c3}"><i class="bx-paper"></i>
+      <i class="bx-disc bx-pdisc"></i><i class="bx-ring bx-pring"></i><i class="bx-bar bx-pbar"></i><i class="bx-sq bx-psq"></i>
+      <div class="bx-pmain">
+        <p class="bx-k kicker reveal">${ev(o,L)}</p>
+        <h1 class="names bx-nm reveal d1" style="font-size:${fs}cqi">${esc(n1)}<span><em>&amp;</em> ${esc(n2)}</span></h1>
+        ${o.hosts?`<p class="bx-host reveal d2"><span>${en?'Hosted by':'Anjuran'}</span>${esc(o.hosts)}</p>`:''}
+        <div class="bx-spec reveal d2">
+          <a data-go="when" href="#"><span>${en?'Date':'Tarikh'}</span><b>${esc(fmtDate(o.date,o.lang))}</b>${o.hijri?`<small>${esc(o.hijri)}</small>`:''}</a>
+          <a data-go="sched" href="#"><span>${en?'Time':'Masa'}</span><b>${esc(fmtTime(o.start,o.lang))}${o.end?` – ${esc(fmtTime(o.end,o.lang))}`:''}</b></a>
+          <a data-go="loc" href="#"><span>${en?'Venue':'Tempat'}</span><b>${esc(o.venue)}</b>${o.address?`<small>${esc(o.address)}</small>`:''}</a>
+        </div>
+        <nav class="bx-links reveal d3"><a data-go="when" href="#"><i></i>${en?'Details':'Butiran'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#"><i></i>RSVP</a>`:''}<a data-go="loc" href="#"><i></i>${en?'Map':'Lokasi'}</a></nav>
+      </div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',{dd,mm,yy}=bhD(o),fs=bhFs(n1,n2,17,88);
+    return `<div class="cover cv-bauhaus${th.c.dark?' bx-dk':''}" style="--c3:${th.c.c3}"><i class="bx-table"></i>
+      ${guest?`<p class="bx-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <${tag} class="bx-stage" ${attr} aria-label="${L.open}">
+        <span class="bx-card">
+          <span class="bx-inside"><i class="bx-paper"></i><span class="bx-ik">${en?'with love':'dengan kasih'}</span></span>
+          <span class="bx-front"><i class="bx-paper"></i>
+            <i class="bx-ring"></i><i class="bx-disc"></i><i class="bx-bar"></i><i class="bx-sq"></i>
+            <span class="bx-top"><span>${ev(o,L)}</span><span>${dd}·${mm}</span></span>
+            <span class="bx-cn" style="font-size:${fs}cqi">${esc(n1)}<span><em>&amp;</em> ${esc(n2)}</span></span>
+            <span class="bx-cd"><span>${esc(fmtDate(o.date,o.lang))}</span><span>${esc(o.venue)}</span></span>
+            <span class="bx-col"><span>${en?'Printed invitation':'Kad jemputan'}</span><span>No. ${dd}/${mm}/${yy.slice(2)}</span></span>
+          </span>
+        </span>
+        <span class="bx-btn">${en?'Open invitation':'Buka Jemputan'}</span>
+      </${tag}></div>`},
+  skin(el,o,th){K.cards(el);el.classList.toggle('bx-dk',!!th.c.dark);el.style.setProperty('--c3',th.c.c3);const sc=$('.scroller',el);
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(!h)return;h.insertAdjacentHTML('afterbegin',`<b class="bx-no">${pad(i+1)}</b>`)});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el)||$('[data-s="when"]',el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'klasik',n:'Klasik',desc:'Red, blue and yellow on a dark wall',c:{ground:'#262421',sheet:'#efe9dc',ink:'#191919',accent:'#d33a25',gold:'#1f4f9e',c3:'#f0b31c',pagefg:'#efe9dc',line:'rgba(25,25,25,.85)'}},
-    {k:'kertas',n:'Kertas',desc:'Primaries on a pale gallery wall',c:{ground:'#d8d2c5',sheet:'#f3eee3',ink:'#1a1a1a',accent:'#e0412b',gold:'#2557a8',c3:'#f2b820',pagefg:'#1a1a1a',line:'rgba(26,26,26,.85)'}},
-    {k:'terakota',n:'Terakota',desc:'Earthy terracotta, ochre and teal',c:{ground:'#3b2a21',sheet:'#ece1cd',ink:'#2a201b',accent:'#c0582f',gold:'#2d5c56',c3:'#d9a033',pagefg:'#ece1cd',line:'rgba(42,32,27,.85)'}},
-    {k:'lumut',n:'Lumut',desc:'Olive, rust and mustard on linen',c:{ground:'#e2dbc9',sheet:'#f3eddf',ink:'#23261f',accent:'#a8462f',gold:'#5d6d33',c3:'#e1b347',pagefg:'#23261f',line:'rgba(35,38,31,.85)'}},
-    {k:'nila',n:'Nila',desc:'Orange and cobalt on navy',c:{ground:'#15213b',sheet:'#efe8d8',ink:'#15213b',accent:'#e65c37',gold:'#2c6db3',c3:'#f3c444',pagefg:'#efe8d8',line:'rgba(21,33,59,.85)'}},
-    {k:'jambu',n:'Jambu',desc:'Rose, navy and saffron on blush',c:{ground:'#efd8d0',sheet:'#f8f0e7',ink:'#2a1f25',accent:'#d34f6a',gold:'#2b4785',c3:'#f0a52c',pagefg:'#2a1f25',line:'rgba(42,31,37,.85)'}},
-    {k:'hitam',n:'Hitam',desc:'A black poster printed in bright primaries',c:{ground:'#0d0d0d',sheet:'#1d1c1a',ink:'#eee7d8',accent:'#e4472f',gold:'#3f78cc',c3:'#f2c12c',pagefg:'#eee7d8',line:'rgba(238,231,216,.7)'}},
-    {k:'sage',n:'Sage',desc:'Coral and pine on a sage wall',c:{ground:'#9ba692',sheet:'#f1eee3',ink:'#1e2a24',accent:'#d4683a',gold:'#2f5a4c',c3:'#e7bf55',pagefg:'#16201b',line:'rgba(30,42,36,.85)'}},
+    {k:'klasik',n:'Klasik',desc:'Vermilion and black on cream, on a dark table',c:{ground:'#2b2925',sheet:'#efe8d9',ink:'#1b1a18',accent:'#c8402b',gold:'#1f4c8f',c3:'#e2a823',pagefg:'#efe8d9',line:'rgba(27,26,24,.8)'}},
+    {k:'kertas',n:'Kertas',desc:'Cobalt and black on white cotton',c:{ground:'#d9d4ca',sheet:'#f4f1ea',ink:'#1a1a1a',accent:'#22509a',gold:'#c8402b',c3:'#e2a823',pagefg:'#1a1a1a',line:'rgba(26,26,26,.8)'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta and teal on sand',c:{ground:'#3a2a21',sheet:'#ece2cf',ink:'#2a211c',accent:'#b9562f',gold:'#2d5c56',c3:'#d39b35',pagefg:'#ece2cf',line:'rgba(42,33,28,.8)'}},
+    {k:'lumut',n:'Lumut',desc:'Olive and rust on linen',c:{ground:'#ded7c5',sheet:'#f2ecdd',ink:'#23261f',accent:'#5d6b34',gold:'#a8462f',c3:'#d9ac45',pagefg:'#23261f',line:'rgba(35,38,31,.8)'}},
+    {k:'nila',n:'Nila',desc:'Cobalt and orange on cream, on navy',c:{ground:'#16213a',sheet:'#eee7d6',ink:'#16213a',accent:'#2a5fae',gold:'#e0582f',c3:'#eebf43',pagefg:'#eee7d6',line:'rgba(22,33,58,.8)'}},
+    {k:'jambu',n:'Jambu',desc:'Rose and navy on blush',c:{ground:'#ead6ce',sheet:'#f8f1e8',ink:'#2a1f25',accent:'#c9566c',gold:'#2b4785',c3:'#e9a23a',pagefg:'#2a1f25',line:'rgba(42,31,37,.8)'}},
+    {k:'hitam',n:'Hitam',desc:'Vermilion and ivory on black stock',c:{ground:'#0e0e0d',sheet:'#1e1d1b',ink:'#ece5d6',accent:'#d6492f',gold:'#e3b23a',c3:'#3f78cc',pagefg:'#ece5d6',line:'rgba(236,229,214,.6)',dark:'1'}},
+    {k:'sage',n:'Sage',desc:'Coral and pine on pale sage',c:{ground:'#a3ad99',sheet:'#f1efe5',ink:'#1e2a24',accent:'#cf6a3c',gold:'#2f5a4c',c3:'#e2bb55',pagefg:'#16201b',line:'rgba(30,42,36,.8)'}},
   ]});
 
 })()}catch(e){console.error("family bauhaus failed",e)}
@@ -1811,97 +2092,44 @@ FAMILY({key:'bulan',name:'Bulan',meaning:'Moon phases',
 
 /* ===== family: bungaraya ===== */
 try{(()=>{
-/* bungaraya: the hibiscus, Malaysia's national flower. A large painted bloom of five layered petals with fine veins,
-   a deep throat and a long stamen, set among fine-line gold-foil leaves and buds on textured paper.
-   Cover: touching the bloom opens it; the petals part outward and fall away, revealing the names.
-   Page: hibiscus sprigs framing the names. Skin: petal-shaped heading badges, leaf sprig corners. */
-needFont('Great+Vibes');
-const r1=n=>+n.toFixed(1);
-let U=0;
-// one petal, base at 0 0, pointing up; wide ruffled crown
-function petalD(R,w,L){let d=`M0 0C${r1(-w*.12)} ${r1(-L*.14)} ${r1(-w*.74)} ${r1(-L*.34)} ${r1(-w)} ${r1(-L*.62)}`;
-  d+=`C${r1(-w*1.08)} ${r1(-L*.8)} ${r1(-w*.88)} ${r1(-L*.95)} ${r1(-w*.62)} ${r1(-L*.98)}`;
-  const n=5,yE=x=>-L*(1.0-.13*(x/w)*(x/w));let x0=-w*.62;
-  for(let i=0;i<n;i++){const span=w*1.24/n,x1=i===n-1?w*.62:-w*.62+(i+1)*span+(R()-.5)*span*.3,qx=(x0+x1)/2+(R()-.5)*6,qy=yE(qx)-2-R()*7,ey=yE(x1)+R()*3.5;d+=`Q${r1(qx)} ${r1(qy)} ${r1(x1)} ${r1(ey)}`;x0=x1}
-  d+=`C${r1(w*.88)} ${r1(-L*.95)} ${r1(w*1.08)} ${r1(-L*.8)} ${r1(w)} ${r1(-L*.62)}`;
-  d+=`C${r1(w*.74)} ${r1(-L*.34)} ${r1(w*.12)} ${r1(-L*.14)} 0 0Z`;return d}
-function veinsD(R,w,L,n){let v='',f='';for(let k=-n;k<=n;k++){const u=k/n,ex=u*w*.95,ey=-L*(.97-.08*u*u)+2+R()*3,cx=u*w*.12+(R()-.5)*5,cy=-L*.55;
-    v+=`M0 -8Q${r1(cx)} ${r1(cy)} ${r1(ex)} ${r1(ey)}`;
-    if(k!==0&&R()<.6){const t=.6+R()*.15,mx=cx*2*t*(1-t)+ex*t*t,my=cy*2*t*(1-t)-8*(1-t)*(1-t)+ey*t*t,sg=Math.sign(k)||1;f+=`M${r1(mx)} ${r1(my)}Q${r1(mx+sg*3)} ${r1(my-L*.1)} ${r1(mx+sg*(4+R()*4))} ${r1(my-L*.2)}`}}
-  return {v,f}}
-function petalSvg(c,i,ang,uid,clip){const R=rng(31+i*7),w=56+R()*8,L=[110,100,114,104,108][i%5],d=petalD(R,w,L),V=veinsD(R,w,L,15),id=`bp${uid}_${i}`;
-  const pleat=[-.55,-.05,.5].map(u=>`M0 -12Q${r1(u*w*.25)} ${r1(-L*.5)} ${r1(u*w*.95)} ${r1(-L*.92)}`).join('');
-  return `<svg viewBox="-130 -130 260 260" ${NS}><defs>
-   <radialGradient id="${id}g" cx="0" cy="0" r="${L}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.eye}"/><stop offset=".16" stop-color="${c.eye}"/><stop offset=".3" stop-color="${c.petalD}"/><stop offset=".6" stop-color="${c.petal}"/><stop offset=".92" stop-color="${c.petalL}"/><stop offset="1" stop-color="${c.petal}"/></radialGradient>
-   <radialGradient id="${id}m" cx="0" cy="0" r="${L}" gradientUnits="userSpaceOnUse"><stop offset=".12" stop-color="#fff" stop-opacity="0"/><stop offset=".3" stop-color="#fff"/><stop offset=".75" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-   <mask id="${id}k" maskUnits="userSpaceOnUse" x="-130" y="-130" width="260" height="260"><rect x="-130" y="-130" width="260" height="260" fill="url(#${id}m)"/></mask>
-   <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".38" stop-color="#fff" stop-opacity=".16"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
-   <filter id="${id}b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.6"/></filter>
-   <clipPath id="${id}c"><path d="${d}"/></clipPath>${clip?`<clipPath id="${id}h"><rect x="-140" y="-140" width="140" height="150"/></clipPath>`:''}</defs>
-   <g transform="rotate(${ang})" ${clip?`clip-path="url(#${id}h)"`:''}><path d="${d}" fill="url(#${id}g)"/>
-   <g clip-path="url(#${id}c)" fill="none" stroke-linecap="round">
-    <g filter="url(#${id}b)"><path d="${pleat}" stroke="#000" stroke-opacity=".16" stroke-width="6"/><path d="${pleat}" stroke="#fff" stroke-opacity=".14" stroke-width="5" transform="translate(5 1)"/></g>
-    <g mask="url(#${id}k)"><path d="${V.v}" stroke="${c.vein}" stroke-opacity=".32" stroke-width=".42"/><path d="${V.v}" stroke="#fff" stroke-opacity=".12" stroke-width=".4" transform="translate(.7 0)"/><path d="${V.f}" stroke="${c.vein}" stroke-opacity=".22" stroke-width=".35"/></g>
-    <rect x="-80" y="-120" width="160" height="125" fill="url(#${id}s)"/>
-    <path d="${d}" stroke="#000" stroke-opacity=".12" stroke-width="5" filter="url(#${id}b)"/></g>
-   <path d="${d}" fill="none" stroke="${c.petalL}" stroke-opacity=".55" stroke-width=".6"/></g></svg>`}
-function stamenSvg(c,uid){const id=`bs${uid}`;let an='';const R=rng(5);const X=t=>t*76+Math.sin(t*2.6)*10,Y=t=>-t*128;
-  for(let i=0;i<34;i++){const t=.56+i/34*.38,x=X(t),y=Y(t),a=-Math.PI/2+(R()-.5)*3.4,l=4+R()*6,ex=x+Math.cos(a)*l,ey=y+Math.sin(a)*l;
-    an+=`<path d="M${r1(x)} ${r1(y)}Q${r1((x+ex)/2+1)} ${r1((y+ey)/2)} ${r1(ex)} ${r1(ey)}" stroke="${c.stamen}" stroke-width=".55" fill="none"/><ellipse cx="${r1(ex)}" cy="${r1(ey)}" rx="2.1" ry="1.4" transform="rotate(${r1(a*57)} ${r1(ex)} ${r1(ey)})" fill="${c.pollen}" stroke="${c.pollenD}" stroke-width=".45"/>`}
-  const tx=X(1),ty=Y(1);
-  const tip=[-60,-30,0,30,60].map(a=>{const ra=(a-68)*Math.PI/180,x=tx+Math.cos(ra)*8,y=ty+Math.sin(ra)*8;return `<path d="M${r1(tx)} ${r1(ty)}L${r1(x)} ${r1(y)}" stroke="${c.stigma}" stroke-width="1"/><circle cx="${r1(x)}" cy="${r1(y)}" r="2.7" fill="${c.stigma}" stroke="#000" stroke-opacity=".3" stroke-width=".4"/><circle cx="${r1(x-.7)}" cy="${r1(y-.8)}" r=".8" fill="#fff" opacity=".5"/>`}).join('');
-  let col=`M-3 0`;for(let i=1;i<=10;i++){const t=i/10;col+=`L${r1(X(t)-3*(1-t)-.9)} ${r1(Y(t))}`}for(let i=10;i>=0;i--){const t=i/10;col+=`L${r1(X(t)+3*(1-t)+.9)} ${r1(Y(t)+.6)}`}
-  return `<svg viewBox="-130 -130 260 260" ${NS}><defs><linearGradient id="${id}" x1="0" y1="1" x2=".6" y2="0"><stop offset="0" stop-color="${c.eye}"/><stop offset=".45" stop-color="${c.stamen}"/><stop offset="1" stop-color="${c.petalL}"/></linearGradient></defs>
-   <path d="${col}Z" fill="url(#${id})"/><path d="M0 -6${Array.from({length:9},(_,i)=>{const t=(i+1)/10;return `L${r1(X(t)-.6)} ${r1(Y(t))}`}).join('')}" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width=".7"/>${an}${tip}</svg>`}
-function eyeSvg(c,uid){let s='';const R=rng(9);for(let i=0;i<60;i++){const a=i/60*Math.PI*2,l=16+R()*16;s+=`M${r1(Math.cos(a)*4)} ${r1(Math.sin(a)*4)}L${r1(Math.cos(a)*l)} ${r1(Math.sin(a)*l)}`}
-  return `<svg viewBox="-130 -130 260 260" ${NS}><defs><radialGradient id="be${uid}"><stop offset="0" stop-color="${c.eye}"/><stop offset=".55" stop-color="${c.eye}" stop-opacity=".85"/><stop offset="1" stop-color="${c.eye}" stop-opacity="0"/></radialGradient></defs><circle r="28" fill="url(#be${uid})"/><path d="${s}" stroke="${c.eye}" stroke-width=".7" opacity=".55"/><circle r="5" fill="${c.eye}"/></svg>`}
-function bloom(c,cls,tag='div',attr=''){const uid=++U,base=-18;
-  let p='';for(let i=0;i<5;i++){const a=base+i*72+[0,7,-4,9,-3][i],rad=(a-90)*Math.PI/180;p+=`<i class="br-pet" style="--tx:${r1(Math.cos(rad)*60)}%;--ty:${r1(Math.sin(rad)*60)}%;--rt:${[14,-10,16,-12,10][i]}deg;--dl:${[0,.05,.02,.07,.04][i]}s">${petalSvg(c,i,a,uid,false)}</i>`;
-    if(i===4)p+=`<i class="br-pet" style="--tx:${r1(Math.cos((base-90)*Math.PI/180)*60)}%;--ty:${r1(Math.sin((base-90)*Math.PI/180)*60)}%;--rt:14deg;--dl:0s">${petalSvg(c,0,base,uid,true)}</i>`}
-  return `<${tag} class="br-bloom ${cls}" ${attr}>${p}<i class="br-eye">${eyeSvg(c,uid)}</i><i class="br-sta">${stamenSvg(c,uid)}</i></${tag}>`}
-// fine-line leaf: serrated ovate outline with midrib and veins
-function leafD(x,y,rot,s){const pts=[];const N=22;for(let i=0;i<=N;i++){const t=i/N,yy=-t*100,ww=38*Math.sin(Math.PI*Math.pow(t,.8))*(1-.15*t),tooth=i%2?2.4:0;pts.push([-(ww+tooth),yy])}
-  let d='M0 0';pts.forEach(([px,py])=>d+=`L${r1(px)} ${r1(py)}`);for(let i=pts.length-1;i>=0;i--){d+=`L${r1(-pts[i][0])} ${r1(pts[i][1])}`}d+='Z';
-  let v='M0 6L0 -98';for(let k=1;k<=6;k++){const yy=-k*14;v+=`M0 ${yy}Q-14 ${yy-8} ${r1(-30*Math.sin(Math.PI*k/7.5))} ${yy-20}M0 ${yy}Q14 ${yy-8} ${r1(30*Math.sin(Math.PI*k/7.5))} ${yy-20}`}
-  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="${d}" stroke-width="${r1(1.1/s)}"/><path d="${v}" stroke-width="${r1(.7/s)}"/></g>`}
-function budD(x,y,rot,s){return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0C-9 -14 -9 -34 0 -52C9 -34 9 -14 0 0Z" stroke-width="${r1(1.1/s)}"/><path d="M0 -50C-4 -34 2 -16 0 -2M-5 -40C0 -28 5 -18 3 -6" stroke-width="${r1(.6/s)}"/><path d="M0 2C-10 -4 -14 -14 -12 -22C-6 -14 -3 -8 0 -6C3 -8 6 -14 12 -22C14 -14 10 -4 0 2Z" stroke-width="${r1(.9/s)}"/><path d="M-9 -12l-6 -8M9 -12l6 -8M-4 -6l-3 -12M4 -6l3 -12" stroke-width="${r1(.6/s)}"/><path d="M0 2C0 14 -2 26 -8 38" stroke-width="${r1(1/s)}"/></g>`}
-const lf=(ang,s,off)=>{const r=(ang-90)*Math.PI/180;return leafD(r1(200+Math.cos(r)*off),r1(200+Math.sin(r)*off),ang,s)};
-const bd=(ang,s,off)=>{const r=(ang-90)*Math.PI/180;return budD(r1(200+Math.cos(r)*off),r1(200+Math.sin(r)*off),ang,s)};
-const LEAVES=K.uri(`<svg ${NS} viewBox="0 0 400 400"><g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
-  ${lf(-138,1.05,78)}${lf(-108,.8,92)}${lf(142,1.0,82)}${lf(112,.78,96)}${lf(-30,.7,120)}${lf(40,.72,118)}
-  ${bd(-160,.95,150)}${bd(166,.85,150)}
-  <path d="M200 200L${r1(200+Math.cos((-160-90)*Math.PI/180)*150)} ${r1(200+Math.sin((-160-90)*Math.PI/180)*150)}M200 200L${r1(200+Math.cos((166-90)*Math.PI/180)*150)} ${r1(200+Math.sin((166-90)*Math.PI/180)*150)}" stroke-width="1"/></g></svg>`);
-const SPRIG=K.uri(`<svg ${NS} viewBox="0 0 200 200"><g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M8 192C40 160 70 120 96 70C110 44 130 26 150 14" stroke-width="1.1"/><path d="M60 136C44 128 32 112 28 96M96 74C110 76 122 70 132 58" stroke-width=".9"/>
-  ${leafD(46,152,-118,.62)}${leafD(84,98,64,.55)}${leafD(124,48,-80,.42)}${budD(150,14,52,.72)}${budD(28,96,-30,.5)}${budD(132,58,40,.48)}</g></svg>`);
-const PETAL=`M0 0C-6 -9 -32 -18 -36 -38C-39 -50 -30 -60 -20 -61Q-14 -66 -8 -62Q-2 -67 4 -62Q10 -66 16 -61C28 -60 38 -50 36 -38C32 -18 6 -9 0 0Z`;
-const BADGE=c=>K.uri(`<svg ${NS} viewBox="-42 -70 84 74"><defs><radialGradient id="g" cx="0" cy="0" r="66" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.eye}"/><stop offset=".25" stop-color="${c.eye}"/><stop offset=".45" stop-color="${c.petalD}"/><stop offset="1" stop-color="${c.petalL}"/></radialGradient></defs><path d="${PETAL}" fill="url(#g)"/><g fill="none" stroke="${c.vein}" stroke-opacity=".55" stroke-width=".45">${[-6,-4,-2,0,2,4,6].map(k=>`<path d="M0 -3Q${k*1.5} -30 ${k*5.2} ${r1(-58+Math.abs(k)*1.2)}"/>`).join('')}</g><path d="${PETAL}" fill="none" stroke="${c.gold}" stroke-width="1"/></svg>`);
-const pal=c=>({petal:c.petal||c.accent,petalD:c.petalD||c.accent,petalL:c.petalL||c.accent,eye:c.eye||'#4a0712',vein:c.vein||'#5a0a14',stamen:c.stamen||'#e9a0a0',pollen:c.pollen||'#f2c14e',pollenD:c.pollenD||'#9b6a12',stigma:c.stigma||'#b3122b',gold:c.gold});
-FAMILY({key:'bungaraya',name:'Bunga Raya',meaning:'Hibiscus bloom',
-  blurb:'A painted hibiscus among gold-foil leaves on textured paper; touch it and the petals open away to reveal the names.',
-  fonts:{d:"'Bodoni Moda', serif",s:"'Great Vibes', 'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1350,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=pal(th.c),en=o.lang==='en';
-    return `<section class="page pg-bungaraya" style="--sprig:${SPRIG}"><div class="br-paper"></div><div class="br-fr"></div>
-     <div class="br-spr tl">${bloom(c,'mini')}<i class="br-gl"></i></div><div class="br-spr br">${bloom(c,'mini')}<i class="br-gl"></i></div>
-     <div class="br-txt"><p class="kicker reveal">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="br-rule reveal d2"><i></i><b></b><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="br-v reveal d3">${esc(o.venue)}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=pal(th.c),en=o.lang==='en';
-    return `<div class="cover cv-bungaraya" style="--leaves:${LEAVES}"><div class="br-paper"></div><div class="br-fr"></div>
-     <div class="br-head"><p class="br-k">${ev(o,L)}</p><p class="br-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="br-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <div class="br-stage"><i class="br-lv"></i>${bloom(c,'big',tag,`${attr} aria-label="${L.open}"`)}</div>
-     <div class="br-foot">${guest?`<p class="br-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="br-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);const c=pal(th.c);el.style.setProperty('--badge',BADGE(c));el.style.setProperty('--sprig',SPRIG);
-    $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="br-bd"><i></i><i></i><i></i></i>'));
-    K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="br-cs a"></i><i class="br-cs b"></i>'))},
+/* bungaraya: a hand-coloured botanical plate of hibiscus (Redouté, public domain) kept in a bevel-cut mount board.
+   Cover: the mount, the blooms showing through its window and the names in foil below it. Tap "Buka Jemputan"
+   and the mount swings open on its left hinge, leaving the plate with the names printed as its caption.
+   Page: the plate on linen with the opened mount behind it. Skin: plate paper cards with a pressed plate mark. */
+const brVars=th=>`--mat:${th.c.mat};--mfg:${th.c.mfg}`,brCls=th=>(th.c.foil?'br-foil ':'')+(th.c.dark?'br-dk':'');
+const brPlate=(o,L,cls='')=>{const [n1,n2]=coverNames(o);
+  return `<div class="br-plate ${cls}"><div class="br-mark">
+    <div class="br-print"><img src="${A}flower-hibiscus.webp" alt=""></div>
+    <div class="br-cap"><p class="br-k kicker">${ev(o,L)}</p><p class="br-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+      <p class="br-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="br-ven">${esc(o.venue)}</p>`:''}</div></div></div>`};
+const brMat=(o,L,cls='')=>{const [n1,n2]=coverNames(o);
+  return `<div class="br-mat ${cls}"><div class="br-face"><i class="br-win"></i>
+      <div class="br-mcap"><p class="br-k">${ev(o,L)}</p><p class="br-mn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="br-md">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+    <div class="br-backface"></div></div>`};
+FAMILY({key:'bungaraya',name:'Bunga Raya',meaning:'Botanical plate',
+  blurb:'A hand-coloured botanical plate of hibiscus kept in a bevel-cut mount, the names in gold foil below the window. The mount swings open to show the plate.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en';
+    return `<section class="page pg-bungaraya ${brCls(th)}" style="${brVars(th)}"><div class="br-ground"></div>
+      <div class="br-lay reveal">${brMat(o,L,'br-under')}${brPlate(o,L)}</div>
+      <a class="br-pill reveal d2" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
+    return `<div class="cover cv-bungaraya ${brCls(th)}" style="${brVars(th)}"><div class="br-ground"></div>
+      <div class="br-stage">${brPlate(o,L)}${brMat(o,L,'br-swing')}</div>
+      <div class="br-foot">${guest?`<p class="br-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="br-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--mat',c.mat);el.style.setProperty('--mfg',c.mfg);el.classList.toggle('br-dark',!!c.dark);
+    const sc=$('.scroller',el);
+    $$('.sheet > .sec h2',el).forEach(h=>{if(!h.previousElementSibling?.classList?.contains('br-sprig'))h.insertAdjacentHTML('beforebegin',`<i class="br-sprig" style="--m:url(${A}eng-hibiscus.webp)"></i>`)});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Red hibiscus on ivory paper',c:{ground:'#f6efe3',sheet:'#fffaf2',ink:'#3a2420',accent:'#a3192b',gold:'#b08a48',pagefg:'#3a2420',petal:'#c8192e',petalD:'#9e0f22',petalL:'#ea4a52',eye:'#4a0712',vein:'#5c0814'}},
-    {k:'malam',n:'Malam',desc:'Red hibiscus on a deep green night',c:{ground:'#0f1f1a',sheet:'#f7f0e4',ink:'#2a2320',accent:'#a3192b',gold:'#c9a35c',pagefg:'#f1e8d6',petal:'#d01f33',petalD:'#a3112a',petalL:'#f0585c',eye:'#3e0510',vein:'#5c0814'}},
-    {k:'jambu',n:'Jambu',desc:'Pink hibiscus on blush paper',c:{ground:'#f8ebe8',sheet:'#fffaf8',ink:'#3e2a2c',accent:'#b23a5a',gold:'#b48c5a',pagefg:'#3e2a2c',petal:'#e77a96',petalD:'#cf4f74',petalL:'#f8b5c4',eye:'#7d1035',vein:'#8a1d42',stamen:'#f3b7c6',stigma:'#a3123c'}},
-    {k:'kuning',n:'Kuning',desc:'Yellow hibiscus with a red heart',c:{ground:'#f7f1df',sheet:'#fffcf2',ink:'#3a2e1c',accent:'#9a6a12',gold:'#a88a4a',pagefg:'#3a2e1c',petal:'#f2c236',petalD:'#e3a51c',petalL:'#fbe183',eye:'#8c1420',vein:'#a5701a',stamen:'#f4d06a',pollen:'#fff1b0',stigma:'#b3122b'}},
-    {k:'putih',n:'Putih',desc:'White hibiscus on slate',c:{ground:'#2b3138',sheet:'#f6f3ee',ink:'#272a2e',accent:'#8e1d33',gold:'#c4a670',pagefg:'#eeeae2',petal:'#f6f0ec',petalD:'#eadcd8',petalL:'#ffffff',eye:'#8e1d33',vein:'#b9a6a6',stamen:'#f1d7da',stigma:'#a3123c'}},
-    {k:'jingga',n:'Jingga',desc:'Coral hibiscus on sand',c:{ground:'#f5ebdf',sheet:'#fffaf3',ink:'#3a2820',accent:'#b4472a',gold:'#ad8650',pagefg:'#3a2820',petal:'#ef7046',petalD:'#d84e2f',petalL:'#f9a679',eye:'#7d1420',vein:'#8f2d1a',stamen:'#f6b48f'}},
-    {k:'marun',n:'Marun',desc:'Crimson bloom on maroon velvet',c:{ground:'#2c0a12',sheet:'#f7ece4',ink:'#2e1a1c',accent:'#8e1428',gold:'#d2a965',pagefg:'#f4e4d6',petal:'#b8122c',petalD:'#8a0c22',petalL:'#de3a48',eye:'#2a030a',vein:'#4a0712'}},
-    {k:'zamrud',n:'Zamrud',desc:'Red hibiscus on emerald',c:{ground:'#0f3a2e',sheet:'#f8f2e6',ink:'#22302a',accent:'#a3192b',gold:'#d2b06a',pagefg:'#f2ead8',petal:'#d3243a',petalD:'#a3142c',petalL:'#f26a6a',eye:'#3e0510',vein:'#5c0814'}},
+    {k:'merah',n:'Merah',desc:'Crimson mount, gold foil, ivory linen',c:{ground:'#ece4d6',sheet:'#fbf7ee',ink:'#33241f',accent:'#8e1d2a',gold:'#c39a4e',pagefg:'#33241f',mat:'#8a1a27',mfg:'#f4e6cf',foil:1}},
+    {k:'malam',n:'Malam',desc:'Night-green mount on dark velvet',c:{ground:'#0f1d18',sheet:'#fbf7ee',ink:'#2a2622',accent:'#8e1d2a',gold:'#cfa95e',pagefg:'#efe6d4',mat:'#183129',mfg:'#efe2c6',foil:1,dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Dusty rose mount, plum lettering, blush linen',c:{ground:'#f1e2dd',sheet:'#fffaf6',ink:'#3e2a2c',accent:'#9a4a5c',gold:'#b38a4c',pagefg:'#3e2a2c',mat:'#c98e98',mfg:'#4e1f2b'}},
+    {k:'kuning',n:'Kuning',desc:'Turmeric mount, ink lettering, cream linen',c:{ground:'#efe6d0',sheet:'#fffbf1',ink:'#3a2e1c',accent:'#8a5a12',gold:'#a8823e',pagefg:'#3a2e1c',mat:'#d9a93c',mfg:'#3b2a10'}},
+    {k:'putih',n:'Putih',desc:'White mount on slate',c:{ground:'#2b3138',sheet:'#fbf9f4',ink:'#272a2e',accent:'#8e1d33',gold:'#c4a670',pagefg:'#eeeae2',mat:'#f3efe7',mfg:'#7d1a2e',dark:1}},
+    {k:'jingga',n:'Jingga',desc:'Terracotta mount, cream lettering, sand linen',c:{ground:'#efe3d4',sheet:'#fffaf3',ink:'#3a2820',accent:'#a4472c',gold:'#c09656',pagefg:'#3a2820',mat:'#b5583a',mfg:'#fcf1e4'}},
+    {k:'marun',n:'Marun',desc:'Maroon mount on wine velvet',c:{ground:'#2a0b12',sheet:'#fbf5ee',ink:'#2e1a1c',accent:'#861a2b',gold:'#d3ab66',pagefg:'#f4e4d6',mat:'#5c1522',mfg:'#f1dcc2',foil:1,dark:1}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald mount on deep green velvet',c:{ground:'#0c2a21',sheet:'#fbf7ee',ink:'#22302a',accent:'#8e1d2a',gold:'#d2b06a',pagefg:'#f2ead8',mat:'#174636',mfg:'#f0e4c8',foil:1,dark:1}},
   ]});
 
 })()}catch(e){console.error("family bungaraya failed",e)}
@@ -2138,81 +2366,128 @@ FAMILY({key:'buruj',name:'Buruj',meaning:'Star chart',
 })()}catch(e){console.error("family buruj failed",e)}
 
 
+/* ===== family: catair ===== */
+try{(()=>{
+/* catair (redesign): a folded cold-press watercolour card with a real botanical plate (Redouté and friends, public domain)
+   painted onto the front, lying on a linen tablecloth.
+   Cover: tap "Buka Jemputan" and the front of the card swings open on its fold to show the inside.
+   Page: the open card laid flat, the plate bleeding off its corner. Skin: deckled cold-press cards with a small painted sprig. */
+const caFl=(n,cls,style='')=>`<img class="ca2-fl ${cls}" src="${A}flower-${n}.webp" alt="" style="${style}">`;
+FAMILY({key:'catair',name:'Cat Air',meaning:'Watercolour',
+  blurb:'A folded watercolour card with a painted botanical plate, lying on linen. Guests open it on its fold like a real greeting card.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',[f1,f2]=th.fl;
+    return `<section class="page pg-catair2"><div class="ca2-linen"></div>
+      <div class="ca2-sheet reveal">${caFl(f1,'ca2-pf1')}${caFl(f2,'ca2-pf2')}
+        <div class="ca2-txt"><p class="ca2-k kicker">${ev(o,L)}</p><h1 class="ca2-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="ca2-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="ca2-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <div class="ca2-acts reveal d2"><a class="ca2-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',[f1,f2]=th.fl,d=esc(fmtShort(o.date)).replace(/\./g,' · ');
+    return `<div class="cover cv-catair2${th.c.dark?' ca2-dark':''}"><div class="ca2-linen"></div>
+      ${guest?`<p class="ca2-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="ca2-card">
+        ${th.c.dark?'':caFl(f2,'ca2-sprig')}
+        <div class="ca2-inside"><div class="ca2-txt"><p class="ca2-k">${ev(o,L)}</p><p class="ca2-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ca2-cd">${d}</p></div></div>
+        <div class="ca2-front"><div class="ca2-face"><i class="ca2-plate" style="background-image:url(${A}flower-${f1}.webp)"></i>
+          <div class="ca2-ftxt"><p class="ca2-k">${ev(o,L)}</p><p class="ca2-fn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="ca2-cd">${d}</p></div></div><div class="ca2-back"></div></div>
+      </div>
+      <${tag} class="ca2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--sprig',`url(${A}flower-${th.fl[1]}.webp)`);el.classList.toggle('ca2-dk',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    // [key, name, desc, linen, paper, ink, accent, gold, plates, dark]
+    ...[['raya','Bunga Raya','Hibiscus and pink roses on blush linen','#e9dcd6','#fffaf5','#4a3437','#a3465f','#c08a98',['hibiscus','pink-rose']],
+    ['teratai','Teratai','Water lilies and forget-me-nots on mist linen','#dde3e6','#fbfcfc','#2d3a4c','#3c5f8a','#8ea4c2',['lotus','forget-me-not']],
+    ['taman','Taman','Anemones and wild roses on oat linen','#e6dfd2','#fffdf6','#3b3027','#9c3a2e','#c79a6a',['anemones','wild-rose']],
+    ['ungu','Ungu Senja','Irises and anemones on lilac-grey linen','#e2dee8','#fcfbfd','#3a3349','#5d4a8a','#a99cc8',['iris','anemones']],
+    ['terakota','Terakota','Wild rose and anemone, terracotta type','#ead9cc','#fffaf4','#3a2d26','#b5593b','#c98d6a',['wild-rose','anemones']],
+    ['biru-lembut','Biru Lembut','Forget-me-nots on dusty blue linen','#dbe2e8','#f9fbfc','#2e3946','#56708f','#93a8bf',['forget-me-not','iris']],
+    ['sage','Sage','White roses on sage linen','#dfe2d6','#fbfbf6','#2f352b','#5f6d55','#a3ac8f',['white-roses','jasmine']],
+    ['merah','Merah','Red roses on burgundy linen','#4a1a24','#fffaf6','#3a2025','#6b1a2a','#c9a47a',['red-rose','blush-rose'],1],
+    ['champagne','Champagne','Blush roses on champagne linen','#e8dfcf','#fdf8ef','#3b3226','#8f7340','#c2a46a',['blush-rose','cabbage-rose']],
+    ['nila','Nila','Iris and lotus on navy linen','#1e2840','#fafbfd','#22293a','#1d2b4a','#c2a66a',['iris','lotus'],1],
+    ['raya-putih','Melati','Jasmine and hibiscus on ivory linen','#e4e2d6','#fffdf8','#2b3a30','#2e4637','#b49a5e',['jasmine','hibiscus']],
+    ['mauve','Mauve Zaitun','Anemones and blush roses on mauve linen','#dccdcf','#fbf6f5','#3b2e33','#6e4a5a','#b39a6a',['anemones','blush-rose']],
+    ['pic','Pic Sage','Wild and white roses on peach linen','#efdccd','#fffaf4','#3a2e27','#b4603f','#c99b6a',['wild-rose','white-roses']],
+    ['kunyit','Kunyit Nila','Anemones and cabbage roses on turmeric linen','#e7d6ad','#fffaf0','#33291f','#a24a22','#c99a3a',['anemones','cabbage-rose']],
+    ['lavender','Lavender Arang','Iris and forget-me-nots on charcoal linen','#33323a','#f8f6fb','#2e2b38','#6f62a8','#cfc3a2',['iris','forget-me-not'],1],
+    ['karang','Teal Karang','Lotus and pink rose on coral linen','#ecd5c8','#fffaf6','#22302f','#0f6b6b','#d9a07a',['lotus','pink-rose']],
+    ['pandan','Pandan','Jasmine and white roses on pandan linen','#203a2e','#fbf8ee','#26332b','#0d4a32','#d6b45a',['jasmine','white-roses'],1],
+    ['kopi','Kopi Susu','Cabbage and wild roses on latte linen','#d9c8b3','#fbf6ee','#3a2c22','#6b4a3a','#b08a5a',['cabbage-rose','wild-rose']],
+    ['hujan','Biru Hujan','Forget-me-nots and iris on rain-grey linen','#d5dbe0','#f8fafb','#26303a','#3a5570','#a9a28c',['forget-me-not','iris']],
+    ['fajar','Fajar','Pink rose and hibiscus on dawn linen','#f0dcd2','#fffaf6','#3e2a30','#a3465f','#d9a16a',['pink-rose','hibiscus']],
+    ].map(([k,n,desc,ground,sheet,ink,accent,gold,fl,dark])=>({k,n,desc,c:{ground,sheet,ink,accent,gold,pagefg:dark?'#f6f1ea':ink,dark:dark?1:0},extra:{fl}}))]});
+
+})()}catch(e){console.error("family catair failed",e)}
+
+
 /* ===== family: catur ===== */
 try{(()=>{
-/* catur: a marble (or walnut) chessboard seen in perspective, an ebony king and an ivory queen standing together.
-   Opening: the board tilts away into the distance and fades. Page: a scoresheet card, the names set as the two
-   players, the date and venue written as moves. Skin: chequered dividers and square-coordinate headings. */
+/* catur (redesign): a quiet still life. A turned ebony king and an ivory queen stand close on a polished board,
+   lit from one side, the board falling out of focus into the dark.
+   Cover: tap "Buka Jemputan" and the view sinks toward the board as the scene dims.
+   Page: the same still life above an elegant scoresheet card: the two players, the moves (date, time, place), result ½–½.
+   Skin: scoresheet cards with a double hairline, Cinzel headings with a tiny two-square mark. */
 let ctN=0;
-const CF=(n,d=1)=>n.toFixed(d);
-const ctHex=h=>{h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16))};
-const ctMix=(a,b,t)=>'#'+ctHex(a).map((v,i)=>Math.round(v+(ctHex(b)[i]-v)*t).toString(16).padStart(2,'0')).join('');
-// Catmull-Rom through the points; a repeated point makes a crisp corner
-function ctCurve(p){let d=`M${CF(p[0][0],2)} ${CF(p[0][1],2)}`;
+const CF=(n,d=2)=>(+n).toFixed(d);
+function ctCurve(p){let d=`M${CF(p[0][0])} ${CF(p[0][1])}`;
   for(let i=0;i<p.length-1;i++){const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p2;
-    d+=`C${CF(p1[0]+(p2[0]-p0[0])/6,2)} ${CF(p1[1]+(p2[1]-p0[1])/6,2)} ${CF(p2[0]-(p3[0]-p1[0])/6,2)} ${CF(p2[1]-(p3[1]-p1[1])/6,2)} ${CF(p2[0],2)} ${CF(p2[1],2)}`}
+    d+=`C${CF(p1[0]+(p2[0]-p0[0])/6)} ${CF(p1[1]+(p2[1]-p0[1])/6)} ${CF(p2[0]-(p3[0]-p1[0])/6)} ${CF(p2[1]-(p3[1]-p1[1])/6)} ${CF(p2[0])} ${CF(p2[1])}`}
   return d}
 const ctOutline=half=>{const R=half.map(([x,y])=>[30+x,y]),Lf=half.slice().reverse().map(([x,y])=>[30-x,y]);return ctCurve([...R,...Lf])+'Z'};
-// right-hand half profiles (x from the axis, y down), base at y=146
+// Staunton half-profiles (x from the axis, y down, base at 146); doubled points keep the turned edges crisp
 const CT_KING=[[0,15],[5,15],[8.6,17],[10.8,21],[10.8,21],[9.4,24],[7.6,28],[7.2,31],[7.2,31],[10.4,32],[10.4,35.5],[10.4,35.5],[7,36.6],[6.1,42],[5.8,56],[6.4,74],[7.8,92],[9.8,103],[9.8,103],[13.2,105],[13.2,108.6],[13.2,108.6],[10.8,109.6],[12.6,113],[16.4,119],[17.4,122.5],[17.4,122.5],[15.6,124],[19.4,128],[21.4,133],[21.4,137],[21.4,137],[23.4,138],[23.4,143.6],[22.6,146],[0,146]];
 const CT_QUEEN=[[0,25],[10.4,22.6],[10.4,22.6],[9.2,27],[7.2,31.5],[7,33.6],[7,33.6],[9.8,34.6],[9.8,38],[9.8,38],[6.6,39],[5.7,46],[5.4,62],[6.1,80],[7.6,96],[9.4,104],[9.4,104],[12.6,106],[12.6,109.4],[12.6,109.4],[10.4,110.4],[12,113.6],[15.4,119],[16.4,122.4],[16.4,122.4],[14.8,124],[18.4,128],[20.4,133],[20.4,137],[20.4,137],[22.4,138],[22.4,143.6],[21.6,146],[0,146]];
-const ctRing=(y,r,col,w=.55)=>`<path d="M${CF(30-r)} ${y}Q30 ${CF(y+r*.3)} ${CF(30+r)} ${y}" fill="none" stroke="${col}" stroke-width="${w}"/>`;
-function ctPiece(kind,c,uid){const king=kind==='k',body=king?ctMix(c.accent,'#000000',.55):ctMix(c.sheet,'#ffffff',.3),dark=king?'#0b0a0a':ctMix(c.sheet,c.gold,.45),hi=king?ctMix(c.accent,'#ffffff',.28):'#ffffff',g=c.gold,id=`ctg${kind}${uid}`;
-  const top=king?`<path d="M30 3.6l2.6 4.4-2.6 2.2-2.6-2.2z" fill="url(#${id})" stroke="${g}" stroke-width=".55"/><circle cx="30" cy="12.4" r="3.4" fill="url(#${id})" stroke="${g}" stroke-width=".55"/>`+
-      `<path d="M21.2 20.6h17.6" stroke="${g}" stroke-width=".5"/>${[-7.5,-3.75,0,3.75,7.5].map(x=>`<path d="M${CF(30+x)} 16v4" stroke="${g}" stroke-width=".45"/>`).join('')}`
-    :`<circle cx="30" cy="12.6" r="4.4" fill="url(#${id})" stroke="${g}" stroke-width=".55"/>${[-10,-6.6,-3.2,0,3.2,6.6,10].map((x,i)=>`<circle cx="${CF(30+x)}" cy="${CF(21.6-(i%2?0:1.4)-(Math.abs(x)>8?-.6:0))}" r="${i%2?1.3:1.7}" fill="url(#${id})" stroke="${g}" stroke-width=".45"/>`).join('')}`;
-  const outline=ctOutline(king?CT_KING:CT_QUEEN);
-  const rings=king?ctRing(31,7.2,g)+ctRing(35.5,10.4,g)+ctRing(103,9.8,g)+ctRing(108.6,13.2,g)+ctRing(122.5,17.4,g)+ctRing(137,21.4,g)
-    :ctRing(33.6,7,g)+ctRing(38,9.8,g)+ctRing(104,9.4,g)+ctRing(109.4,12.6,g)+ctRing(122.4,16.4,g)+ctRing(137,20.4,g);
-  return `<svg class="catur-pc ${kind}" viewBox="0 0 60 150" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="${dark}"/><stop offset=".3" stop-color="${hi}"/><stop offset=".52" stop-color="${body}"/><stop offset="1" stop-color="${dark}"/></linearGradient></defs>
-   <path d="${outline}" fill="url(#${id})" stroke="${g}" stroke-width=".7"/>${top}${rings}
-   <path d="M${king?'25 44':'25.4 48'}C${king?'24.4 70 24.6 88 23 100':'24.8 70 24.8 88 23.2 101'}" fill="none" stroke="#fff" stroke-opacity="${king?.18:.5}" stroke-width="1.4" stroke-linecap="round"/></svg>`}
-// small flat piece icons for notation (king and queen heads)
-const ctIcon=(kind,col)=>`<svg class="catur-ic" viewBox="0 0 60 150" aria-hidden="true"><path d="${ctOutline(kind==='k'?CT_KING:CT_QUEEN)}" fill="${col}"/>${kind==='k'?`<circle cx="30" cy="12.4" r="3.6" fill="${col}"/><path d="M30 3l3 5-3 2.4-3-2.4z" fill="${col}"/>`:`<circle cx="30" cy="12.6" r="4.6" fill="${col}"/>`}</svg>`;
-const ctChecks=(a,b,s=8)=>svgUriSq(`<svg ${NS} width="${s*2}" height="${s*2}" viewBox="0 0 2 2"><rect width="2" height="2" fill="${b}"/><path d="M0 0h1v1H0zM1 1h1v1H1z" fill="${a}"/></svg>`);
-const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-
-FAMILY({key:'catur',name:'Catur',meaning:'Chess checkmate',
-  blurb:'An ebony king and an ivory queen on a marble chessboard; the board tilts away and the game is written as a scoresheet. Checkmate.',
-  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1350,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',d=new Date((o.date||'2026-01-01')+'T00:00:00'),ok=!isNaN(d);
-    const dt=ok?`${d.getDate()} · ${ROM[d.getMonth()]} · ${d.getFullYear()}`:'';
-    const mv=(n,a,b)=>`<li><b>${n}.</b><span>${a}</span><em>${b}</em></li>`;
-    return `<section class="page pg-catur" style="--chk:${ctChecks(c.accent,c.sheet)};--chk2:${ctChecks(c.gold,'transparent',6)}"><div class="catur-floor"></div>
-    <div class="catur-sheet reveal"><div class="catur-band"></div>
-     <div class="catur-diag"><div class="catur-dsq"></div><span class="catur-dp q">${ctIcon('q',c.sheet)}</span><span class="catur-dp k">${ctIcon('k',c.ink)}</span></div>
-     <p class="kicker">${ev(o,L)}</p>
-     <div class="catur-pl"><span class="catur-sq">${en?'White':'Putih'} · d1</span><h1 class="names">${esc(n1)}</h1></div>
-     <p class="catur-vs"><i></i><span>${en?'and':'dan'}</span><i></i></p>
-     <div class="catur-pl"><h1 class="names">${esc(n2)}</h1><span class="catur-sq">${en?'Black':'Hitam'} · e8</span></div>
-     <ol class="catur-moves">${mv(1,en?'Date':'Tarikh',esc(dt))}${mv(2,en?'Time':'Masa',esc(fmtTime(o.start,o.lang)))}${mv(3,en?'Venue':'Gelanggang',esc(o.venue))}</ol>
-     <p class="catur-mate"><b>${en?'Checkmate':'Skak mat'}</b><span>½ – ½</span></p>
-     <p class="catur-note">${en?'A drawn game: both hearts win.':'Seri: kedua-dua hati menang.'}</p>
-     <div class="catur-band b"></div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++ctN;
-    const files='abcdefgh'.split('').map(f=>`<i>${f}</i>`).join(''),ranks=[8,7,6,5,4,3,2,1].map(r=>`<i>${r}</i>`).join('');
-    return `<div class="cover cv-catur" style="--chk:${ctChecks(c.accent,c.sheet)};--frame:${c.frame}"><div class="catur-floor"></div>
-    <div class="catur-head"><p class="catur-k">${ev(o,L)}</p><p class="catur-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
-     <p class="catur-line"><i></i><b>${en?'Checkmate':'Skak Mat'}</b><i></i></p><p class="catur-sub">${en?'two hearts, one final move':'dua hati, satu langkah terakhir'}</p></div>
-    <div class="catur-scene"><div class="catur-board ${th.c.tx||'marble'}">
-      <i class="catur-vein"></i><div class="catur-sqs"></div><div class="catur-files">${files}</div><div class="catur-ranks">${ranks}</div>
-      <i class="catur-sh q"></i><i class="catur-sh k"></i></div>
-      <div class="catur-at k">${ctPiece('k',c,u)}</div><div class="catur-at q">${ctPiece('q',c,u)}</div></div>
-    <${tag} class="catur-tap" ${attr} aria-label="${L.open}"></${tag}>
-    <div class="catur-foot">${guest?`<p class="catur-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="catur-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--chk',ctChecks(c.accent,c.sheet));el.style.setProperty('--chk2',ctChecks(c.gold,'transparent',5));
-    const sq=['e4','d5','c6','f3','g2','b7','h1','a8','e2','d7','f6'];
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('catur-sec');const h=$('h2',s);if(!h)return;h.insertAdjacentHTML('afterbegin',`<em class="catur-co">${sq[i%sq.length]}</em>`)})},
+const CT_RINGS={k:[[31,7.2],[35.5,10.4],[103,9.8],[108.6,13.2],[122.5,17.4],[137,21.4],[143.6,23.4]],q:[[33.6,7],[38,9.8],[104,9.4],[109.4,12.6],[122.4,16.4],[137,20.4],[143.6,22.4]]};
+// a turned piece, lit from the upper left with a faint rim light on the right
+function ctPiece(kind,u){const king=kind==='k',id=`ct${kind}${u}`;
+  const tone=king?['#060505','#2a2523','#6d655d','#171413','#0b0a09','#3a3430','#050404']:['#8b7a5c','#d8ccb1','#fffaf0','#efe5cf','#c9b893','#e9dcc0','#7d6d50'];
+  const stops=[0,.13,.3,.48,.78,.91,1].map((o,i)=>`<stop offset="${o}" stop-color="${tone[i]}"/>`).join('');
+  const out=ctOutline(king?CT_KING:CT_QUEEN);
+  const top=king?`<path d="M28.6 1.6h2.8v3.2h3.2v2.8h-3.2v6.6h-2.8V7.6h-3.2V4.8h3.2z"/><ellipse cx="30" cy="15.2" rx="5.2" ry="1.6"/>`
+    :`<circle cx="30" cy="11.4" r="4.1"/>${[-9.6,-6.4,-3.2,0,3.2,6.4,9.6].map((x,i)=>`<circle cx="${CF(30+x,1)}" cy="${CF(22.4-(Math.abs(x)>8?-.4:i%2?.6:1.1),1)}" r="${i%2?1.25:1.6}"/>`).join('')}<path d="M24.4 16.6Q30 14.4 35.6 16.6L34 22H26z"/>`;
+  const rings=CT_RINGS[kind].map(([y,r])=>`<path d="M${CF(30-r)} ${y}A${r} ${CF(r*.2)} 0 0 0 ${CF(30+r)} ${y}" fill="none" stroke="${king?'#000':'#6b5a3c'}" stroke-opacity="${king?.7:.45}" stroke-width=".7"/><path d="M${CF(30-r*.92)} ${CF(y+1)}A${r} ${CF(r*.2)} 0 0 0 ${CF(30+r*.92)} ${CF(y+1)}" fill="none" stroke="#fff" stroke-opacity="${king?.16:.55}" stroke-width=".45"/>`).join('');
+  return `<svg class="ct-pc ct-${kind}" viewBox="0 0 60 150" aria-hidden="true"><defs><linearGradient id="${id}">${stops}</linearGradient>
+    <linearGradient id="${id}v" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="${king?.08:.15}"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".86" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${king?.5:.32}"/></linearGradient>
+    <filter id="${id}b"><feGaussianBlur stdDeviation=".7"/></filter></defs>
+    <g fill="url(#${id})">${top}<path d="${out}"/></g><path d="${out}" fill="url(#${id}v)"/>${rings}
+    <path d="M${king?'25.6 44':'26 48'}C${king?'25 70 25.2 88 23.6 100':'25.4 70 25.4 88 23.8 101'}" fill="none" stroke="#fff" stroke-opacity="${king?.22:.7}" stroke-width="1.6" stroke-linecap="round" filter="url(#${id}b)"/>
+    <path d="M${king?'35.6 44':'35.4 48'}C${king?'36.4 70 36.4 88 38 100':'36 70 36 88 37.6 101'}" fill="none" stroke="#fff" stroke-opacity="${king?.12:.25}" stroke-width=".8" stroke-linecap="round" filter="url(#${id}b)"/></svg>`}
+// the still life: board in perspective, soft focus far and near, the two pieces with reflections and shadows
+const ctScene=(cls='')=>{const u=++ctN;return `<div class="ct-scene ${cls}"><div class="ct-light"></div>
+  <div class="ct-persp"><div class="ct-board"><i class="ct-grain"></i></div></div><div class="ct-dof"></div>
+  <div class="ct-pair"><i class="ct-sh k"></i><i class="ct-sh q"></i>
+    <div class="ct-ref k">${ctPiece('k',u+'r')}</div><div class="ct-ref q">${ctPiece('q',u+'r')}</div>
+    <div class="ct-st k">${ctPiece('k',u)}</div><div class="ct-st q">${ctPiece('q',u)}</div></div></div>`};
+FAMILY({key:'catur',name:'Catur',meaning:'Chess still life',
+  blurb:'A turned ebony king and an ivory queen standing close on a polished board, lit softly in the dark; inside, the day is written as an elegant scoresheet.',
+  fonts:{d:"'Cinzel', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    const mv=[[en?'Date':'Tarikh',fmtDate(o.date,o.lang)],[en?'Time':'Masa',[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ')],[en?'Place':'Tempat',o.venue]].filter(r=>r[1]);
+    return `<section class="page pg-catur2${ctCls(th)}" style="${ctVars(th)}">${ctScene('pg')}
+      <div class="ct-card reveal d1"><div class="ct-in">
+        <p class="ct-k kicker">${ev(o,L)}</p><h1 class="ct-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        ${o.hijri?`<p class="ct-hj">${esc(o.hijri)}</p>`:''}
+        <ol class="ct-moves">${mv.map(([k,v],i)=>`<li><b>${i+1}.</b><span>${k}</span><em>${esc(v)}</em></li>`).join('')}</ol>
+        <p class="ct-res"><b>½ – ½</b><span>${en?'Both win':'Sama-sama menang'}</span></p></div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-catur2${ctCls(th)}" style="${ctVars(th)}">${ctScene('cv')}<i class="ct-scrim"></i>
+      <div class="ct-top"><p class="ct-k">${ev(o,L)}</p><p class="ct-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ct-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="ct-foot">${guest?`<p class="ct-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ct-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.setAttribute('style',(el.getAttribute('style')||'')+';'+ctVars(th));el.classList.toggle('ct-lite',!!th.c.lite);el.classList.toggle('ct-wood',!!th.c.wood)},
   themes:[
-    {k:'marmar',n:'Marmar',desc:'White and grey marble, gold inlay',c:{ground:'#e7e3dc',sheet:'#f7f4ee',ink:'#2b2b2e',accent:'#3b3f45',gold:'#b8995a',pagefg:'#2b2b2e',frame:'#d6d0c6'}},
-    {k:'kayu',n:'Kayu',desc:'Walnut and maple on a dark table',c:{ground:'#24180f',sheet:'#f1e2c6',ink:'#2e2116',accent:'#6b3f22',gold:'#d4aa60',pagefg:'#f0e3cc',frame:'#3d2414',tx:'wood'}},
-    {k:'hitam',n:'Hitam',desc:'Black marble with bright gold',c:{ground:'#141414',sheet:'#f0eadf',ink:'#1d1c1a',accent:'#232325',gold:'#d6b065',pagefg:'#ece2cc',frame:'#1c1c1d'}},
-    {k:'zamrud',n:'Zamrud',desc:'Malachite green, gold rules',c:{ground:'#0f2a22',sheet:'#f2eee3',ink:'#1d2a24',accent:'#1f5a45',gold:'#d2ac60',pagefg:'#eee6d2',frame:'#15392d'}},
-    {k:'merah',n:'Merah',desc:'Red lacquer and ivory',c:{ground:'#3a1015',sheet:'#f7eee2',ink:'#2d1c1c',accent:'#7c1c26',gold:'#d8b26b',pagefg:'#f3e4d0',frame:'#2a0b0f'}},
-    {k:'nila',n:'Nila',desc:'Navy marble on pale stone',c:{ground:'#e1e5ec',sheet:'#f8f7f3',ink:'#1e2638',accent:'#24345a',gold:'#b8975a',pagefg:'#24345a',frame:'#cdd3de'}},
-    {k:'gading',n:'Gading',desc:'Ivory and taupe, soft gold',c:{ground:'#eee7da',sheet:'#fbf8f1',ink:'#3a3128',accent:'#8a7864',gold:'#ac8648',pagefg:'#4a3f33',frame:'#e0d6c3'}},
-    {k:'jambu',n:'Jambu',desc:'Rose quartz and champagne',c:{ground:'#f1e2e0',sheet:'#fdf8f6',ink:'#3e2a2e',accent:'#a1636b',gold:'#b08950',pagefg:'#4b3236',frame:'#e8d2ce'}},
+    {k:'marmar',n:'Marmar',desc:'White marble board, soft daylight',c:{ground:'#d9d5ce',sheet:'#f8f5ef',ink:'#2b2b2e',accent:'#3b3f45',gold:'#a88a52',pagefg:'#2b2b2e',sqL:'#f1eee8',sqD:'#8e8b86',lite:1}},
+    {k:'kayu',n:'Kayu',desc:'Walnut and maple in lamplight',c:{ground:'#140d08',sheet:'#f3e7d0',ink:'#2e2116',accent:'#7a4a26',gold:'#d4aa60',pagefg:'#eadcc4',sqL:'#b98d5c',sqD:'#3d2414',wood:1}},
+    {k:'hitam',n:'Hitam',desc:'Black marble, one low light',c:{ground:'#0b0b0c',sheet:'#f2ede3',ink:'#1d1c1a',accent:'#2a2a2c',gold:'#cfae6c',pagefg:'#e8e1d2',sqL:'#55524e',sqD:'#121213'}},
+    {k:'zamrud',n:'Zamrud',desc:'Malachite and ivory in the dark',c:{ground:'#08160f',sheet:'#f2eee3',ink:'#1d2a24',accent:'#1f5a45',gold:'#cfae6a',pagefg:'#e6e2d2',sqL:'#cfc8b6',sqD:'#1d4d3c'}},
+    {k:'merah',n:'Merah',desc:'Red lacquer and ivory in the dark',c:{ground:'#17070a',sheet:'#f7eee2',ink:'#2d1c1c',accent:'#7c1c26',gold:'#d4ae6a',pagefg:'#efe0cf',sqL:'#d9cbb6',sqD:'#5e141c'}},
+    {k:'nila',n:'Nila',desc:'Blue-grey marble, cool daylight',c:{ground:'#d3d9e2',sheet:'#f8f8f5',ink:'#1e2638',accent:'#24345a',gold:'#a68d5c',pagefg:'#1e2638',sqL:'#eef0f3',sqD:'#5d6b86',lite:1}},
+    {k:'gading',n:'Gading',desc:'Ivory and taupe marble, warm daylight',c:{ground:'#e2d9c9',sheet:'#fbf8f1',ink:'#3a3128',accent:'#7d6a52',gold:'#a8854a',pagefg:'#3a3128',sqL:'#f4eee3',sqD:'#a8987e',lite:1}},
+    {k:'jambu',n:'Jambu',desc:'Rose quartz marble, soft daylight',c:{ground:'#e8d8d5',sheet:'#fdf8f6',ink:'#3e2a2e',accent:'#94586a',gold:'#a88450',pagefg:'#3e2a2e',sqL:'#f6edeb',sqD:'#bf9a98',lite:1}},
   ]});
+function ctVars(th){const c=th.c;return `--sqL:${c.sqL};--sqD:${c.sqD}`+(c.lite?';--lite:1':';--lite:0')}
+function ctCls(th){return (th.c.lite?' ct-lite':'')+(th.c.wood?' ct-wood':'')}
 
 })()}catch(e){console.error("family catur failed",e)}
 
@@ -2325,6 +2600,83 @@ FAMILY({key:'chinoiserie',name:'Biru Putih',meaning:'Blue and white',
 })()}catch(e){console.error("family chinoiserie failed",e)}
 
 
+/* ===== family: deco ===== */
+try{(()=>{
+/* deco: a black-lacquer panel with a gold-foil sunburst, stepped frame and speed lines, all drawn to exact geometry.
+   Cover: the lacquered lid; tap "Buka Jemputan" and it tilts back and lifts away. Page: the inner panel, the same sunburst over the names.
+   Skin: lacquer cards with a hairline foil frame and stepped corners. */
+// the ornament is drawn once per size as black strokes and used as a mask over foil, so it reads as stamped gold
+const dcCache={};
+function dcOrn(w,h){const key=w+'x'+h;if(dcCache[key])return dcCache[key];
+  const f=n=>n.toFixed(2),cx=w/2,R=w*.4,cy=h*.47,r0=R*.32;let s='';
+  // frames: outer, inner, and stepped corners
+  const step=(x,y,sx,sy)=>`M${f(x)} ${f(y+sy*22)}V${f(y+sy*12)}H${f(x+sx*6)}V${f(y+sy*6)}H${f(x+sx*12)}V${f(y)}H${f(x+sx*22)}`;
+  s+=`<rect x="5" y="5" width="${w-10}" height="${h-10}" fill="none" stroke="#000" stroke-width="1.3"/>`;
+  s+=`<rect x="9.5" y="9.5" width="${w-19}" height="${h-19}" fill="none" stroke="#000" stroke-width=".45"/>`;
+  s+=`<path d="${[step(15,15,1,1),step(w-15,15,-1,1),step(15,h-15,1,-1),step(w-15,h-15,-1,-1)].join('')}" fill="none" stroke="#000" stroke-width=".8"/>`;
+  // the arch that holds the sunburst
+  const ax=cx-R-6,aw=(R+6)*2,ay=cy;
+  s+=`<path d="M${f(ax)} ${f(ay+R*.42)}V${f(ay)}A${f(R+6)} ${f(R+6)} 0 0 1 ${f(ax+aw)} ${f(ay)}V${f(ay+R*.42)}" fill="none" stroke="#000" stroke-width=".9"/>`;
+  s+=`<path d="M${f(ax-5)} ${f(ay+R*.42)}V${f(ay)}A${f(R+11)} ${f(R+11)} 0 0 1 ${f(ax+aw+5)} ${f(ay)}V${f(ay+R*.42)}" fill="none" stroke="#000" stroke-width=".35"/>`;
+  // rays: alternating long wedges and short hairlines, upper half only
+  const N=36;for(let i=0;i<=N;i++){const a=Math.PI+i/N*Math.PI,long=i%2===0,r1=long?R:R*.82,da=long?.021:.005;
+    const p=(rr,aa)=>`${f(cx+Math.cos(aa)*rr)} ${f(cy+Math.sin(aa)*rr)}`;
+    s+=`<path d="M${p(r0+3,a-da)}L${p(r1,a)}L${p(r0+3,a+da)}Z" fill="#000"/>`}
+  // the rising sun: concentric half rings
+  [r0,r0-4,r0-8.5,r0-13].forEach((r,i)=>{s+=`<path d="M${f(cx-r)} ${f(cy)}A${f(r)} ${f(r)} 0 0 1 ${f(cx+r)} ${f(cy)}" fill="none" stroke="#000" stroke-width="${i?'.5':'1.1'}"/>`});
+  s+=`<path d="M${f(cx-r0-14)} ${f(cy)}H${f(cx+r0+14)}" stroke="#000" stroke-width=".9"/>`;
+  // speed lines down both sides, and chevrons at the top
+  [0,4.5,9].forEach(d=>{s+=`<path d="M${f(24+d)} ${f(cy+R*.55)}V${f(h-48)}M${f(w-24-d)} ${f(cy+R*.55)}V${f(h-48)}" stroke="#000" stroke-width="${d?'.4':'.7'}"/>`});
+  [0,6,12].forEach(d=>{s+=`<path d="M${f(cx-16+d*.0)} ${f(26+d)}L${f(cx)} ${f(18+d)}L${f(cx+16)} ${f(26+d)}" fill="none" stroke="#000" stroke-width=".55"/>`});
+  // a diamond rule near the foot
+  const fy=h-34;s+=`<path d="M${f(cx-70)} ${fy}H${f(cx-8)}M${f(cx+8)} ${fy}H${f(cx+70)}" stroke="#000" stroke-width=".5"/><path d="M${cx} ${fy-4}L${cx+4} ${fy}L${cx} ${fy+4}L${cx-4} ${fy}Z" fill="#000"/>`;
+  return dcCache[key]=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">${s}</svg>`)}
+const dcMix=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)*(1-t)+parseInt(b.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('');
+// foil ramp and button ink per colourway: light lacquer gets a deeper, darker foil so it reads
+const dcVars=c=>`--fhi:${c.fhi};--flo:${c.flo};--btn:${c.btn}`;
+const dcPanel=(o,L,big)=>{const [n1,n2]=coverNames(o),en=o.lang==='en',w=300,h=big?484:450;
+  return `<div class="dc-panel${big?' big':''}" style="aspect-ratio:${w}/${h}"><i class="dc-foil" style="--orn:${dcOrn(w,h)}"></i>
+    <p class="dc-k${big?' kicker':''}">${ev(o,L)}</p>
+    <${big?'h1':'p'} class="dc-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${big?'h1':'p'}>
+    <p class="dc-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>
+    ${big?`${o.venue?`<p class="dc-ven">${esc(o.venue)}</p>`:''}<div class="dc-links"><a data-go="when" href="#">${en?'Details':'Butiran'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}</div>`:''}</div>`};
+FAMILY({key:'deco',name:'Deco',meaning:'Art deco lacquer',
+  blurb:'A black-lacquer panel with a gold-foil sunburst and a stepped frame, drawn with exact geometry. The lid tilts back and lifts away.',
+  fonts:{d:"'Poiret One', sans-serif",s:"'Bodoni Moda', serif",b:"'Bodoni Moda', serif"},ms:1400,
+  page(o,th,L){return `<section class="page pg-deco2" style="${dcVars(th.c)}"><div class="dc-lac"></div><div class="dc-wrap reveal">${dcPanel(o,L,true)}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
+    return `<div class="cover cv-deco2" style="${dcVars(th.c)}"><div class="dc-lac"></div>
+      ${guest?`<p class="dc-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="dc-stage"><div class="dc-lid">${dcPanel(o,L,false)}</div></div>
+      <${tag} class="dc-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);['fhi','flo','btn'].forEach(k=>el.style.setProperty('--'+k,th.c[k]));
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    ['noir','Noir','Black lacquer, yellow gold','#121111','#d2ad62'],
+    ['zamrud','Zamrud','Emerald lacquer, yellow gold','#0c2f26','#d4b06a'],
+    ['nila','Nila','Midnight lacquer, pale gold','#111a33','#d6b878'],
+    ['wain','Wain','Wine lacquer, rose gold','#3a0e18','#dcae86'],
+    ['gading','Gading','Ivory lacquer, antique gold','#efe7d6','#8a6428',1],
+    ['marun','Marun','Maroon lacquer, yellow gold','#431120','#d6ae62'],
+    ['ungu','Ungu','Plum lacquer, pale gold','#2b1829','#d4b67c'],
+    ['teal','Teal','Teal lacquer, yellow gold','#0d3537','#d6b26a'],
+    ['arang','Arang','Charcoal lacquer, silver','#232425','#c9ccd1'],
+    ['champagne','Champagne','Champagne lacquer, bronze','#e3d3b4','#6e4f1e',1],
+    ['mauve','Mauve','Mauve lacquer, rose gold','#4f1a29','#d6a98a'],
+    ['pic','Pic','Olive lacquer, copper','#3e4a38','#d39c6c'],
+    ['kunyit','Kunyit','Navy lacquer, saffron gold','#16213d','#e3b04a'],
+    ['lavender','Lavender','Slate lacquer, champagne','#36343d','#d6c9a6'],
+    ['karang','Karang','Deep teal lacquer, coral gold','#0b4044','#e0b07e'],
+    ['pandan','Pandan','Pandan lacquer, yellow gold','#0c3f2b','#d8b65c'],
+    ['kopi','Kopi','Coffee lacquer, caramel gold','#2f221c','#cfa66c'],
+    ['hujan','Hujan','Storm-blue lacquer, platinum','#22324a','#cfcbbd'],
+    ['fajar','Fajar','Aubergine lacquer, peach gold','#3d1d30','#e3b386'],
+  ].map(([k,n,desc,ground,gold,light])=>({k,n,desc,c:light?{ground,gold,sheet:'#f6f0e2',ink:'#2a2219',accent:gold,pagefg:'#2a2219',line:'rgba(60,45,20,.25)',lac:ground,fhi:dcMix(gold,'#000000',.05),flo:dcMix(gold,'#000000',.5),btn:dcMix(gold,'#000000',.55)}
+    :{ground,gold,sheet:dcMix(ground,'#ffffff',.1),ink:'#efe7d6',accent:gold,pagefg:'#efe7d6',line:'rgba(255,240,210,.18)',lac:ground,fhi:dcMix(gold,'#ffffff',.5),flo:dcMix(gold,'#000000',.25),btn:dcMix(gold,'#ffffff',.15)}}))});
+
+})()}catch(e){console.error("family deco failed",e)}
+
+
 /* ===== family: editorial ===== */
 try{(()=>{
 /* editorial: quiet-luxury magazine typography. Huge high-contrast Didone initials, hairline rules, crop marks, folios, a tiny caption.
@@ -2385,75 +2737,226 @@ FAMILY({key:'editorial',name:'Editorial',meaning:'Quiet luxury magazine',
 
 /* ===== family: garis ===== */
 try{(()=>{
-/* garis: a single continuous pen line on cream cotton stock, a rose bouquet tied with a bow, drawn without lifting the pen.
-   Cover: a debossed card with the drawing almost finished; touch it and the line completes itself, then the page fades in.
-   Page: a small line drawing over the names. Skin: one-line flourishes under each heading on debossed cards. */
-needFont('Mrs+Saint+Delafield');
-needFont('Jost:wght@300;400;500');
-const SCR="'Mrs Saint Delafield', cursive",CG="'Cormorant Garamond', serif",JO="'Jost', sans-serif";
-// Catmull-Rom through points -> smooth cubic path
-function smooth(p,t=.5){let d=`M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;for(let i=0;i<p.length-1;i++){const a=p[i-1]||p[i],b=p[i],c=p[i+1],e=p[i+2]||c;
-  const c1=[b[0]+(c[0]-a[0])*t/3,b[1]+(c[1]-a[1])*t/3],c2=[c[0]-(e[0]-b[0])*t/3,c[1]-(e[1]-b[1])*t/3];d+=`C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`}return d}
-// a rose: spiral outward from the centre with soft petal lobes, ending on the outer cup at angle `end`
-function rose(cx,cy,R,turns,ph,end){const out=[];const N=Math.round(turns*16);for(let i=1;i<=N;i++){const t=i/N,a=ph+t*turns*Math.PI*2,r=R*(.12+.88*Math.pow(t,.9))*(1+.1*Math.sin(a*2.5));out.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r*.86])}
-  out.push([cx+Math.cos(end)*R*1.05,cy+Math.sin(end)*R*.95]);return out}
-function leaf(x,y,dx,dy,w){const L=Math.hypot(dx,dy),nx=-dy/L*w,ny=dx/L*w;return [[x+dx*.45+nx,y+dy*.45+ny],[x+dx,y+dy],[x+dx*.45-nx,y+dy*.45-ny],[x+1,y+1]]}
-const BOUQUET=(()=>{const P=[];const add=a=>a.forEach(q=>P.push(q));
-  add([[50,254],[70,248],[88,232],[100,212]]);
-  add([[88,204],[70,196],[64,208],[78,214],[100,210]]);                      // bow, left loop
-  add([[120,200],[136,192],[140,206],[124,214],[104,212]]);                  // bow, right loop
-  add([[114,226],[124,244],[116,238],[101,212]]);                            // ribbon tail curls back
-  add([[94,190],[84,160],[72,128],[64,104]]);                                // stem to the first rose
-  add(rose(62,90,24,2.6,Math.PI*.9,Math.PI*.3));
-  add([[80,116],[90,140]]);add(leaf(90,140,-30,14,8));                       // leaf
-  add([[86,128],[78,154]]);add(leaf(78,154,-22,-4,6));
-  add([[92,140],[102,106],[108,82]]);add(rose(110,64,28,2.9,0,Math.PI*.45));
-  add([[124,86],[132,74],[138,60]]);add(rose(140,52,9,1.4,Math.PI*1.2,Math.PI*.6));   // a bud
-  add([[146,64],[150,84]]);add(rose(152,100,20,2.2,Math.PI,Math.PI*.65));
-  add([[144,122],[140,132]]);add(leaf(140,132,30,4,8));
-  add([[132,140],[130,128]]);add(rose(128,130,11,1.6,Math.PI*1.5,Math.PI*.9));
-  add([[120,146],[112,152]]);add(leaf(112,152,24,22,6));
-  add([[104,142],[98,130]]);add(rose(90,128,15,1.9,Math.PI*1.4,Math.PI*.95));
-  add([[78,140],[60,148]]);add(rose(52,146,7,1.2,0,Math.PI*.2));             // a small bud low left
-  add([[60,156],[80,168],[96,190],[104,214],[106,236],[100,250],[112,258],[134,254],[154,244]]);
-  return smooth(P)})();
-function lineArt(cls){return `<svg class="${cls}" viewBox="30 24 148 240" aria-hidden="true"><path class="gr-line" d="${BOUQUET}" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
-// one-line flourish for the skin: a level line that makes n loops
-function flourish(n,w=200){const P=[[4,12]],seg=(w-8)/(n+1);for(let i=1;i<=n;i++){const x=4+seg*i;P.push([x-seg*.3,12],[x+3,4],[x+6,11],[x-2,15],[x-6,10],[x+seg*.3,12])}P.push([w-4,12]);
-  return `<svg class="gr-fl" viewBox="0 0 ${w} 20" aria-hidden="true"><path d="${smooth(P)}" fill="none" stroke="var(--ink)" stroke-width="1" stroke-linecap="round"/></svg>`}
-const mono=o=>{const [a,b]=K.initials(o);return `<span class="gr-mono">${esc(a)}<i></i>${esc(b)}</span>`};
-FAMILY({key:'garis',name:'Garis Tunggal',meaning:'One continuous line',
-  blurb:'A rose bouquet drawn in one unbroken pen line on cream cotton stock, debossed and letterpressed; touch it and the line finishes itself.',
-  fonts:{d:JO,s:SCR,b:CG},ms:1500,
+/* garis: a brush-pen drawing of a jasmine sprig on heavy cotton card, the type letterpressed into it.
+   Cover: the card stands on the table in a paper belly band. Tap "Buka Jemputan" and the band slides off.
+   Page: the card with its reply cards tucked under it. Skin: cotton cards with a pressed rule and a small sprig. */
+// a tapered brush stroke along one cubic: thin at both ends, full in the middle, slightly heavier on the down-stroke
+const gsB=(P,t)=>{const u=1-t;return [0,1].map(k=>u*u*u*P[0][k]+3*u*u*t*P[1][k]+3*u*t*t*P[2][k]+t*t*t*P[3][k])};
+function gsStroke(P,w,n=30,lead=.75){const L=[],R=[];
+  for(let i=0;i<=n;i++){const t=i/n,a=gsB(P,Math.max(0,t-.01)),b=gsB(P,Math.min(1,t+.01)),p=gsB(P,t);
+    let dx=b[0]-a[0],dy=b[1]-a[1];const m=Math.hypot(dx,dy)||1;dx/=m;dy/=m;
+    const hw=w*(.1+.9*Math.pow(Math.sin(Math.PI*Math.pow(t,lead)),.75));
+    L.push([p[0]-dy*hw,p[1]+dx*hw]);R.push([p[0]+dy*hw,p[1]-dx*hw])}
+  const f=q=>q[0].toFixed(2)+' '+q[1].toFixed(2);
+  return 'M'+L.map(f).join('L')+'L'+R.reverse().map(f).join('L')+'Z'}
+const gsDir=(deg,r)=>[Math.cos(deg*Math.PI/180)*r,Math.sin(deg*Math.PI/180)*r];
+// a leaf: two strokes from base to tip and a short midrib; bend curls the whole leaf sideways
+function gsLeaf(x,y,ang,len,wd,w,bend=0){const [dx,dy]=gsDir(ang,1),px=-dy,py=dx,pt=(a,s)=>[x+dx*len*a+px*(wd*s+bend*len*a*a),y+dy*len*a+py*(wd*s+bend*len*a*a)],tip=pt(1,0);
+  return gsStroke([[x,y],pt(.25,1.1),pt(.7,.85),tip],w)+gsStroke([[x,y],pt(.3,-1),pt(.72,-.7),tip],w*.8)+gsStroke([[x,y],pt(.3,.05),pt(.55,0),pt(.74,0)],w*.42)}
+// a jasmine flower: five rounded petals looping out from the centre, a dot of a throat
+function gsFlower(x,y,r,rot,w){let d='';for(let i=0;i<5;i++){const a=rot+i*72+(i%2?5:-4),[dx,dy]=gsDir(a,1),px=-dy,py=dx,rr=r*(i%3?.9:1);
+    const P=(f,s)=>[x+dx*rr*f+px*r*s,y+dy*rr*f+py*r*s];
+    d+=gsStroke([P(.2,.04),P(.62,.62),P(1.12,.34),P(1.06,-.04)],w,22,.8)+gsStroke([P(1.06,-.04),P(1.02,-.42),P(.58,-.5),P(.2,-.05)],w*.75,22)}
+  return d+`M${x+2.6} ${y}a2.6 2.6 0 1 0 -5.2 0a2.6 2.6 0 1 0 5.2 0Z`}
+function gsBud(x,y,ang,len,w){const [dx,dy]=gsDir(ang,1),px=-dy,py=dx;
+  return gsStroke([[x,y],[x+dx*len*.8+px*len*.45,y+dy*len*.8+py*len*.45],[x+dx*len*1.15,y+dy*len*1.15],[x+dx*len,y+dy*len]],w,20)+gsStroke([[x+dx*len,y+dy*len],[x+dx*len*.9-px*len*.42,y+dy*len*.9-py*len*.42],[x+dx*len*.2-px*len*.1,y+dy*len*.2-py*len*.1],[x,y]],w*.8,20)}
+const GS_D=(()=>{let d='';
+  d+=gsStroke([[76,248],[98,200],[82,128],[114,70]],2.3,44,.55);           // main stem
+  d+=gsStroke([[88,164],[64,144],[50,116],[49,98]],1.5);                   // left branch
+  d+=gsStroke([[94,130],[122,122],[146,110],[152,98]],1.4);                // right branch
+  d+=gsStroke([[100,104],[84,92],[76,74],[78,56]],1.1);                     // bud stalk, left
+  d+=gsStroke([[140,113],[156,116],[168,108],[172,96]],1);                 // bud stalk, right
+  d+=gsLeaf(84,224,198,52,13,1.4,.12)+gsLeaf(90,202,-22,56,14,1.45,-.1)+gsLeaf(87,180,214,40,10,1.3,.15)
+    +gsLeaf(62,142,172,30,8,1.15,-.12)+gsLeaf(98,114,-58,36,9,1.2,.12)+gsLeaf(124,121,64,30,8,1.1,-.15);
+  d+=gsFlower(116,50,23,-84,1.3)+gsFlower(48,82,18,-58,1.2)+gsFlower(154,82,17,-100,1.15);
+  d+=gsBud(78,56,-96,15,1.05)+gsBud(172,96,-62,13,1);
+  return d})();
+const gsDraw=(cls='')=>`<svg class="gs-art ${cls}" viewBox="22 18 162 234" aria-hidden="true"><path d="${GS_D}"/></svg>`;
+const gsSprig=()=>`<svg class="gs-sprig" viewBox="22 18 162 234" aria-hidden="true"><path d="${GS_D}"/></svg>`;
+FAMILY({key:'garis',name:'Garis Tunggal',meaning:'Brush-pen drawing',
+  blurb:'A brush-pen jasmine sprig on heavy cotton card with letterpressed type, wrapped in a paper band that slides off when guests open it.',
+  fonts:{d:"'Marcellus', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1300,
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
-    return `<section class="page pg-garis" style="--press:${th.c.press}"><div class="gr-card"><i class="gr-deb"></i>
-     <div class="gr-pa reveal">${lineArt('gr-art')}</div>
-     <p class="gr-k reveal d1">${ev(o,L)}</p>
-     <h1 class="names gr-nm reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     ${flourish(1,150).replace('gr-fl','gr-fl reveal d2')}
-     <p class="gr-d reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="gr-v reveal d3">${esc(fmtTime(o.start,o.lang))} &#183; ${esc(o.venue)}</p>
-     ${o.hijri?`<p class="gr-h reveal d3">${esc(o.hijri)}</p>`:''}</div></section>`},
+    return `<section class="page pg-garis ${th.c.dark?'gs-dk':''}" style="--band:${th.c.band};--bandfg:${th.c.bandfg}"><div class="gs-table"></div>
+      <div class="gs-suite">
+        <div class="gs-card gs-main reveal"><div class="gs-in">${gsDraw()}
+          <p class="gs-k kicker">${ev(o,L)}</p><p class="gs-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+          <p class="gs-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="gs-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <a class="gs-card gs-small gs-a reveal d2" data-go="when" href="#"><small>${en?'Event':'Butiran'}</small><b>${en?'Details':'Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="gs-card gs-small gs-b reveal d3" data-go="rsvp" href="#"><small>${en?'Kindly reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+      </div></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
-    return `<div class="cover cv-garis" style="--press:${th.c.press}"><div class="gr-table"></div><div class="gr-card"><i class="gr-deb"></i>
-     <div class="gr-top">${mono(o)}<p class="gr-k">${ev(o,L)}</p></div>
-     <${tag} class="gr-draw" ${attr} aria-label="${L.open}">${lineArt('gr-art')}</${tag}>
-     <p class="gr-nm">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
-     <p class="gr-d">${esc(fmtDate(o.date,o.lang))}</p><p class="gr-v">${esc(o.venue)}</p>
-     ${guest?`<p class="gr-to">${L.dear}<b>${esc(guest)}</b></p>`:''}
-     <p class="gr-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty("--press",th.c.press);$$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend',flourish(i%3+1,180))})},
+    return `<div class="cover cv-garis ${th.c.dark?'gs-dk':''}" style="--band:${th.c.band};--bandfg:${th.c.bandfg}"><div class="gs-table"></div>
+      ${guest?`<p class="gs-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="gs-card gs-cv${guest?'':' gs-noguest'}"><div class="gs-in">${gsDraw()}
+        <p class="gs-k">${ev(o,L)}</p><p class="gs-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <p class="gs-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+        <${tag} class="gs-band" ${attr}><span>${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('gs-dark',!!th.c.dark);const sc=$('.scroller',el);
+    $$('.sheet > .sec h2',el).forEach(h=>{if(!h.querySelector('.gs-sprig'))h.insertAdjacentHTML('afterbegin',gsSprig())});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'krim',n:'Krim',desc:'Sepia ink on cream cotton',c:{ground:'#e6ddcd',sheet:'#f8f3ea',ink:'#2b2622',accent:'#8a6d4b',gold:'#b8925a',press:'rgba(255,255,255,.75)',pagefg:'#2b2622',line:'rgba(43,38,34,.16)'}},
-    {k:'sage',n:'Sage',desc:'Forest ink on sage-washed stock',c:{ground:'#c8cebd',sheet:'#f5f3ec',ink:'#2f3a30',accent:'#5c7055',gold:'#a99060',press:'rgba(255,255,255,.75)',pagefg:'#26302a',line:'rgba(47,58,48,.16)'}},
-    {k:'jambu',n:'Jambu',desc:'Plum ink on blush cotton',c:{ground:'#ead6d0',sheet:'#fbf4f1',ink:'#3b2a2d',accent:'#a8616a',gold:'#c09a6a',press:'rgba(255,255,255,.75)',pagefg:'#3b2a2d',line:'rgba(59,42,45,.16)'}},
-    {k:'biru',n:'Biru',desc:'Navy ink on bright white',c:{ground:'#cdd6e1',sheet:'#f7f8f7',ink:'#1f2a3a',accent:'#3f5a7a',gold:'#a3a8b4',press:'rgba(255,255,255,.8)',pagefg:'#1f2a3a',line:'rgba(31,42,58,.16)'}},
-    {k:'terakota',n:'Terakota',desc:'Rust ink on warm cotton',c:{ground:'#d8b8a2',sheet:'#faf1e8',ink:'#4a2a1c',accent:'#b0583a',gold:'#b8864a',press:'rgba(255,255,255,.75)',pagefg:'#3d2318',line:'rgba(74,42,28,.16)'}},
-    {k:'hitam',n:'Hitam',desc:'Ivory line on charcoal stock',c:{ground:'#141414',sheet:'#201f1d',ink:'#ece4d6',accent:'#c9a978',gold:'#c9a978',press:'rgba(0,0,0,.7)',pagefg:'#ece4d6',line:'rgba(236,228,214,.16)'}},
-    {k:'hijau',n:'Hijau',desc:'Cream line on bottle green',c:{ground:'#10211a',sheet:'#1a3028',ink:'#efe7d6',accent:'#d1b47a',gold:'#d1b47a',press:'rgba(0,0,0,.6)',pagefg:'#efe7d6',line:'rgba(239,231,214,.16)'}},
-    {k:'nila',n:'Nila',desc:'Silver-white line on midnight',c:{ground:'#0f1828',sheet:'#17233a',ink:'#e8e2d4',accent:'#c7b07a',gold:'#c0c4cc',press:'rgba(0,0,0,.6)',pagefg:'#e8e2d4',line:'rgba(232,226,212,.16)'}},
+    {k:'krim',n:'Krim',desc:'Sepia ink on cream cotton',c:{ground:'#e3dbcc',sheet:'#f8f3e9',ink:'#2b2622',accent:'#7a5c3c',gold:'#b8925a',pagefg:'#2b2622',band:'#c9b79a',bandfg:'#3b2f22'}},
+    {k:'sage',n:'Sage',desc:'Forest ink on white cotton, sage band',c:{ground:'#d3d7c8',sheet:'#f7f6f0',ink:'#28332a',accent:'#4f6448',gold:'#a99060',pagefg:'#26302a',band:'#8e9f84',bandfg:'#f7f6f0'}},
+    {k:'jambu',n:'Jambu',desc:'Plum ink on blush cotton',c:{ground:'#ead9d3',sheet:'#fcf6f3',ink:'#3b2a2d',accent:'#8e4c58',gold:'#c09a6a',pagefg:'#3b2a2d',band:'#d3a3a6',bandfg:'#3b2a2d'}},
+    {k:'biru',n:'Biru',desc:'Navy ink on bright white',c:{ground:'#d5dce4',sheet:'#fbfbf9',ink:'#1f2a3a',accent:'#2f4a6c',gold:'#a3a8b4',pagefg:'#1f2a3a',band:'#2f4a6c',bandfg:'#f4f1ea'}},
+    {k:'terakota',n:'Terakota',desc:'Rust ink on warm cotton',c:{ground:'#dcc3b0',sheet:'#faf2ea',ink:'#43271b',accent:'#9c4a2f',gold:'#b8864a',pagefg:'#3d2318',band:'#a85a3c',bandfg:'#faf2ea'}},
+    {k:'hitam',n:'Hitam',desc:'Ivory ink and gold foil on black card',c:{ground:'#1b1a19',sheet:'#262422',ink:'#ece4d6',accent:'#d2b47e',gold:'#c9a978',pagefg:'#ece4d6',band:'#e8dfcf',bandfg:'#262422',dark:1}},
+    {k:'hijau',n:'Hijau',desc:'Cream ink and gold foil on bottle green',c:{ground:'#0f1e18',sheet:'#1b3129',ink:'#efe7d6',accent:'#d6b97f',gold:'#d1b47a',pagefg:'#efe7d6',band:'#efe7d6',bandfg:'#1b3129',dark:1}},
+    {k:'nila',n:'Nila',desc:'Pearl ink and gold foil on midnight',c:{ground:'#0e1626',sheet:'#18243b',ink:'#e8e2d4',accent:'#d0b884',gold:'#c7b07a',pagefg:'#e8e2d4',band:'#e8e2d4',bandfg:'#18243b',dark:1}},
   ]});
 
 })()}catch(e){console.error("family garis failed",e)}
+
+
+/* ===== family: gerbang ===== */
+try{(()=>{
+/* gerbang: a carved timber palace gateway, its awan larat scrolls and pucuk rebung borders picked out in gold leaf,
+   opening onto a sunlit water garden (Childe Hassam, The Water Garden, public domain). The names sit on the carved name board over the arch.
+   Cover: tap "Buka Jemputan" and you walk through the arch into the garden.
+   Page: the garden seen through the arch, the names below. Skin: dark timber cards edged with gilt pucuk rebung. */
+let gbN=0;
+const f2=n=>n.toFixed(2);
+// a carved spiral (awan larat): a tapering coil with a leaf at its tail
+function gbCoil(cx,cy,r,dir,a0){let d='';const n=26,turns=1.35;
+  for(let i=0;i<=n;i++){const t=i/n,a=a0+dir*t*turns*Math.PI*2,rr=r*(1-t*.78);d+=(i?'L':'M')+f2(cx+Math.cos(a)*rr)+' '+f2(cy+Math.sin(a)*rr)}
+  const lx=cx+Math.cos(a0)*r,ly=cy+Math.sin(a0)*r,ang=a0*180/Math.PI+90*dir;
+  return `<path d="${d}" fill="none" stroke-width="${f2(r*.2)}" stroke-linecap="round"/><path d="M0 0C${f2(r*.35)} ${f2(-r*.25)} ${f2(r*.55)} ${f2(-r*.7)} 0 ${f2(-r*1.05)}C${f2(-r*.55)} ${f2(-r*.7)} ${f2(-r*.35)} ${f2(-r*.25)} 0 0Z" transform="translate(${f2(lx)} ${f2(ly)}) rotate(${f2(ang)})"/>`}
+// the spandrel carving for the left half (the right is mirrored): a bud at the crown, a stem running down the arch into coils
+const gbSpandrel=()=>`<path d="M50 40.5C46 42.5 41 43 36.5 42.8C31 42.6 26.5 44.5 24 48.5C21.5 52.5 20.5 56 18.5 59" fill="none" stroke-width=".9" stroke-linecap="round"/>
+  ${gbCoil(30,46.6,3.3,-1,-Math.PI*.55)}${gbCoil(19.2,47.2,4.2,1,Math.PI*1.05)}${gbCoil(40.5,40.2,2.2,1,Math.PI*.9)}${gbCoil(16.5,60.5,2.4,-1,-Math.PI*.2)}
+  <path d="M50 31.2C51.9 33.4 52.1 35.6 50 38.6C47.9 35.6 48.1 33.4 50 31.2Z"/><path d="M50 38.6C47.5 37.8 45.5 38.6 44.4 40.4C46.8 40.9 48.6 40.2 50 38.6Z"/>
+  <circle cx="35.5" cy="39.6" r=".7"/><circle cx="25.6" cy="41.5" r=".7"/><circle cx="21.6" cy="55" r=".6"/>`;
+// side bands: a running vine with small coils turning to alternate sides
+const gbVine=(x,y0,y1)=>{let d=`M${x} ${y1}`,coils='';const P=13;for(let y=y1,k=0;y>y0+P;y-=P,k++){const s=k%2?1:-1;
+  d+=`C${f2(x+s*3)} ${f2(y-P*.3)} ${f2(x+s*3)} ${f2(y-P*.7)} ${x} ${f2(y-P)}`;coils+=gbCoil(x+s*2.1,y-P*.5,1.9,s,s>0?Math.PI:0)}
+  return `<path d="${d}" fill="none" stroke-width=".95"/>${coils}`};
+const GB_ARCH='M23 151V72C23 56 38 49 50 41C62 49 77 56 77 72V151Z';
+function gbGate(th,uid){const c=th.c,m=c.metal;
+  const relief=`<filter id="gbr${uid}" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation=".45" result="b"/>
+      <feDiffuseLighting in="b" surfaceScale="2.4" diffuseConstant="1.15" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="38"/></feDiffuseLighting>
+      <feSpecularLighting in="b" surfaceScale="2.4" specularConstant=".9" specularExponent="16" lighting-color="#fff3d2" result="s"><feDistantLight azimuth="235" elevation="44"/></feSpecularLighting>
+      <feComposite in="d" in2="SourceGraphic" operator="arithmetic" k1="1.15" result="lit"/><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/>
+      <feComposite in="lit" in2="s2" operator="arithmetic" k2="1" k3=".8" result="o"/><feComposite in="o" in2="SourceAlpha" operator="in" result="top"/>
+      <feOffset in="SourceAlpha" dx=".5" dy=".8"/><feGaussianBlur stdDeviation=".5"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .7 0" result="sh"/>
+      <feMerge><feMergeNode in="sh"/><feMergeNode in="top"/></feMerge></filter>`;
+  const grain=`<filter id="gbw${uid}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".22 .012" numOctaves="4" seed="${uid}"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -.7 .5" result="g"/><feComposite in="g" in2="SourceGraphic" operator="in" result="g2"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="g2"/></feMerge></filter>`;
+  const half=`<g class="gb-carve">${gbSpandrel()}${gbVine(8.5,38,148)}</g>`;
+  return `<svg class="gb-gate" viewBox="0 0 100 152" ${NS} aria-hidden="true"><defs>${relief}${grain}
+    <clipPath id="gba${uid}"><path d="${GB_ARCH}"/></clipPath>
+    <linearGradient id="gbs${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset=".3" stop-color="#000" stop-opacity="0"/></linearGradient></defs>
+    <g clip-path="url(#gba${uid})"><image class="gb-paint" href="${A}pd-paint-${c.paint}.jpg" x="8" y="36" width="84" height="116" preserveAspectRatio="xMidYMid slice"/><rect x="0" y="0" width="100" height="152" fill="url(#gbs${uid})"/></g>
+    <path d="M1 152V3H99V152H77V72C77 56 62 49 50 41C38 49 23 56 23 72V152Z" fill="${c.wood}" filter="url(#gbw${uid})"/>
+    <path d="M1 3H99" stroke="#000" stroke-opacity=".35" stroke-width=".6"/>
+    <g fill="${m}" stroke="${m}" filter="url(#gbr${uid})">
+      ${half}<g transform="translate(100 0) scale(-1 1)">${half}</g>
+      <path d="M4 37.5H96M4 151V37.5M96 151V37.5M13 151V37.5M87 151V37.5" fill="none" stroke-width=".7"/>
+      <path d="M2.5 9H97.5M2.5 6H97.5" fill="none" stroke-width=".7"/>
+      ${K.ring(22,0).map((_,i)=>`<circle cx="${f2(4.5+i*4.3)}" cy="7.5" r=".9" stroke="none"/>`).join('')}
+      <path d="M20.5 151V72C20.5 54.5 36.5 46.5 50 37.6C63.5 46.5 79.5 54.5 79.5 72V151" fill="none" stroke-width=".9"/>
+      <path d="M17 14H83C86 14 88 17 88 23.5C88 30 86 33 83 33H17C14 33 12 30 12 23.5C12 17 14 14 17 14Z" fill="none" stroke-width="1"/>
+      ${[[9,23.5],[91,23.5]].map(([x,y])=>`<path d="${K.star(8,2.4,1.1,x,y)}" stroke="none"/>`).join('')}
+    </g>
+    <path d="${GB_ARCH}" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="2.2" style="filter:blur(.8px)"/>
+  </svg>`}
+const gbBoard=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="gb-board"><p class="gb-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p></div>`};
+const gbT=(k,n,desc,ground,wood,accent,extra={})=>({k,n,desc,c:{ground,sheet:wood,ink:'#f1e8d8',accent,gold:'#d2ad62',pagefg:'#f1e8d8',wood,metal:'#c9a14e',paint:'hassam-water',...extra}});
+FAMILY({key:'gerbang',name:'Gerbang',meaning:'Carved gateway',
+  blurb:'A carved timber palace gateway with gold-leaf scrolls, your names on the name board over the arch and a water garden beyond. Guests walk through the arch to open the card.',
+  fonts:{d:"'Cinzel', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<section class="page pg-gerbang2" style="--paint:url(${A}pd-paint-${th.c.paint}.jpg);--metal:${th.c.metal};--wood:${th.c.wood}"><div class="gb-ground"></div>
+    <div class="gb-view reveal"><div class="gb-arch"></div></div>
+    ${o.bismillah?'<p class="gb-bis reveal d1">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+    <p class="gb-k kicker reveal d1">${ev(o,L)}</p><p class="gb-pnames">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+    <p class="gb-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="gb-hj reveal d2">${esc(o.hijri)}</p>`:''}${o.venue?`<p class="gb-ven reveal d2">${esc(o.venue)}</p>`:''}
+    <a class="gb-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-gerbang2" style="--metal:${th.c.metal};--wood:${th.c.wood}"><div class="gb-ground"></div>
+    <div class="gb-stage">${gbGate(th,++gbN)}${gbBoard(o,L)}</div>
+    <div class="gb-foot"><p class="gb-k">${ev(o,L)} · ${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>${guest?`<p class="gb-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="gb-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const m=th.c.metal;
+    el.style.setProperty('--paint',`url(${A}pd-paint-${th.c.paint}.jpg)`);el.style.setProperty('--wood',th.c.wood);el.style.setProperty('--metal',m);
+    let d='';for(let x=0;x<120;x+=8)d+=`<path d="M${x+.6} 9.4L${x+4} 1.2L${x+7.4} 9.4Z" fill="none" stroke="${m}" stroke-width=".8"/><path d="M${x+4} 8.6V4.6" stroke="${m}" stroke-width=".6"/>`;
+    el.style.setProperty('--rebung',K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 10" preserveAspectRatio="xMidYMid slice"><filter id="r"><feGaussianBlur in="SourceAlpha" stdDeviation=".35" result="b"/><feDiffuseLighting in="b" surfaceScale="2" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="40"/></feDiffuseLighting><feComposite in="d" in2="SourceGraphic" operator="arithmetic" k1="1.2"/><feComposite in2="SourceAlpha" operator="in"/></filter><g filter="url(#r)">${d}<path d="M0 .4H120M0 9.6H120" stroke="${m}" stroke-width=".7"/></g></svg>`));
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    gbT('gading','Gading','Golden teak gateway, gilt carving','#2e231a','#5a4130','#e6c98c'),
+    gbT('nila','Nila','Indigo-stained gateway, gilt carving','#141b2e','#253556','#e2c88e'),
+    gbT('marun','Marun','Maroon lacquered gateway, gilt carving','#3a1018','#5e1b26','#e6c58a'),
+    gbT('zamrud','Zamrud','Emerald lacquered gateway, gilt carving','#0c241c','#18402f','#e2c88c'),
+    gbT('jambu','Merah Jambu','Rose-washed gateway, ivory carving','#3e1f27','#7a4250','#f2d9d6',{metal:'#efe4d2',paint:'monet-irises'}),
+    gbT('sage','Sage','Sage-washed gateway, ivory carving','#262e24','#4c5a46','#e9eedf',{metal:'#efe7d4'}),
+    gbT('hitam','Hitam','Ebony gateway, gilt carving','#100e0d','#26211d','#e2c48a'),
+    gbT('terakota','Terakota','Terracotta gateway, gilt carving','#3a1a10','#7a3a22','#f0cfa6',{paint:'monet-irises'}),
+  ]});
+
+})()}catch(e){console.error("family gerbang failed",e)}
+
+
+/* ===== family: herb ===== */
+try{(()=>{
+/* herb (redesign): a herbarium specimen sheet. A real botanical plate (public domain) "pressed" on heavy mounting paper,
+   held by strips of washi tape, with a typed specimen label, a catalogue number and a round ink stamp.
+   Cover: tap "Buka Jemputan" and the sheet is drawn aside off the table.
+   Page: the specimen sheet laid out with the names typed on its label. Skin: mounting-paper cards with a strip of washi tape. */
+const hbTape=(x,y,w,rot,seed)=>{const r=rng(seed),z=[];for(let i=0;i<=6;i++)z.push(`${(r()*7).toFixed(1)}% ${(i/6*100).toFixed(1)}%`);
+  const zr=[];for(let i=6;i>=0;i--)zr.push(`${(93+r()*7).toFixed(1)}% ${(i/6*100).toFixed(1)}%`);
+  return `<i class="hb2-tape" style="left:${x}%;top:${y}%;width:${w}%;transform:rotate(${rot}deg);clip-path:polygon(${z.join(',')},${zr.join(',')})"></i>`};
+// a round rubber stamp: ring of spaced caps around the date
+const hbStamp=(o,L,uid)=>{const t=String(ev(o,L)).replace(/&amp;/g,'&').toUpperCase(),d=esc(fmtShort(o.date));
+  return `<svg class="hb2-stamp" viewBox="0 0 100 100"><defs><path id="hbp${uid}" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1 -72 0"/></defs>
+    <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="50" cy="50" r="43.5" fill="none" stroke="currentColor" stroke-width=".7"/><circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" stroke-width=".8"/>
+    <text font-family="Special Elite, monospace" font-size="8.4" letter-spacing="2" fill="currentColor"><textPath href="#hbp${uid}" startOffset="2%">${esc(t)} · ${esc(t)} ·</textPath></text>
+    <text x="50" y="54" text-anchor="middle" font-family="Special Elite, monospace" font-size="9" fill="currentColor">${d}</text></svg>`};
+let hbN=0;
+const hbNo=o=>{const m=String(o.date||'').match(/\d{4}-(\d\d)-(\d\d)/);return m?`${m[2]}${m[1]}`:'1912'};
+const hbPlant=(fl,cls)=>`<div class="hb2-plant ${cls}"><i class="hb2-pl" style="background-image:url(${A}flower-${fl}.webp)"></i>${hbTape(37,83,26,-9,3)}${hbTape(41,60,20,14,5)}</div>`;
+FAMILY({key:'herb',name:'Herbarium',meaning:'Pressed specimen',
+  blurb:'A pressed flower taped to a herbarium sheet with a typed specimen label and an ink stamp. Guests draw the sheet aside to open the card.',
+  fonts:{d:"'Special Elite', monospace",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1350,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',fl=th.fl[0];
+    return `<section class="page pg-herb2"><div class="hb2-table"></div>
+      <div class="hb2-sheet hb2-big reveal"><span class="hb2-no">No. ${hbNo(o)}</span>${hbStamp(o,L,++hbN)}
+        ${hbPlant(fl,'hb2-pp')}
+        <p class="hb2-k kicker">${ev(o,L)}</p><h1 class="hb2-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+        <div class="hb2-label"><p><small>${en?'Date':'Tarikh'}</small><b>${esc(fmtDate(o.date,o.lang))}</b></p>${o.venue?`<p><small>${en?'Venue':'Tempat'}</small><b>${esc(o.venue)}</b></p>`:''}${o.start?`<p><small>${en?'Time':'Masa'}</small><b>${esc(fmtTime(o.start,o.lang))}</b></p>`:''}</div></div>
+      <a class="hb2-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',fl=th.fl[0];
+    return `<div class="cover cv-herb2${th.c.dark?' hb2-dk':''}"><div class="hb2-table"></div>
+      <div class="hb2-sheet"><span class="hb2-no">No. ${hbNo(o)}</span>${hbStamp(o,L,++hbN)}
+        ${hbPlant(fl,'')}
+        <div class="hb2-label hb2-cl">${guest?`<p class="hb2-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+          <p class="hb2-k">${ev(o,L)}</p><p class="hb2-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
+          <p><small>${en?'Date':'Tarikh'}</small><b>${esc(fmtShort(o.date))}</b></p>${o.venue?`<p><small>${en?'Venue':'Tempat'}</small><b>${esc(o.venue)}</b></p>`:''}</div></div>
+      <${tag} class="hb2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('hb2-dk',!!th.c.dark);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    // [key, name, desc, table, accent, tape, plate, dark]
+    ...[['melati','Melati','Pressed jasmine, sand tape','#d9cdb9','#7a3a4a','#c9a77a','jasmine'],
+    ['raya','Bunga Raya','Pressed hibiscus, rose tape','#cfc3b2','#9c3a52','#d9a7b5','hibiscus'],
+    ['iris','Iris','Pressed iris, blue tape','#c9cdd3','#2d4b78','#a9bbd6','iris'],
+    ['lupa','Lupa Jangan','Pressed forget-me-nots, celadon tape','#d3d6cc','#3c5f8a','#b8c7a0','forget-me-not'],
+    ['anemone','Anemone','Pressed anemones, ochre tape','#d8cbbd','#8a2a2a','#c9b06a','anemones'],
+    ['mawar','Mawar Liar','Pressed wild rose, pink tape','#d2d0c0','#6e3a4a','#d1a3a3','wild-rose'],
+    ['teratai','Teratai','Pressed water lily, mist tape','#cdd5d6','#2d4b78','#b9cadb','lotus'],
+    ['mawar-putih','Mawar Putih','Pressed white roses, straw tape','#d6d2c4','#4a5a3f','#d9c9a0','white-roses'],
+    ['jambu','Jambu','Pressed blush rose, pink tape','#dccfc8','#9c4a5a','#e3b9b9','blush-rose'],
+    ['merah','Merah','Pressed red rose on oxblood','#3e2024','#7a1b29','#c9a77a','red-rose',1],
+    ['kubis','Mawar Kubis','Pressed cabbage rose, kraft tape','#d3cdbd','#6b4a3a','#c9b48a','cabbage-rose'],
+    ['mauve','Mauve Zaitun','Pressed anemones, mauve tape','#cbbcbc','#6e4a5a','#b896a4','anemones'],
+    ['pic','Pic Sage','Pressed wild rose, peach tape','#d9cbbd','#b4603f','#e9a07f','wild-rose'],
+    ['kunyit','Kunyit Nila','Pressed anemones, turmeric tape','#d6cbb6','#a24a22','#e3a72f','anemones'],
+    ['lavender','Lavender Arang','Pressed iris, lilac tape','#cfccd6','#6f62a8','#a79bd1','iris'],
+    ['karang','Teal Karang','Pressed water lily, coral tape','#c9d3cf','#0f6b6b','#ef8a72','lotus'],
+    ['pandan','Pandan','Pressed jasmine on pandan green','#24392d','#0d4a32','#c9a43f','jasmine',1],
+    ['kopi','Kopi Susu','Pressed cabbage rose on walnut','#3a2c23','#6b4a3a','#c9a982','cabbage-rose',1],
+    ['hujan','Biru Hujan','Pressed forget-me-nots on slate','#2c3844','#3a5570','#8fa7bd','forget-me-not',1],
+    ['fajar','Fajar','Pressed pink rose, apricot tape','#ddc9c4','#a3465f','#f0a46c','pink-rose'],
+    ].map(([k,n,desc,ground,accent,tape,fl,dark])=>({k,n,desc,c:{ground,sheet:'#fbf8f1',ink:'#33291f',accent,gold:accent,tape,pagefg:dark?'#f3ede3':'#33291f',dark:dark?1:0},extra:{fl:[fl,fl]}}))]});
+
+})()}catch(e){console.error("family herb failed",e)}
 
 
 /* ===== family: hutan ===== */
@@ -2866,6 +3369,94 @@ FAMILY({key:'iznik',name:'Iznik',meaning:'Ottoman tile panel',
 })()}catch(e){console.error("family iznik failed",e)}
 
 
+/* ===== family: jahit ===== */
+try{(()=>{
+/* jahit: hand embroidery on natural linen, still in its wooden hoop, with the needle and thread left in.
+   Every stitch is drawn: fishbone leaves, stem-stitch stalks, lazy-daisy petals, satin-stitch roses, French knots,
+   and the names worked in satin stitch over a script letterform.
+   Cover: tap "Buka Jemputan", the outer hoop lifts off and the embroidered linen comes forward.
+   Page: the finished piece laid flat on the table with the empty hoop beside it.
+   Skin: linen cards with a running-stitch border. */
+needFont('Parisienne');
+let jhN=0;
+const j2=v=>v.toFixed(2);
+// fishbone leaf: angled stitches from each edge into the centre vein, from base (0,0) to tip (len,0), then placed
+function jhLeaf(x,y,rot,len,wid,col,hi){let d='';const n=Math.round(len/1.05);
+  for(let i=1;i<n;i++){const t=i/n,w=wid*Math.sin(Math.PI*Math.pow(t,.8))*.5,cx=Math.min(len,t*len+wid*.45);
+    d+=`M${j2(t*len)} ${j2(-w)}L${j2(cx)} 0M${j2(t*len)} ${j2(w)}L${j2(cx)} 0`}
+  return `<g transform="translate(${j2(x)} ${j2(y)}) rotate(${j2(rot)})"><path d="${d}" stroke="${col}" stroke-width="1.05" stroke-linecap="round" fill="none"/><path d="${d}" stroke="${hi}" stroke-width=".35" stroke-linecap="round" fill="none" opacity=".55" transform="translate(-.2 -.25)"/></g>`}
+// stem stitch: short overlapping slanted stitches along a path, faked with a dashed thread and a lighter twist on top
+const jhStem=(d,col,hi)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="1.3" stroke-dasharray="2.4 .5" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${hi}" stroke-width=".45" stroke-dasharray="1.2 1.7" opacity=".6"/>`;
+// lazy daisy: each petal a chain loop held with a tiny stitch at the tip
+const jhDaisy=(x,y,r,col,ctr,rot=0)=>{let s='';for(let i=0;i<5;i++){const a=rot+i*72;
+  s+=`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 -1.2C2.4 -${r*.35} 1.9 -${r*.95} 0 -${r}C-1.9 -${r*.95} -2.4 -${r*.35} 0 -1.2Z" fill="none" stroke="${col}" stroke-width="1"/><path d="M0 -${r}v-1.3" stroke="${col}" stroke-width=".9"/></g>`}
+  return s+jhKnot(x,y,1.3,ctr)};
+// french knot: a raised bead of thread
+const jhKnot=(x,y,r,col)=>`<circle cx="${j2(x)}" cy="${j2(y)}" r="${r}" fill="${col}"/><circle cx="${j2(x-r*.3)}" cy="${j2(y-r*.35)}" r="${j2(r*.42)}" fill="#fff" opacity=".35"/>`;
+// satin-stitch rose: petals filled with close parallel stitches, two shades
+function jhRose(x,y,r,c1,c2){let s='';const ring=(rr,n,col,off)=>{for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2+off,px=x+Math.cos(a)*rr*.55,py=y+Math.sin(a)*rr*.55;
+    let d='';const m=Math.round(rr*1.6);for(let k=0;k<=m;k++){const t=k/m-.5,ox=Math.cos(a+Math.PI/2)*t*rr*1.05,oy=Math.sin(a+Math.PI/2)*t*rr*1.05,h=Math.sqrt(Math.max(0,.25-t*t))*rr*1.1;
+      d+=`M${j2(px+ox-Math.cos(a)*h)} ${j2(py+oy-Math.sin(a)*h)}L${j2(px+ox+Math.cos(a)*h)} ${j2(py+oy+Math.sin(a)*h)}`}
+    s+=`<path d="${d}" stroke="${col}" stroke-width=".95" stroke-linecap="round"/>`}};
+  ring(r,6,c1,0);ring(r*.62,5,c2,.6);return s+jhKnot(x,y,r*.22,c2)}
+// the wreath: an open ring of stems, leaves and flowers, gap at the top
+function jhWreath(c,R=70,cx=100,cy=100){let s='';const L=c.leaf,LH=c.leafhi||'#e8f0d8';
+  const arc=(a0,a1)=>{const p=a=>[cx+Math.cos(a)*R,cy+Math.sin(a)*R];const [x0,y0]=p(a0),[x1,y1]=p(a1);return `M${j2(x0)} ${j2(y0)}A${R} ${R} 0 0 ${a1>a0?1:0} ${j2(x1)} ${j2(y1)}`};
+  const D=Math.PI/180;s+=jhStem(arc(-62*D,90*D),L,LH)+jhStem(arc(242*D,90*D),L,LH);
+  for(let a=-56;a<=236;a+=12){if(a>78&&a<102)continue;const r=a*D,px=cx+Math.cos(r)*R,py=cy+Math.sin(r)*R,g=a<90?a-90:a+90;
+    s+=jhLeaf(px,py,g-34,10,4.6,L,LH)+jhLeaf(px,py,g+34,9,4.2,L,LH)}
+  const fl=[[100,c.fl,c.fl2,8],[30,c.fl2,c.fl,6],[150,c.fl2,c.fl,6],[-20,c.fl,c.fl2,5],[200,c.fl,c.fl2,5]];
+  fl.forEach(([a,c1,c2,r])=>{const px=cx+Math.cos(a*D)*R,py=cy+Math.sin(a*D)*R;s+=jhRose(px,py,r,c1,c2)});
+  [[62,c.fl2],[118,c.fl2],[-40,c.fl],[220,c.fl],[8,c.fl],[172,c.fl]].forEach(([a,col])=>{const px=cx+Math.cos(a*D)*(R+7),py=cy+Math.sin(a*D)*(R+7);s+=jhDaisy(px,py,4.2,col,c.gold,a)});
+  [[-30,4],[210,4],[78,-6],[102,-6],[45,7],[135,7]].forEach(([a,o])=>{const px=cx+Math.cos(a*D)*(R+o),py=cy+Math.sin(a*D)*(R+o);s+=jhKnot(px,py,1.1,c.gold)+jhKnot(px+2.6,py+1.2,1,c.gold)+jhKnot(px-1.4,py+2.4,1,c.gold)});
+  return s}
+// names in satin stitch: a script letterform filled with slanted thread, a shadow underneath for the raised thread
+function jhNames(o,c,u,y0=90,sz=31){const [n1,n2]=coverNames(o);const fit=t=>Math.min(sz,sz*8/Math.max(8,String(t).length));
+  const t=(txt,y,s)=>`<text x="100" y="${y}" font-size="${j2(s)}" text-anchor="middle" font-family="Parisienne,cursive">${esc(txt)}</text>`;
+  const body=t(n1,y0,fit(n1))+`<text x="100" y="${y0+15}" font-size="13" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-style="italic">&amp;</text>`+t(n2,y0+40,fit(n2));
+  return `<defs><pattern id="jhs${u}" width="1.5" height="1.5" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><rect width="1.5" height="1.5" fill="${c.accent}"/><rect width="1.5" height=".42" y=".2" fill="#fff" opacity=".28"/><rect width="1.5" height=".18" y="1.25" fill="#000" opacity=".25"/></pattern></defs>
+    <g fill="#000" opacity=".28" transform="translate(.45 .6)">${body}</g><g fill="url(#jhs${u})" stroke="${c.accent}" stroke-width=".18">${body}</g>`}
+const jhCloth=(o,c,names=true)=>{const u=++jhN;return `<svg class="jh-emb" viewBox="0 0 200 200" ${NS}><g fill="none">${jhWreath(c)}</g>${names?jhNames(o,c,u):''}</svg>`};
+const jhGo=(el)=>{const sc=$('.scroller',el);
+  $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))};
+// needle and thread left in the cloth
+const jhNeedle=c=>`<svg class="jh-needle" viewBox="0 0 200 200" ${NS}><defs><linearGradient id="jhm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f2"/><stop offset=".5" stop-color="#9a9da2"/><stop offset="1" stop-color="#5d6066"/></linearGradient></defs>
+  <path d="M171 178C180 192 196 190 206 196C218 203 214 222 226 232" fill="none" stroke="${c.accent}" stroke-width="1.3" stroke-dasharray="2.4 .4"/>
+  <g transform="rotate(42 150 157)"><rect x="150" y="156" width="30" height="1.8" rx=".9" fill="url(#jhm)"/><ellipse cx="176.5" cy="156.9" rx="2" ry=".45" fill="#3a3a3a" opacity=".7"/></g></svg>`;
+const jhStyle=c=>`--leaf:${c.leaf};--fl:${c.fl}`;
+FAMILY({key:'jahit',name:'Sulaman',meaning:'Hand embroidery',
+  blurb:'Your names hand-embroidered in satin stitch on natural linen, framed by a stitched wreath and still held in a wooden hoop.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Parisienne', cursive",b:"'Cormorant Garamond', serif"},ms:1350,
+  page(o,th,L){const en=o.lang==='en',c=th.c;
+    return `<section class="page pg-jahit2" style="${jhStyle(c)}"><div class="jh-table"></div>
+      <div class="jh-panel reveal"><div class="jh-pin">
+        <p class="jh-k kicker">${ev(o,L)}</p>
+        <div class="names jh-nm">${jhCloth(o,c)}</div>
+        <p class="jh-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="jh-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="jh-ven">${esc(o.venue)}</p>`:''}
+        <a class="jh-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-jahit2" style="${jhStyle(c)}"><div class="jh-table"></div>
+      <p class="jh-k jh-top">${ev(o,L)}</p>
+      <div class="jh-stage"><div class="jh-drape"><div class="jh-cloth"></div></div>
+        <div class="jh-hoop"><div class="jh-taut">${jhCloth(o,c)}</div><i class="jh-inner"></i><i class="jh-ring"></i><i class="jh-screw"></i></div>${jhNeedle(c)}</div>
+      <p class="jh-cdate">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+      <div class="jh-foot">${guest?`<p class="jh-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="jh-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);jhGo(el)},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Ivory linen, honey and rose threads',c:{ground:'#d8c7a6',sheet:'#f4eee2',ink:'#3a2e24',accent:'#7a4a2a',gold:'#c99a3a',pagefg:'#3a2c20',fl:'#c97a6a',fl2:'#e8b49a',leaf:'#7d8a52'}},
+    {k:'nila',n:'Nila',desc:'Ivory linen, indigo threads',c:{ground:'#8ea0b8',sheet:'#f3efe6',ink:'#232c40',accent:'#1d2f5a',gold:'#d4a84a',pagefg:'#16203a',fl:'#3e5c96',fl2:'#9fb3d6',leaf:'#5d7a6a'}},
+    {k:'marun',n:'Marun',desc:'Ivory linen, wine and blush threads',c:{ground:'#5c2430',sheet:'#f4ede2',ink:'#3a2228',accent:'#6e1a2a',gold:'#d2a24c',pagefg:'#f4e6dc',fl:'#9a2a3c',fl2:'#e3a5a8',leaf:'#6f7d4e'}},
+    {k:'zamrud',n:'Zamrud',desc:'Ivory linen, emerald threads',c:{ground:'#2f5444',sheet:'#f2eee3',ink:'#22302a',accent:'#0f4a36',gold:'#d2aa4e',pagefg:'#eef0e2',fl:'#e8d6b0',fl2:'#c98a7a',leaf:'#2f6a4a'}},
+    {k:'jambu',n:'Merah Jambu',desc:'White linen, rose-pink threads',c:{ground:'#e6c6c2',sheet:'#f8f3ee',ink:'#4a2a34',accent:'#a3465f',gold:'#d6a85a',pagefg:'#5a2a3a',fl:'#d8728a',fl2:'#f2b8c2',leaf:'#86a07a'}},
+    {k:'sage',n:'Sage',desc:'Oat linen, sage and cream threads',c:{ground:'#a9b49b',sheet:'#f3efe4',ink:'#2f3a2a',accent:'#46573e',gold:'#c4a45a',pagefg:'#26301f',fl:'#f2ead8',fl2:'#d9a48c',leaf:'#5d7550'}},
+    {k:'hitam',n:'Hitam',desc:'Ivory linen, black and red threads',c:{ground:'#242222',sheet:'#f1ece2',ink:'#1c1a1a',accent:'#161414',gold:'#c99a3a',pagefg:'#eee6d8',fl:'#a3263a',fl2:'#d97080',leaf:'#4a5a3e'}},
+    {k:'terakota',n:'Terakota',desc:'Ivory linen, terracotta threads',c:{ground:'#c98466',sheet:'#f5eee3',ink:'#4a2a1e',accent:'#8e3a1c',gold:'#d6a046',pagefg:'#3a1c12',fl:'#c25a32',fl2:'#efb48c',leaf:'#7a8048'}},
+  ]});
+
+})()}catch(e){console.error("family jahit failed",e)}
+
+
 /* ===== family: jam ===== */
 try{(()=>{
 /* jam: an engraved hunter-case pocket watch on its chain.
@@ -3084,6 +3675,135 @@ FAMILY({key:'jianzhi',name:'Potong Kertas',meaning:'Chinese papercut',
 })()}catch(e){console.error("family jianzhi failed",e)}
 
 
+/* ===== family: jubin ===== */
+try{(()=>{
+/* jubin: a wall of real hand-painted Ottoman tiles (Met Museum, public domain: pd-illum-3/4/5) with one plain glazed plaque set into it,
+   its cusped arch and rosettes painted by hand in the colourway's glaze.
+   Cover: tap "Buka Jemputan", the plaque comes forward off the wall while the wall dims.
+   Page: the plaque over the wall with three small glazed tiles that link to the details, RSVP and location.
+   Skin: glazed cream plaques with a painted double rule and a rosette over each heading. */
+let jbN=0;
+// an Iznik rosette: eight teardrop petals outlined in the glaze colour, cream centres, a red heart
+const jbRose=(cx,cy,r)=>{const pet=K.ring(8,0,cx,cy).map(([x,y,a])=>{const d=(a*180/Math.PI+90).toFixed(1);
+    return `<path d="M${cx} ${cy-r*.3}C${cx+r*.32} ${cy-r*.55} ${cx+r*.3} ${cy-r*.92} ${cx} ${cy-r}C${cx-r*.3} ${cy-r*.92} ${cx-r*.32} ${cy-r*.55} ${cx} ${cy-r*.3}Z" transform="rotate(${d} ${cx} ${cy})"/>`}).join('');
+  return `<g class="jb-rose">${pet}<circle cx="${cx}" cy="${cy}" r="${(r*.3).toFixed(2)}" class="jb-red"/></g>`};
+// the plaque: a cusped arch painted on cream glaze; the strokes wobble slightly like a brush
+const JB_ARCH='M5 137V46C5 33 16 29 26 25C36 21 44 15 50 5C56 15 64 21 74 25C84 29 95 33 95 46V137Z';
+const JB_MASK=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 142" preserveAspectRatio="none"><path d="${JB_ARCH}"/></svg>`);
+const jbPlaque=(uid)=>{const arch=JB_ARCH;
+  const inner='M11 131V49C11 38 20 35 28 31.5C37 27.5 45 22 50 14C55 22 63 27.5 72 31.5C80 35 89 38 89 49V131Z';
+  return `<svg class="jb-svg" viewBox="0 0 100 142" preserveAspectRatio="none" ${NS} aria-hidden="true"><defs>
+    <filter id="jbw${uid}" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".12" numOctaves="2" seed="${uid}"/><feDisplacementMap in="SourceGraphic" scale=".7"/></filter>
+    <linearGradient id="jbg${uid}" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".28" stop-color="#fff" stop-opacity="0"/><stop offset=".85" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".08"/></linearGradient></defs>
+    <path d="${arch}" class="jb-glaze"/>
+    <g filter="url(#jbw${uid})"><path d="${arch}" fill="none" class="jb-band" stroke-width="2.8"/><path d="${inner}" fill="none" class="jb-line" stroke-width=".55"/>
+      ${jbRose(50,29,5)}</g>
+    <path d="${arch}" fill="url(#jbg${uid})"/></svg>`};
+const jbInner=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="jb-txt"><p class="jb-k${big?' kicker':''}">${ev(o,L)}</p><p class="jb-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+  <p class="jb-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>${big&&o.hijri?`<p class="jb-hj">${esc(o.hijri)}</p>`:''}</div>`};
+const jbWall=th=>`<div class="jb-wall" style="--wall:url(${A}pd-illum-${th.c.tile}.jpg);--wallf:${th.c.wallf||'none'}"></div>`;
+const jbT=(k,n,desc,ground,accent,tile,extra={})=>({k,n,desc,c:{ground,sheet:'#fbf8f1',ink:'#2a2622',accent,gold:'#b89a5e',pagefg:'#2a2622',tile,...extra}});
+FAMILY({key:'jubin',name:'Jubin',meaning:'Painted tiles',
+  blurb:'A wall of hand-painted Ottoman tiles with one plain glazed plaque set into it, your names painted inside a cusped arch.',
+  fonts:{d:"'Marcellus', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1300,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-jubin2">${jbWall(th)}<div class="jb-veil"></div>
+    <div class="jb-plaque big reveal" style="--jbm:${JB_MASK}">${jbPlaque(++jbN)}${jbInner(o,L,true)}</div>
+    <div class="jb-tiles reveal d2">
+      <a class="jb-tile" data-go="when" href="#"><small>${en?'Event':'Butiran'}</small><b>${en?'Details':'Majlis'}</b></a>
+      ${o.x_rsvp?`<a class="jb-tile" data-go="rsvp" href="#"><small>${en?'Reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+      <a class="jb-tile" data-go="loc" href="#"><small>${en?'Find us':'Cari kami'}</small><b>${en?'Location':'Lokasi'}</b></a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-jubin2">${jbWall(th)}<div class="jb-shade"></div>
+    <div class="jb-stage"><div class="jb-plaque" style="--jbm:${JB_MASK}">${jbPlaque(++jbN)}${jbInner(o,L,false)}</div></div>
+    <div class="jb-foot">${guest?`<p class="jb-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="jb-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--wall',`url(${A}pd-illum-${th.c.tile}.jpg)`);el.style.setProperty('--wallf',th.c.wallf||'none');el.classList.toggle('jb-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    jbT('gading','Gading','Ochre glaze on a cream Iznik wall','#f3ecdf','#8a6a2c','5'),
+    jbT('nila','Nila','Cobalt glaze on a blue tulip wall','#eef0f4','#1f3a7a','4'),
+    jbT('marun','Marun','Oxblood glaze on a coral Iznik wall','#f5ece6','#7a1b29','5'),
+    jbT('zamrud','Zamrud','Green glaze on a blue garden wall','#edf1eb','#1f5a44','3'),
+    jbT('jambu','Merah Jambu','Rose glaze on a soft Iznik wall','#f8eeec','#a3465f','5',{wallf:'saturate(.7) brightness(1.05)'}),
+    jbT('sage','Sage','Sage glaze on a faded tile wall','#eff0e9','#55654b','4',{wallf:'grayscale(.75) sepia(.35) hue-rotate(35deg) brightness(1.04)'}),
+    jbT('hitam','Hitam','Ink glaze on a dusk-lit tile wall','#1b1918','#1d1b1a','3',{pagefg:'#efe8dc',dark:'1',wallf:'brightness(.55) saturate(.8)'}),
+    jbT('terakota','Terakota','Terracotta glaze on a coral Iznik wall','#f5ebe1','#a24a22','5',{wallf:'sepia(.2)'}),
+  ]});
+
+})()}catch(e){console.error("family jubin failed",e)}
+
+
+/* ===== family: kaca ===== */
+try{(()=>{
+/* kaca: a leaded stained-glass window (qamariya) set deep in a dark plaster wall, star-and-cross glass lit from behind,
+   its coloured light falling on the wall and the sill.
+   Cover: tap "Buka Jemputan", the sun comes out behind the glass and its light fills the screen.
+   Page: the window as a headpiece with light falling from it over the names. Skin: dark plaster cards under a leaded glass transom. */
+let kcN=0;
+const KC_ARCH='M4 148V58C4 32 26 17 50 4C74 17 96 32 96 58V148Z',KC_IN='M11 141V60C11 38 29 26 50 14C71 26 89 38 89 60V141Z';
+// star-and-cross glass in a 100 x 150 box, clipped to the arch
+function kcGlass(g,uid,s=16.5){let panes='',lead='';
+  for(let j=0;j<20;j++)for(let i=-4;i<=4;i++){const cx=50+i*s+(j%2?s/2:0),cy=146-j*s*.5;if(cy<-4||cx<-8||cx>108)continue;
+    const d=K.star(8,s*.46,s*.29,cx,cy),f=g[[0,2,4][(Math.abs(i)+j)%3]];
+    panes+=`<path d="${d}" fill="${f}"/><circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${(s*.1).toFixed(2)}" fill="${g[1]}"/>`;
+    lead+=`<path d="${d}"/><circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${(s*.1).toFixed(2)}"/>`}
+  return `<svg class="kc-glass" viewBox="0 0 100 150" ${NS} aria-hidden="true"><defs>
+    <clipPath id="kci${uid}"><path d="${KC_IN}"/></clipPath><mask id="kcm${uid}"><rect x="-5" y="-5" width="110" height="160" fill="#fff"/><circle cx="50" cy="50" r="17" fill="#000"/></mask>
+    <filter id="kcn${uid}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="${uid+3}"/>
+      <feColorMatrix values="0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  .9 0 0 0 0" result="n"/><feBlend in="SourceGraphic" in2="n" mode="soft-light" result="b"/><feComposite in="b" in2="SourceGraphic" operator="in"/></filter>
+    <radialGradient id="kcl${uid}" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#fff8e6" stop-opacity=".55"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>
+    <linearGradient id="kcr${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#000" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
+    <filter id="kcb${uid}"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="kch${uid}" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.1" result="bl"/><feColorMatrix in="bl" values="1.1 0 0 0 .05  0 1.1 0 0 .05  0 0 1.1 0 .05  0 0 0 .75 0" result="bl2"/><feBlend in="SourceGraphic" in2="bl2" mode="screen"/></filter></defs>
+    <path d="M-4 152V57C-4 26 21 9 50 -5C79 9 104 26 104 57V152Z" class="kc-rev"/><path d="M-4 152V57C-4 26 21 9 50 -5C79 9 104 26 104 57V152Z" fill="url(#kcr${uid})"/>
+    <g filter="url(#kch${uid})"><g filter="url(#kcn${uid})"><path d="${KC_ARCH}" fill="${g[1]}"/><g clip-path="url(#kci${uid})"><rect x="0" y="0" width="100" height="150" fill="${g[3]}"/>${panes}${(()=>{const pts=K.ring(16,13.5,50,50).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2.6" fill="${g[2]}"/>`).join('');return `<circle cx="50" cy="50" r="17" fill="${g[4]}"/>${pts}<circle cx="50" cy="50" r="11" fill="${g[3]}"/><path d="${K.star(8,10.5,6,50,50)}" fill="${g[0]}"/><circle cx="50" cy="50" r="3.4" fill="${g[1]}"/>`})()}</g></g>
+    <path d="${KC_ARCH}" fill="url(#kcl${uid})" style="mix-blend-mode:screen"/>
+    <g clip-path="url(#kci${uid})" fill="none" stroke="#17130f" stroke-width="1" stroke-linejoin="round"><g mask="url(#kcm${uid})">${lead}</g>
+      <circle cx="50" cy="50" r="17" stroke-width="1.5"/>${K.ring(16,13.5,50,50).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2.6"/>`).join('')}<circle cx="50" cy="50" r="11"/><path d="${K.star(8,10.5,6,50,50)}"/><circle cx="50" cy="50" r="3.4"/></g>
+    <path d="M7.5 144.5V59C7.5 35 27.5 21.5 50 9C72.5 21.5 92.5 35 92.5 59V144.5" fill="none" stroke="#17130f" stroke-width="6.4" stroke-dasharray=".7 4.6"/>
+    <path d="${KC_IN}" fill="none" stroke="#17130f" stroke-width="1.3"/><path d="${KC_ARCH}" fill="none" stroke="#000" stroke-width="3" opacity=".55" filter="url(#kcb${uid})"/><path d="${KC_ARCH}" fill="none" stroke="#17130f" stroke-width="1.6"/>
+    <path d="M0 96H100M0 120H100" stroke="#17130f" stroke-width="1.1" opacity=".85"/></g></svg>`}
+const kcWin=(th,cls='')=>{const u=++kcN,g=th.glass;return `<div class="kc-win ${cls}" style="--g0:${g[0]};--g1:${g[1]};--g2:${g[2]}"><div class="kc-glow"></div>${kcGlass(g,u)}<div class="kc-sill"></div></div>`};
+const kcNames=o=>{const [n1,n2]=coverNames(o);return `<p class="kc-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>`};
+const kcLift=(h,a)=>'#'+[1,3,5].map(i=>Math.round(parseInt(h.substr(i,2),16)*(1-a)+255*a).toString(16).padStart(2,'0')).join('');
+const kcT=(k,n,desc,ground,accent,glass,light)=>({k,n,desc,c:{ground,sheet:kcLift(ground,.06),ink:'#ece4d6',accent,gold:'#d9b06a',pagefg:'#efe7da',lit:light},extra:{glass}});
+FAMILY({key:'kaca',name:'Kaca',meaning:'Stained glass',
+  blurb:'A leaded stained-glass window set deep in a plaster wall, lit from behind. When guests open the card the sun comes out and its light fills the screen.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1300,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-kaca2" style="--lit:${th.c.lit}"><div class="kc-wall"></div>${kcWin(th,'small')}<div class="kc-beam"></div>
+    ${o.bismillah?'<p class="kc-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+    <p class="kc-k kicker reveal">${ev(o,L)}</p>${kcNames(o)}
+    <p class="kc-date reveal d1">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="kc-hj reveal d1">${esc(o.hijri)}</p>`:''}${o.venue?`<p class="kc-ven reveal d2">${esc(o.venue)}</p>`:''}
+    <a class="kc-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-kaca2" style="--lit:${th.c.lit}"><div class="kc-wall"></div>
+    <p class="kc-k kc-top">${ev(o,L)}</p>
+    <div class="kc-stage">${kcWin(th)}</div>
+    <div class="kc-mid">${kcNames(o)}<p class="kc-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+    <div class="kc-foot">${guest?`<p class="kc-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="kc-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div><div class="kc-flood"></div></div>`},
+  skin(el,o,th,L){K.cards(el);const g=th.glass;
+    // a small leaded roundel over each heading
+    const dots=K.ring(12,15,20,20).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3.2" fill="${g[2]}" stroke="#17130f" stroke-width="1"/>`).join('');
+    el.style.setProperty('--transom',K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="${g[4]}" stroke="#17130f" stroke-width="1.6"/>${dots}<circle cx="20" cy="20" r="11" fill="${g[3]}" stroke="#17130f" stroke-width="1.1"/><path d="${K.star(8,10,5.6,20,20)}" fill="${g[0]}" stroke="#17130f" stroke-width="1"/><circle cx="20" cy="20" r="3" fill="${g[1]}" stroke="#17130f" stroke-width=".9"/></svg>`));
+    el.style.setProperty('--g0',g[0]);el.style.setProperty('--g1',g[1]);el.style.setProperty('--lit',th.c.lit);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    kcT('mawar','Mawar','Rose and amber glass in a dark wall','#251c1a','#b8475e',['#b8475e','#d9a441','#4f7a4a','#e7c2a0','#7a2e3e'],'#f2c7cf'),
+    kcT('zamrud','Zamrud','Emerald and gold glass in a dark wall','#122019','#2f7a5a',['#2f7a5a','#d9a441','#1f5a46','#a8c27a','#e3c27a'],'#cfe6c4'),
+    kcT('nila','Nila','Cobalt and sky glass in a dark wall','#121827','#2d4b9a',['#2d4b9a','#d9a441','#5f86c4','#1d2b6a','#a7c0e0'],'#c9d8f2'),
+    kcT('lavender','Lavender','Lilac and sage glass in a dark wall','#1f1c25','#9c8fc9',['#9c8fc9','#b8c6a6','#6f62a8','#e6d9f2','#d9a441'],'#e2dbf4'),
+    kcT('senja','Senja','Sunset glass in a dark wall','#241815','#d9673f',['#d9673f','#e8a33c','#b8475e','#f2cf86','#7a2e3e'],'#f6d2b8'),
+    kcT('teal','Teal','Teal and coral glass in a dark wall','#112121','#1f7a7a',['#1f7a7a','#ef8a72','#7fbfb5','#d9a441','#0f4a4a'],'#c4e6e0'),
+    kcT('pandan','Pandan','Pandan and cream glass in a dark wall','#141c17','#2f7a5a',['#2f7a5a','#d9a441','#7fa36a','#e9dcb8','#0d4a32'],'#dbe8c8'),
+    kcT('kopi','Kopi Susu','Coffee and cream glass in a dark wall','#1e1915','#a07a5a',['#a07a5a','#c9a26a','#6b4a3a','#e6d3b3','#8a5a3a'],'#eedcc4'),
+    kcT('hujan','Biru Hujan','Rain-blue and pearl glass in a dark wall','#161b22','#3a5f8a',['#3a5f8a','#8fa7bd','#c8c2b0','#26394d','#a7c0e0'],'#d4dfea'),
+    kcT('fajar','Fajar','Dawn pink and peach glass in a dark wall','#221820','#d9708a',['#d9708a','#f0a46c','#e0b27a','#4a2238','#f6cdb3'],'#f6cfd8'),
+  ]});
+
+})()}catch(e){console.error("family kaca failed",e)}
+
+
 /* ===== family: kalendar ===== */
 try{(()=>{
 /* kalendar: a vintage Malaysian tear-off calendar (kalendar koyak) on a printed backing board hung from a nail.
@@ -3157,77 +3877,46 @@ FAMILY({key:'kalendar',name:'Kalendar',meaning:'Tear-off calendar',
 
 /* ===== family: kampung ===== */
 try{(()=>{
-/* kampung: a Malay stilt house at golden hour, in layered paper-cut planes: sky and sun, hazy hills, a tree
-   line, the house with its crossed gable boards and carved fascia among coconut palms, paddy terraces,
-   foreground fronds. Cover: touching the scene lets the planes drift apart in depth as the sky brightens.
-   Page: the house small with pelita lamps lining the path, names above. Skin: cards framed like carved
-   wooden fascia boards (papan cantik). */
-let uid=0;
-const f1=v=>(+v).toFixed(1);
-// a coconut palm: curved trunk with rings, a crown of drooping fronds made of leaflets
-function palm(x,y,h,lean,s,R){const tx=x+lean,ty=y-h;let d=`M${f1(x-4*s)} ${y}Q${f1(x+lean*.2-3*s)} ${f1(y-h*.55)} ${f1(tx-1.6*s)} ${f1(ty)}L${f1(tx+1.6*s)} ${f1(ty)}Q${f1(x+lean*.2+3*s)} ${f1(y-h*.55)} ${f1(x+4*s)} ${y}Z`;
-  let fr='';for(const a of [-172,-148,-122,-96,-66,-38,-12,8]){const A=(a+(R()-.5)*10)*Math.PI/180,L=(44+R()*14)*s,ex=tx+Math.cos(A)*L,ey=ty+Math.sin(A)*L*.6+L*.38,cx=tx+Math.cos(A)*L*.5,cy=ty+Math.sin(A)*L*.5-6*s;
-    fr+=`M${f1(tx)} ${f1(ty)}Q${f1(cx)} ${f1(cy)} ${f1(ex)} ${f1(ey)}`;
-    for(let i=1;i<10;i++){const t=i/10,u=1-t,px=u*u*tx+2*u*t*cx+t*t*ex,py=u*u*ty+2*u*t*cy+t*t*ey,ll=(1-t*.55)*11*s;fr+=`M${f1(px)} ${f1(py)}l${f1(Math.cos(A+1.9)*ll)} ${f1(Math.abs(Math.sin(A+1.9))*ll+3*s)}M${f1(px)} ${f1(py)}l${f1(Math.cos(A-1.9)*ll)} ${f1(Math.abs(Math.sin(A-1.9))*ll+3*s)}`}}
-  return `<path d="${d}"/><path d="${fr}" class="kampung-frond" stroke-width="${f1(1.3*s)}"/><circle cx="${f1(tx)}" cy="${f1(ty+3*s)}" r="${f1(4*s)}"/>`}
-// the rumah kampung: stilts, verandah, stair, main gable with crossed boards and pendant fascia
-function house(){const st=[154,178,202,226,250,274,298].map(x=>`M${x} 544h4.4v58h-4.4z`).join('');
-  const pend=(x0,y0,x1,y1,n)=>Array.from({length:n},(_,i)=>{const t=(i+.5)/n,x=x0+(x1-x0)*t,y=y0+(y1-y0)*t;return `M${f1(x-3)} ${f1(y)}q3 7 6 0z`}).join('');
-  return `<g class="kampung-house">
-   <path d="${st}"/><path d="M146 540H306V547H146Z"/>
-   <path d="M196 490H302V540H196Z"/><path d="M150 512H196V540H150Z"/>
-   <path d="M144 514L170 482H200V514Z"/>
-   <path d="M180 494L248 420L316 494Z"/>
-   <path d="M174 500L252 414M322 500L244 414" class="kampung-board"/>
-   <path d="${pend(184,494,248,425,9)}${pend(248,425,312,494,9)}${pend(146,514,170,486,4)}"/>
-   <path d="M140 602L162 547H170L148 602Z"/><path d="M126 602L148 547H154L132 602Z"/>
-   <path d="M150 512H196V515H150Z"/>
-  </g>
-  <g class="kampung-glow"><path d="M211 500h15v26h-15zM272 500h15v26h-15z"/><path d="M243 501h10v39h-10z"/>
-   <path d="M215 480L248 446L281 480Z" class="kampung-gab"/>
-   ${Array.from({length:6},(_,i)=>`<path d="M${157+i*6.6} 520h3v16h-3z"/>`).join('')}
-   ${Array.from({length:5},(_,i)=>`<path d="M${f1(139.5+i*3.6)} ${f1(592-i*10)}h${f1(10-0)}v2h-10z"/>`).join('')}</g>
-  <g class="kampung-house"><path d="M248 450V478M232 478L248 462L264 478M222 480H274" class="kampung-slat"/><path d="M218.5 500v26M279.5 500v26M211 513h15M272 513h15" class="kampung-slat"/></g>`}
-function layers(){const id=++uid,R=rng(4);
-  const grass=Array.from({length:70},(_,i)=>{const x=i*5.8-4,h=18+R()*30,l=(R()-.5)*14;return `M${f1(x)} 760L${f1(x+l)} ${f1(760-h-50)}L${f1(x+3)} 760Z`}).join('');
-  const rows=(y0,amp,n)=>Array.from({length:n},(_,i)=>{const y=y0+i*5;return `M-10 ${y}C90 ${y-amp} 200 ${y+amp} 400 ${y-amp*.5}`}).join('');
-  const sv=(k,body)=>`<span class="kampung-l ${k}"><svg viewBox="0 0 390 760" preserveAspectRatio="xMidYMax slice">${body}</svg></span>`;
-  return sv('k1',`<path d="M-20 300C20 288 70 290 110 298C150 290 180 296 200 302C150 308 40 310 -20 300Z" class="kampung-cloud"/><path d="M230 250C270 240 330 242 370 252C390 246 420 250 430 256C380 262 260 262 230 250Z" class="kampung-cloud"/><circle cx="238" cy="408" r="44" class="kampung-sun"/>`)
-   +sv('k2',`<path d="M0 470C40 440 80 430 120 448C160 466 200 420 250 416C300 412 340 446 390 438V760H0Z" class="kampung-hill"/>`)
-   +sv('k3',`<path d="M0 506C20 494 30 500 44 492C58 484 70 496 86 490C100 484 118 498 136 494C160 488 172 500 196 496C224 490 240 502 266 496C290 490 310 500 332 494C352 488 372 500 390 494V760H0Z" class="kampung-tree"/><g class="kampung-tree">${palm(30,500,70,-8,.55,R)}${palm(110,496,58,6,.48,R)}${palm(330,498,76,10,.58,R)}${palm(372,500,52,-6,.45,R)}</g>`)
-   +sv('k4',`<path d="M0 600C80 594 160 598 230 596C300 594 350 600 390 598V760H0Z" class="kampung-hs"/><g transform="translate(225 602) scale(1.16) translate(-225 -602)">${house()}</g><g class="kampung-hs">${palm(78,604,250,-22,1,R)}${palm(346,604,214,18,.9,R)}${palm(112,604,170,14,.72,R)}</g>`)
-   +sv('k5',`<path d="M0 628C90 616 190 640 270 626C330 616 370 622 390 620V760H0Z" class="kampung-pad"/><path d="${rows(636,6,6)}" class="kampung-row"/><path d="M0 668C110 656 210 680 300 664C350 656 380 660 390 660V760H0Z" class="kampung-pad b"/><path d="${rows(676,8,7)}" class="kampung-row"/>`)
-   +sv('k6',`<path d="${grass}" class="kampung-fg"/><g class="kampung-fg">${palm(-30,800,140,40,1.15,R)}</g><path d="M0 730C80 720 300 722 390 730V760H0Z" class="kampung-fg"/>`)}
-const FASCIA=c=>{const w=c.wood||'#6b4a2a';return svgUriSq(`<svg ${NS} width="32" height="24" viewBox="0 0 32 24"><path d="M0 0H32V8H0Z" fill="${w}"/><path d="M0 8H16V12Q16 22 8 22Q0 22 0 12ZM16 8H32V12Q32 22 24 22Q16 22 16 12Z" fill="${w}"/><circle cx="8" cy="14" r="2.6" fill="${c.sheet}"/><circle cx="24" cy="14" r="2.6" fill="${c.sheet}"/><path d="M16 9.5V16" stroke="${c.sheet}" stroke-width="1.2"/><circle cx="16" cy="4" r="1.3" fill="${c.sheet}"/><circle cx="0" cy="4" r="1.3" fill="${c.sheet}"/><circle cx="32" cy="4" r="1.3" fill="${c.sheet}"/><path d="M0 1.5H32" stroke="#000" stroke-opacity=".25" stroke-width=".6"/></svg>`)};
-const vars=c=>`--kp-fascia:${FASCIA(c)};--wood:${c.wood||'#6b4a2a'}`;
-function lamps(){let s='';for(const [t,k] of [[0,.55],[.33,.72],[.66,.88],[1,1.05]]){const y=606+t*48;
-  for(const x of [140-t*58,166+t*70])s+=`<g transform="translate(${f1(x)} ${f1(y)}) scale(${k})"><circle cx="0" cy="-34" r="13" class="kampung-halo"/><path d="M-.9 0V-30h1.8V0Z" class="kampung-pole"/><path d="M-4 -30h8l-1.4 -6h-5.2z" class="kampung-pole"/><path d="M0 -37c-2.6-3-2.6-6 0-10c2.6 4 2.6 7 0 10z" class="kampung-flame"/></g>`}
-  return s}
-FAMILY({key:'kampung',name:'Rumah Kampung',meaning:'Village stilt house',
-  blurb:'A Malay stilt house at golden hour among coconut palms and paddy, in layered paper cut; touch it and the planes drift apart as the sky brightens.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',R=rng(9);
-    return `<section class="page pg-kampung" style="${vars(c)}"><i class="kampung-sky"></i><i class="kampung-paper"></i>
-     <p class="kicker reveal">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <p class="kampung-date reveal d1">${esc(fmtDate(o.date,o.lang))}</p>
-     <div class="kampung-mini reveal d2"><svg viewBox="70 370 300 290"><path d="M60 596C160 590 260 594 380 590V670H60Z" class="kampung-hs"/><path d="M140 602H160L250 670H70Z" class="kampung-path"/>
-      ${house()}<g class="kampung-hs">${palm(104,604,170,-14,.66,R)}${palm(338,604,190,12,.72,R)}</g>${lamps()}</svg></div>
-     <div class="kampung-ground reveal d3"><p class="kampung-ven">${esc(o.venue)}</p><p class="kampung-time">${en?'from':'jam'} ${esc(fmtTime(o.start,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<div class="cover cv-kampung" style="${vars(c)}"><i class="kampung-sky"></i><i class="kampung-bright"></i>
-     <${tag} class="kampung-scene" ${attr} aria-label="${L.open}">${layers()}</${tag}><i class="kampung-paper"></i>
-     <div class="kampung-head"><p class="kampung-k">${ev(o,L)}</p><p class="kampung-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kampung-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <div class="kampung-foot">${guest?`<p class="kampung-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kampung-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
+/* kampung: an antique print of a seaside kampung in Penang (a public-domain photograph c. 1910, pc-pinang, with its etched
+   line version sk-pinang), pulled in the colourway's ink on deckled cotton paper with an embossed plate mark and lightly hand-tinted.
+   Cover: the print lies on a cloth-covered board, titled beneath in script like an artist's proof. Tap "Buka Jemputan" and the
+   sheet lifts away. Page: the print with the names set under it. Skin: paper cards with a plate mark and old-style type. */
+let kpN=0;
+const kpHex=h=>{h=String(h).replace('#','');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)};
+// grey of the photograph -> ink (dark) ... paper (light): a photogravure in any ink
+function kpFilter(id,ink,paper){const a=kpHex(ink),b=kpHex(paper),curve=[0,.06,.24,.5,.74,.9,.98,1];
+  const tv=i=>curve.map(k=>(a[i]+(b[i]-a[i])*k).toFixed(3)).join(' ');
+  return `<svg class="kp-defs" width="0" height="0" aria-hidden="true"><filter id="${id}" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+    <feColorMatrix type="matrix" values=".3 .55 .15 0 0 .3 .55 .15 0 0 .3 .55 .15 0 0 0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="table" tableValues="${tv(0)}"/><feFuncG type="table" tableValues="${tv(1)}"/><feFuncB type="table" tableValues="${tv(2)}"/></feComponentTransfer></filter></svg>`}
+const kpPlate=(cls)=>`<span class="kp-plate ${cls||''}"><i class="kp-img"></i><i class="kp-lines"></i><i class="kp-tint"></i></span>`;
+const kpVars=(c,id)=>`--kpfx:url(#${id});--wash1:${c.wash1};--wash2:${c.wash2}`;
+FAMILY({key:'kampung',name:'Kampung',meaning:'Village print',
+  blurb:'An antique print of a seaside kampung, pulled in coloured ink on deckled cotton paper with a plate mark and a touch of hand tint. The sheet lifts away to open.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Pinyon Script', cursive",b:"'IM Fell English', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id='kpf'+(++kpN);
+    return `<section class="page pg-kampung2" style="${kpVars(c,id)}">${kpFilter(id,c.ink,c.sheet)}<i class="kp-board"></i>
+      <div class="kp-sheetw reveal"><div class="kp-sheet big">${kpPlate('wide')}
+        <p class="kp-k kicker">${ev(o,L)}</p><h1 class="kp-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="kp-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="kp-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <a class="kp-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id='kpf'+(++kpN);
+    return `<div class="cover cv-kampung2" style="${kpVars(c,id)}">${kpFilter(id,c.ink,c.sheet)}<i class="kp-board"></i>
+      <div class="kp-lift"><div class="kp-sheetw"><div class="kp-sheet">${kpPlate()}
+        <p class="kp-cap"><span>${ev(o,L)}</span><span>${esc(fmtShort(o.date))}</span></p>
+        <p class="kp-title">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div></div></div>
+      <div class="kp-foot">${guest?`<p class="kp-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="kp-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'senja',n:'Senja',desc:'Violet dusk, amber sun, deep green',c:{ground:'#3a2a4c',sheet:'#fbf3e4',ink:'#2b241e',accent:'#22331f',gold:'#f2b45a',pagefg:'#fdf0d8',wood:'#5e3f24'}},
-    {k:'jingga',n:'Jingga',desc:'Orange sunset, umber silhouettes',c:{ground:'#6b2f1e',sheet:'#fdf3e6',ink:'#2e2018',accent:'#2b2016',gold:'#f6a94a',pagefg:'#fff0dc',wood:'#6a3f22'}},
-    {k:'merah',n:'Merah',desc:'Red dusk over the paddy',c:{ground:'#561a26',sheet:'#fbf1e6',ink:'#2d1f1c',accent:'#2a1b1c',gold:'#f09c58',pagefg:'#fde9dc',wood:'#5c2e22'}},
-    {k:'biru',n:'Biru',desc:'Blue hour with lamplight',c:{ground:'#1b2b4e',sheet:'#f6f3ea',ink:'#1e2432',accent:'#141d2b',gold:'#e8c07a',pagefg:'#ece6d6',wood:'#4a3a2c'}},
-    {k:'hijau',n:'Hijau',desc:'Green evening, soft gold',c:{ground:'#24412f',sheet:'#f7f4e6',ink:'#22281f',accent:'#16261a',gold:'#f0cf78',pagefg:'#f2ecd4',wood:'#5a4426'}},
-    {k:'ungu',n:'Ungu',desc:'Plum sky and a pink sun',c:{ground:'#372451',sheet:'#fbf3f3',ink:'#2a2230',accent:'#211a2c',gold:'#f2b49c',pagefg:'#f7e8ee',wood:'#5a3a3a'}},
-    {k:'pagi',n:'Pagi',desc:'Pale morning sky, fresh greens',c:{ground:'#8fb7cc',sheet:'#fbfaf4',ink:'#22302a',accent:'#2f4a32',gold:'#fbe1a0',pagefg:'#1d2a24',wood:'#7a5634'}},
-    {k:'emas',n:'Emas',desc:'Golden-hour amber, warm brown',c:{ground:'#7a4c18',sheet:'#fff7e6',ink:'#2f2412',accent:'#33240f',gold:'#ffd98a',pagefg:'#fff3d8',wood:'#6e4a22'}},
+    {k:'senja',n:'Senja',desc:'Sepia print on a plum board',c:{ground:'#3a2a4c',sheet:'#f6eedc',ink:'#3b2a1e',accent:'#5a3a52',gold:'#9a7a52',pagefg:'#f3e9da',wash1:'#f0c6a8',wash2:'#a9c4bf'}},
+    {k:'jingga',n:'Jingga',desc:'Bistre print on a burnt-orange board',c:{ground:'#7a3a22',sheet:'#f8ecd8',ink:'#4a2516',accent:'#8a3e22',gold:'#a8794a',pagefg:'#fbefe0',wash1:'#f4c08e',wash2:'#b8c7a6'}},
+    {k:'merah',n:'Merah',desc:'Brown-black print on a deep red board',c:{ground:'#561a26',sheet:'#f7eee2',ink:'#2f1a18',accent:'#7a2232',gold:'#a37a5a',pagefg:'#f8e9e2',wash1:'#efb9a6',wash2:'#b5c6b8'}},
+    {k:'biru',n:'Biru',desc:'Indigo print on a navy board',c:{ground:'#1b2b4e',sheet:'#f3f0e7',ink:'#1d2a48',accent:'#24406e',gold:'#8a7a5a',pagefg:'#ece8de',wash1:'#d9d2c0',wash2:'#9fbccf'}},
+    {k:'hijau',n:'Hijau',desc:'Green-black print on a forest board',c:{ground:'#24412f',sheet:'#f4f1e4',ink:'#1f2e22',accent:'#2f5a3a',gold:'#8f8256',pagefg:'#eef0e2',wash1:'#e9d9b0',wash2:'#a8c7a5'}},
+    {k:'ungu',n:'Ungu',desc:'Plum print on a violet board',c:{ground:'#372451',sheet:'#f6f0ee',ink:'#2f2240',accent:'#5b3d78',gold:'#9a8268',pagefg:'#f1eaf4',wash1:'#efc3c6',wash2:'#b2b8d4'}},
+    {k:'pagi',n:'Pagi',desc:'Blue-grey print on a pale morning board',c:{ground:'#cfdbe0',sheet:'#fbf9f2',ink:'#2b3a44',accent:'#36556a',gold:'#8a8066',pagefg:'#22323c',wash1:'#f2e2c4',wash2:'#a6c8d4'}},
+    {k:'emas',n:'Emas',desc:'Umber print on an ochre board',c:{ground:'#7a4c18',sheet:'#f8eed6',ink:'#3a2812',accent:'#7a4c18',gold:'#a8823e',pagefg:'#fff3d8',wash1:'#f2cf8a',wash2:'#b9c49a'}},
   ]});
 
 })()}catch(e){console.error("family kampung failed",e)}
@@ -3235,110 +3924,85 @@ FAMILY({key:'kampung',name:'Rumah Kampung',meaning:'Village stilt house',
 
 /* ===== family: kaset ===== */
 try{(()=>{
-/* kaset: a compact cassette in a clear case with a printed J-card filled in by hand.
-   Cover: the case stands upright, the J-card front is a mixtape form with the names written in.
-   Opening: the lid swings open on its hinge and the cassette slides up out of the tray.
-   Page: the cassette label with reels, above the unfolded J-card tracklist. Skin: J-card track headings. */
-needFont('Caveat:wght@400;600');
+/* kaset: a cassette in a clear case, shot like a product photo on linen. The J-card is a small piece of print design:
+   a public-domain painting full-bleed, a cloth-coloured band with the names set in serif italic.
+   Cover: tap "Buka Jemputan"; the case lid swings open on its hinge and shows the tape lying in the tray.
+   Page: the J-card unfolded flat (front, spine, inside flap with the programme as Side A) with the tape laid across it.
+   Skin: J-card panels, each with a narrow printed band carrying the side and track number, and a fold line between rows. */
 let ksN=0;
 const KF=(n,d=1)=>n.toFixed(d);
-// a reel hub: ring with six drive teeth
-const ksHub=(cx,cy,c)=>`<circle cx="${cx}" cy="${cy}" r="7.6" fill="${c.sheet}" stroke="${c.ink}" stroke-opacity=".5" stroke-width=".5"/><circle cx="${cx}" cy="${cy}" r="4.4" fill="#1d1a18"/>`+
-  K.ring(6,4.4,cx,cy).map(([x,y,a])=>`<rect x="${KF(x-1)}" y="${KF(y-1)}" width="2" height="2.2" fill="${c.sheet}" transform="rotate(${KF(a*180/Math.PI+90)} ${KF(x)} ${KF(y)})"/>`).join('')+
-  K.ring(3,6,cx,cy,0).map(([x,y])=>`<circle cx="${KF(x)}" cy="${KF(y)}" r=".7" fill="${c.ink}" opacity=".45"/>`).join('');
-function ksTape(o,c,uid,big){const [n1,n2]=coverNames(o),en=o.lang==='en',nm=`${n1} & ${n2}`,fs=nm.length>18?11:13.5;
-  const screw=(x,y)=>`<circle cx="${x}" cy="${y}" r="2.5" fill="${c.shell2}" stroke="${c.ink}" stroke-opacity=".45" stroke-width=".4"/><path d="M${x-1.5} ${y}h3M${x} ${y-1.5}v3" stroke="${c.ink}" stroke-opacity=".55" stroke-width=".5"/>`;
-  const ticks=Array.from({length:21},(_,i)=>`<path d="M${KF(84+i*1.6)} 74.2v${i%5?1.2:2.2}" stroke="${c.sheet}" stroke-width=".3" opacity=".8"/>`).join('');
-  return `<svg class="kaset-cas" viewBox="0 0 200 128" aria-hidden="true"><defs>
-    <linearGradient id="ksg${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.shell}"/><stop offset="1" stop-color="${c.shell2}"/></linearGradient>
-    <clipPath id="ksw${uid}"><rect x="52" y="47" width="96" height="28" rx="3"/></clipPath>
-    <pattern id="ksl${uid}" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 4L4 0" stroke="${c.accent}" stroke-width=".35" opacity=".5"/></pattern></defs>
-   <rect x=".8" y=".8" width="198.4" height="126.4" rx="7" fill="url(#ksg${uid})" stroke="${c.ink}" stroke-opacity=".55" stroke-width=".6"/>
-   <rect x="3.6" y="3.6" width="192.8" height="120.8" rx="5" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".5"/>
-   <path d="M18 .8h10v3h-10zM172 .8h10v3h-10z" fill="${c.ink}" opacity=".35"/>
-   <rect x="14" y="8.5" width="172" height="80" rx="3" fill="${c.sheet}"/>
-   <rect x="14" y="8.5" width="172" height="80" rx="3" fill="url(#ksl${uid})" opacity=".18"/>
-   <path d="M17 8.5h166a3 3 0 0 1 3 3V21H14v-9.5a3 3 0 0 1 3-3z" fill="${c.accent}"/>
-   <path d="M14 23h172M14 24.6h172" stroke="${c.gold}" stroke-width=".55"/><path d="M14 26.2h172" stroke="${c.accent}" stroke-width=".35"/>
-   <text x="20" y="18" font-family="Jost,sans-serif" font-size="7" letter-spacing="1.6" fill="${c.sheet}" font-weight="500">${en?'SIDE':'SISI'}</text>
-   <text x="44" y="18.6" font-family="Jost,sans-serif" font-size="10" fill="${c.sheet}" font-weight="600">A</text>
-   <text x="180" y="17.6" text-anchor="end" font-family="Jost,sans-serif" font-size="5.6" letter-spacing="1.2" fill="${c.sheet}">TYPE I · NORMAL · C60</text>
-   <text x="100" y="38.5" text-anchor="middle" font-family="Caveat,cursive" font-size="${fs}" font-weight="600" fill="${c.pen}">${esc(nm)}</text>
-   <path d="M22 41.4h156" stroke="${c.ink}" stroke-width=".3" opacity=".45"/>
-   <rect x="49" y="44.5" width="102" height="33" rx="4.5" fill="none" stroke="${c.gold}" stroke-width=".6"/>
-   <rect x="52" y="47" width="96" height="28" rx="3" fill="#2a2522" opacity=".9"/>
-   <g clip-path="url(#ksw${uid})"><circle cx="76" cy="61" r="${big?24:20}" fill="#4a3226"/><circle cx="76" cy="61" r="${big?24:20}" fill="none" stroke="#7a5a44" stroke-width=".3" stroke-dasharray="1 2"/><circle cx="124" cy="61" r="${big?12:16}" fill="#4a3226"/>
-    <path d="M52 74.6h96" stroke="#5a3e30" stroke-width="1.2"/>${ticks}</g>
-   ${ksHub(76,61,c)}${ksHub(124,61,c)}
-   <rect x="52" y="47" width="96" height="28" rx="3" fill="#fff" opacity=".06"/><path d="M56 49l20 0-6 24h-20z" fill="#fff" opacity=".07"/>
-   <text x="22" y="85" font-family="Jost,sans-serif" font-size="5.4" letter-spacing=".9" fill="${c.ink}" opacity=".75">${esc(fmtShort(o.date))}</text>
-   <text x="178" y="85" text-anchor="end" font-family="Jost,sans-serif" font-size="5.4" letter-spacing=".9" fill="${c.ink}" opacity=".75">STEREO · 2 × 30 MIN</text>
-   <path d="M46 127.2L53 98h94l7 29.2" fill="${c.shell2}" stroke="${c.ink}" stroke-opacity=".45" stroke-width=".5"/>
-   <path d="M50 127L56 101h88l6 26" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".4"/>
-   <circle cx="66" cy="114" r="3.6" fill="#1d1a18"/><circle cx="134" cy="114" r="3.6" fill="#1d1a18"/>
-   <rect x="91" y="117" width="18" height="10" rx="1" fill="#1d1a18"/><rect x="76" y="119" width="7" height="8" rx="1" fill="#1d1a18"/><rect x="117" y="119" width="7" height="8" rx="1" fill="#1d1a18"/>
-   <rect x="60" y="121" width="5" height="6" rx="1" fill="#1d1a18"/><rect x="135" y="121" width="5" height="6" rx="1" fill="#1d1a18"/>
-   ${screw(9,9)}${screw(191,9)}${screw(9,119)}${screw(191,119)}${screw(100,93.5)}</svg>`}
-// a little tape strip with reels, used for dividers
-const ksStrip=c=>svgUriSq(`<svg ${NS} viewBox="0 0 220 16"><path d="M14 8H206" stroke="${c.tape}" stroke-width="2.2"/><path d="M14 8H206" stroke="${c.gold}" stroke-width=".4" stroke-dasharray="1 5"/><g fill="none" stroke="${c.accent}" stroke-width="1"><circle cx="8" cy="8" r="6.5"/><circle cx="212" cy="8" r="6.5"/></g><g fill="${c.accent}"><circle cx="8" cy="8" r="2.4"/><circle cx="212" cy="8" r="2.4"/></g></svg>`);
-const ksPin=c=>svgUriSq(`<svg ${NS} width="10" height="10" viewBox="0 0 10 10"><path d="M0 2.5h10M0 5h10M0 7.5h10" stroke="${c}" stroke-width=".6" opacity=".9"/></svg>`);
+const ksVars=c=>`--board:${c.board};--shell:${c.shell};--tape:${c.tape};--art:url(${A}${c.art});--artpos:${c.artpos||'50% 40%'};--artsize:${c.artsize||'cover'};--artbg:${c.artbg||c.sheet};--bandink:${c.bandink}`;
+// the tape: a clear-smoke shell, a printed label, the window with two reels of brown tape
+function ksTape(o,c,uid){const [n1,n2]=coverNames(o),en=o.lang==='en',nm=`${n1} & ${n2}`,fs=nm.length>20?10:nm.length>15?11.5:13;
+  const screw=(x,y)=>`<circle cx="${x}" cy="${y}" r="2.3" fill="${c.shell2}" stroke="#000" stroke-opacity=".35" stroke-width=".4"/><path d="M${x-1.3} ${y-1.3}l2.6 2.6" stroke="#000" stroke-opacity=".45" stroke-width=".5"/>`;
+  const hub=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="7" fill="#f4f1ea" stroke="#000" stroke-opacity=".3" stroke-width=".4"/><circle cx="${cx}" cy="${cy}" r="4.2" fill="#1b1816"/>`+
+    K.ring(6,4.2,cx,cy).map(([x,y,a])=>`<rect x="${KF(x-.9)}" y="${KF(y-1)}" width="1.8" height="2" fill="#f4f1ea" transform="rotate(${KF(a*180/Math.PI+90)} ${KF(x)} ${KF(y)})"/>`).join('');
+  return `<svg class="ks-cas" viewBox="0 0 200 128" aria-hidden="true"><defs>
+    <linearGradient id="ksg${uid}" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="${c.shell}"/><stop offset="1" stop-color="${c.shell2}"/></linearGradient>
+    <linearGradient id="ksh${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset=".25" stop-color="#fff" stop-opacity="0"/><stop offset=".42" stop-color="#fff" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <clipPath id="ksw${uid}"><rect x="56" y="50" width="88" height="26" rx="13"/></clipPath></defs>
+   <rect x=".8" y=".8" width="198.4" height="126.4" rx="7" fill="url(#ksg${uid})" stroke="#000" stroke-opacity=".35" stroke-width=".6"/>
+   <rect x="3.4" y="3.4" width="193.2" height="121.2" rx="5" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".5"/>
+   <rect x="13" y="9" width="174" height="80" rx="2.5" fill="${c.sheet}"/>
+   <rect x="13" y="9" width="174" height="12" rx="2.5" fill="${c.board}"/><rect x="13" y="16" width="174" height="5" fill="${c.board}"/>
+   <path d="M13 23.4h174" stroke="${c.gold}" stroke-width=".5"/>
+   <text x="19" y="17.6" font-family="Jost,sans-serif" font-size="6" letter-spacing="1.8" fill="${c.sheet}">${en?'SIDE A':'SISI A'}</text>
+   <text x="181" y="17.6" text-anchor="end" font-family="Jost,sans-serif" font-size="5" letter-spacing="1.4" fill="${c.sheet}">${esc(fmtShort(o.date))}</text>
+   <text x="100" y="39" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-style="italic" font-size="${fs}" fill="${c.ink}">${esc(nm)}</text>
+   <path d="M30 44h140" stroke="${c.ink}" stroke-width=".25" opacity=".4"/>
+   <rect x="52" y="47" width="96" height="32" rx="16" fill="${c.shell2}" opacity=".55"/>
+   <g clip-path="url(#ksw${uid})"><rect x="56" y="50" width="88" height="26" fill="#2a2522"/>
+    <circle cx="76" cy="63" r="17" fill="${c.tape}"/><circle cx="124" cy="63" r="11" fill="${c.tape}"/>
+    <circle cx="76" cy="63" r="17" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="3" stroke-dasharray=".4 1.4"/></g>
+   ${hub(76,63)}${hub(124,63)}
+   <rect x="56" y="50" width="88" height="26" rx="13" fill="none" stroke="#000" stroke-opacity=".35" stroke-width=".5"/>
+   <path d="M44 127.2L51 101h98l7 26.2" fill="${c.shell2}" stroke="#000" stroke-opacity=".3" stroke-width=".5"/>
+   <circle cx="72" cy="114" r="3.2" fill="#1b1816" opacity=".75"/><circle cx="128" cy="114" r="3.2" fill="#1b1816" opacity=".75"/><rect x="94" y="108" width="12" height="8" rx="1" fill="#1b1816" opacity=".55"/>
+   ${screw(7,7)}${screw(193,7)}${screw(7,121)}${screw(193,121)}${screw(100,95)}
+   <rect x=".8" y=".8" width="198.4" height="126.4" rx="7" fill="url(#ksh${uid})"/></svg>`}
+// the J-card front: painting above, cloth band with the names below
+const ksJ=(o,L,small)=>{const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="ks-jc"><div class="ks-art"></div>
+  <div class="ks-band"><p class="ks-ser">${en?'Wedding recordings':'Rakaman Perkahwinan'} · Vol. I</p><p class="ks-nm">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="ks-dt">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>`};
 
-// fine gold linework: two reels joined by the tape path
-function ksReels(c){const reel=cx=>`<circle cx="${cx}" cy="20" r="16"/><circle cx="${cx}" cy="20" r="12.5" stroke-dasharray=".6 1.6"/><circle cx="${cx}" cy="20" r="4.2"/>`+
-    K.ring(6,4.2,cx,20).map(([x,y,a])=>`<path d="M${KF(x)} ${KF(y)}L${KF(cx+Math.cos(a)*9)} ${KF(20+Math.sin(a)*9)}"/>`).join('');
-  return `<svg class="kaset-reels" viewBox="0 0 160 40" fill="none" stroke="${c.gold}" stroke-width=".8">${reel(36)}${reel(124)}<path d="M36 36H124M20 20C20 34 30 38 40 38H120C130 38 140 34 140 20" stroke-width=".5"/><path d="M60 30h40l-3 6H63z" stroke-width=".6"/><circle cx="80" cy="12" r="1.2" fill="${c.gold}"/><path d="M68 12h7M85 12h7" stroke-width=".5"/></svg>`}
-function ksTracks(o,en){const L2=[];const sc=(o.schedule||[]).filter(s=>s.label);
-  L2.push(['A1',en?'Date':'Tarikh',fmtDate(o.date,o.lang,false),fmtShort(o.date).slice(0,5).replace('.',':')]);
-  L2.push(['A2',en?'Time':'Masa',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`,o.start||'']);
-  L2.push(['A3',en?'Venue':'Tempat',o.venue||'','']);
-  sc.slice(0,3).forEach((s,i)=>L2.push(['B'+(i+1),'',s.label,s.time||'']));
-  return L2}
-
-FAMILY({key:'kaset',name:'Kaset',meaning:'Mixtape cassette',
-  blurb:'A cassette in a clear case with a hand-written J-card; the lid swings open and the tape slides out to its label and tracklist.',
-  fonts:{d:"'Jost', sans-serif",s:"'Caveat', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const c=th.c,en=o.lang==='en',u=++ksN,tr=ksTracks(o,en);
-    const row=([n,lab,val,t])=>`<li><b>${n}</b><span>${lab?`<small>${esc(lab)}</small>`:''}<em>${esc(val)}</em></span><i>${esc(t)}</i></li>`;
-    return `<section class="page pg-kaset" style="--pin:${ksPin(c.gold)};--pen:${c.pen}"><div class="kaset-desk"></div>
-    <p class="kicker reveal">${ev(o,L)}</p>
-    <div class="kaset-pcas reveal d1">${ksTape(o,c,'p'+u,true)}</div>
-    <div class="kaset-inlay reveal d2"><div class="kaset-ihd"><span class="kaset-side">${en?'Side':'Sisi'} A · B</span><span>${en?'Recorded for':'Dirakam untuk'} ${esc(coverNames(o).join(' & '))}</span></div>
-     <ol class="kaset-list">${tr.slice(0,3).map(row).join('')}<li class="kaset-sep"><span>${en?'Side B':'Sisi B'}</span></li>${tr.slice(3).map(row).join('')}</ol>
-     <p class="kaset-addr">${esc(o.address||'')}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++ksN,sc=(o.schedule||[]).filter(s=>s.label).slice(0,3);
-    const line=(t,cls='')=>`<p class="kaset-ln ${cls}">${t}</p>`;
-    return `<div class="cover cv-kaset" style="--pin:${ksPin(c.gold)};--pen:${c.pen}"><div class="kaset-desk"></div>
-    <p class="kaset-top">${ev(o,L)}</p>
-    <div class="kaset-stage">
-     <div class="kaset-edge"><span>${esc(n1)} &amp; ${esc(n2)}</span><b>${esc(fmtShort(o.date))}</b><i class="kaset-glass"></i></div>
-     <div class="kaset-tray"><i class="kaset-post a"></i><i class="kaset-post b"></i><div class="kaset-tape">${ksTape(o,c,'c'+u,false)}</div></div>
-     <div class="kaset-lid"><div class="kaset-face front">
-       <div class="kaset-jc"><div class="kaset-jhd"><span>Type I · Normal</span><b>C60</b></div>
-        <div class="kaset-band"><i></i><span>${en?'Mixtape':'Kaset'}</span><i></i></div><p class="kaset-vol">${en?'Songs for us':'Lagu untuk kita'} · Vol. I</p>
-        <p class="kaset-lab">${en?'Title':'Tajuk'}</p>${line(`${esc(n1)} <span>&amp;</span>`,'nm')}${line(esc(n2),'nm')}
-        <p class="kaset-lab">${en?'Date':'Tarikh'}</p>${line(esc(fmtShort(o.date)))}
-        <p class="kaset-lab">${en?'Side A':'Sisi A'}</p>${sc.length?sc.map((s,i)=>line(`${i+1}. ${esc(s.label)}`,'tr')).join(''):line(esc(o.venue),'tr')}
-        <p class="kaset-lab">${en?'Side B':'Sisi B'}</p>${line(esc(o.venue),'tr')}
-        ${ksReels(c)}
-        <div class="kaset-foot"><i class="kaset-reel"></i><span>${en?'Stereo':'Stereo'} · 2 × 30</span><i class="kaset-reel"></i></div></div>
-       <i class="kaset-glass"></i></div>
-      <div class="kaset-face back"><i class="kaset-glass"></i></div></div>
-     <${tag} class="kaset-tap" ${attr} aria-label="${L.open}"></${tag}>
+FAMILY({key:'kaset',name:'Kaset',meaning:'Cassette in a case',
+  blurb:'A cassette in a clear case with a beautifully printed J-card: a classic painting and your names in serif italic. The lid swings open to show the tape inside.',
+  fonts:{d:"'Jost', sans-serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const c=th.c,en=o.lang==='en',u=++ksN,[n1,n2]=coverNames(o),tr=(o.schedule||[]).filter(s=>s.label).slice(0,4);
+    return `<section class="page pg-kaset2${c.dark?' ks-dark':''}" style="${ksVars(c)}"><div class="ks-linen"></div>
+    <div class="ks-unf reveal">
+      <div class="ks-panel ks-front"><div class="ks-art"></div></div>
+      <div class="ks-panel ks-spine"><span>${esc(n1)} &amp; ${esc(n2)}</span><b>${esc(fmtShort(o.date))}</b></div>
+      <div class="ks-panel ks-flap">
+        <p class="ks-k kicker">${ev(o,L)}</p>
+        <h1 class="names ks-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+        <p class="ks-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="ks-ven">${esc(o.venue)}</p>`:''}
+        ${tr.length?`<p class="ks-side">${en?'Side A':'Sisi A'}</p><ol class="ks-tr">${tr.map((s,i)=>`<li><b>${i+1}</b><span>${esc(s.label)}</span><i>${esc(fmtTime(s.time,o.lang))}</i></li>`).join('')}</ol>`:''}
+        <div class="ks-pills"><a class="ks-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="ks-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+      </div>
     </div>
-    <div class="kaset-bot">${guest?`<p class="kaset-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kaset-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--strip',ksStrip(c));el.style.setProperty('--pin',ksPin(c.gold));el.style.setProperty('--pen',c.pen);
-    const durs=['03:41','04:12','02:58','05:06','03:27','04:45','03:09','04:30','02:51','03:55','04:02'];
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('kaset-sec');const h=$('h2',s);if(!h)return;
-      const n=i<5?'A'+(i+1):'B'+(i-4);h.innerHTML=`<b class="kaset-no">${n}</b><span class="kaset-ht">${h.innerHTML}</span><i class="kaset-dur">${durs[i%durs.length]}</i>`})},
+    <div class="ks-ptape reveal d2">${ksTape(o,c,'p'+u)}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',u=++ksN;
+    return `<div class="cover cv-kaset2${c.dark?' ks-dark':''}" style="${ksVars(c)}"><div class="ks-linen"></div>
+    <p class="ks-k ks-top">${ev(o,L)}</p>
+    <div class="ks-case">
+      <div class="ks-tray"><i class="ks-ridge"></i><div class="ks-in">${ksTape(o,c,'c'+u)}</div></div>
+      <div class="ks-lid"><div class="ks-face">${ksJ(o,L)}<i class="ks-gloss"></i><i class="ks-hinge"></i></div><div class="ks-back"><i class="ks-gloss"></i></div></div>
+    </div>
+    <div class="ks-foot">${guest?`<p class="ks-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ks-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en';
+    el.setAttribute('style',(el.getAttribute('style')||'')+';'+ksVars(c));el.classList.toggle('ks-dark',!!c.dark);
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!s.querySelector('.ks-strip'))s.insertAdjacentHTML('afterbegin',`<p class="ks-strip"><span>${en?'Side':'Sisi'} ${i<5?'A':'B'}</span><b>${String(i<5?i+1:i-4).padStart(2,'0')}</b></p>`)});
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'krim',n:'Krim',desc:'Cream shell, tomato-red J-card',c:{ground:'#e7dfd1',sheet:'#fbf6ea',ink:'#2a2420',accent:'#b0412e',gold:'#c39a4c',pagefg:'#3b302a',shell:'#f3eee4',shell2:'#ddd5c6',pen:'#1f3a6b',tape:'#5a3a28'}},
-    {k:'hitam',n:'Hitam',desc:'Smoked shell on a black desk',c:{ground:'#141414',sheet:'#f3eee2',ink:'#22201c',accent:'#2b2a2c',gold:'#d2ad62',pagefg:'#ece2cc',shell:'#4a4847',shell2:'#2b2a29',pen:'#7a1d2b',tape:'#5a3a28',line:'rgba(34,32,28,.22)'}},
-    {k:'biru',n:'Biru',desc:'Navy print, ivory card',c:{ground:'#1c2a42',sheet:'#f6f3ec',ink:'#1f2635',accent:'#24467e',gold:'#c79d4e',pagefg:'#ece6d6',shell:'#e6eaef',shell2:'#c8d0da',pen:'#24467e',tape:'#4e3426'}},
-    {k:'pic',n:'Pic',desc:'Peach and coral on a pale desk',c:{ground:'#f2ddcc',sheet:'#fff8f0',ink:'#3a2a24',accent:'#c4573a',gold:'#b8894a',pagefg:'#4a322a',shell:'#fff6ee',shell2:'#ecdccd',pen:'#6b2f3a',tape:'#5a3a28'}},
-    {k:'sage',n:'Sage',desc:'Sage green print, linen desk',c:{ground:'#d3dccb',sheet:'#f8f8f0',ink:'#25302a',accent:'#4d6b4c',gold:'#b5945a',pagefg:'#2c3a30',shell:'#f2f2ea',shell2:'#d4d8cb',pen:'#3a4f7a',tape:'#4e3a2a'}},
-    {k:'ungu',n:'Ungu',desc:'Plum print on a dusk desk',c:{ground:'#2a2238',sheet:'#f8f3f6',ink:'#2a2330',accent:'#6a3d7a',gold:'#d2ab60',pagefg:'#efe6f2',shell:'#dcd5e4',shell2:'#b9afc6',pen:'#6a3d7a',tape:'#4a3028'}},
-    {k:'marun',n:'Marun',desc:'Maroon print, gold pinstripe',c:{ground:'#3a1418',sheet:'#fbf3ea',ink:'#2d1f1c',accent:'#7a1d2b',gold:'#d4ac62',pagefg:'#f1e3cf',shell:'#efe6dc',shell2:'#d6c8b8',pen:'#7a1d2b',tape:'#4a3026'}},
-    {k:'kunyit',n:'Kunyit',desc:'Turmeric yellow and ink brown',c:{ground:'#ecdcae',sheet:'#fffaf0',ink:'#33281c',accent:'#a8661c',gold:'#6f4a24',pagefg:'#3a2c1c',shell:'#fbf4e2',shell2:'#e6d6b4',pen:'#2c3f6b',tape:'#5a3a28'}},
+    {k:'krim',n:'Krim',desc:'Cream J-card, Hassam’s flower garden, on oatmeal linen',c:{ground:'#e6ddcf',sheet:'#fbf7ef',ink:'#2c2620',accent:'#8a4a2e',gold:'#b8925a',pagefg:'#2c2620',board:'#efe5d2',shell:'#efeae0',shell2:'#d9d1c3',tape:'#4a3226',art:'pd-paint-hassam-island.jpg',artpos:'50% 40%',bandink:'#3a2c22',dark:''}},
+    {k:'hitam',n:'Hitam',desc:'Black J-card, a still life in oil, on charcoal linen',c:{ground:'#171615',sheet:'#f3eee4',ink:'#221f1b',accent:'#6a4e2c',gold:'#c9a660',pagefg:'#ece5d8',board:'#1c1a19',shell:'#55524f',shell2:'#3a3836',tape:'#3e2a20',art:'pd-still-2.jpg',artpos:'50% 30%',bandink:'#e8dcc2',dark:'1'}},
+    {k:'biru',n:'Biru',desc:'Blue-and-white plate on an ivory J-card, navy linen',c:{ground:'#1c2738',sheet:'#f6f3ec',ink:'#1f2635',accent:'#24467e',gold:'#c7a35e',pagefg:'#e9e6dc',board:'#203a66',shell:'#e8ecf0',shell2:'#c6ced8',tape:'#4a3428',art:'pd-asia-1.webp',artpos:'50% 50%',artsize:'118%',artbg:'#f3efe4',bandink:'#efe7d4',dark:'1'}},
+    {k:'pic',n:'Pic',desc:'Bullfinches on a blossom branch, peach J-card',c:{ground:'#efdccd',sheet:'#fff8f1',ink:'#3a2a24',accent:'#a9553c',gold:'#b8894a',pagefg:'#3a2a24',board:'#e7b9a2',shell:'#fff6ee',shell2:'#ead9ca',tape:'#5a3a2a',art:'pd-asia-3.jpg',artpos:'50% 45%',bandink:'#4a2a20',dark:''}},
+    {k:'sage',n:'Sage',desc:'A long-tailed bird print, sage J-card, pale linen',c:{ground:'#dfe3d6',sheet:'#f9f9f2',ink:'#25302a',accent:'#4d6b4c',gold:'#a98f55',pagefg:'#25302a',board:'#7d8f72',shell:'#f2f2ea',shell2:'#d4d8cb',tape:'#4e3a2a',art:'pd-asia-2.jpg',artpos:'50% 30%',bandink:'#f6f2e4',dark:''}},
+    {k:'ungu',n:'Ungu',desc:'Monet’s irises, plum J-card, dusk linen',c:{ground:'#261f31',sheet:'#f8f3f4',ink:'#2a2330',accent:'#6a3d7a',gold:'#d2ab60',pagefg:'#efe6f2',board:'#4a2d58',shell:'#dcd5e4',shell2:'#b5abc2',tape:'#4a3028',art:'pd-paint-monet-irises.jpg',artpos:'50% 55%',bandink:'#f1e6ef',dark:'1'}},
+    {k:'marun',n:'Marun',desc:'A gold songket J-card, maroon linen',c:{ground:'#33141a',sheet:'#fbf3ea',ink:'#2d1f1c',accent:'#7a1d2b',gold:'#d4ac62',pagefg:'#f1e3cf',board:'#5c1620',shell:'#efe6dc',shell2:'#d3c4b4',tape:'#4a3026',art:'pd-textile-1.jpg',artpos:'30% 40%',bandink:'#f1dfbf',dark:'1'}},
+    {k:'kunyit',n:'Kunyit',desc:'Loquats on silk, turmeric J-card',c:{ground:'#eadcb6',sheet:'#fffaf0',ink:'#33281c',accent:'#94591a',gold:'#9a7034',pagefg:'#33281c',board:'#d9a441',shell:'#fbf4e2',shell2:'#e3d3b0',tape:'#5a3a28',art:'pd-asia-4.jpg',artpos:'40% 40%',bandink:'#3a2810',dark:''}},
   ]});
 
 })()}catch(e){console.error("family kaset failed",e)}
@@ -3346,95 +4010,84 @@ FAMILY({key:'kaset',name:'Kaset',meaning:'Mixtape cassette',
 
 /* ===== family: kerang ===== */
 try{(()=>{
-/* kerang: a scallop shell and a pearl on rippled sand. The shell lies hinge-away; touch it and the upper valve
-   lifts on its hinge to show a pearl on the nacre, then the scene fades. Page: a pearl-strand border with small
-   scallops at the corners. Skin: pearl swags on each card and pearl-strand dividers. */
-needFont('Bodoni+Moda:ital,wght@0,400;1,400');needFont('Mrs+Saint+Delafield');
-const f1=n=>n.toFixed(1),PI=Math.PI;
-const mix=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
-let gid=0;
-/* pearl gradient defs, one per svg */
-const pearlDef=(id,c)=>`<radialGradient id="${id}" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="${c.pearl1}"/><stop offset=".7" stop-color="${c.pearl2}"/><stop offset="1" stop-color="${c.pearl3}"/></radialGradient>`;
-const pearl=(x,y,r,id)=>`<circle cx="${f1(x)}" cy="${f1(y+r*.25)}" r="${f1(r)}" fill="#000" opacity=".12"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="url(#${id})"/><ellipse cx="${f1(x-r*.32)}" cy="${f1(y-r*.38)}" rx="${f1(r*.22)}" ry="${f1(r*.14)}" fill="#fff" opacity=".85" transform="rotate(-30 ${f1(x-r*.32)} ${f1(y-r*.38)})"/>`;
-/* scallop geometry: umbo at U, a near-circular margin of n scalloped ribs, ears on a straight hinge line */
-const U=[150,40],RHO=116,CC=[150,40+RHO*1.02],F0=-38*PI/180,F1=218*PI/180;
-const M=(f,k=1)=>[CC[0]+Math.cos(f)*RHO*k,CC[1]+Math.sin(f)*RHO*k];
-const toU=(p,s)=>[U[0]+(p[0]-U[0])*s,U[1]+(p[1]-U[1])*s];
-function outline(n,k=1){let d=`M${U[0]} ${U[1]+4}`;
-  for(let i=0;i<n;i++){const g0=F0+(F1-F0)*i/n,g1=F0+(F1-F0)*(i+1)/n,fm=(g0+g1)/2,[x0,y0]=M(g0,k),[x1,y1]=M(g1,k),[qx,qy]=M(fm,k*1.09);d+=(i?'':`L${f1x(x0)} ${f1x(y0)}`)+`Q${f1x(qx)} ${f1x(qy)} ${f1x(x1)} ${f1x(y1)}`}
-  return d+'Z'}
-const f1x=n=>n.toFixed(1);
-function lid(c,uid){const n=17;let ribs='',grads='',stri='',grow='';
-  for(let i=0;i<n;i++){const g0=F0+(F1-F0)*i/n,g1=F0+(F1-F0)*(i+1)/n,fm=(g0+g1)/2,w=g1-g0;
-    const a=M(fm-w*.4),b=M(fm+w*.4),q=M(fm,1.1),ua=toU(M(fm-w*.4),.02),ub=toU(M(fm+w*.4),.02);
-    grads+=`<linearGradient id="kr${uid}_${i}" gradientUnits="userSpaceOnUse" x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}"><stop offset="0" stop-color="${c.shellD}"/><stop offset=".42" stop-color="${mix(c.shell,'#ffffff',.55)}"/><stop offset=".62" stop-color="${c.shell}"/><stop offset="1" stop-color="${c.shellD}"/></linearGradient>`;
-    ribs+=`<path d="M${f1(ua[0])} ${f1(ua[1])}L${f1(a[0])} ${f1(a[1])}Q${f1(q[0])} ${f1(q[1])} ${f1(b[0])} ${f1(b[1])}L${f1(ub[0])} ${f1(ub[1])}Z" fill="url(#kr${uid}_${i})"/>`;
-    const e=M(g0);stri+=`M${U[0]} ${U[1]}L${f1(e[0])} ${f1(e[1])}`;for(const g of [-.2,0,.2]){const p=M(fm+w*g,1.04),u=toU(p,.2);stri+=`M${f1(u[0])} ${f1(u[1])}L${f1(p[0])} ${f1(p[1])}`}}
-  for(let j=0;j<20;j++){const s=.22+j*.04+(j%3)*.006;let d='';for(let i=0;i<=48;i++){const p=toU(M(F0+(F1-F0)*i/48),s);d+=(i?'L':'M')+f1(p[0])+' '+f1(p[1])}grow+=d}
-  const ear=sd=>{const e=M(sd>0?F0:F1);return `<path d="M150 40L${150+sd*76} 33Q${150+sd*80} 56 ${f1(e[0])} ${f1(e[1])}L150 46Z" fill="${c.shell}" stroke="${c.shellD}" stroke-width=".8"/>${[0,1,2,3,4,5].map(i=>`<path d="M${150+sd*(14+i*11)} ${f1(46+i*6)}L${150+sd*(14+i*11)} ${f1(38-i*.8)}" stroke="${c.shellD}" stroke-width=".5" opacity=".7"/>`).join('')}`};
-  const o=outline(n);
-  return `<defs>${grads}<linearGradient id="ks${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe4ee"/><stop offset=".3" stop-color="#e2fff4"/><stop offset=".55" stop-color="#ece4ff"/><stop offset=".8" stop-color="#fff4dc"/><stop offset="1" stop-color="#e4f2ff"/></linearGradient>
-    <radialGradient id="kd${uid}" cx=".5" cy=".55" r=".6"><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></radialGradient>
-    <clipPath id="kc${uid}"><path d="${o}"/></clipPath></defs>
-   ${ear(-1)}${ear(1)}<path d="${o}" fill="${c.shell}"/>
-   <g clip-path="url(#kc${uid})">${ribs}<path d="${grow}" fill="none" stroke="${c.shellD}" stroke-width=".45" opacity=".5"/><path d="${stri}" fill="none" stroke="${c.shellD}" stroke-width=".4" opacity=".55"/>
-    <rect width="300" height="300" fill="url(#ks${uid})" opacity=".5" style="mix-blend-mode:soft-light"/><rect width="300" height="300" fill="url(#kd${uid})"/></g>
-   <path d="${o}" fill="none" stroke="${c.shellD}" stroke-width="1"/><path d="M146 40h8" stroke="${c.shellD}" stroke-width="2" stroke-linecap="round"/>`}
-/* the lower valve seen from inside: smooth nacre with faint ribs and the pearl */
-function inside(c,uid){const o=outline(17,.98);let rib='';
-  for(let k=0;k<=17;k++){const p=M(F0+(F1-F0)*k/17,.96),u=toU(p,.25);rib+=`M${f1(u[0])} ${f1(u[1])}L${f1(p[0])} ${f1(p[1])}`}
-  return `<defs><radialGradient id="kn${uid}" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fffdfb"/><stop offset=".55" stop-color="${c.nacre1}"/><stop offset="1" stop-color="${c.nacre2}"/></radialGradient>
-   <linearGradient id="ki${uid}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ffd6e6"/><stop offset=".35" stop-color="#d6fff0"/><stop offset=".65" stop-color="#e2d8ff"/><stop offset="1" stop-color="#fff0d0"/></linearGradient>${pearlDef('kp'+uid,c)}
-   <clipPath id="kq${uid}"><path d="${o}"/></clipPath></defs>
-   <path d="${outline(17,1.03)}" fill="${c.shellD}"/><path d="${o}" fill="url(#kn${uid})"/>
-   <g clip-path="url(#kq${uid})"><rect width="300" height="300" fill="url(#ki${uid})" opacity=".35" style="mix-blend-mode:soft-light"/><path d="${rib}" stroke="${c.shellD}" stroke-width="2" opacity=".14"/></g>
-   <ellipse cx="150" cy="182" rx="30" ry="9" fill="#000" opacity=".12"/>${pearl(150,162,24,'kp'+uid)}`}
-/* rippled sand: grain from turbulence plus soft wind ripples */
-function sand(c,uid){let rp='';const r=rng(5);for(let i=0;i<16;i++){const y=30+i*48+r()*14;let d=`M-10 ${f1(y)}`;for(let x=0;x<=420;x+=60)d+=`Q${x+30} ${f1(y+(r()-.5)*16)} ${x+60} ${f1(y+(r()-.5)*6)}`;rp+=`<path d="${d}" stroke="#fff" stroke-width="1.6" opacity="${c.dark?.07:.22}" fill="none"/><path d="${d}" transform="translate(0 2.4)" stroke="#000" stroke-width="1.2" opacity=".07" fill="none"/>`}
-  return `<svg class="kg-sand" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice"><defs><filter id="kgr${uid}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .12 0 0 0 1.4 -.72"/></filter></defs>${rp}<rect width="400" height="800" filter="url(#kgr${uid})" opacity=".5"/></svg>`}
-/* a loose strand of pearls draped on the sand, spaced evenly along a cubic */
-function drape(c,id){const P=[[252,476],[296,566],[180,592],[52,586]],pts=[];let last=null;
-  for(let i=0;i<=400;i++){const t=i/400,u=1-t,x=u*u*u*P[0][0]+3*u*u*t*P[1][0]+3*u*t*t*P[2][0]+t*t*t*P[3][0],y=u*u*u*P[0][1]+3*u*u*t*P[1][1]+3*u*t*t*P[2][1]+t*t*t*P[3][1];
-    if(!last||Math.hypot(x-last[0],y-last[1])>=8.6){pts.push([x,y]);last=[x,y]}}
-  return `<svg class="kg-neck" viewBox="0 0 390 760" preserveAspectRatio="xMidYMid slice"><defs>${pearlDef(id,c)}</defs>${pts.map(([x,y])=>pearl(x,y,4.1,id)).join('')}${pearl(318,604,5.2,id)}${pearl(334,592,3.8,id)}</svg>`}
-/* a strand of pearls along a path of points, graduated towards the middle */
-function strand(pts,rmin,rmax,id){return pts.map(([x,y],i)=>{const t=1-Math.abs(i/(pts.length-1)*2-1);return pearl(x,y,rmin+(rmax-rmin)*t,id)}).join('')}
-function mini(c,uid,x,y,s,rot){return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s}) translate(-150 -150)">${lid(c,uid)}</g>`}
-let uid=0;
+/* kerang: a scallop shell die-cut from thick cotton paper, its ribs and growth lines blind-debossed and finely engraved,
+   lying on linen beside a single pearl. Cover: tap "Buka Jemputan" and the shell opens on its hinge to show the
+   nacre inside, then the scene fades. Page: the open shell with its pearl resting on the corner of the card, a seed-pearl necklace (Met Museum, public domain) beside it.
+   Skin: paper cards with a scalloped top edge and engraved headings. */
+needFont('Mrs+Saint+Delafield');
+let keU=0;
+const kq=v=>(+v).toFixed(2);
+// shell geometry (200 x 200): disc centred (100,98) r 86, ears at the hinge, ribs fanning from the hinge
+const KE=(()=>{const N=18,cx=100,cy=98,R=86,hx=100,hy=188,a0=-142,a1=142,P=a=>[cx+R*Math.sin(a*Math.PI/180),cy-R*Math.cos(a*Math.PI/180)];
+  const tips=Array.from({length:N+1},(_,i)=>P(a0+(a1-a0)*i/N));
+  let edge='';tips.forEach((p,i)=>{if(!i){edge+=`M${kq(p[0])} ${kq(p[1])}`;return}
+    const q=tips[i-1],m=P(a0+(a1-a0)*(i-.5)/N),ox=(m[0]-cx)/R*5.5,oy=(m[1]-cy)/R*5.5;edge+=`Q${kq(m[0]+ox)} ${kq(m[1]+oy)} ${kq(p[0])} ${kq(p[1])}`});
+  const [rx,ry]=tips[N],[lx,ly]=tips[0];
+  const outline=edge+`L${kq(rx+3)} ${kq(ry+3)}L152 176L154 193Q100 197 46 193L48 176L${kq(lx-3)} ${kq(ly+3)}Z`;
+  const ribs=Array.from({length:N},(_,i)=>P(a0+(a1-a0)*(i+.5)/N)).map(p=>[p[0]+(p[0]-cx)/R*3,p[1]+(p[1]-cy)/R*3]);
+  return {outline,ribs,hx,hy,N}})();
+// the shell as a paper object; inner=true draws the inside of the lower valve (nacre)
+function keShell(inner,cls=''){const u=++keU,{outline,ribs,hx,hy}=KE;
+  const rib=ribs.map(([x,y])=>`M${hx} ${hy}L${kq(x)} ${kq(y)}`).join('');
+  const growth=[34,58,82,104,124,142].map(r=>`<circle cx="${hx}" cy="${hy}" r="${r}"/>`).join('');
+  const ear=Array.from({length:9},(_,i)=>`M${54+i*4.6} 180V192M${109+i*4.6} 180V192`).join('');
+  if(inner)return `<svg class="ke-shell ke-in ${cls}" viewBox="0 0 200 200" aria-hidden="true"><defs><clipPath id="kc${u}"><path d="${outline}"/></clipPath>
+      <radialGradient id="kn${u}" cx=".45" cy=".42" r=".7"><stop offset="0" style="stop-color:var(--nac1)"/><stop offset=".6" style="stop-color:var(--nac2)"/><stop offset="1" style="stop-color:var(--shellD)"/></radialGradient>
+      <linearGradient id="ki${u}" x1="0" y1="0" x2="1" y2=".6"><stop offset="0" stop-color="#ffd9e6" stop-opacity=".0"/><stop offset=".35" stop-color="#ffe0ec" stop-opacity=".45"/><stop offset=".55" stop-color="#d8f0f0" stop-opacity=".4"/><stop offset=".8" stop-color="#e8e0ff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+    <path d="${outline}" style="fill:var(--shell)"/>
+    <g clip-path="url(#kc${u})"><path d="${outline}" fill="url(#kn${u})" transform="translate(100 104) scale(.9) translate(-100 -104)"/>
+      <path d="${outline}" fill="url(#ki${u})" transform="translate(100 104) scale(.9) translate(-100 -104)" style="mix-blend-mode:soft-light"/>
+      <path d="${rib}" stroke="rgba(120,90,80,.22)" stroke-width="2.6" fill="none" filter="url(#kbl)"/>
+      <path d="${rib}" stroke="rgba(255,255,255,.5)" stroke-width=".7" fill="none" transform="translate(-.8 0)"/></g>
+    <path d="${outline}" fill="none" style="stroke:var(--shellD)" stroke-width=".8"/></svg>`;
+  return `<svg class="ke-shell ${cls}" viewBox="0 0 200 200" aria-hidden="true"><defs><clipPath id="kc${u}"><path d="${outline}"/></clipPath>
+      <linearGradient id="kl${u}" x1=".1" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3a2a20" stop-opacity=".2"/></linearGradient>
+      <pattern id="kh${u}" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><path d="M0 0V2.2" style="stroke:var(--eng)" stroke-width=".35"/></pattern></defs>
+    <path d="${outline}" style="fill:var(--shell)"/>
+    <g clip-path="url(#kc${u})">
+      <image href="${A}paper.jpg" x="-20" y="-20" width="240" height="240" preserveAspectRatio="xMidYMid slice" style="mix-blend-mode:multiply" opacity=".55"/>
+      <path d="M100 188L210 60V210H100Z" fill="url(#kh${u})" opacity=".35"/>
+      <g fill="none" style="stroke:var(--eng)" stroke-width=".35" opacity=".5" stroke-dasharray="1.6 1.1">${growth}</g>
+      <path d="${rib}" stroke="rgba(60,40,30,.16)" stroke-width="6" fill="none" transform="translate(2.2 1.2)" filter="url(#kbl)"/>
+      <path d="${rib}" stroke="rgba(255,255,255,.75)" stroke-width="3.4" fill="none" transform="translate(-1.2 -.6)" filter="url(#kbl)"/>
+      <path d="${rib}" stroke="rgba(60,40,30,.28)" stroke-width="1.5" fill="none" transform="translate(.9 .5)"/>
+      <path d="${rib}" stroke="rgba(255,255,255,.85)" stroke-width="1.1" fill="none" transform="translate(-.7 -.3)"/>
+      <path d="${rib}" style="stroke:var(--eng)" stroke-width=".4" fill="none" opacity=".75"/>
+      <path d="${ear}" style="stroke:var(--eng)" stroke-width=".35" opacity=".55"/>
+      <path d="M48 177Q100 171 152 177" fill="none" stroke="rgba(60,40,30,.25)" stroke-width="1"/><path d="M48 176Q100 170 152 176" fill="none" stroke="rgba(255,255,255,.8)" stroke-width=".7"/>
+      <rect width="200" height="200" fill="url(#kl${u})"/></g>
+    <path d="${outline}" fill="none" stroke="rgba(60,40,30,.35)" stroke-width=".6"/></svg>`}
+const kePearl=(cls='',style='')=>`<i class="ke-pearl ${cls}" style="${style}"></i>`;
+const keVars=c=>`--shell:${c.shell};--shellD:${c.shellD};--nac1:${c.nacre1};--nac2:${c.nacre2};--p1:${c.pearl1};--p2:${c.pearl2};--p3:${c.pearl3};--eng:${c.eng||c.accent};--nm:${c.nm};--btn:${c.dark?'rgba(0,0,0,.3)':'rgba(255,255,255,.4)'}`;
+const KBL=`<svg width="0" height="0" style="position:absolute"><filter id="kbl"><feGaussianBlur stdDeviation="1.2"/></filter></svg>`;
 FAMILY({key:'kerang',name:'Kerang',meaning:'Seashell and pearl',
-  blurb:'A ribbed scallop with a pearly sheen lies on rippled sand. Touch it and the shell opens on a single pearl.',
-  fonts:{d:"'Bodoni Moda', serif",s:"'Mrs Saint Delafield', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++uid,id='pp'+u;
-    const top=Array.from({length:23},(_,i)=>[30+i*15.45,30]),bot=top.map(([x])=>[x,770]),lft=Array.from({length:47},(_,i)=>[30,45.6+i*15.2]),rgt=lft.map(([,y])=>[370,y]);
-    const all=[...top,...bot,...lft,...rgt].map(([x,y])=>pearl(x,y,5.6,id)).join('');
-    return `<section class="page pg-kerang" style="--kgn:${c.nm}">${sand(c,u)}<svg class="kg-border" viewBox="0 0 400 800" preserveAspectRatio="none"><defs>${pearlDef(id,c)}</defs>
-     <rect x="44" y="44" width="312" height="712" fill="none" stroke="${c.gold}" stroke-width=".8"/><rect x="49" y="49" width="302" height="702" fill="none" stroke="${c.gold}" stroke-width=".4"/>${all}</svg>
-     <svg class="kg-cs tl" viewBox="0 0 300 300">${mini(c,'q'+u+'a',150,150,1,-45)}</svg><svg class="kg-cs tr" viewBox="0 0 300 300">${mini(c,'q'+u+'b',150,150,1,45)}</svg>
-     <svg class="kg-cs bl" viewBox="0 0 300 300">${mini(c,'q'+u+'c',150,150,1,-135)}</svg><svg class="kg-cs br" viewBox="0 0 300 300">${mini(c,'q'+u+'d',150,150,1,135)}</svg>
-     <div class="kg-in"><svg class="kg-top" viewBox="0 0 300 300">${lid(c,'t'+u)}</svg><p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-      <svg class="kg-str reveal d2" viewBox="0 0 200 20"><defs>${pearlDef(id+'s',c)}</defs>${strand(Array.from({length:13},(_,i)=>[28+i*12,8+Math.sin(i/12*PI)*4]),2.6,4.6,id+'s')}</svg>
-      <p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(fmtTime(o.start,o.lang))} &middot; ${esc(o.venue)}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++uid;
-    return `<div class="cover cv-kerang" style="--kgn:${c.nm}">${sand(c,u)}<i class="kg-frame"></i>${drape(c,'kn'+u+'d')}
-     <div class="kg-head"><p class="kg-k">${ev(o,L)}</p><p class="kg-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</p></div>
-     <${tag} class="kg-shell" ${attr} aria-label="${L.open}"><svg class="kg-low" viewBox="0 0 300 300">${inside(c,u)}</svg><svg class="kg-lid" viewBox="0 0 300 300">${lid(c,u)}</svg></${tag}>
-     <div class="kg-foot"><svg class="kg-str" viewBox="0 0 200 20"><defs>${pearlDef('kz'+u,c)}</defs>${strand(Array.from({length:13},(_,i)=>[28+i*12,8+Math.sin(i/12*PI)*4]),2.6,4.6,'kz'+u)}</svg>
-      <p class="kg-d">${esc(fmtDate(o.date,o.lang))}</p>${guest?`<p class="kg-to">${L.dear}<b>${esc(guest)}</b></p>`:`<p class="kg-to"><b>${esc(o.venue)}</b></p>`}
-      <p class="kg-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){const c=th.c;K.cards(el);
-    K.secs(el).forEach((s,i)=>{const id='sk'+(++gid);
-      const swag=Array.from({length:27},(_,k)=>{const t=k/26;return [14+t*332,6+Math.sin(t*PI)*24]});
-      s.insertAdjacentHTML('afterbegin',`<svg class="kg-swag" viewBox="0 0 360 40" preserveAspectRatio="none"><defs>${pearlDef(id,c)}</defs>${strand(swag,3,3,id)}</svg>`);
-      const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend',`<svg class="kg-str" viewBox="0 0 200 20"><defs>${pearlDef(id+'d',c)}</defs>${strand(Array.from({length:13},(_,k)=>[28+k*12,8+Math.sin(k/12*PI)*4]),2.4,4.4,id+'d')}</svg>`)})},
+  blurb:'A scallop shell die-cut from thick cotton paper, its ribs pressed and engraved, lying on linen beside a pearl. Open it and the shell parts on its hinge to show the nacre.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Mrs Saint Delafield', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-kerang2${c.dark?' ke-dark':''}" style="${keVars(c)}">${KBL}<div class="ke-linen"></div>
+      <div class="ke-pcard reveal"><div class="ke-pobj">${keShell(true)}${kePearl('ke-ppearl')}</div><div class="ke-ci">
+        <p class="ke-k kicker">${ev(o,L)}</p><h1 class="ke-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="ke-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="ke-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<a class="ke-ven" data-go="loc" href="#">${esc(o.venue)}</a>`:''}</div></div>
+      <img class="ke-neck" src="${A}pd-obj-pearls.webp" alt=""><div class="ke-links reveal d2"><a data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-kerang2${c.dark?' ke-dark':''}" style="${keVars(c)}">${KBL}<div class="ke-linen"></div>
+      <div class="ke-top"><p class="ke-k">${ev(o,L)}</p><p class="ke-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="ke-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="ke-obj"><div class="ke-low">${keShell(true)}${kePearl('ke-inpearl')}</div><div class="ke-up">${keShell(false)}</div>${kePearl('ke-loose')}</div>
+      <div class="ke-foot">${guest?`<p class="ke-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ke-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.classList.toggle('ke-dark',!!c.dark);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'mutiara',n:'Mutiara',desc:'Ivory sand, blush shell',c:{ground:'#eee4d4',sheet:'#fcf9f4',ink:'#4a4038',accent:'#7a5a50',gold:'#b5986a',pagefg:'#4a4038',nm:'#7a5a50',shell:'#f4e6dc',shellD:'#c9ab98',nacre1:'#f6ece8',nacre2:'#dccbd0',pearl1:'#fbf6f1',pearl2:'#e6dcd6',pearl3:'#b8aaa4'}},
-    {k:'laut',n:'Laut',desc:'Pale sand, sea-blue script',c:{ground:'#e8e2d4',sheet:'#fbfaf6',ink:'#2f3d45',accent:'#2e5b6e',gold:'#a8956a',pagefg:'#2f3d45',nm:'#2e5b6e',shell:'#f2e9df',shellD:'#bfa892',nacre1:'#eef2f2',nacre2:'#cfd8dc',pearl1:'#f8f8f6',pearl2:'#dfe2e2',pearl3:'#a7aeb2'}},
-    {k:'jambu',n:'Jambu',desc:'Pink sand, rose shell',c:{ground:'#f1dfd6',sheet:'#fdf8f5',ink:'#4a3434',accent:'#9a5462',gold:'#b58d6a',pagefg:'#4a3434',nm:'#9a5462',shell:'#f7e0d8',shellD:'#d4a49a',nacre1:'#fbecec',nacre2:'#e8c8cc',pearl1:'#fff6f4',pearl2:'#efdcdc',pearl3:'#c4a8aa'}},
-    {k:'emas',n:'Emas',desc:'Golden sand, warm pearl',c:{ground:'#e6d2ad',sheet:'#fcf6ea',ink:'#463822',accent:'#7a5a26',gold:'#b08a42',pagefg:'#463822',nm:'#6e5020',shell:'#f5e8d2',shellD:'#c4a274',nacre1:'#f8f0e2',nacre2:'#e2cfb0',pearl1:'#fffaf0',pearl2:'#ece0c8',pearl3:'#bba684'}},
-    {k:'hijau',n:'Buih Laut',desc:'Seafoam sand, green script',c:{ground:'#dfe6dc',sheet:'#fafbf7',ink:'#2f3d36',accent:'#3d6656',gold:'#a8966a',pagefg:'#2f3d36',nm:'#3d6656',shell:'#f0eadf',shellD:'#b6a890',nacre1:'#eef4f0',nacre2:'#d0dcd6',pearl1:'#f9faf7',pearl2:'#e0e4df',pearl3:'#a9b0aa'}},
-    {k:'ungu',n:'Ungu',desc:'Lilac dusk, mauve pearl',c:{ground:'#e5dde5',sheet:'#fbf8fb',ink:'#3e3446',accent:'#6a4e7a',gold:'#a8936e',pagefg:'#3e3446',nm:'#6a4e7a',shell:'#f1e6e8',shellD:'#c0a6b0',nacre1:'#f3ecf4',nacre2:'#d8cadc',pearl1:'#fbf8fb',pearl2:'#e6dde8',pearl3:'#aea0b4'}},
-    {k:'malam',n:'Malam',desc:'Night shore, silver shell',c:{ground:'#1c2732',sheet:'#f8f6f2',ink:'#2e3640',accent:'#3f5468',gold:'#c4ad80',pagefg:'#e8e4dc',dark:1,nm:'#f0e8dc',shell:'#ece6e0',shellD:'#a89c94',nacre1:'#eef0f2',nacre2:'#c8ccd4',pearl1:'#ffffff',pearl2:'#e2e4e8',pearl3:'#9ca2ac'}},
-    {k:'nila',n:'Nila',desc:'Deep indigo sea, cream shell',c:{ground:'#17243e',sheet:'#fbf8f2',ink:'#27304a',accent:'#2e3f6e',gold:'#c8a868',pagefg:'#ece6da',dark:1,nm:'#f2e6d2',shell:'#f3e8da',shellD:'#b39d84',nacre1:'#f4eee8',nacre2:'#d6ccc8',pearl1:'#fffdf8',pearl2:'#e9e2d8',pearl3:'#aaa094'}},
+    {k:'mutiara',n:'Mutiara',desc:'Ivory shell and pearl on sand linen',c:{ground:'#e9dfcf',sheet:'#fcf9f4',ink:'#4a4038',accent:'#7a5a50',gold:'#b5986a',pagefg:'#4a4038',nm:'#6e5048',shell:'#f8f1e6',shellD:'#c9ab98',nacre1:'#f6ece8',nacre2:'#dccbd0',pearl1:'#fbf6f1',pearl2:'#e6dcd6',pearl3:'#b8aaa4'}},
+    {k:'laut',n:'Laut',desc:'Ivory shell on pale linen, sea-blue ink',c:{ground:'#e3ded2',sheet:'#fbfaf6',ink:'#2f3d45',accent:'#2e5b6e',gold:'#a8956a',pagefg:'#2f3d45',nm:'#2e5b6e',shell:'#f7f3ea',shellD:'#bfa892',nacre1:'#eef2f2',nacre2:'#cfd8dc',pearl1:'#f8f8f6',pearl2:'#dfe2e2',pearl3:'#a7aeb2'}},
+    {k:'jambu',n:'Jambu',desc:'Blush shell on pink linen',c:{ground:'#eedbd2',sheet:'#fdf8f5',ink:'#4a3434',accent:'#9a5462',gold:'#b58d6a',pagefg:'#4a3434',nm:'#8e4a58',shell:'#fbeee8',shellD:'#d4a49a',nacre1:'#fbecec',nacre2:'#e8c8cc',pearl1:'#fff6f4',pearl2:'#efdcdc',pearl3:'#c4a8aa'}},
+    {k:'emas',n:'Emas',desc:'Cream shell on golden sand linen',c:{ground:'#e3cfaa',sheet:'#fcf6ea',ink:'#463822',accent:'#7a5a26',gold:'#b08a42',pagefg:'#463822',nm:'#6e5020',shell:'#faf2e2',shellD:'#c4a274',nacre1:'#f8f0e2',nacre2:'#e2cfb0',pearl1:'#fffaf0',pearl2:'#ece0c8',pearl3:'#bba684'}},
+    {k:'hijau',n:'Buih Laut',desc:'Ivory shell on seafoam linen',c:{ground:'#dbe3d8',sheet:'#fafbf7',ink:'#2f3d36',accent:'#3d6656',gold:'#a8966a',pagefg:'#2f3d36',nm:'#3d6656',shell:'#f6f3ea',shellD:'#b6a890',nacre1:'#eef4f0',nacre2:'#d0dcd6',pearl1:'#f9faf7',pearl2:'#e0e4df',pearl3:'#a9b0aa'}},
+    {k:'ungu',n:'Ungu',desc:'Pale shell on lilac linen',c:{ground:'#e2dae3',sheet:'#fbf8fb',ink:'#3e3446',accent:'#6a4e7a',gold:'#a8936e',pagefg:'#3e3446',nm:'#6a4e7a',shell:'#f7f0f2',shellD:'#c0a6b0',nacre1:'#f3ecf4',nacre2:'#d8cadc',pearl1:'#fbf8fb',pearl2:'#e6dde8',pearl3:'#aea0b4'}},
+    {k:'malam',n:'Malam',desc:'White shell on a night-blue cloth',c:{ground:'#1c2732',sheet:'#f8f6f2',ink:'#2e3640',accent:'#3f5468',gold:'#c4ad80',pagefg:'#e8e4dc',dark:1,nm:'#f0e8dc',shell:'#f2eee8',shellD:'#a89c94',nacre1:'#eef0f2',nacre2:'#c8ccd4',pearl1:'#ffffff',pearl2:'#e2e4e8',pearl3:'#9ca2ac',eng:'#5a6878'}},
+    {k:'nila',n:'Nila',desc:'Cream shell on deep indigo cloth',c:{ground:'#17243e',sheet:'#fbf8f2',ink:'#27304a',accent:'#2e3f6e',gold:'#c8a868',pagefg:'#ece6da',dark:1,nm:'#f2e6d2',shell:'#f6efe4',shellD:'#b39d84',nacre1:'#f4eee8',nacre2:'#d6ccc8',pearl1:'#fffdf8',pearl2:'#e9e2d8',pearl3:'#aaa094',eng:'#5a5470'}},
   ]});
 
 })()}catch(e){console.error("family kerang failed",e)}
@@ -3516,94 +4169,161 @@ FAMILY({key:'kering',name:'Bunga Kering',meaning:'Dried boho bouquet',
 
 /* ===== family: kerongsang ===== */
 try{(()=>{
-/* kerongsang: the front of a kebaya in fine voile with embroidered lace edges, fastened with a set of three
-   gold filigree brooches (one kerongsang ibu, two anak) linked by fine chains.
-   Cover: touching the brooch set lifts it away and the two lace panels part. Page: a lace border with a
-   single brooch above the names. Skin: lace-edged cards with brooch bullets. */
-let uid=0;
-const f1=v=>(+v).toFixed(1);
-// the neckline edge of the left panel: a cubic from the left edge down to the centre seam
-const P=[[-6,150],[74,158],[168,226],[195,306]];
-const bz=t=>{const u=1-t;return[0,1].map(k=>u*u*u*P[0][k]+3*u*u*t*P[1][k]+3*u*t*t*P[2][k]+t*t*t*P[3][k])};
-const bzd=t=>{const u=1-t;return[0,1].map(k=>3*u*u*(P[1][k]-P[0][k])+6*u*t*(P[2][k]-P[1][k])+3*t*t*(P[3][k]-P[2][k]))};
-// points every ~step px along the neckline then down the seam, with the normal pointing into the voile
-function edgePts(step){const pts=[];let len=0,prev=bz(0);
-  for(let i=0;i<=400;i++){const t=i/400,p=bz(t);len+=Math.hypot(p[0]-prev[0],p[1]-prev[1]);prev=p;
-    if(len>=step||i===0){len=0;const d=bzd(t),L=Math.hypot(d[0],d[1]);pts.push([p[0],p[1],-d[1]/L,d[0]/L])}}
-  for(let y=P[3][1]+step;y<=1010;y+=step)pts.push([195,y,-1,0]);
-  return pts}
-const at=(p,o)=>[p[0]+p[2]*o,p[1]+p[3]*o];
-const sprig=(x,y,r,a)=>`<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(a)})">${[0,72,144,216,288].map(t=>`<ellipse cy="-${f1(r)}" rx="${f1(r*.5)}" ry="${f1(r)}" transform="rotate(${t})"/>`).join('')}</g>`;
-function panel(){const id=++uid,E=edgePts(7);
-  const shape=`M${P[0][0]} ${P[0][1]}C${P[1].join(' ')} ${P[2].join(' ')} ${P[3].join(' ')}L195 1010H-10V${P[0][1]}Z`;
-  let sc='',holes='',fl='',vine1='',vine2='',lf='';
-  E.forEach((p,i)=>{if(i){const q=E[i-1],m=at([(p[0]+q[0])/2,(p[1]+q[1])/2,p[2],p[3]],-5.2);sc+=`M${f1(q[0])} ${f1(q[1])}Q${f1(m[0])} ${f1(m[1])} ${f1(p[0])} ${f1(p[1])}`}
-    const h=at(p,5.5);if(i%2===0)holes+=`<circle cx="${f1(h[0])}" cy="${f1(h[1])}" r="1.5"/>`;
-    const a=at(p,3),b=at(p,20);vine1+=`${i?'L':'M'}${f1(a[0])} ${f1(a[1])}`;vine2+=`${i?'L':'M'}${f1(b[0])} ${f1(b[1])}`;
-    if(i%4===2){const f=at(p,12.5);fl+=sprig(f[0],f[1],2.6,i*17)}
-    if(i%4===0&&i){const f=at(p,12.5),ang=Math.atan2(p[3],p[2])*180/Math.PI;lf+=`<path d="M0 0q3-4 0-8q-3 4 0 8z" transform="translate(${f1(f[0])} ${f1(f[1])}) rotate(${f1(ang+90+50)})"/><path d="M0 0q3-4 0-8q-3 4 0 8z" transform="translate(${f1(f[0])} ${f1(f[1])}) rotate(${f1(ang+90-50)})"/>`}});
-  // scattered sulam flowers on the voile
-  const R=rng(5);let scat='';for(let i=0;i<52;i++){const x=10+R()*175,y=200+R()*800;const e=E.reduce((m,p)=>Math.min(m,Math.hypot(p[0]-x,p[1]-y)),1e9);if(e<34)continue;scat+=sprig(x,y,2.2+R()*1.2,R()*72)}
-  return `<svg class="kerongsang-psvg" viewBox="0 0 195 1000" preserveAspectRatio="none"><defs><clipPath id="krc${id}"><path d="${shape}"/></clipPath></defs>
-   <path d="${sc}" class="kerongsang-scal"/>
-   <path d="${shape}" class="kerongsang-voile"/>
-   <g clip-path="url(#krc${id})"><g class="kerongsang-scat">${scat}</g>
-    
-    <path d="${vine1}" class="kerongsang-v1"/><path d="${vine2}" class="kerongsang-v2"/><g class="kerongsang-holes">${holes}</g><g class="kerongsang-fl">${fl}</g><g class="kerongsang-lf">${lf}</g></g>
-   <path d="${sc}" class="kerongsang-scl"/></svg>`}
-// gold filigree brooches
-const gem=(cx,cy,r,id,cls='kerongsang-stone')=>`<circle cx="${cx}" cy="${cy}" r="${f1(r)}" fill="url(#krs${id})" class="${cls}"/><path d="M${f1(cx-r*.55)} ${f1(cy-r*.2)}L${cx} ${f1(cy-r*.62)}L${f1(cx+r*.55)} ${f1(cy-r*.2)}L${cx} ${f1(cy+r*.5)}Z" class="kerongsang-facet"/><circle cx="${f1(cx-r*.32)}" cy="${f1(cy-r*.36)}" r="${f1(r*.2)}" class="kerongsang-glint"/>`;
-function defs(id){return `<defs><radialGradient id="krg${id}" cx=".35" cy=".3" r=".8"><stop offset="0" style="stop-color:color-mix(in srgb,var(--gold) 40%,#fff)"/><stop offset=".5" style="stop-color:var(--gold)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--gold) 50%,#000)"/></radialGradient>
-  <radialGradient id="krs${id}" cx=".38" cy=".32" r=".75"><stop offset="0" style="stop-color:color-mix(in srgb,var(--gem,var(--accent)) 40%,#fff)"/><stop offset=".45" style="stop-color:var(--gem,var(--accent))"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--gem,var(--accent)) 45%,#000)"/></radialGradient>
-  <radialGradient id="krw${id}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#e9eef2"/><stop offset="1" stop-color="#9aa6ae"/></radialGradient></defs>`}
-function ibu(){const id=++uid;const H=t=>[50+2.85*16*Math.pow(Math.sin(t),3),46-2.85*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))];
-  const heart=k=>{let d='';for(let i=0;i<=72;i++){const t=i/72*Math.PI*2,[x,y]=H(t);d+=`${i?'L':'M'}${f1(50+(x-50)*k)} ${f1(46+(y-46)*k)}`}return d+'Z'};
-  const beads=k=>Array.from({length:40},(_,i)=>{const t=i/40*Math.PI*2,[x,y]=H(t);return `<circle cx="${f1(50+(x-50)*k)}" cy="${f1(46+(y-46)*k)}" r="1.15"/>`}).join('');
-  const stones=Array.from({length:10},(_,i)=>{const t=(i+.5)/10*Math.PI*2,[x,y]=H(t);return gem(+f1(50+(x-50)*.68),+f1(46+(y-46)*.68),3.3,id,'kerongsang-wst')}).join('').replaceAll(`url(#krs${id})`,`url(#krw${id})`);
-  const scr=Array.from({length:12},(_,i)=>`<path d="M50 31c5-6 13-6 15 0s-4 9-8 6 0-6 3-4" transform="rotate(${i*30} 50 46)" class="kerongsang-fil"/>`).join('')+Array.from({length:12},(_,i)=>`<path d="M50 19q4 5 0 9q-4-4 0-9z" transform="rotate(${i*30+15} 50 46)" class="kerongsang-fil2"/>`).join('');
-  return `<svg viewBox="-4 -16 108 116">${defs(id)}<path d="M45-4q5-5 10 0l-1.5 6h-7z" fill="url(#krg${id})"/><circle cx="50" cy="-6" r="2.4" fill="url(#krg${id})"/>
-   <g class="kerongsang-ball">${Array.from({length:44},(_,i)=>{const t=i/44*Math.PI*2,[x,y]=H(t);return `<circle cx="${f1(50+(x-50)*1.12)}" cy="${f1(46+(y-46)*1.12)}" r="1.9" fill="url(#krg${id})"/>`}).join('')}</g><path d="${heart(1.06)}" fill="url(#krg${id})" class="kerongsang-rim"/><path d="${heart(.95)}" class="kerongsang-in"/><clipPath id="krh${id}"><path d="${heart(.95)}"/></clipPath><pattern id="krp${id}" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="3.1" class="kerongsang-mesh"/><circle cx="0" cy="0" r=".9" class="kerongsang-meshd"/><circle cx="9" cy="0" r=".9" class="kerongsang-meshd"/><circle cx="0" cy="9" r=".9" class="kerongsang-meshd"/><circle cx="9" cy="9" r=".9" class="kerongsang-meshd"/></pattern><rect x="-10" y="-10" width="120" height="120" fill="url(#krp${id})" clip-path="url(#krh${id})"/><g class="kerongsang-bead">${beads(.99)}</g>
-   <g class="kerongsang-filg">${scr}</g>${stones}
-   <circle cx="50" cy="46" r="15" fill="url(#krg${id})" class="kerongsang-rim"/><g class="kerongsang-bead">${K.ring(18,13.2,50,46).map(([x,y])=>`<circle cx="${f1(x)}" cy="${f1(y)}" r=".9"/>`).join('')}</g>
-   ${gem(50,46,10.5,id)}</svg>`}
-function anak(){const id=++uid;const pet=K.ring(8,15,30,30).map(([x,y,a])=>`<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="4.4" ry="7.4" transform="rotate(${f1(a*180/Math.PI+90)} ${f1(x)} ${f1(y)})" fill="url(#krg${id})" class="kerongsang-rim"/>`).join('');
-  const st=K.ring(8,15,30,30).map(([x,y])=>gem(+f1(x),+f1(y),2.5,id,'kerongsang-wst')).join('').replaceAll(`url(#krs${id})`,`url(#krw${id})`);
-  return `<svg viewBox="0 0 60 60">${defs(id)}<path d="${K.scallop(16,24,3,30,30)}" class="kerongsang-filo"/>${pet}${st}<circle cx="30" cy="30" r="9.5" fill="url(#krg${id})" class="kerongsang-rim"/>
-   <g class="kerongsang-bead">${K.ring(14,8.2,30,30).map(([x,y])=>`<circle cx="${f1(x)}" cy="${f1(y)}" r=".7"/>`).join('')}</g>${gem(30,30,6.2,id)}</svg>`}
-const chain=(h)=>`<svg class="kerongsang-ch" viewBox="0 0 60 ${h}" preserveAspectRatio="none"><path d="M22 0C4 ${h*.35} 6 ${h*.7} 24 ${h}M38 0C56 ${h*.35} 54 ${h*.7} 36 ${h}" class="kerongsang-chain"/><path d="M30 0V${h}" class="kerongsang-chain2"/></svg>`;
-const LACE=c=>svgUriSq(`<svg ${NS} width="28" height="16" viewBox="0 0 28 16"><path d="M0 0H28V9Q24.5 16 21 9Q17.5 16 14 9Q10.5 16 7 9Q3.5 16 0 9Z" fill="${c.sheet}"/><path d="M0 9Q3.5 16 7 9Q10.5 16 14 9Q17.5 16 21 9Q24.5 16 28 9" fill="none" stroke="${c.accent}" stroke-width=".7"/><path d="M0 2.5H28" stroke="${c.accent}" stroke-width=".5" opacity=".7"/><circle cx="7" cy="6" r="1.4" fill="${c.ground}"/><circle cx="21" cy="6" r="1.4" fill="${c.ground}"/><g fill="none" stroke="${c.accent}" stroke-width=".55"><circle cx="14" cy="6" r="2"/><path d="M14 2.6v-1M14 9.4v1M10.6 6h-1M17.4 6h1"/></g></svg>`);
-const LACEV=c=>svgUriSq(`<svg ${NS} width="16" height="28" viewBox="0 0 16 28"><path d="M16 0V28H7Q0 24.5 7 21Q0 17.5 7 14Q0 10.5 7 7Q0 3.5 7 0Z" fill="${c.sheet}"/><path d="M7 0Q0 3.5 7 7Q0 10.5 7 14Q0 17.5 7 21Q0 24.5 7 28" fill="none" stroke="${c.accent}" stroke-width=".7"/><path d="M13.5 0V28" stroke="${c.accent}" stroke-width=".5" opacity=".7"/><circle cx="10" cy="7" r="1.4" fill="${c.ground}"/><circle cx="10" cy="21" r="1.4" fill="${c.ground}"/><g fill="none" stroke="${c.accent}" stroke-width=".55"><circle cx="10" cy="14" r="2"/></g></svg>`);
-const vars=c=>`--kr-lace:${LACE(c)};--kr-lacev:${LACEV(c)};--gem:${c.gem||c.accent}${c.nm?';--kr-nm:'+c.nm:''}`;
-const BUL=c=>svgUriSq(`<svg ${NS} viewBox="0 0 60 60"><g fill="${c.gold}">${K.ring(8,15,30,30).map(([x,y,a])=>`<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="4.6" ry="7.6" transform="rotate(${f1(a*180/Math.PI+90)} ${f1(x)} ${f1(y)})"/>`).join('')}<circle cx="30" cy="30" r="10"/></g><circle cx="30" cy="30" r="6.5" fill="${c.gem||c.accent}"/><circle cx="28" cy="28" r="1.8" fill="#fff" opacity=".8"/></svg>`);
+/* kerongsang: a kerongsang set (one heart-shaped ibu and two round anak, granulated gold with rose-cut stones) pinned to an
+   ivory card that lies on a length of songket (a public-domain woven textile from the Met Museum).
+   Cover: tap "Buka Jemputan", the brooch is unpinned and lifted away, then the card is drawn up off the cloth.
+   Page: the card with the ibu pinned at its top, the two anak below it on a fine chain, each leading to a section.
+   Skin: ivory cards on the songket, each heading under a small anak brooch. */
+let krU=0;
+const kf=v=>(+v).toFixed(2);
+// heart (daun sirih) outline, centre (50,46)
+const krH=(t,k)=>{const x=16*Math.pow(Math.sin(t),3),y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));return[50+2.75*x*k,47+2.75*y*k]};
+const krHeart=k=>{let d='';for(let i=0;i<=96;i++){const [x,y]=krH(i/96*Math.PI*2,k);d+=`${i?'L':'M'}${kf(x)} ${kf(y)}`}return d+'Z'};
+// gradients shared by one brooch: gold bead, gold wire, deep backing, white stone, coloured stone
+const krDefs=u=>`<defs>
+  <radialGradient id="kb${u}" cx=".34" cy=".3" r=".75"><stop offset="0" stop-color="#fff6d6"/><stop offset=".35" stop-color="#e6bf68"/><stop offset=".8" stop-color="#9a6c22"/><stop offset="1" stop-color="#5e3f10"/></radialGradient>
+  <linearGradient id="kw${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe7a8"/><stop offset=".3" stop-color="#d7a94f"/><stop offset=".55" stop-color="#8f6420"/><stop offset=".75" stop-color="#e9c975"/><stop offset="1" stop-color="#7a5418"/></linearGradient>
+  <radialGradient id="kd${u}" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#a77a2c"/><stop offset=".7" stop-color="#6a4812"/><stop offset="1" stop-color="#3e2808"/></radialGradient>
+  <radialGradient id="ks${u}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e7ebee"/><stop offset="1" stop-color="#8d98a2"/></radialGradient>
+  <radialGradient id="kg${u}" cx=".4" cy=".35" r=".75"><stop offset="0" style="stop-color:color-mix(in srgb,var(--gem) 45%,#fff)"/><stop offset=".45" style="stop-color:var(--gem)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--gem) 40%,#000)"/></radialGradient></defs>`;
+// a rose-cut stone in a gold collet: fine facet lines, one glint
+const krStone=(x,y,r,u,fill)=>{const f=K.ring(6,r*.55,x,y).map(([a,b])=>`M${kf(x)} ${kf(y)}L${kf(a)} ${kf(b)}`).join('');
+  return `<circle cx="${kf(x)}" cy="${kf(y)}" r="${kf(r*1.28)}" fill="url(#kw${u})"/><circle cx="${kf(x)}" cy="${kf(y)}" r="${kf(r)}" fill="url(#${fill}${u})"/>
+  <path d="${f}" stroke="rgba(0,0,0,.28)" stroke-width="${kf(r*.07)}" fill="none"/><circle cx="${kf(x)}" cy="${kf(y)}" r="${kf(r*.55)}" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="${kf(r*.07)}"/>
+  <circle cx="${kf(x-r*.36)}" cy="${kf(y-r*.4)}" r="${kf(r*.16)}" fill="#fff" opacity=".9"/>`};
+const krBeads=(pts,r,u)=>pts.map(([x,y])=>`<circle cx="${kf(x)}" cy="${kf(y)}" r="${r}" fill="url(#kb${u})"/>`).join('');
+// kerongsang ibu
+function krIbu(){const u=++krU,n=50;
+  const outer=Array.from({length:n},(_,i)=>krH(i/n*Math.PI*2,1.1));
+  const stones=Array.from({length:10},(_,i)=>krH((i+.5)/10*Math.PI*2,.68)).map(([x,y])=>krStone(x,y,3.1,u,'ks')).join('');
+  const fil=Array.from({length:10},(_,i)=>`<path d="M50 30c6-7 15-5 15 2s-8 8-10 3 3-6 5-3" transform="rotate(${i*36+18} 50 47)"/>`).join('')+
+    Array.from({length:10},(_,i)=>`<path d="M50 17q4.5 5 0 10q-4.5-5 0-10z" transform="rotate(${i*36} 50 47)"/>`).join('');
+  return `<svg class="kr-ibu" viewBox="-6 -14 112 126" aria-hidden="true">${krDefs(u)}
+    <path d="M44.5 -3q5.5-6 11 0l-1.6 7h-7.8z" fill="url(#kw${u})"/><circle cx="50" cy="-7" r="3" fill="none" stroke="url(#kw${u})" stroke-width="1.6"/>
+    <path d="${krHeart(1.03)}" fill="url(#kd${u})"/>
+    ${krBeads(outer,2.15,u)}
+    <path d="${krHeart(1.0)}" fill="none" stroke="url(#kw${u})" stroke-width="2.3"/>
+    <path d="${krHeart(.92)}" fill="none" stroke="#f3d68a" stroke-width="1" stroke-dasharray="1.1 .7" opacity=".9"/>
+    <g fill="none" stroke="url(#kw${u})" stroke-width="1.05" stroke-linecap="round">${fil}</g>
+    ${stones}
+    <circle cx="50" cy="47" r="14.2" fill="url(#kw${u})"/>${krBeads(K.ring(20,12.6,50,47),.95,u)}
+    ${krStone(50,47,9.6,u,'kg')}</svg>`}
+// kerongsang anak: a round flower brooch
+function krAnak(cls=''){const u=++krU;
+  const pet=K.ring(8,15.5,30,30).map(([x,y,a])=>`<path d="M0 -8.6c5 1.5 5.6 12 0 17.2c-5.6-5.2-5-15.7 0-17.2z" transform="translate(${kf(x)} ${kf(y)}) rotate(${kf(a*180/Math.PI+90)})" fill="url(#kd${u})" stroke="url(#kw${u})" stroke-width="1.5"/>`).join('');
+  const st=K.ring(8,16,30,30).map(([x,y])=>krStone(x,y,2.5,u,'ks')).join('');
+  return `<svg class="kr-anak ${cls}" viewBox="0 0 60 60" aria-hidden="true">${krDefs(u)}${krBeads(K.ring(32,26.6,30,30,0),1.15,u)}${pet}${st}
+    <circle cx="30" cy="30" r="9.6" fill="url(#kw${u})"/>${krBeads(K.ring(14,8.5,30,30),.7,u)}${krStone(30,30,6.2,u,'kg')}</svg>`}
+// a little anak brooch for the skin's headings, as a data URI (no gradients by id, so it is safe to repeat)
+const krBul=c=>K.uri(`<svg ${NS} viewBox="0 0 60 60"><g fill="${c.gold}" stroke="#7a5418" stroke-width=".8">${K.ring(8,15.5,30,30).map(([x,y,a])=>`<path d="M0 -8.6c5 1.5 5.6 12 0 17.2c-5.6-5.2-5-15.7 0-17.2z" transform="translate(${kf(x)} ${kf(y)}) rotate(${kf(a*180/Math.PI+90)})"/>`).join('')}<circle cx="30" cy="30" r="9.6"/></g>${K.ring(8,16,30,30).map(([x,y])=>`<circle cx="${kf(x)}" cy="${kf(y)}" r="2.4" fill="#f4f6f8"/>`).join('')}<circle cx="30" cy="30" r="6.2" fill="${c.gem}"/><circle cx="28" cy="28" r="1.4" fill="#fff" opacity=".8"/></svg>`);
+const krVars=c=>`--gem:${c.gem};--btn:${c.light?'rgba(255,255,255,.35)':'rgba(0,0,0,.28)'};--scrim:${c.light?'rgba(255,240,228,.8)':'rgba(10,4,4,.72)'};--txo:${c.light?.5:.9};--tx:url(${A}${c.tx==='b'?'pd-textile-1.jpg':'pd-textile-2.jpg'})`;
 FAMILY({key:'kerongsang',name:'Kerongsang',meaning:'Kebaya brooches',
-  blurb:'The lace front of a kebaya fastened with three linked gold filigree brooches; touch them and the brooches lift as the lace panels part.',
+  blurb:'A gold kerongsang set with rose-cut stones pinned to an ivory card on a length of songket. Open it and the brooch is lifted off and the card drawn up.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-kerongsang" style="${vars(c)}"><div class="kerongsang-sheet"><i class="kerongsang-ed t"></i><i class="kerongsang-ed b"></i><i class="kerongsang-ed l"></i><i class="kerongsang-ed r"></i>
-     <div class="kerongsang-one reveal">${ibu()}</div>
-     <p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="kerongsang-rule reveal d2"><i></i><b>${anak()}</b><i></i></div>
-     <p class="kerongsang-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="kerongsang-ven reveal d3">${esc(o.venue)}<br><span>${en?'from':'jam'} ${esc(fmtTime(o.start,o.lang))}</span></p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',pn=panel();
-    return `<div class="cover cv-kerongsang" style="${vars(c)}"><div class="kerongsang-under"></div><i class="kerongsang-tex"></i>
-     <div class="kerongsang-stage"><div class="kerongsang-pan l">${pn}</div><div class="kerongsang-pan r">${pn}</div>
-      <div class="kerongsang-head"><p class="kerongsang-k">${ev(o,L)}</p><p class="kerongsang-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kerongsang-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-      <${tag} class="kerongsang-set" ${attr} aria-label="${L.open}"><i class="kerongsang-b ibu">${ibu()}</i>${chain(84)}<i class="kerongsang-b anak">${anak()}</i>${chain(72)}<i class="kerongsang-b anak">${anak()}</i></${tag}></div>
-     <div class="kerongsang-foot">${guest?`<p class="kerongsang-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kerongsang-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c)+';--kr-bul:'+BUL(c);
-    $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="kerongsang-hb"></i>'))},
+    return `<section class="page pg-kerongsang2 kr-${c.tone?'tone':'orig'}" style="${krVars(c)}"><div class="kr-cloth"></div>
+      <div class="kr-card kr-pcard reveal">${krIbu()}<div class="kr-ci">
+        <p class="kr-k kicker">${ev(o,L)}</p><h1 class="kr-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="kr-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="kr-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<a class="kr-ven" data-go="loc" href="#">${esc(o.venue)}</a>`:''}</div></div>
+      <div class="kr-set reveal d2"><svg class="kr-chain" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M40 12C80 40 120 40 160 12"/></svg>
+        <a class="kr-pin" data-go="when" href="#">${krAnak()}<b>${en?'Event details':'Butiran Majlis'}</b></a>
+        <a class="kr-pin" data-go="${o.x_rsvp?'rsvp':'count'}" href="#">${krAnak()}<b>${o.x_rsvp?'RSVP':(en?'Countdown':'Kira Detik')}</b></a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-kerongsang2 kr-${c.tone?'tone':'orig'}" style="${krVars(c)}"><div class="kr-cloth"></div>
+      <div class="kr-stage"><div class="kr-card"><div class="kr-ci">
+        <p class="kr-k">${ev(o,L)}</p><p class="kr-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kr-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+        <div class="kr-brooch">${krIbu()}</div></div>
+      <div class="kr-scrim"></div><div class="kr-foot">${guest?`<p class="kr-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="kr-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--gem',c.gem);el.style.setProperty('--kr-bul',krBul(c));el.style.setProperty('--tx',`url(${A}${c.tx==='b'?'pd-textile-1.jpg':'pd-textile-2.jpg'})`);
+    el.classList.toggle('kr-tone',!!c.tone);el.classList.toggle('kr-orig',!c.tone);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'White voile, crimson lining, ruby brooches',c:{ground:'#6a1424',sheet:'#fcf6ee',ink:'#2e221e',accent:'#a3233b',gold:'#d2a64c',pagefg:'#f8e8da'}},
-    {k:'hijau',n:'Hijau',desc:'White voile on emerald, emerald stones',c:{ground:'#11463a',sheet:'#f6f8f1',ink:'#1f2a24',accent:'#1c6a50',gold:'#d4ab55',pagefg:'#eaf1e6'}},
-    {k:'biru',n:'Biru',desc:'Pale-blue voile, sapphire lining',c:{ground:'#1b2d5a',sheet:'#f1f5fb',ink:'#1d2436',accent:'#3557a0',gold:'#cfae62',pagefg:'#e9eef8'}},
-    {k:'jambu',n:'Jambu',desc:'Blush voile, rose lining, pink stones',c:{ground:'#a9536a',sheet:'#fdf1f3',ink:'#3c2a2e',accent:'#b84d68',gold:'#d3a65a',pagefg:'#fff3f2'}},
-    {k:'kunyit',n:'Kunyit',desc:'Cream voile on turmeric gold',c:{ground:'#8a5a10',sheet:'#fff9e8',ink:'#3a2c14',accent:'#a5671a',gold:'#e0b54e',pagefg:'#fff3d6',gem:'#2f6d55'}},
-    {k:'ungu',n:'Ungu',desc:'Lilac voile, plum lining, amethysts',c:{ground:'#3c2150',sheet:'#f8f2fb',ink:'#2e2533',accent:'#6d3a86',gold:'#d4ab5d',pagefg:'#f2e8f6'}},
-    {k:'hitam',n:'Hitam',desc:'Ivory voile on black, garnet brooches',c:{ground:'#141213',sheet:'#f6efe3',ink:'#2a231d',accent:'#7a1d2c',gold:'#d0a650',pagefg:'#efe6d6'}},
-    {k:'pic',n:'Pic',desc:'Peach voile, coral lining, light and soft',c:{ground:'#dfa58b',sheet:'#fff7f1',ink:'#3b2620',accent:'#c0603f',gold:'#c39a4f',pagefg:'#3b2620',nm:'#7a3524'}},
+    {k:'merah',n:'Merah',desc:'Ruby kerongsang on crimson songket',c:{ground:'#5a1420',sheet:'#fcf6ee',ink:'#2e221e',accent:'#8e1f33',gold:'#c9a050',pagefg:'#f8e8da',gem:'#9e1630'}},
+    {k:'hijau',n:'Hijau',desc:'Emerald kerongsang on green songket',c:{ground:'#123f33',sheet:'#f8f8f1',ink:'#1f2a24',accent:'#1c5a45',gold:'#c9a35a',pagefg:'#eaf1e6',gem:'#1e7a55',tone:1}},
+    {k:'biru',n:'Biru',desc:'Sapphire kerongsang on navy songket',c:{ground:'#1a2a52',sheet:'#f6f6f8',ink:'#1d2436',accent:'#2c4a8a',gold:'#c9a862',pagefg:'#e9eef8',gem:'#2a4ea8',tone:1}},
+    {k:'jambu',n:'Jambu',desc:'Rose-quartz kerongsang on dusty-rose songket',c:{ground:'#8e4458',sheet:'#fdf6f4',ink:'#3c2a2e',accent:'#9a3d58',gold:'#c9a05a',pagefg:'#fff3f2',gem:'#d0708c',tone:1}},
+    {k:'kunyit',n:'Kunyit',desc:'Emerald kerongsang on turmeric songket',c:{ground:'#8a5a12',sheet:'#fffaee',ink:'#3a2c14',accent:'#8a5612',gold:'#d8b052',pagefg:'#fff3d6',gem:'#2f6d55',tone:1}},
+    {k:'ungu',n:'Ungu',desc:'Amethyst kerongsang on plum songket',c:{ground:'#3a2050',sheet:'#faf5fb',ink:'#2e2533',accent:'#5e3278',gold:'#cfa95e',pagefg:'#f2e8f6',gem:'#7a3fa0',tone:1}},
+    {k:'hitam',n:'Hitam',desc:'Garnet kerongsang on black songket',c:{ground:'#151213',sheet:'#f6efe3',ink:'#2a231d',accent:'#6e1d2a',gold:'#cfa650',pagefg:'#efe6d6',gem:'#7a1426',tone:1,tx:'b'}},
+    {k:'pic',n:'Pic',desc:'Coral kerongsang on peach songket, light and soft',c:{ground:'#e4b8a2',sheet:'#fffaf5',ink:'#3b2620',accent:'#a8502f',gold:'#b98f48',pagefg:'#3b2620',gem:'#d0643e',tone:1,light:1}},
   ]});
 
 })()}catch(e){console.error("family kerongsang failed",e)}
+
+
+/* ===== family: kertas ===== */
+try{(()=>{
+/* kertas (redesign): handmade papers in three colours, torn by hand and stacked, with a cream card on top
+   held by a cotton thread and a real wax seal.
+   Cover: touch the seal, it lifts away and the papers slide apart: the card rises, the coloured sheets fall away.
+   Page: the same stack, larger, with the names on the cream card. Skin: torn-edged cotton cards with a strip of
+   coloured handmade paper peeking above each one. */
+// a torn edge all round: a polygon in % with a small hand-torn wobble; seed keeps every sheet different
+const kpTorn=(seed,amp=1.6,n=44)=>{const r=rng(seed),pts=[];
+  // low-frequency wander plus fine jitter, like paper torn along a wet ruler
+  const edge=()=>{const p1=r()*6,p2=r()*6,f1=2+r()*2,f2=5+r()*3;return t=>amp*(.55+.28*Math.sin(t*f1+p1)+.14*Math.sin(t*f2*2.3+p2)+(r()-.5)*.55)};
+  const T=edge(),R=edge(),B=edge(),Lf=edge(),k=Math.round(n*1.3);
+  for(let i=0;i<=n;i++)pts.push([i/n*100,T(i/n*6.28)]);
+  for(let i=1;i<=k;i++)pts.push([100-R(i/k*6.28)*.8,i/k*100]);
+  for(let i=n-1;i>=0;i--)pts.push([i/n*100,100-B(i/n*6.28)]);
+  for(let i=k-1;i>0;i--)pts.push([Lf(i/k*6.28)*.8,i/k*100]);
+  return `polygon(${pts.map(([x,y])=>`${Math.min(100,Math.max(0,x)).toFixed(2)}% ${Math.min(100,Math.max(0,y)).toFixed(2)}%`).join(',')})`};
+// loose fibres and inclusions, the look of handmade cotton/mulberry paper
+const kpFib=(seed,col,n=70)=>{const r=rng(seed);let d='';
+  for(let i=0;i<n;i++){const x=r()*300,y=r()*300,a=r()*Math.PI*2,l=6+r()*22,b=(r()-.5)*10;
+    const x2=x+Math.cos(a)*l,y2=y+Math.sin(a)*l,cx=(x+x2)/2+b,cy=(y+y2)/2-b;
+    d+=`<path d="M${x.toFixed(1)} ${y.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${col}" stroke-width="${(.35+r()*.5).toFixed(2)}" fill="none" opacity="${(.25+r()*.45).toFixed(2)}"/>`}
+  for(let i=0;i<14;i++)d+=`<circle cx="${(r()*300).toFixed(1)}" cy="${(r()*300).toFixed(1)}" r="${(.4+r()*.9).toFixed(2)}" fill="${col}" opacity=".35"/>`;
+  return K.uri(`<svg ${NS} width="300" height="300" viewBox="0 0 300 300">${d}</svg>`)};
+// one sheet: the torn edge shows a paler fibrous core around the coloured paper
+const kpSheet=(cls,col,seed,style='')=>`<div class="kt2-sh ${cls}" style="--c:${col};${style}"><i class="kt2-core" style="clip-path:${kpTorn(seed+7,2.2)}"></i><i class="kt2-pap" style="--fib:${kpFib(seed,'rgba(255,255,255,.85)')};clip-path:${kpTorn(seed,1.6)}"></i></div>`;
+const kpThread=()=>`<svg class="kt2-thread" viewBox="0 0 300 20" preserveAspectRatio="none"><path d="M-4 9C60 12 110 7 150 10S240 13 304 8" fill="none" stroke="#f3ece0" stroke-width="1.6"/><path d="M-4 11C70 9 120 13 150 11S230 8 304 12" fill="none" stroke="#e9dfcf" stroke-width="1.3"/><path d="M-4 9C60 12 110 7 150 10S240 13 304 8" fill="none" stroke="rgba(0,0,0,.18)" stroke-width=".5" stroke-dasharray="1.2 1.6"/></svg>`;
+const kpMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="kt2-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const kpStack=(th,big)=>{const [a,b,c]=th.layers;return kpSheet('kt2-l3',c,big?31:11,'')+kpSheet('kt2-l2',b,big?32:12,'')+kpSheet('kt2-l1',a,big?33:13,'')};
+FAMILY({key:'kertas',name:'Kertas',meaning:'Torn paper',
+  blurb:'Three hand-torn handmade papers stacked under a cream card, tied with cotton thread and a wax seal. Touch the seal and the papers slide apart.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-kertas2"><div class="kt2-table"></div>
+      <div class="kt2-stack big reveal">${kpStack(th,true)}
+        <div class="kt2-card"><i class="kt2-pap" style="--c:var(--sheet);--fib:${kpFib(41,'rgba(120,100,80,.5)',50)};clip-path:${kpTorn(44,1.1,30)}"></i>
+          <div class="kt2-in"><p class="kt2-k kicker">${ev(o,L)}</p><h1 class="kt2-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+          <p class="kt2-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="kt2-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <span class="kt2-seal kt2-seal-s" style="--seal:url(${A}seal-${th.seal}.webp)"><span>${kpMono(o)}</span></span>
+      </div>
+      <div class="kt2-acts reveal d2"><a class="kt2-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>${o.x_rsvp?`<a class="kt2-pill kt2-ghost" data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-kertas2"><div class="kt2-table"></div>
+      ${guest?`<p class="kt2-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:'<p class="kt2-to kt2-to-k"><small>'+ev(o,L)+'</small></p>'}
+      <div class="kt2-stack">${kpStack(th,false)}
+        <div class="kt2-card"><i class="kt2-pap" style="--c:var(--sheet);--fib:${kpFib(21,'rgba(120,100,80,.5)',50)};clip-path:${kpTorn(24,1.2,30)}"></i>
+          <div class="kt2-in"><p class="kt2-k">${ev(o,L)}</p><p class="kt2-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kt2-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+        ${kpThread()}
+        <${tag} class="kt2-seal" ${attr} aria-label="${L.open}" style="--seal:url(${A}seal-${th.seal}.webp)"><span>${kpMono(o)}</span></${tag}>
+      </div>
+      <p class="kt2-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
+  skin(el,o,th,L){K.cards(el);const [a,b,c]=th.layers;el.style.setProperty('--l1',a);el.style.setProperty('--l2',b);el.style.setProperty('--l3',c);
+    el.style.setProperty('--kfib',kpFib(5,'rgba(120,100,80,.45)',40));
+    $$('.sheet > .sec',el).forEach((s,i)=>{s.style.setProperty('--tear',kpTorn(60+i,1.4,22));s.style.setProperty('--strip',[a,b,c][i%3])});
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(x=>x.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${x.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'bumi',n:'Bumi',desc:'Ochre, terracotta and mocha papers, gold seal',c:{ground:'#e9e1d4',sheet:'#fbf6ec',ink:'#33291f',accent:'#6b4a3a',gold:'#b5593b',pagefg:'#33291f'},extra:{layers:['#c9a36e','#b5593b','#6b4a3a'],seal:'emas'}},
+    {k:'sage',n:'Sage',desc:'Cream, sage and forest papers, ivory seal',c:{ground:'#e6e6dc',sheet:'#fbfaf3',ink:'#2e3329',accent:'#4f5d47',gold:'#8a9a7c',pagefg:'#2e3329'},extra:{layers:['#d7d2bd','#a8b59a','#4f5d47'],seal:'gading'}},
+    {k:'laut',n:'Laut',desc:'Sand, dusty blue and navy papers on slate',c:{ground:'#2b3446',sheet:'#fbfaf6',ink:'#26303f',accent:'#1d2b4a',gold:'#7d95b4',pagefg:'#eef1f5'},extra:{layers:['#e6d6b8','#7d95b4','#1d2b4a'],seal:'emas'}},
+    {k:'mawar',n:'Mawar',desc:'Blush, rose and burgundy papers, ivory seal',c:{ground:'#efe2dc',sheet:'#fffaf6',ink:'#3a2328',accent:'#5a1a2a',gold:'#b87878',pagefg:'#3a2328'},extra:{layers:['#efd1c9','#c98b8b','#5a1a2a'],seal:'gading'}},
+    {k:'lavender',n:'Lavender',desc:'Silver, lilac and charcoal papers',c:{ground:'#e7e5ec',sheet:'#fbfaff',ink:'#2f2d36',accent:'#3f3d46',gold:'#8f84bb',pagefg:'#2f2d36'},extra:{layers:['#d9d6e2','#a79bd1','#3f3d46'],seal:'gading'}},
+    {k:'karang',n:'Karang',desc:'Peach, coral and teal papers, gold seal',c:{ground:'#f0e4da',sheet:'#fffaf5',ink:'#22302f',accent:'#0f6b6b',gold:'#d9765e',pagefg:'#22302f'},extra:{layers:['#f6cdb3','#ef8a72','#0f6b6b'],seal:'emas'}},
+    {k:'pandan',n:'Pandan',desc:'Mustard, leaf and pandan papers on deep green',c:{ground:'#1f3a2d',sheet:'#fbf8f1',ink:'#26332b',accent:'#0d4a32',gold:'#c9a43f',pagefg:'#eef0e6'},extra:{layers:['#c9a43f','#7fa36a','#0d4a32'],seal:'emas'}},
+    {k:'kopi',n:'Kopi Susu',desc:'Latte, caramel and espresso papers, red seal',c:{ground:'#3a2a22',sheet:'#fbf6ee',ink:'#33271f',accent:'#6b4a3a',gold:'#a07a5a',pagefg:'#f3e9dd'},extra:{layers:['#c9a982','#a07a5a','#5a3f30'],seal:'merah'}},
+    {k:'hujan',n:'Biru Hujan',desc:'Mist, rain-blue and slate papers, blue seal',c:{ground:'#e3e7ea',sheet:'#fbfbf8',ink:'#26303a',accent:'#3a5570',gold:'#6f8aa6',pagefg:'#26303a'},extra:{layers:['#c3d0dc','#8fa7bd','#3a5570'],seal:'biru'}},
+    {k:'fajar',n:'Fajar',desc:'Apricot, rose and plum papers, ivory seal',c:{ground:'#f3e5dc',sheet:'#fffaf6',ink:'#3a2530',accent:'#a3465f',gold:'#e0946a',pagefg:'#3a2530'},extra:{layers:['#f0b88c','#d9708a','#4a2238'],seal:'gading'}},
+  ]});
+
+})()}catch(e){console.error("family kertas failed",e)}
 
 
 /* ===== family: kipas ===== */
@@ -3732,95 +4452,73 @@ FAMILY({key:'kolam',name:'Kolam',meaning:'Lily pond',
 
 /* ===== family: komik ===== */
 try{(()=>{
-/* komik: an inked comic-book page. Panels with brush borders, Ben-Day dots, caption boxes and sound-effect lettering;
-   scenery only (a city skyline at dusk, two rings, a bunch of roses), never faces or people.
-   Cover: the comic page; pull the dog-eared corner and the page turns over. Page: a comic-book front cover. Skin: panel-framed sections. */
-needFont('Comic+Neue:ital,wght@0,400;0,700;1,700');
-const BA="'Bangers', cursive",CN="'Comic Neue', cursive";
-let uid=0;
-const fit=(s,max,fs,k=.5)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-const dotsPat=(id,col,step,r,ang=20)=>`<pattern id="${id}" width="${step}" height="${step}" patternUnits="userSpaceOnUse" patternTransform="rotate(${ang})"><circle cx="${step/2}" cy="${step/2}" r="${r}" fill="${col}"/></pattern>`;
-const box=(x,y,w,h,ink)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/>`;
-function caption(x,y,w,lines,c,fs=8.6){const h=lines.length*fs*1.25+8;return `<g><rect x="${x+2}" y="${y+2}" width="${w}" height="${h}" fill="${c.ink}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c.gold}" stroke="${c.ink}" stroke-width="1.6"/>
-  ${lines.map((t,i)=>`<text x="${x+6}" y="${(y+5+fs*(i+1)*1.18).toFixed(1)}" class="km-cap" font-size="${fs}" fill="${c.ink}">${t}</text>`).join('')}</g>`}
-const sparkle=(x,y,s,c)=>`<path d="M${x} ${y-s}Q${x} ${y} ${x+s} ${y}Q${x} ${y} ${x} ${y+s}Q${x} ${y} ${x-s} ${y}Q${x} ${y} ${x} ${y-s}Z" fill="#fff" stroke="${c.ink}" stroke-width="1"/>`;
-function rays(cx,cy,n,R,col,op=1){let d='';for(let i=0;i<n;i++){const a0=i/n*Math.PI*2,a1=(i+.5)/n*Math.PI*2;d+=`M${cx} ${cy}L${(cx+Math.cos(a0)*R).toFixed(1)} ${(cy+Math.sin(a0)*R).toFixed(1)}L${(cx+Math.cos(a1)*R).toFixed(1)} ${(cy+Math.sin(a1)*R).toFixed(1)}Z`}return `<path d="${d}" fill="${col}" opacity="${op}"/>`}
-function speed(cx,cy,n,r0,r1,ink){let d='';const r=K.rnd(n*7);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+r()*.1,q=r0+r()*14;d+=`M${(cx+Math.cos(a)*q).toFixed(1)} ${(cy+Math.sin(a)*q).toFixed(1)}L${(cx+Math.cos(a)*r1).toFixed(1)} ${(cy+Math.sin(a)*r1).toFixed(1)}`}return `<path d="${d}" stroke="${ink}" stroke-width=".8" opacity=".75"/>`}
-function skyline(x0,y0,w,h,c,seed){const r=K.rnd(seed);let b='',win='',x=x0;
-  while(x<x0+w){const bw=10+r()*20,bh=h*(.25+r()*.55);const top=y0+h-bh;b+=`<rect x="${x.toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}"/>`;
-    for(let wy=top+5;wy<y0+h-6;wy+=6)for(let wx=x+3;wx<x+bw-4;wx+=5)if(r()<.38)win+=`<rect x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="2.2" height="3"/>`;x+=bw+1.2}
-  const tx=x0+w*.68;b+=`<path d="M${tx-7} ${y0+h}V${y0+h*.3}l3-6h8l3 6V${y0+h}Z M${tx} ${y0+h*.3-6}V${y0+4}"/><path d="M${tx} ${y0+4}V${y0+h*.2}" stroke="${c.ink}" stroke-width="1.6"/>`;
-  return `<g fill="${c.ink}">${b}</g><g fill="${c.gold}">${win}</g>`}
-function rings(cx,cy,s,c){const ring=(x,y,rot)=>`<g transform="translate(${x} ${y}) rotate(${rot})"><ellipse rx="${26*s}" ry="${11*s}" fill="none" stroke="${c.ink}" stroke-width="${9*s}"/><ellipse rx="${26*s}" ry="${11*s}" fill="none" stroke="${c.gold}" stroke-width="${5.6*s}"/><path d="M${-20*s} ${-7*s}A${26*s} ${11*s} 0 0 1 ${12*s} ${-10.4*s}" fill="none" stroke="#fff" stroke-width="${1.6*s}" stroke-linecap="round"/></g>`;
-  return `${ring(cx-14*s,cy+4*s,-18)}${ring(cx+14*s,cy-2*s,16)}<g transform="translate(${cx+6*s} ${cy-20*s}) scale(${s})"><path d="M-8 0l4-6h8l4 6-8 9z" fill="#fff" stroke="${c.ink}" stroke-width="1.4" stroke-linejoin="round"/><path d="M-8 0h16M-4-6l-1 6 5 9 5-9-1-6" fill="none" stroke="${c.ink}" stroke-width=".7"/></g>`}
-function rose(x,y,r,c){return `<g transform="translate(${x} ${y})"><circle r="${r}" fill="${c.accent}" stroke="${c.ink}" stroke-width="1.6"/><path d="M${-r*.15} ${-r*.1}c${r*.2} ${-r*.35} ${r*.55} ${-r*.1} ${r*.45} ${r*.25}s${-r*.6} ${r*.45} ${-r*.8} ${0}S${-r*.45} ${-r*.8} ${r*.25} ${-r*.75}s${r*.75} ${r*.55} ${r*.5} ${r*.9}" fill="none" stroke="${c.ink}" stroke-width="1.3" stroke-linecap="round"/></g>`}
-const leaf=(x,y,l,rot,c)=>`<path d="M0 0C${l*.3} ${-l*.35} ${l*.75} ${-l*.3} ${l} 0C${l*.75} ${l*.3} ${l*.3} ${l*.35} 0 0Z" transform="translate(${x} ${y}) rotate(${rot})" fill="${c.leaf}" stroke="${c.ink}" stroke-width="1.3"/>`;
-function title(n1,n2,x,y,c,max,fs){const f1=fit(n1,max,fs),f2=fit(n2,max,fs);const t=(s,yy,f,col)=>{let ex='';for(let i=4;i>0;i--)ex+=`<text x="${x+i}" y="${yy+i}" text-anchor="middle" class="km-t" font-size="${f.toFixed(1)}" fill="${c.ink}" stroke="${c.ink}" stroke-width="3" stroke-linejoin="round">${s}</text>`;
-   return ex+`<text x="${x}" y="${yy}" text-anchor="middle" class="km-t" font-size="${f.toFixed(1)}" fill="${col}" stroke="${c.ink}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${s}</text><text x="${x}" y="${yy}" text-anchor="middle" class="km-t" font-size="${f.toFixed(1)}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".8" transform="translate(-1 -1)">${s}</text>`};
-  return {svg:t(esc(n1.toUpperCase()),y,f1,c.accent)+`<text x="${x}" y="${(y+f1*.62).toFixed(1)}" text-anchor="middle" class="km-t" font-size="${(f1*.5).toFixed(1)}" fill="${c.gold}" stroke="${c.ink}" stroke-width="2.4" paint-order="stroke">&amp;</text>`+t(esc(n2.toUpperCase()),y+f1*.62+f2*.9,f2,c.accent),h:f1*.62+f2*.9}}
-function burstStar(cx,cy,R,c,lines,fs){return `<g transform="rotate(-8 ${cx} ${cy})"><path d="${K.star(14,R,R*.72,cx+2.5,cy+2.5)}" fill="${c.ink}"/><path d="${K.star(14,R,R*.72,cx,cy)}" fill="#fff" stroke="${c.ink}" stroke-width="1.8" stroke-linejoin="round"/>
-  ${lines.map((t,i)=>`<text x="${cx}" y="${(cy+(i-(lines.length-1)/2)*fs*1.05+fs*.36).toFixed(1)}" text-anchor="middle" class="km-t" font-size="${fs}" fill="${i?c.ink:c.accent}">${t}</text>`).join('')}</g>`}
-function comicPage(o,th,L,guest){const c=th.c,u=++uid,[n1,n2]=coverNames(o),en=o.lang==='en';const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=String(d.getFullYear()).slice(2);
-  const T=title(n1,n2,150,420,c,250,48);
-  return `<svg class="km-art" viewBox="0 0 300 560" aria-hidden="true"><defs>${dotsPat('kd'+u,c.sky,4.2,1.5)}${dotsPat('kp'+u,c.pink,4.4,1.7,-15)}${dotsPat('ky'+u,c.accent,4.6,1.2,10)}
-   <linearGradient id="kg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="km${u}"><rect x="0" y="0" width="300" height="200" fill="url(#kg${u})"/></mask>
-   <clipPath id="c1${u}"><rect x="12" y="38" width="276" height="134"/></clipPath><clipPath id="c2${u}"><rect x="12" y="178" width="132" height="150"/></clipPath><clipPath id="c3${u}"><rect x="150" y="178" width="138" height="150"/></clipPath><clipPath id="c4${u}"><rect x="12" y="334" width="276" height="200"/></clipPath></defs>
-   <text x="12" y="26" class="km-cap" font-size="8.5" fill="${c.ink}">${en?'PAGE':'HALAMAN'} 1</text><text x="150" y="27" text-anchor="middle" class="km-t" font-size="15" fill="${c.ink}">${ev(o,L).toUpperCase()}</text><text x="288" y="26" text-anchor="end" class="km-cap" font-size="8.5" fill="${c.ink}">NO. ${dd}</text>
-   <g clip-path="url(#c1${u})"><rect x="12" y="38" width="276" height="134" style="fill:color-mix(in srgb,${c.gold} 55%,#fff)"/><rect x="12" y="38" width="276" height="134" fill="url(#kd${u})" mask="url(#km${u})"/>
-    <circle cx="96" cy="128" r="34" fill="${c.accent}" stroke="${c.ink}" stroke-width="1.6"/>
-    <path d="M40 82q10-6 20 0q8-6 16 0" fill="none" stroke="${c.ink}" stroke-width="1.2"/><path d="M200 66q8-5 16 0q7-5 14 0" fill="none" stroke="${c.ink}" stroke-width="1.2"/>
-    ${skyline(12,96,276,76,c,5)}<rect x="12" y="166" width="276" height="6" fill="${c.ink}"/></g>${box(12,38,276,134,c.ink)}
-   ${caption(18,44,124,[en?'ONE FINE DAY, IN THE':'PADA SUATU HARI,',en?'HEART OF THE CITY...':'DI TENGAH KOTA...'],c)}
-   <g clip-path="url(#c2${u})"><rect x="12" y="178" width="132" height="150" fill="${c.gold}"/>${speed(78,258,46,26,120,c.ink)}${rings(78,262,1.15,c)}${sparkle(40,214,6,c)}${sparkle(122,300,5,c)}${sparkle(116,224,3.5,c)}</g>${box(12,178,132,150,c.ink)}
-   <g transform="rotate(-12 60 206)"><text x="60" y="212" text-anchor="middle" class="km-t" font-size="30" fill="${c.ink}" transform="translate(2.5 2.5)">TING!</text><text x="60" y="212" text-anchor="middle" class="km-t" font-size="30" fill="#fff" stroke="${c.ink}" stroke-width="2" paint-order="stroke">TING!</text></g>
-   <g clip-path="url(#c3${u})"><rect x="150" y="178" width="138" height="150" style="fill:color-mix(in srgb,${c.pink} 40%,#fff)"/><rect x="150" y="178" width="138" height="150" fill="url(#kp${u})"/>
-    <g stroke="${c.ink}" stroke-width="1.6" fill="none"><path d="M219 330L206 270M219 330l4-64M219 330l18-56M219 330l-30-52"/></g>
-    ${leaf(208,300,22,-150,c)}${leaf(224,296,20,-30,c)}${leaf(214,282,16,-120,c)}
-    ${rose(206,264,15,c)}${rose(236,270,13,c)}${rose(222,240,14,c)}${rose(190,280,11,c)}${rose(250,248,10,c)}
-    <path d="M206 310l26 0-6 10h-14z" fill="${c.gold}" stroke="${c.ink}" stroke-width="1.4"/></g>${box(150,178,138,150,c.ink)}
-   ${caption(156,184,126,[en?'TWO HEARTS,':'DUA HATI,',en?'ONE PROMISE.':'SATU JANJI.'],c)}
-   <g clip-path="url(#c4${u})"><rect x="12" y="334" width="276" height="200" fill="#fff"/>${rays(150,434,28,260,c.gold)}<rect x="12" y="334" width="276" height="200" fill="url(#ky${u})" opacity=".18"/>
-    <g transform="translate(0 ${(-T.h/2+12).toFixed(1)})">${T.svg}</g></g>${box(12,334,276,200,c.ink)}
-   ${caption(18,340,140,[ev(o,L).toUpperCase()],c,8.2)}
-   ${burstStar(246,374,30,c,[`${dd}.${mm}`,`'${yy}`],13)}
-   ${caption(18,guest?486:506,guest?178:160,guest?[(en?'SPECIAL FOR: ':'KHAS UNTUK: ')+esc(guest.toUpperCase()),(en?'AT ':'DI ')+esc(o.venue.toUpperCase())]:[(en?'AT ':'DI ')+esc(o.venue.toUpperCase())],c,8)}
-   <text x="12" y="550" class="km-cap" font-size="7.5" fill="${c.ink}">${esc(fmtDate(o.date,o.lang)).toUpperCase()} &#183; ${esc(fmtTime(o.start,o.lang)).toUpperCase()}</text></svg>`}
-function coverArt(o,th,L){const c=th.c,u=++uid,[n1,n2]=coverNames(o),en=o.lang==='en';const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=d.getFullYear();
-  const T=title(n1,n2,150,92,c,262,52),mon=(fmtDate(o.date,o.lang).split(' ')[2]||'').slice(0,3).toUpperCase();
-  return `<svg class="km-art" viewBox="0 0 300 560" aria-hidden="true"><defs>${dotsPat('qd'+u,c.sky,4.2,1.5)}${dotsPat('qp'+u,c.pink,4.4,1.7,-15)}</defs>
-   <rect x="0" y="0" width="300" height="560" fill="${c.sky}"/><rect x="0" y="0" width="300" height="560" fill="url(#qd${u})" opacity=".55"/>
-   ${rays(150,300,36,420,'#fff',.22)}
-   <rect x="0" y="0" width="300" height="${(T.h+96).toFixed(0)}" fill="${c.sheet}"/><path d="M0 ${(T.h+96).toFixed(0)}h300" stroke="${c.ink}" stroke-width="3"/>
-   <rect x="10" y="10" width="54" height="40" fill="#fff" stroke="${c.ink}" stroke-width="2"/><text x="37" y="27" text-anchor="middle" class="km-t" font-size="12" fill="${c.ink}">NO. ${dd}</text><text x="37" y="43" text-anchor="middle" class="km-cap" font-size="8" fill="${c.ink}">${mon} ${yy}</text>
-   <text x="286" y="24" text-anchor="end" class="km-cap" font-size="8" fill="${c.ink}">${en?'SPECIAL EDITION':'EDISI ISTIMEWA'}</text><text x="286" y="36" text-anchor="end" class="km-cap" font-size="8" fill="${c.accent}">${ev(o,L).toUpperCase()}</text>
-   ${T.svg}
-   <g transform="translate(0 ${(T.h-110).toFixed(0)})">
-   ${speed(150,300,60,70,240,c.ink)}
-   <circle cx="150" cy="300" r="74" fill="${c.gold}" stroke="${c.ink}" stroke-width="2.4"/><circle cx="150" cy="300" r="74" fill="url(#qp${u})" opacity=".45"/>${rings(150,304,2.1,c)}
-   ${sparkle(86,250,9,c)}${sparkle(222,352,7,c)}${sparkle(214,246,5,c)}
-   ${leaf(48,430,40,-60,c)}${leaf(70,440,34,-100,c)}${rose(40,404,20,c)}${rose(78,416,16,c)}${rose(56,380,13,c)}
-   ${leaf(252,430,40,-120,c)}${leaf(230,440,34,-80,c)}${rose(260,404,20,c)}${rose(222,416,16,c)}${rose(244,380,13,c)}
-   ${burstStar(236,206,34,c,[en?'YOU\'RE':'ANDA',en?'INVITED!':'DIJEMPUT!'],11)}</g>
-   <rect x="0" y="474" width="300" height="86" fill="${c.ink}"/><rect x="0" y="474" width="300" height="5" fill="${c.accent}"/>
-   <text x="150" y="502" text-anchor="middle" class="km-t" font-size="19" fill="${c.gold}">${esc(fmtDate(o.date,o.lang)).toUpperCase()}</text>
-   <text x="150" y="522" text-anchor="middle" class="km-cap" font-size="10" fill="#fff">${esc(fmtTime(o.start,o.lang)).toUpperCase()} &#183; ${esc(o.venue.toUpperCase())}</text></svg>`}
-FAMILY({key:'komik',name:'Komik',meaning:'Comic book page',
-  blurb:'An inked comic-book page of panels, Ben-Day dots, caption boxes and a TING! of two rings over a dusk skyline; the dog-eared corner turns the page.',
-  fonts:{d:BA,s:BA,b:CN},ms:1350,
-  page(o,th,L){return `<section class="page pg-komik"><div class="km-cover reveal">${coverArt(o,th,L)}</div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-komik"><div class="km-desk"></div><div class="km-pg"><div class="km-front">${comicPage(o,th,L,guest)}<i class="km-paper"></i>
-     <${tag} class="km-ear" ${attr} aria-label="${L.open}"><i></i><span>${en?'Turn':'Selak'} &#8594;</span></${tag}></div><div class="km-back"></div></div></div>`},
-  skin(el,o,th){K.cards(el);['sky','pink','leaf'].forEach(k=>el.style.setProperty('--'+k,th.c[k]));$$('.sheet > .sec',el).forEach((s,i)=>s.classList.add(['km-a','km-b','km-c'][i%3]))},
+/* komik (round 7): one quiet graphic-novel panel printed in two colours on newsprint.
+   The art is a public-domain Japanese print of two bullfinches on a branch (pd-asia-3), screened into real halftone dots
+   in the colourway's ink over a flat second colour. Lettering is hand-drawn caption caps; the names are set in a book serif.
+   Cover: the printed page on a desk; tap "Buka Jemputan" and the page turns over like a leaf of the book.
+   Page: the title page of chapter one, a tall panel (pd-asia-2, a long-tailed bird) beside caption boxes that lead to the sections.
+   Skin: newsprint panels with an inked frame and caption-box headings. */
+needFont('Kalam:wght@300;400;700');
+// The art is screened once, in the browser, into a real halftone (round dots on a 45 degree screen) and kept as a mask:
+// the ink colour shows through the dots, the flat second colour through the gaps. Tone: the pale paper of the print drops out,
+// saturated colour (rose breasts, leaves) and the black caps read darker.
+const KM_ART={birds:{src:'pd-asia-3.jpg',box:[.11,.405,.71,.975],W:600,H:624},tail:{src:'pd-asia-2.jpg',box:[.05,.13,.75,.578],W:400,H:560}};
+// browser only, run once on first render (the engine is also imported on the server, where there is no document)
+let kmCss=null;
+const kmInit=()=>{if(kmCss||typeof document==='undefined'||typeof Image==='undefined')return;kmCss=document.createElement('style');document.head.appendChild(kmCss);
+Object.entries(KM_ART).forEach(([key,a])=>{const img=new Image();img.onload=()=>{try{
+  const {W,H,box}=a,iw=img.naturalWidth,ih=img.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');g.filter='blur(1.2px)';
+  g.drawImage(img,box[0]*iw,box[1]*ih,(box[2]-box[0])*iw,(box[3]-box[1])*ih,0,0,W,H);const px=g.getImageData(0,0,W,H).data;
+  const o=document.createElement('canvas');o.width=W;o.height=H;const q=o.getContext('2d');q.fillStyle='#000';
+  const P=6,c=Math.SQRT1_2,n=Math.ceil((W+H)/P)+2;
+  for(let i=-n;i<n;i++)for(let j=-n;j<n;j++){const x=W/2+(i-j)*c*P,y=H/2+(i+j)*c*P;if(x<0||y<0||x>=W||y>=H)continue;
+    const k=((y|0)*W+(x|0))*4,r=px[k]/255,gg=px[k+1]/255,b=px[k+2]/255,lum=.3*r+.59*gg+.11*b,sat=Math.max(r,gg,b)-Math.min(r,gg,b);
+    const d=1-Math.min(1,Math.max(0,(lum-.08)/.72-sat*.5)),rad=P*.71*Math.sqrt(Math.max(0,d-.06)/.94);
+    if(rad>.5){q.beginPath();q.arc(x,y,rad,0,7);q.fill()}}
+  const u=o.toDataURL('image/png');kmCss.textContent+=`.inv .km-panel i.km-dots-${key}{-webkit-mask-image:url(${u});mask-image:url(${u})}`}catch(e){}};img.src=A+a.src})};
+// a printed panel: flat second colour, the screened art in ink, newsprint grain, an inked frame
+const kmPanel=(art,cls='',extra='')=>{kmInit();return `<div class="km-panel ${cls}"><i class="km-dots km-dots-${art}"></i><i class="km-grain"></i>${extra}</div>`}
+const kmVars=c=>`--spot:${c.spot};--paper:${c.paper}`;
+FAMILY({key:'komik',name:'Komik',meaning:'Graphic-novel panel',
+  blurb:'A single graphic-novel panel printed in two colours on newsprint: two birds on one branch, hand-lettered captions. The page turns to open the card.',
+  fonts:{d:"'Kalam', cursive",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-komik2" style="${kmVars(th.c)}"><div class="km-leaf">
+      <p class="km-k kicker reveal">${ev(o,L)}</p>
+      <h1 class="km-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+      <div class="km-grid reveal d2">${kmPanel('tail','tall')}
+        <div class="km-stack">
+          <p class="km-cap"><small>${en?'The day':'Harinya'}</small>${esc(fmtDate(o.date,o.lang))}</p>
+          <p class="km-cap"><small>${en?'From':'Mulai'}</small>${esc(fmtTime(o.start,o.lang))}</p>
+          ${o.venue?`<p class="km-cap"><small>${en?'At':'Di'}</small>${esc(o.venue)}</p>`:''}<p class="km-more">${en?'To be continued…':'Bersambung di majlis kami…'}</p></div></div>
+      <div class="km-tiles reveal d3">
+        <a class="km-tile" data-go="when" href="#">${en?'Details':'Butiran'} <i>→</i></a>
+        ${o.x_rsvp?`<a class="km-tile" data-go="rsvp" href="#">RSVP <i>→</i></a>`:''}
+        <a class="km-tile" data-go="loc" href="#">${en?'Location':'Lokasi'} <i>→</i></a></div>
+</div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-komik2" style="${kmVars(th.c)}"><div class="km-desk"></div>
+      <div class="km-sheet"><div class="km-sheetin">
+        <div class="km-head"><span>${ev(o,L)}</span><span>${esc(fmtShort(o.date))}</span></div>
+        ${kmPanel('birds','',`<p class="km-cap km-c1">${en?'Two hearts,<br>one branch.':'Dua hati,<br>satu dahan.'}</p>`)}
+        <p class="km-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
+        <p class="km-more">${en?'To be continued…':'Bersambung…'}</p></div><i class="km-turn"></i></div>
+      <div class="km-foot">${guest?`<p class="km-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="km-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){kmInit();K.cards(el);el.style.setProperty('--spot',th.c.spot);el.style.setProperty('--paper',th.c.paper);el.classList.toggle('km-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  // two inks per colourway: ink (line and halftone) and spot (the flat second colour)
   themes:[
-    {k:'klasik',n:'Klasik',desc:'Red, yellow and sky blue on newsprint',c:{ground:'#1e2a45',sheet:'#f8f1dc',ink:'#141414',accent:'#e23b2e',gold:'#ffd23f',sky:'#3d8ee0',pink:'#f28cb1',leaf:'#3f9a4a',pagefg:'#f8f1dc',line:'rgba(20,20,20,.5)'}},
-    {k:'pop',n:'Pop',desc:'Magenta and cyan on yellow',c:{ground:'#ffd23f',sheet:'#fffaf0',ink:'#151515',accent:'#ff3e8a',gold:'#fff15a',sky:'#2fc2e6',pink:'#ff9ccb',leaf:'#27b45a',pagefg:'#151515',line:'rgba(21,21,21,.5)'}},
-    {k:'noir',n:'Noir',desc:'Greyscale ink with a red accent',c:{ground:'#0e0e0e',sheet:'#ecebe6',ink:'#111111',accent:'#c8102e',gold:'#e9e2c8',sky:'#7a808a',pink:'#bdbdbd',leaf:'#6a6a6a',pagefg:'#ecebe6',line:'rgba(17,17,17,.5)'}},
-    {k:'pastel',n:'Pastel',desc:'Rose, butter and baby blue',c:{ground:'#f3d9e3',sheet:'#fffaf3',ink:'#2b2026',accent:'#ef5f86',gold:'#ffe08a',sky:'#8ec9ee',pink:'#f7b2c8',leaf:'#6fbf8e',pagefg:'#3a2530',line:'rgba(43,32,38,.45)'}},
-    {k:'laut',n:'Laut',desc:'Orange and gold on a teal night',c:{ground:'#0f3b4d',sheet:'#fbf3df',ink:'#14181c',accent:'#ff7a3d',gold:'#ffd166',sky:'#2bb3c0',pink:'#ff9eb5',leaf:'#2e8b57',pagefg:'#fbf3df',line:'rgba(20,24,28,.5)'}},
-    {k:'ungu',n:'Ungu',desc:'Violet, lemon and cyan',c:{ground:'#2a1b4a',sheet:'#fbf6ee',ink:'#16121f',accent:'#9b5de5',gold:'#fee440',sky:'#00bbf9',pink:'#f15bb5',leaf:'#00b98f',pagefg:'#f5effc',line:'rgba(22,18,31,.5)'}},
-    {k:'vintaj',n:'Vintaj',desc:'Faded sepia golden-age print',c:{ground:'#4a3624',sheet:'#efe2c4',ink:'#2b1d12',accent:'#b5442a',gold:'#e6b95a',sky:'#6f9ab0',pink:'#d98b7e',leaf:'#6b8a4a',pagefg:'#efe2c4',line:'rgba(43,29,18,.5)'}},
-    {k:'hijau',n:'Hijau',desc:'Leaf green, sun yellow and coral',c:{ground:'#e3ecd9',sheet:'#fffdf4',ink:'#17201a',accent:'#f0643c',gold:'#ffd43b',sky:'#4dabf7',pink:'#ff8fa3',leaf:'#2f9e44',pagefg:'#1d2b1f',line:'rgba(23,32,26,.5)'}},
+    {k:'klasik',n:'Klasik',desc:'Black and vermilion on newsprint',c:{ground:'#e4d9c2',sheet:'#f4ecd9',paper:'#f4ecd9',ink:'#1e1c1a',accent:'#1e1c1a',spot:'#d0573a',gold:'#d0573a',pagefg:'#2a2622',cover:'#d0573a'}},
+    {k:'pop',n:'Pop',desc:'Navy and rose on white newsprint',c:{ground:'#ece2df',sheet:'#f8f2ea',paper:'#f8f2ea',ink:'#1f2a48',accent:'#1f2a48',spot:'#e2788f',gold:'#e2788f',pagefg:'#1f2a48',cover:'#e2788f'}},
+    {k:'noir',n:'Noir',desc:'Black ink and a red spot, on a dark desk',c:{ground:'#121212',sheet:'#ecebe5',paper:'#ecebe5',ink:'#141414',accent:'#141414',spot:'#b5313a',gold:'#b5313a',pagefg:'#ecebe5',dark:'1',cover:'#b5313a'}},
+    {k:'pastel',n:'Pastel',desc:'Plum ink and blush on cream',c:{ground:'#f1e2e2',sheet:'#fcf5ef',paper:'#fcf5ef',ink:'#3e2d3c',accent:'#3e2d3c',spot:'#eaa7b4',gold:'#eaa7b4',pagefg:'#3e2d3c',cover:'#eaa7b4'}},
+    {k:'laut',n:'Laut',desc:'Deep teal and orange, on a teal desk',c:{ground:'#0f2e38',sheet:'#f2ebdb',paper:'#f2ebdb',ink:'#123844',accent:'#123844',spot:'#e48a4e',gold:'#e48a4e',pagefg:'#efe7d6',dark:'1',cover:'#e48a4e'}},
+    {k:'ungu',n:'Ungu',desc:'Aubergine and lilac, on a plum desk',c:{ground:'#221a31',sheet:'#f4eff0',paper:'#f4eff0',ink:'#2d2142',accent:'#2d2142',spot:'#a98ad8',gold:'#a98ad8',pagefg:'#eee8f2',dark:'1',cover:'#a98ad8'}},
+    {k:'vintaj',n:'Vintaj',desc:'Sepia and brick on aged paper',c:{ground:'#3b2a1c',sheet:'#ecdfc2',paper:'#ecdfc2',ink:'#3a2617',accent:'#3a2617',spot:'#b9583a',gold:'#b9583a',pagefg:'#efe2c6',dark:'1',cover:'#b9583a'}},
+    {k:'hijau',n:'Hijau',desc:'Forest green and mustard on cream',c:{ground:'#dfe4d2',sheet:'#f6f2e4',paper:'#f6f2e4',ink:'#1f3527',accent:'#1f3527',spot:'#d6a23e',gold:'#d6a23e',pagefg:'#1f3527',cover:'#d6a23e'}},
   ]});
 
 })()}catch(e){console.error("family komik failed",e)}
@@ -3956,88 +4654,97 @@ FAMILY({key:'kraft',name:'Kraft',meaning:'Twine-tied parcel',
 
 /* ===== family: kunci ===== */
 try{(()=>{
-/* kunci: a vintage brass room key with an engraved fob tag (the room number is the date), in an ornate escutcheon
-   on a panelled door. Opening: the key turns a quarter in the lock, then the plate fades.
-   Page: the escutcheon above the names. Skin: door-panel cards with key-tag headings. */
-let uid=0;
-const f=v=>(+v).toFixed(2);
-// right half of the Victorian escutcheon as cubic segments [c1,c2,p]; the left half is its mirror
-const ESC_R=[[[56,2],[59,8],[57,13]],[[63,12],[67,17],[64,23]],[[71,25],[73,33],[66,39]],[[75,43],[77,53],[71,61]],[[79,67],[80,80],[72,88]],[[73,104],[73,118],[72,132]],[[80,140],[79,154],[70,160]],[[77,168],[75,178],[66,182]],[[72,188],[70,198],[62,201]],[[60,210],[54,216],[50,218]]];
-function escPath(s=1,cx=50,cy=110){const T=([x,y])=>`${f(cx+(x-cx)*s)} ${f(cy+(y-cy)*s)}`,M=([x,y])=>[100-x,y];
-  let d=`M${T([50,2])}`;ESC_R.forEach(([a,b,p])=>d+=`C${T(a)} ${T(b)} ${T(p)}`);
-  const pts=[[50,2],...ESC_R.map(s=>s[2])];for(let i=ESC_R.length-1;i>=0;i--){const [a,b]=ESC_R[i],p=pts[i];d+=`C${T(M(b))} ${T(M(a))} ${T(M(p))}`}return d+'Z'}
-const grads=(id,c)=>`<linearGradient id="b${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.b1}"/><stop offset=".3" stop-color="${c.b2}"/><stop offset=".5" stop-color="${c.b1}"/><stop offset=".75" stop-color="${c.b3}"/><stop offset="1" stop-color="${c.b2}"/></linearGradient>
- <linearGradient id="v${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c.b3}"/><stop offset=".35" stop-color="${c.b1}"/><stop offset=".6" stop-color="${c.b2}"/><stop offset="1" stop-color="${c.b3}"/></linearGradient>
- <radialGradient id="r${id}" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="${c.b1}"/><stop offset=".6" stop-color="${c.b2}"/><stop offset="1" stop-color="${c.b3}"/></radialGradient>`;
-const curl=(x,y,s,r,col)=>`<path d="M0 0c4-9 16-11 21-4s0 15-8 13-6-9 0-9" transform="translate(${x} ${y}) rotate(${r}) scale(${s})" fill="none" stroke="${col}" stroke-width="${f(.7/s)}" stroke-linecap="round"/>`;
-function plate(c,id,hole=true){const e=c.b4,sym=(x,y,s,r)=>curl(x,y,s,r,e)+`<g transform="translate(100 0) scale(-1 1)">${curl(x,y,s,r,e)}</g>`;
-  const leaves=[[50,40],[50,184]].map(([x,y])=>`<path d="M${x} ${y-9}c5 4 5 12 0 18-5-6-5-14 0-18z" fill="none" stroke="${e}" stroke-width=".6"/><path d="M${x} ${y-5}v10" stroke="${e}" stroke-width=".4"/>`).join('');
-  const screw=(x,y)=>`<circle cx="${x}" cy="${y}" r="3.6" fill="url(#r${id})" stroke="${e}" stroke-width=".5"/><path d="M${x-2.6} ${y+1}l5.2-2" stroke="${e}" stroke-width=".8"/>`;
-  return `<svg class="kc-plate" viewBox="0 0 100 220"><defs>${grads(id,c)}<filter id="pf${id}" x="-20%" y="-10%" width="140%" height="125%"><feDropShadow dx="1.2" dy="2.6" stdDeviation="1.8" flood-opacity=".45"/></filter></defs>
-   <path d="${escPath()}" fill="url(#b${id})" stroke="${e}" stroke-width=".7" filter="url(#pf${id})"/>
-   <path d="${escPath(.93)}" fill="none" stroke="${c.b1}" stroke-width=".6" opacity=".8"/><path d="${escPath(.9)}" fill="none" stroke="${e}" stroke-width=".55"/>
-   <path d="${escPath(.83)}" fill="none" stroke="${e}" stroke-width=".4" stroke-dasharray=".1 2.2" stroke-linecap="round"/>
-   ${sym(38,64,.9,-60)}${sym(36,92,.8,-20)}${sym(38,150,.8,40)}${sym(40,172,.7,80)}${leaves}
-   <path d="M50 54c-6 6-6 14 0 20 6-6 6-14 0-20zM50 166c-6 6-6 14 0 20 6-6 6-14 0-20z" fill="url(#r${id})" stroke="${e}" stroke-width=".5"/>
-   ${screw(50,24)}${screw(50,201)}
-   ${hole?`<ellipse cx="50" cy="118" rx="13" ry="16" fill="none" stroke="${e}" stroke-width=".6"/><ellipse cx="50" cy="118" rx="10.5" ry="13.5" fill="none" stroke="${c.b1}" stroke-width=".8" opacity=".8"/>
-   <path d="M50 108.5a5.6 5.6 0 0 1 3.4 10l2.4 12.5h-11.6l2.4-12.5a5.6 5.6 0 0 1 3.4-10z" fill="${c.hole}" stroke="${c.b1}" stroke-width=".7"/>`:''}</svg>`}
-// the key, hanging from the keyhole: shaft, collar, filigree bow, and the loop for the fob ring
-function key(c,id){const e=c.b4;let pet='';for(let i=0;i<8;i++)pet+=`<ellipse cx="50" cy="147" rx="5" ry="12" transform="rotate(${i*45} 50 165)" fill="none" stroke="url(#v${id})" stroke-width="3"/>`;
-  return `<svg class="kc-key" viewBox="0 0 100 210"><defs>${grads(id,c)}</defs>
-   <rect x="46.5" y="0" width="7" height="104" rx="2" fill="url(#v${id})" stroke="${e}" stroke-width=".5"/>
-   <path d="M48 6v92" stroke="${c.b1}" stroke-width=".8" opacity=".7"/>
-   ${[100,107,114].map((y,i)=>`<rect x="${42-i}" y="${y}" width="${16+i*2}" height="5" rx="2.5" fill="url(#v${id})" stroke="${e}" stroke-width=".5"/>`).join('')}
-   <path d="M44 120h12l3 8H41z" fill="url(#v${id})" stroke="${e}" stroke-width=".5"/>
-   <circle cx="50" cy="165" r="34" fill="none" stroke="url(#b${id})" stroke-width="6"/><circle cx="50" cy="165" r="37" fill="none" stroke="${e}" stroke-width=".5"/><circle cx="50" cy="165" r="31" fill="none" stroke="${e}" stroke-width=".5"/>
-   ${pet}<g fill="none" stroke="${e}" stroke-width=".35">${pet.replace(/stroke="url\(#v\d+\)" stroke-width="3"/g,'')}</g>
-   <circle cx="50" cy="165" r="7" fill="url(#r${id})" stroke="${e}" stroke-width=".6"/><circle cx="50" cy="165" r="2.4" fill="${e}"/>
-   ${[0,90,180,270].map(a=>`<circle cx="50" cy="128" r="3" transform="rotate(${a} 50 165)" fill="url(#r${id})" stroke="${e}" stroke-width=".5"/>`).join('')}
-   <circle cx="50" cy="204" r="5" fill="none" stroke="url(#v${id})" stroke-width="2.6"/></svg>`}
-// the fob: an oval brass tag on a split ring, engraved with the date as the room number and the venue
-function fob(o,c,id,en){const d=new Date((o.date||'2026-12-19')+'T00:00:00'),e=c.b4,no=isNaN(d)?'':`${d.getDate()}·${String(d.getMonth()+1).padStart(2,'0')}`;
-  let rim='';for(let i=0;i<64;i++){const a=i/64*Math.PI*2;rim+=`<circle cx="${f(60+Math.cos(a)*49)}" cy="${f(100+Math.sin(a)*79)}" r=".9"/>`}
-  return `<svg class="kc-fob" viewBox="0 0 120 200"><defs>${grads('f'+id,c)}<path id="fa${id}" d="M22 96A38 66 0 0 1 98 96"/><path id="fb${id}" d="M20 110A40 66 0 0 0 100 110"/><filter id="ff${id}" x="-20%" y="-10%" width="140%" height="130%"><feDropShadow dx="1.5" dy="3" stdDeviation="2" flood-opacity=".4"/></filter></defs>
-   <ellipse cx="60" cy="100" rx="56" ry="88" fill="url(#bf${id})" stroke="${e}" stroke-width=".8" filter="url(#ff${id})"/>
-   <ellipse cx="60" cy="100" rx="52" ry="84" fill="none" stroke="${c.b1}" stroke-width=".7" opacity=".8"/><g fill="${e}" opacity=".75">${rim}</g>
-   <ellipse cx="60" cy="100" rx="44" ry="74" fill="none" stroke="${e}" stroke-width=".6"/>
-   <circle cx="60" cy="24" r="6.5" fill="${c.ground}" stroke="${e}" stroke-width=".8"/><circle cx="60" cy="24" r="8.5" fill="none" stroke="${c.b1}" stroke-width=".6"/>
-   <text font-family="Cinzel, serif" font-size="6.6" letter-spacing="2.2" fill="${e}" text-anchor="middle"><textPath href="#fa${id}" startOffset="50%">${en?'ROOM':'BILIK'}</textPath></text>
-   <text x="60" y="108" text-anchor="middle" font-family="'Bodoni Moda', serif" font-weight="600" font-size="30" fill="${e}">${no}</text>
-   <text x="60.5" y="108.8" text-anchor="middle" font-family="'Bodoni Moda', serif" font-weight="600" font-size="30" fill="${c.b1}" opacity=".35">${no}</text>
-   <path d="M38 118h44" stroke="${e}" stroke-width=".5"/><text x="60" y="130" text-anchor="middle" font-family="Cinzel, serif" font-size="8" letter-spacing="3" fill="${e}">${isNaN(d)?'':d.getFullYear()}</text>
-   <text font-family="'Cormorant Garamond', serif" font-style="italic" font-size="8" fill="${e}" text-anchor="middle"><textPath href="#fb${id}" startOffset="50%">${esc(o.venue||'')}</textPath></text></svg>`}
-const RING=c=>`<svg class="kc-ring" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="none" stroke="${c.b2}" stroke-width="2.4"/><circle cx="15" cy="15" r="11" fill="none" stroke="${c.b4}" stroke-width=".4"/><path d="M8 7a11 11 0 0 1 9-3" stroke="${c.b1}" stroke-width="1" fill="none"/></svg>`;
-FAMILY({key:'kunci',name:'Kunci',meaning:'Room key',
-  blurb:'A vintage brass room key in an ornate escutcheon, its fob engraved with the date; touch it and the key turns.',
-  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<section class="page pg-kunci"><div class="kc-door"><i class="kc-pan"></i></div>
-     <div class="kc-pplate reveal">${plate(c,'p'+id)}</div>
-     <p class="kc-k reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="kc-rule reveal d2"><i></i><b></b><i></i></div>
-     <p class="kc-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="kc-hj reveal d2">${esc(o.hijri)}</p>`:''}
-     <p class="kc-ven reveal d3">${esc(o.venue)} <i>·</i> ${esc(fmtTime(o.start,o.lang))}</p></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<div class="cover cv-kunci"><div class="kc-door"><i class="kc-pan"></i></div>
-     <div class="kc-head kc-fade"><p class="kc-k">${ev(o,L)}</p><p class="kc-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
-     <${tag} class="kc-lock" ${attr} aria-label="${L.open}"><span class="kc-pw">${plate(c,id)}</span>
-      <span class="kc-fw">${RING(c)}${fob(o,c,id,en)}</span><span class="kc-kw">${key(c,id)}</span></${tag}>
-     <div class="kc-foot kc-fade">${guest?`<p class="kc-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kc-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--hole',th.c.hole);
-    $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h&&!h.dataset.kc){h.dataset.kc=1;h.innerHTML=`<span class="kc-tag"><i></i><span>${h.innerHTML}</span></span>`}})},
+/* kunci: an antique iron key with a pierced rosette bow (Met Museum, public domain) tied with cotton thread to a paper tag that carries the
+   names, lying on marble or velvet. Cover: tap "Buka Jemputan" and the tag turns over toward you while the key slips away.
+   Page: the tag stood upright with the key across its corner; two small tags lead to the details and RSVP.
+   Skin: paper cards with an eyelet at the top, headings set in spaced caps over a fine rule. */
+let knU=0;
+// the key: a 15th-century iron key with a pierced rosette bow (Met Museum, public domain), bow on the left
+const knKey=(cls='')=>`<img class="kn-key ${cls}" src="${A}pd-obj-key-iron.webp" alt="">`;
+// thread from the tag's eyelet to the key's bow (drawn in the tag+key box, 0-100 each way)
+const knThread=d=>`<svg class="kn-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" class="kn-t1"/><path d="${d}" class="kn-t2"/></svg>`;
+const knTag=(o,L,inner,cls='')=>`<div class="kn-tag ${cls}"><div class="kn-paper"></div><i class="kn-eye"></i><div class="kn-ti">${inner}</div></div>`;
+const knVars=c=>`--b1:${c.b1};--b2:${c.b2};--b3:${c.b3};--b4:${c.b4};--tag:${c.tag||c.sheet};--nm:${c.nm||c.accent};--btn:${c.dark?'rgba(0,0,0,.3)':'rgba(255,255,255,.4)'}`;
+FAMILY({key:'kunci',name:'Kunci',meaning:'Antique key',
+  blurb:'A fifteenth-century iron key tied with thread to a paper tag bearing the names, on marble or velvet. Open it and the tag turns over toward you.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-kunci2${c.dark?' kn-dark':''}" style="${knVars(c)}"><div class="kn-surf"></div>
+      <div class="kn-pwrap reveal">${knTag(o,L,`<p class="kn-k kicker">${ev(o,L)}</p><h1 class="kn-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="kn-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="kn-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<a class="kn-ven" data-go="loc" href="#">${esc(o.venue)}</a>`:''}`,'kn-ptag')}
+        ${knKey('kn-pkey')}</div>
+      <div class="kn-links reveal d2"><a data-go="when" href="#"><i></i>${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#"><i></i>RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-kunci2${c.dark?' kn-dark':''}" style="${knVars(c)}"><div class="kn-surf"></div>
+      <p class="kn-k kn-top">${ev(o,L)}</p>
+      <div class="kn-set">${knThread('M11 27C-2 44 0 70 15 80')}
+        ${knTag(o,L,`<p class="kn-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kn-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`,'kn-ctag')}
+        ${knKey('kn-ckey')}</div>
+      <div class="kn-foot">${guest?`<p class="kn-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="kn-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.classList.toggle('kn-dark',!!c.dark);el.style.setProperty('--tag',c.tag||c.sheet);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'hijau',n:'Hijau',desc:'Brass on a forest-green door',c:{ground:'#1f3b30',sheet:'#f8f3e6',ink:'#1f2a24',accent:'#1e4a3a',gold:'#c9a24e',pagefg:'#f1ead6',b1:'#fbe6a2',b2:'#cc9c48',b3:'#87601f',b4:'#4a3410',hole:'#120d06'}},
-    {k:'biru',n:'Biru',desc:'Brass on a navy door',c:{ground:'#1c2a46',sheet:'#f6f3ea',ink:'#1d2230',accent:'#22365e',gold:'#cfa755',pagefg:'#eeebe0',b1:'#fbe7a8',b2:'#cf9f4a',b3:'#896120',b4:'#4a3410',hole:'#0d0a06',line:'rgba(34,54,94,.2)'}},
-    {k:'marun',n:'Marun',desc:'Antique brass on oxblood',c:{ground:'#4a1a22',sheet:'#fbf3ec',ink:'#2d1b1d',accent:'#6e1f30',gold:'#d2a467',pagefg:'#f6e6dc',b1:'#f6dca6',b2:'#c79650',b3:'#7f5726',b4:'#432a12',hole:'#120806',line:'rgba(110,31,48,.2)'}},
-    {k:'hitam',n:'Hitam',desc:'Polished brass on a black door',c:{ground:'#151517',sheet:'#f4efe5',ink:'#19191b',accent:'#3a3024',gold:'#d4ae5c',pagefg:'#efe7d4',b1:'#fdebb0',b2:'#d6a750',b3:'#8e6421',b4:'#4b3410',hole:'#000',line:'rgba(58,48,36,.22)'}},
-    {k:'krim',n:'Krim',desc:'Brass on a cream door',c:{ground:'#e9e0cc',sheet:'#fffaf0',ink:'#2c251c',accent:'#6d4a1f',gold:'#a8823c',pagefg:'#2c251c',b1:'#f9e3a0',b2:'#c99a46',b3:'#83601f',b4:'#4a3410',hole:'#1a120a'}},
-    {k:'sage',n:'Sage',desc:'Brass on a sage door',c:{ground:'#b9c6b0',sheet:'#fbfaf2',ink:'#24302a',accent:'#3d5a47',gold:'#94783c',pagefg:'#1f2a24',b1:'#f6e2a4',b2:'#c79c4c',b3:'#80601f',b4:'#47340f',hole:'#140f08',line:'rgba(61,90,71,.22)'}},
-    {k:'jambu',n:'Jambu',desc:'Rose brass on a blush door',c:{ground:'#e6c9c3',sheet:'#fffaf6',ink:'#38242a',accent:'#84394c',gold:'#a97a5e',pagefg:'#38242a',b1:'#fbe1cf',b2:'#d09b7c',b3:'#87553d',b4:'#4a2a1c',hole:'#1a0d0a',line:'rgba(132,57,76,.2)'}},
-    {k:'kelabu',n:'Kelabu',desc:'Nickel on a slate-grey door',c:{ground:'#4b5258',sheet:'#f6f6f4',ink:'#22262b',accent:'#38424e',gold:'#c3c7cd',pagefg:'#eef0f2',b1:'#ffffff',b2:'#c2c6cc',b3:'#7a7f87',b4:'#3a3e44',hole:'#0b0c0e',line:'rgba(56,66,78,.2)'}},
+    {k:'hijau',n:'Hijau',desc:'Iron key on forest-green velvet',c:{ground:'#1d362c',sheet:'#f8f3e6',ink:'#1f2a24',accent:'#1e4a3a',gold:'#c9a24e',pagefg:'#f1ead6',b1:'#fbe6a2',b2:'#cc9c48',b3:'#87601f',b4:'#4a3410',nm:'#1e4a3a',dark:1}},
+    {k:'biru',n:'Biru',desc:'Iron key on navy velvet',c:{ground:'#1b2843',sheet:'#f6f3ea',ink:'#1d2230',accent:'#22365e',gold:'#cfa755',pagefg:'#eeebe0',b1:'#fbe7a8',b2:'#cf9f4a',b3:'#896120',b4:'#4a3410',dark:1}},
+    {k:'marun',n:'Marun',desc:'Iron key on oxblood velvet',c:{ground:'#45171f',sheet:'#fbf3ec',ink:'#2d1b1d',accent:'#6e1f30',gold:'#d2a467',pagefg:'#f6e6dc',b1:'#f6dca6',b2:'#c79650',b3:'#7f5726',b4:'#432a12',dark:1}},
+    {k:'hitam',n:'Hitam',desc:'Iron key on black velvet',c:{ground:'#151517',sheet:'#f4efe5',ink:'#19191b',accent:'#3a3024',gold:'#d4ae5c',pagefg:'#efe7d4',b1:'#fdebb0',b2:'#d6a750',b3:'#8e6421',b4:'#4b3410',dark:1}},
+    {k:'krim',n:'Krim',desc:'Iron key on cream marble',c:{ground:'#ece6da',sheet:'#fffaf0',ink:'#2c251c',accent:'#6d4a1f',gold:'#a8823c',pagefg:'#2c251c',b1:'#f9e3a0',b2:'#c99a46',b3:'#83601f',b4:'#4a3410',tag:'#efe2c4'}},
+    {k:'sage',n:'Sage',desc:'Iron key on sage marble',c:{ground:'#d4dccd',sheet:'#fbfaf2',ink:'#24302a',accent:'#3d5a47',gold:'#94783c',pagefg:'#1f2a24',b1:'#f6e2a4',b2:'#c79c4c',b3:'#80601f',b4:'#47340f'}},
+    {k:'jambu',n:'Jambu',desc:'Iron key on blush marble',c:{ground:'#efdcd7',sheet:'#fffaf6',ink:'#38242a',accent:'#84394c',gold:'#a97a5e',pagefg:'#38242a',b1:'#fbe1cf',b2:'#d09b7c',b3:'#87553d',b4:'#4a2a1c'}},
+    {k:'kelabu',n:'Kelabu',desc:'Iron key on slate velvet',c:{ground:'#3c4247',sheet:'#f6f6f4',ink:'#22262b',accent:'#38424e',gold:'#c3c7cd',pagefg:'#eef0f2',b1:'#ffffff',b2:'#c2c6cc',b3:'#7a7f87',b4:'#3a3e44',dark:1}},
   ]});
 
 })()}catch(e){console.error("family kunci failed",e)}
+
+
+/* ===== family: lakaran ===== */
+try{(()=>{
+/* lakaran (redesign): a fine pen-and-ink drawing of an old Malayan building (drawn from 1900s postcards), printed in a
+   debossed plate mark on heavy cotton paper, under a sheet of tissue printed with the guest's name.
+   Cover: tap "Buka Jemputan" and the tissue lifts away on its top edge, showing the drawing crisp.
+   Page: the card with the drawing and the names set in old-style type. Skin: cotton cards with a plate-mark border. */
+const LR_AR={boatquay:720/399,collyer:614/474,kl:720/459,masjid:720/461,pasar:720/443,pinang:720/502};
+const lrPlate=(sk,cls='')=>`<div class="lr2-plate ${cls}"><i class="lr2-ink" style="--m:url(${A}sk-${sk}.webp);aspect-ratio:${LR_AR[sk]||1.5}"></i></div>`;
+const lrRule=()=>`<svg class="lr2-rule" viewBox="0 0 120 8"><path d="M2 4H50M70 4H118" stroke="currentColor" stroke-width=".6"/><path d="M60 1L63 4L60 7L57 4Z" fill="none" stroke="currentColor" stroke-width=".6"/><circle cx="53" cy="4" r=".9" fill="currentColor"/><circle cx="67" cy="4" r=".9" fill="currentColor"/></svg>`;
+FAMILY({key:'lakaran',name:'Lakaran',meaning:'Pen-and-ink sketch',
+  blurb:'A fine pen-and-ink drawing of an old Malayan building, pressed into heavy cotton paper under a sheet of printed tissue that lifts away.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'IM Fell English', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-lakaran2${th.c.dark?' lr2-dkc':''}"><div class="lr2-desk"></div>
+      <div class="lr2-card lr2-big reveal">${lrPlate(th.sk)}
+        <p class="lr2-k kicker">${ev(o,L)}</p><h1 class="lr2-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>${lrRule()}
+        <p class="lr2-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="lr2-ven">${esc(o.venue)}</p>`:''}</div>
+      <a class="lr2-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-lakaran2${th.c.dark?' lr2-dkc':''}"><div class="lr2-desk"></div>
+      <div class="lr2-card">${lrPlate(th.sk)}
+        <div class="lr2-ct"><p class="lr2-k">${ev(o,L)}</p><p class="lr2-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>${lrRule()}<p class="lr2-cd">${esc(fmtDate(o.date,o.lang))}</p></div>
+        <div class="lr2-tissue"><div class="lr2-tt"><small>${ev(o,L)}</small><b>${esc(n1)} <span>&amp;</span> ${esc(n2)}</b>${guest?`<p class="lr2-tg"><small>${L.dear}</small><i>${esc(guest)}</i></p>`:''}</div></div>
+      </div>
+      <${tag} class="lr2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('lr2-dk',!!th.c.dark);
+    const others=Object.keys(LR_AR).filter(k=>k!==th.sk),w=$('[data-s="when"]',el);
+    if(w&&!$('.lr2-vig',w)){const h=$('h2',w);h&&h.insertAdjacentHTML('beforebegin',`<div class="lr2-vig">${lrPlate(others[1])}</div>`)}
+    $$('.sheet > .sec > h2',el).forEach(h=>{if(!h.nextElementSibling?.classList.contains('lr2-rule'))h.insertAdjacentHTML('afterend',lrRule())});
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    // [key, name, desc, desk, paper, ink, accent, sketch, dark]
+    ...[['gading','Gading','Sepia ink, Sultan Abdul Samad building, on oak','#cdbfa8','#f8f3e8','#3a2c20','#7a5a2a','kl'],
+    ['nila','Nila','Indigo ink, a mosque pavilion, on midnight','#1c2539','#f5f6f4','#1d2b4a','#1d2b4a','masjid',1],
+    ['marun','Marun','Maroon ink, Penang shore, on rosewood','#d8c3bc','#faf4ef','#5a1524','#7a1b29','pinang'],
+    ['zamrud','Zamrud','Green ink, Collyer Quay, on sage','#c3cbbd','#f6f7f1','#0f3d2e','#0f3d2e','collyer'],
+    ['jambu','Merah Jambu','Rose ink, Sultan Abdul Samad building, on blush','#e3cfcb','#fdf6f4','#6e3242','#a3465f','kl'],
+    ['sage','Sage','Olive ink, a mosque pavilion, on sage','#cfd3c4','#f7f8f2','#3e4a38','#55654b','masjid'],
+    ['hitam','Hitam','Black ink, Boat Quay, on charcoal','#262422','#f4f1ea','#161414','#161414','boatquay',1],
+    ['terakota','Terakota','Rust ink, Penang shore, on clay','#d9c2b0','#faf3ea','#6b2e1c','#a24a22','pinang'],
+    ].map(([k,n,desc,ground,sheet,ink,accent,sk,dark])=>({k,n,desc,c:{ground,sheet,ink,accent,gold:accent,pagefg:dark?'#f1ede4':ink,dark:dark?1:0},extra:{sk}}))]});
+
+})()}catch(e){console.error("family lakaran failed",e)}
 
 
 /* ===== family: lentera ===== */
@@ -4244,6 +4951,144 @@ FAMILY({key:'majalah',name:'Majalah',meaning:'Magazine cover',
 })()}catch(e){console.error("family majalah failed",e)}
 
 
+/* ===== family: mancis ===== */
+try{(()=>{
+/* mancis: an old safety-match box with a letterpress label: an ink field, a cream cartouche, an engraved flower in a dotted medallion,
+   and a gritty striker strip down the side. Cover: the box stands at an angle; tap "Buka Jemputan" and the tray slides up out of the sleeve.
+   Page: the label laid flat on the table with two smaller labels (details, RSVP). Skin: cream board cards printed with a fine ink border. */
+// the medallion: a dotted ring with the motto set round it, the engraving sits inside
+let mcN=0;
+const mcMedal=(o,c)=>{const u=++mcN,en=o.lang==='en',t=en?'A perfect match · A perfect match ·':'Sepadan · Serasi · Sepadan · Serasi ·';
+  const dots=K.ring(44,46.5,50,50).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".75"/>`).join('');
+  return `<svg class="mc-ring" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="mcp${u}" d="M50 50m-36.4 0a36.4 36.4 0 1 1 72.8 0a36.4 36.4 0 1 1 -72.8 0"/></defs>
+    <g fill="currentColor">${dots}</g><circle cx="50" cy="50" r="43.5" fill="none" stroke="currentColor" stroke-width=".5"/><circle cx="50" cy="50" r="33" fill="none" stroke="currentColor" stroke-width=".5"/><circle cx="50" cy="50" r="31.6" fill="none" stroke="currentColor" stroke-width=".25"/>
+    <text font-size="5.6" letter-spacing="1.25" fill="currentColor"><textPath href="#mcp${u}" startOffset="0">${t}</textPath></text></svg>${ENG(c.eng,'','mc-eng')}`};
+// small corner fleuron, printed in the label ink
+const mcCorner=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 1h10M1 1v10M4 4h5M4 4v5" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M8 8q5 0 5 5q-3-.5-5-5z" fill="currentColor"/><circle cx="14.5" cy="14.5" r="1" fill="currentColor"/></svg>`;
+const mcCorners=['tl','tr','bl','br'].map(k=>`<i class="mc-cor ${k}">${mcCorner}</i>`).join('');
+// the printed label: cream board > ink field > cream cartouche
+const mcLabel=(o,L,c,big)=>{const [n1,n2]=coverNames(o);
+  return `<div class="mc-label${big?' big':''}"><div class="mc-field">${mcCorners}
+    <p class="mc-band">${big?esc(o.hijri||fmtShort(o.date).replace(/\./g,' · ')):ev(o,L)}</p>
+    <div class="mc-medal">${mcMedal(o,c)}</div>
+    <div class="mc-cart">${big?`<p class="mc-k kicker">${ev(o,L)}</p>`:''}<${big?'h1':'p'} class="mc-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${big?'h1':'p'}></div>
+    <p class="mc-band mc-date">${big?esc(fmtDate(o.date,o.lang)):esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>`};
+// faint grain for the striker and board, drawn once
+const mcGrit=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.4 -.55"/></filter><rect width="120" height="120" filter="url(#g)"/></svg>`);
+const mcVars=c=>`--strike:${c.strike};--board:${c.board}`;
+FAMILY({key:'mancis',name:'Mancis',meaning:'Matchbox',
+  blurb:'An old safety-match box with a letterpress label and an engraved flower, standing on the table. The tray slides out to open the card.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'IM Fell English', serif",b:"'IM Fell English', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en',c=th.c;
+    return `<section class="page pg-mancis2" style="--grit:${mcGrit};${mcVars(c)}"><div class="mc-table"></div>
+      <div class="mc-flat reveal">${mcLabel(o,L,c,true)}<i class="mc-strike"></i></div>
+      <div class="mc-tiles">
+        <a class="mc-tile reveal d1" data-go="when" href="#"><small>${en?'Date & venue':'Tarikh & tempat'}</small><b>${en?'Event details':'Butiran Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="mc-tile mc-round reveal d2" data-go="rsvp" href="#"><small>${en?'Kindly reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+      </div>
+      ${o.venue?`<p class="mc-ven reveal d3">${esc(o.venue)}</p>`:''}</section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c,[n1,n2]=coverNames(o);
+    return `<div class="cover cv-mancis2" style="--grit:${mcGrit};${mcVars(c)}"><div class="mc-table"></div>
+      ${guest?`<p class="mc-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="mc-scene"><i class="mc-shadow"></i><div class="mc-box">
+        <div class="mc-tray"><i class="mc-floor"><span class="mc-note"><small>${en?'with love':'dengan kasih'}</small>${esc(n1)} &amp; ${esc(n2)}</span></i><i class="mc-tw l"></i><i class="mc-tw r"></i><i class="mc-te"></i></div>
+        <div class="mc-front">${mcLabel(o,L,c,false)}</div>
+        <div class="mc-side"></div><div class="mc-back"></div>
+      </div></div>
+      <${tag} class="mc-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);el.style.setProperty('--grit',mcGrit);el.style.setProperty('--board',th.c.board);el.style.setProperty('--strike',th.c.strike);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Sepia label on an ivory table',c:{ground:'#e9e1d2',sheet:'#f7f0e1',ink:'#2e261d',accent:'#6b4b2a',gold:'#b08a4e',pagefg:'#2e261d',line:'rgba(60,40,20,.25)',eng:'jasmine',strike:'#6a4a36',board:'#d8c7a6'}},
+    {k:'nila',n:'Nila',desc:'Indigo label on a midnight table',c:{ground:'#141c30',sheet:'#f5efe1',ink:'#232633',accent:'#1f3361',gold:'#c9a55e',pagefg:'#ece6d8',line:'rgba(31,51,97,.25)',eng:'iris',strike:'#5b4038',board:'#cdb991'}},
+    {k:'marun',n:'Marun',desc:'Maroon label on a dark wine table',c:{ground:'#2a0d14',sheet:'#f7efe0',ink:'#2e1d1d',accent:'#7a1d2c',gold:'#c9a055',pagefg:'#f1e5d6',line:'rgba(122,29,44,.25)',eng:'cabbage-rose',strike:'#4e3430',board:'#d2bd96'}},
+    {k:'zamrud',n:'Zamrud',desc:'Bottle-green label on a dark green table',c:{ground:'#0f2219',sheet:'#f4eedf',ink:'#1e2a22',accent:'#1d4a35',gold:'#c6a35a',pagefg:'#e9e6d6',line:'rgba(29,74,53,.25)',eng:'lotus',strike:'#5a4234',board:'#cdbb94'}},
+    {k:'jambu',n:'Jambu',desc:'Rose label on a blush table',c:{ground:'#ecd9d3',sheet:'#fbf3ea',ink:'#3a2526',accent:'#9b4a5a',gold:'#b98f62',pagefg:'#3a2526',line:'rgba(155,74,90,.25)',eng:'wild-rose',strike:'#6b4640',board:'#dcc6a8'}},
+    {k:'sage',n:'Sage',desc:'Sage label on an olive table',c:{ground:'#2c3428',sheet:'#f4f0e2',ink:'#262b22',accent:'#4f6347',gold:'#bfa064',pagefg:'#e8e6d8',line:'rgba(79,99,71,.25)',eng:'forget-me-not',strike:'#5a4636',board:'#cfc09a'}},
+    {k:'hitam',n:'Hitam',desc:'Scarlet label on a black table',c:{ground:'#121011',sheet:'#f6efdf',ink:'#221c1a',accent:'#a3263a',gold:'#d2ad62',pagefg:'#ece4d6',line:'rgba(163,38,58,.25)',eng:'red-rose',strike:'#4a3631',board:'#d0bc94'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta label on a clay table',c:{ground:'#3a1e14',sheet:'#f8efe2',ink:'#33231b',accent:'#a24a26',gold:'#d4a468',pagefg:'#f2e5d6',line:'rgba(162,74,38,.25)',eng:'hibiscus',strike:'#5b3e30',board:'#d6bf98'}},
+  ]});
+
+})()}catch(e){console.error("family mancis failed",e)}
+
+
+/* ===== family: marmar ===== */
+try{(()=>{
+/* marmar: a polished marble tablet lying on linen, the names cut into it and gilded.
+   The stone is the marble texture stretched along the grain and tinted, with a few long diagonal veins that branch and fade; four colourways carry a thread of gold.
+   Cover: tap "Buka Jemputan" and the tablet lifts towards you, then the page settles.
+   Page: the tablet with three small marble coasters (details, RSVP, location). Skin: thin polished stone cards. */
+// veins: a few long veins running one way down the diagonal, wandering a little, branching and fading;
+// each is a cloudy halo, a sharp core whose weight and strength change along its length, and some hairline cracks
+function mmVeinSvg(seed,col,gold){const r=rng(seed),W=400,H=570,cl=v=>v.toFixed(1);let soft='',core='',crack='',gl='';
+  const walk=(x,y,a,len,step=12)=>{const p=[[x,y]];let d=0;for(let i=0;i<len/step;i++){d=d*.8+(r()-.5)*.22;a+=d*.35+(r()-.5)*.06;x+=Math.cos(a)*step;y+=Math.sin(a)*step;p.push([x,y])}return p};
+  const pl=p=>p.map(q=>cl(q[0])+' '+cl(q[1])).join(' ');
+  const veinCore=(p,w0)=>{let ph=r()*6,o='';for(let i=1;i<p.length;i++){const t=i/p.length,str=Math.max(0,Math.sin(t*3.2+ph)*.5+.5*Math.sin(t*7+ph*2)),
+      w=w0*(.25+str*.9)*Math.min(1,t*6,(1-t)*6+.2),op=.15+.85*str*str;if(op<.12)continue;
+      o+=`<path d="M${cl(p[i-1][0])} ${cl(p[i-1][1])}L${cl(p[i][0])} ${cl(p[i][1])}" stroke-width="${w.toFixed(2)}" stroke-opacity="${op.toFixed(2)}"/>`}return o};
+  const n=2+Math.floor(r()*2),base=1.02+(r()-.5)*.12;   // mostly one direction: about 58 degrees down to the right
+  let first=null;
+  for(let k=0;k<n;k++){const x0=-60+(k+r()*.8)*(W*.85/n),y0=-30-r()*60,p=walk(x0,y0,base+(r()-.5)*.14,H*1.35);if(!first||Math.abs(x0-W*.15)<Math.abs(first[0][0]-W*.15))first=p;
+    soft+=`<polyline points="${pl(p)}" stroke-width="${cl(10+r()*14)}" stroke-opacity="${(.18+r()*.14).toFixed(2)}"/>`;
+    core+=veinCore(p,1.4+r()*1.2);
+    // one or two branches that split off, run at a shallower angle and fade out
+    const nb=1+Math.floor(r()*2);for(let j=0;j<nb;j++){const at=p[Math.floor(p.length*(.2+r()*.55))],q=walk(at[0],at[1],base+(r()<.5?-.5:.45),60+r()*110,9);
+      soft+=`<polyline points="${pl(q)}" stroke-width="6" stroke-opacity=".12"/>`;core+=veinCore(q,.8)}}
+  for(let k=0;k<3;k++){const p=walk(r()*W,-20,base+(r()-.5)*.25,H*1.2,16);crack+=`<polyline points="${pl(p)}" stroke-width=".45" stroke-opacity="${(.25+r()*.25).toFixed(2)}"/>`}
+  if(gold&&first){const s0=Math.floor(first.length*(.15+r()*.2)),seg=first.slice(s0,s0+Math.floor(first.length*.4));gl=veinCore(seg.map(q=>[q[0]+2.5,q[1]-1]),1.1)}
+  const svg=g=>K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs><filter id="b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="e" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="${seed}"/><feDisplacementMap in="SourceGraphic" scale="3.5"/><feGaussianBlur stdDeviation=".25"/></filter></defs>${g}</svg>`);
+  return {veins:svg(`<g fill="none" stroke="${col}" stroke-linecap="round" stroke-linejoin="round"><g filter="url(#b)">${soft}</g><g filter="url(#e)">${core}${crack}</g></g>`),
+    gold:gold?svg(`<g fill="none" stroke="#000" stroke-linecap="round" filter="url(#e)">${gl}</g>`):'none'}}
+const MM_V={};const mmV=c=>MM_V[c.seed]||(MM_V[c.seed]=mmVeinSvg(c.seed,c.vein,c.goldv));
+const mmStoneVars=c=>`--stone:${c.sheet};--veins:${mmV(c).veins};--gveins:${mmV(c).gold}`;
+const mmMono=o=>{const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const mmTab=(o,L,big,c)=>{const [n1,n2]=coverNames(o);
+  return `<div class="mm-tab${big?' big':''}">${c.goldv?'<i class="mm-gv"></i>':''}<i class="mm-sheen"></i><i class="mm-frame"></i>
+    <div class="mm-in"><p class="mm-k${big?' kicker':''}">${ev(o,L)}</p><h1 class="mm-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1><i class="mm-rule"></i>
+      <p class="mm-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>${big&&o.venue?`<p class="mm-ven">${esc(o.venue)}</p>`:''}</div></div>`};
+FAMILY({key:'marmar',name:'Marmar',meaning:'Marble tablet',
+  blurb:'A polished marble tablet on linen, the names cut into the stone and gilded. It lifts towards guests as the card opens.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1300,
+  page(o,th,L){const en=o.lang==='en',c=th.c;
+    return `<section class="page pg-marmar2${c.dark?' mm-dk':''}" style="${mmStoneVars(c)}"><div class="mm-linen"></div>
+      <div class="reveal" style="width:84%;max-width:340px">${mmTab(o,L,true,c)}</div>
+      <div class="mm-coasters">
+        <a class="mm-co reveal d1" data-go="when" href="#"><small>${en?'Event':'Butiran'}</small><b>${en?'Details':'Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="mm-co reveal d2" data-go="rsvp" href="#"><small>${en?'Reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+        <a class="mm-co reveal d3" data-go="loc" href="#"><small>${en?'Find us':'Cari kami'}</small><b>${en?'Location':'Lokasi'}</b></a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-marmar2${c.dark?' mm-dk':''}" style="${mmStoneVars(c)}"><div class="mm-linen"></div>
+      <div class="mm-stage">${mmTab(o,L,false,c)}</div>
+      <div class="mm-foot">${guest?`<p class="mm-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="mm-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.classList.toggle('mm-dark',!!c.dark);
+    el.style.setProperty('--stone',c.sheet);el.style.setProperty('--veins',mmV(c).veins);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  // the same colourway ids as the old marble family, so published cards keep working
+  themes:[
+    {k:'carrara',n:'Carrara',desc:'White Carrara, gold in the veins',c:{ground:'#d8d1c5',sheet:'#efece6',ink:'#2e2924',accent:'#6e5428',gold:'#b38d45',pagefg:'#3a3128',vein:'rgba(70,72,78,.42)',goldv:1,seed:3}},
+    {k:'hijau',n:'Hijau Zamrud',desc:'Verde green marble, gold lettering',c:{ground:'#e2dccf',sheet:'#203f35',ink:'#ece6d6',accent:'#e0c58a',gold:'#d2ad62',pagefg:'#2c3128',vein:'rgba(214,232,220,0.67)',seed:11,dark:1}},
+    {k:'hitam',n:'Hitam',desc:'Nero marble, gold in the veins',c:{ground:'#e3dbcf',sheet:'#1d1d1f',ink:'#ece8e0',accent:'#e0c48a',gold:'#d4af66',pagefg:'#2e2a26',vein:'rgba(235,235,238,0.51)',goldv:1,seed:19,dark:1}},
+    {k:'jambu',n:'Merah Jambu',desc:'Rosa marble, gold in the veins',c:{ground:'#ece0db',sheet:'#ead3cd',ink:'#3a2629',accent:'#7f4250',gold:'#b38a4a',pagefg:'#3a2629',vein:'rgba(120,64,70,.34)',goldv:1,seed:7}},
+    {k:'krim',n:'Krim',desc:'Cream travertine marble',c:{ground:'#d5cbb9',sheet:'#ebdfc9',ink:'#352a1e',accent:'#7a5a2a',gold:'#a8823e',pagefg:'#352a1e',vein:'rgba(120,92,58,.4)',seed:23}},
+    {k:'biru',n:'Biru',desc:'Midnight blue marble, gold lettering',c:{ground:'#dfe1e2',sheet:'#22324d',ink:'#e8ebf0',accent:'#e0c78f',gold:'#d2b06a',pagefg:'#252c38',vein:'rgba(220,230,245,0.61)',seed:31,dark:1}},
+    {k:'mauve',n:'Mauve',desc:'Mauve marble on stone linen',c:{ground:'#d3c4c3',sheet:'#ddc8cb',ink:'#3a2830',accent:'#6e4458',gold:'#b0905a',pagefg:'#3a2830',vein:'rgba(90,44,62,.34)',seed:37}},
+    {k:'pic',n:'Pic',desc:'Peach marble on sand linen',c:{ground:'#ddd0c2',sheet:'#f2dfcf',ink:'#3c2a20',accent:'#9c5636',gold:'#b8905a',pagefg:'#3c2a20',vein:'rgba(150,92,62,.34)',seed:41}},
+    {k:'kunyit',n:'Kunyit',desc:'Siena yellow marble, deep ink',c:{ground:'#e8e0cd',sheet:'#d9b464',ink:'#2e2210',accent:'#5a3a0e',gold:'#8a6420',pagefg:'#2e2a22',vein:'rgba(110,70,22,.45)',seed:43}},
+    {k:'lavender',n:'Lavender',desc:'Lilac-grey marble, silver-gold',c:{ground:'#d4d1da',sheet:'#e0dbe8',ink:'#2f2b3a',accent:'#5b4f86',gold:'#a89a74',pagefg:'#2f2b3a',vein:'rgba(80,70,112,.34)',seed:47}},
+    {k:'karang',n:'Karang',desc:'Deep teal marble, gold lettering',c:{ground:'#e4ded4',sheet:'#1e5552',ink:'#eaf0ec',accent:'#e6c991',gold:'#d6b06e',pagefg:'#22302e',vein:'rgba(226,240,234,0.64)',seed:53,dark:1}},
+    {k:'pandan',n:'Pandan',desc:'Forest green marble, gold lettering',c:{ground:'#e5e0cf',sheet:'#2d5a44',ink:'#eef0e4',accent:'#e6cd8c',gold:'#d6b45a',pagefg:'#26302a',vein:'rgba(224,240,220,0.64)',seed:59,dark:1}},
+    {k:'kopi',n:'Kopi',desc:'Emperador brown marble, cream veins',c:{ground:'#e2d7c7',sheet:'#4a3428',ink:'#f2e8da',accent:'#e6c991',gold:'#d3aa66',pagefg:'#33271f',vein:'rgba(236,216,190,0.75)',seed:61,dark:1}},
+    {k:'hujan',n:'Hujan',desc:'Blue-grey marble on pale linen',c:{ground:'#e7e8e8',sheet:'#cad2da',ink:'#22303e',accent:'#2f4a68',gold:'#9c8c66',pagefg:'#22303e',vein:'rgba(48,66,88,.36)',seed:67}},
+    {k:'fajar',n:'Fajar',desc:'Dawn pink marble, gold in the veins',c:{ground:'#dfcdc7',sheet:'#f0d8d2',ink:'#3c2429',accent:'#94404f',gold:'#b8905a',pagefg:'#3c2429',vein:'rgba(160,70,90,.3)',goldv:1,seed:71}},
+  ]});
+
+})()}catch(e){console.error("family marmar failed",e)}
+
+
 /* ===== family: menu ===== */
 try{(()=>{
 /* menu: a fine-dining menu in a leather folder with engraved gold corners, laid between a fork and a knife.
@@ -4391,6 +5236,74 @@ FAMILY({key:'merak',name:'Merak',meaning:'Peacock train',
   ]});
 
 })()}catch(e){console.error("family merak failed",e)}
+
+
+/* ===== family: mihrab ===== */
+try{(()=>{
+/* mihrab: an illuminated manuscript frontispiece. A vellum leaf ruled in gold, blue and black (jadwal) lies on dark leather;
+   on it a pointed arch whose frame and spandrels are filled with real gold illumination (pd-illum-1, Met Museum, public domain).
+   Cover: tap "Buka Jemputan", a gleam runs over the gold and the leaf settles into place as the front page.
+   Page: the same leaf, larger, with the names in the arch. Skin: vellum leaves with jadwal rules and a gilt roundel over each heading. */
+let mhN=0;
+// the arch panel, drawn in a 100 x 150 box: illumination fills everything outside the arch
+const mhArch=(uid)=>{const arch='M15 140V62C15 40 36 30 50 12C64 30 85 40 85 62V140Z';
+  const ring=K.ring(8,2.6,50,27).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="1.25" fill="url(#mhg${uid})"/>`).join('');
+  return `<svg class="mh-arch" viewBox="0 0 100 150" ${NS} aria-hidden="true"><defs>
+    <linearGradient id="mhg${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e2a4"/><stop offset=".45" stop-color="#c99a45"/><stop offset=".7" stop-color="#8a6324"/><stop offset="1" stop-color="#e4c47c"/></linearGradient>
+    <clipPath id="mhc${uid}"><path d="M6 4H94V146H6Z${arch}" clip-rule="evenodd"/></clipPath>
+    <radialGradient id="mhv${uid}" cx=".5" cy=".42" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+    <g clip-path="url(#mhc${uid})"><image href="${A}pd-illum-1.jpg" x="-22" y="-4" width="144" height="158" preserveAspectRatio="xMidYMid slice"/>
+      <rect x="0" y="0" width="100" height="150" fill="#3a2508" opacity=".12"/></g>
+    <path d="${arch}" fill="url(#mhv${uid})"/>
+    <rect x="6" y="4" width="88" height="142" fill="none" stroke="url(#mhg${uid})" stroke-width="1.3"/>
+    <rect x="4.3" y="2.3" width="91.4" height="145.4" fill="none" stroke="#1d1a17" stroke-width=".3"/>
+    <rect x="6.9" y="4.9" width="86.2" height="140.2" fill="none" stroke="#1d1a17" stroke-width=".25"/>
+    <path d="${arch}" fill="none" stroke="#1d1a17" stroke-width="1.5"/><path d="${arch}" fill="none" stroke="url(#mhg${uid})" stroke-width="1"/>
+    <path d="M18 138V62.5C18 42.5 38 33 50 17C62 33 82 42.5 82 62.5V138Z" fill="none" class="mh-in" stroke-width=".35" stroke-dasharray="1 .9"/>
+    <path d="M50 22l1.2 3.3 3.3 1.2-3.3 1.2L50 31l-1.2-3.3-3.3-1.2 3.3-1.2Z" fill="url(#mhg${uid})"/>${ring}
+    <path d="${K.scallop(12,4.6,1.3,50,3)}" fill="url(#mhg${uid})" stroke="#1d1a17" stroke-width=".22"/><circle cx="50" cy="3" r="3.2" fill="#27508f" stroke="#1d1a17" stroke-width=".2"/>
+    <path d="${K.star(8,2.5,1.1,50,3)}" fill="url(#mhg${uid})"/><circle cx="50" cy="3" r=".55" fill="#b8402c"/>
+  </svg>`};
+const mhLeaf=(o,L,big)=>{const [n1,n2]=coverNames(o),u=++mhN;return `<div class="mh-leaf${big?' big':''}"><div class="mh-block">${mhArch(u)}
+  <div class="mh-txt">${big&&o.bismillah?'<p class="mh-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+    <p class="mh-k${big?' kicker':''}">${ev(o,L)}</p><p class="mh-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+    <p class="mh-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>${big&&o.hijri?`<p class="mh-hj">${esc(o.hijri)}</p>`:''}${big&&o.venue?`<p class="mh-ven">${esc(o.venue)}</p>`:''}</div>
+  </div><i class="mh-gleam"></i></div>`};
+const MHD='#efe6d4',MHL='#2c2620';
+const mhT=(k,n,desc,ground,accent,light)=>({k,n,desc,c:{ground,sheet:'#f7f0e1',ink:'#2c2620',accent,gold:'#b8924e',pagefg:light?MHL:MHD,leather:light?'1':''}});
+FAMILY({key:'mihrab',name:'Mihrab',meaning:'Illuminated arch',
+  blurb:'A vellum manuscript leaf on leather, ruled in gold, with your names inside a pointed arch framed by real gold illumination.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-mihrab2"><div class="mh-leath"></div>
+    <div class="reveal" style="width:100%;display:flex;justify-content:center">${mhLeaf(o,L,true)}</div>
+    <div class="mh-tabs reveal d2"><a class="mh-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>${o.x_rsvp?`<a class="mh-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-mihrab2"><div class="mh-leath"></div>
+    <div class="mh-stage">${mhLeaf(o,L,false)}</div>
+    <div class="mh-foot">${guest?`<p class="mh-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="mh-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    mhT('zamrud','Zamrud','Gold illumination on emerald leather','#0f3a30','#1f5a48'),
+    mhT('gading','Gading Emas','Gold illumination on ivory calf','#e3d8c2','#7d5f2f',1),
+    mhT('biru','Biru Malam','Gold illumination on midnight leather','#18233a','#27406e'),
+    mhT('merah','Merah Bata','Gold illumination on brick leather','#521b18','#7a2a22'),
+    mhT('terakota','Terakota','Gold illumination on terracotta leather','#6e301f','#8a3f28'),
+    mhT('sage','Sage','Gold illumination on sage leather','#4f5c47','#55654b'),
+    mhT('nila','Nila','Gold illumination on indigo leather','#16213b','#2a3c6e'),
+    mhT('ungu','Ungu','Gold illumination on plum leather','#371b31','#5a2d50'),
+    mhT('champagne','Champagne','Gold illumination on champagne calf','#cdbb98','#7d5f2f',1),
+    mhT('mauve','Mauve Zaitun','Gold illumination on mulberry leather','#4f1a27','#6e3a4f'),
+    mhT('pic','Pic Sage','Gold illumination on olive leather, peach ink','#465341','#a8573a'),
+    mhT('kunyit','Kunyit Nila','Gold illumination on indigo leather, saffron ink','#1b2846','#a24a22'),
+    mhT('lavender','Lavender Arang','Gold illumination on charcoal leather, lilac ink','#36343c','#5f5296'),
+    mhT('karang','Teal Karang','Gold illumination on teal leather','#0b4444','#0f6060'),
+    mhT('pandan','Pandan','Gold illumination on pandan leather','#0d4430','#145a3e'),
+    mhT('kopi','Kopi Susu','Gold illumination on coffee leather','#36271f','#6b4a3a'),
+    mhT('hujan','Biru Hujan','Gold illumination on slate leather','#24364a','#3a5570'),
+    mhT('fajar','Fajar','Gold illumination on dusk leather, rose ink','#432034','#9a3f58'),
+  ]});
+
+})()}catch(e){console.error("family mihrab failed",e)}
 
 
 /* ===== family: monogram ===== */
@@ -4667,61 +5580,56 @@ FAMILY({key:'mughal',name:'Mahal',meaning:'Mughal palace',
 
 /* ===== family: muzium ===== */
 try{(()=>{
-/* muzium: a gallery wall under a track spotlight. A carved gilt frame holds an abstract colour-field painting,
-   a wall placard beside it, a brass-post rope barrier in front. Opening: the spotlight brightens and the frame fades.
-   Page: the placard, the couple as "the work", the date and venue as provenance. Skin: museum-placard labels. */
-let mzN=0;
-// carved gilt corner: scrolls and a shell fan, gold gradient with a dark tooled line
-function mzCorner(c,u){const sh=Array.from({length:7},(_,i)=>{const a=(-90+i*15)*Math.PI/180+Math.PI/4*0;const r=13;return `<path d="M15 15L${(15+Math.cos((i*15)*Math.PI/180)*r).toFixed(1)} ${(15+Math.sin((i*15)*Math.PI/180)*r).toFixed(1)}" />`}).join('');
-  return `<svg class="muzium-cn" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mzg${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2c4"/><stop offset=".3" stop-color="${c.gold}"/><stop offset=".62" stop-color="#7a5820"/><stop offset="1" stop-color="${c.gold}"/></linearGradient></defs>
-   <g fill="url(#mzg${u})" stroke="#4a3412" stroke-width=".6" stroke-linejoin="round">
-    <path d="M2 2H44C38 4 34 8 33 13C32 19 37 22 40 19C43 16 40 12 37 14C38 9 43 7 49 8C42 11 41 20 35 24C29 28 22 24 20 20C17 26 22 31 18 36C14 41 8 40 8 46C7 40 4 38 2 38Z"/>
-    <path d="M10 10C18 6 27 8 30 14C26 12 20 12 16 16C12 20 12 26 14 30C8 27 6 18 10 10Z" opacity=".95"/>
-    <circle cx="11" cy="11" r="3.2"/><path d="M44 2C50 3 54 6 56 10C52 8 48 8 46 9Z"/><path d="M2 44C3 50 6 54 10 56C8 52 8 48 9 46Z"/></g>
-   <g fill="none" stroke="#fff2c4" stroke-opacity=".55" stroke-width=".5">${sh}</g></svg>`}
-function mzPainting(){return `<span class="muzium-canvas"><i class="muzium-b a"></i><i class="muzium-b b"></i><i class="muzium-b c"></i><i class="muzium-tex"></i></span>`}
-function mzFrame(c,u,small){return `<span class="muzium-frame${small?' sm':''}"><i class="muzium-bead"></i><i class="muzium-cove"></i><i class="muzium-slip"></i>${mzPainting()}
-  ${['tl','tr','bl','br'].map(k=>`<i class="muzium-cw ${k}">${mzCorner(c,u)}</i>`).join('')}<i class="muzium-crest t"></i><i class="muzium-crest b"></i></span>`}
-const MZ_CREST=svgUriSq(`<svg ${NS} viewBox="0 0 60 24"><path d="M30 2C34 8 40 10 48 9C44 13 38 14 34 13C36 17 40 19 46 19C40 23 33 21 30 16C27 21 20 23 14 19C20 19 24 17 26 13C22 14 16 13 12 9C20 10 26 8 30 2Z"/></svg>`);
-function mzPlacard(o,L,big){const [n1,n2]=coverNames(o),en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),ok=!isNaN(d);
-  const acc=ok?`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`:'';
-  if(!big)return `<span class="muzium-pl"><b>${esc(n1)} &amp; ${esc(n2)}</b><small>${en?'Malaysia, b.':'Malaysia, l.'} ${ok?d.getFullYear():''}</small><i>${ev(o,L)}</i><small>${en?'Love, prayers and blessings on canvas':'Kasih, doa dan restu di atas kanvas'}</small><em>No. ${acc}</em></span>`;
-  return `<div class="muzium-plc"><p class="muzium-acc"><span>No. ${acc}</span><span>${en?'Gallery':'Galeri'} 1</span></p>
-   <h1 class="names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1><p class="muzium-orig">${en?'The bride and groom · Malaysia, b.':'Pengantin · Malaysia, l.'} ${ok?d.getFullYear():''}</p>
-   <p class="muzium-title"><i>${ev(o,L)}</i>, ${ok?d.getFullYear():''}</p><p class="muzium-med">${en?'Love, prayers and blessings on the canvas of life':'Kasih, doa dan restu di atas kanvas kehidupan'}</p>
-   <p class="muzium-lab">${en?'Provenance':'Provenans'}</p><p class="muzium-txt">${en?'On view':'Dipamerkan pada'} ${esc(fmtDate(o.date,o.lang))}${o.hijri?` (${esc(o.hijri)})`:''}, ${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}, ${en?'at':'di'} <b>${esc(o.venue)}</b>${o.address?`, ${esc(o.address)}`:''}.</p>
-   ${o.hosts?`<p class="muzium-lab">${en?'Courtesy of':'Ihsan'}</p><p class="muzium-txt">${esc(o.hosts)}</p>`:''}
-   <p class="muzium-note">${en?'Your presence completes the collection.':'Kehadiran anda melengkapkan koleksi ini.'}</p></div>`}
-
-FAMILY({key:'muzium',name:'Muzium',meaning:'Gallery painting',
-  blurb:'A carved gilt frame under a gallery spotlight, an abstract painting and a wall placard; the light brightens, the frame fades, and the placard names the couple as the work.',
-  fonts:{d:"'Jost', sans-serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
-  page(o,th,L){const c=th.c,en=o.lang==='en',u=++mzN;
-    return `<section class="page pg-muzium" style="--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--crest:${MZ_CREST}"><div class="muzium-wall"></div><i class="muzium-pool"></i>
-     <p class="muzium-wt reveal">${en?'Exhibition':'Pameran'} · <b>${ev(o,L)}</b></p>
-     <div class="muzium-mini reveal d1">${mzFrame(c,u,true)}</div>
-     <div class="reveal d2 muzium-plw">${mzPlacard(o,L,true)}</div></section>`},
-  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',u=++mzN,[n1,n2]=coverNames(o);
-    return `<div class="cover cv-muzium" style="--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--crest:${MZ_CREST}"><div class="muzium-wall"></div>
-     <i class="muzium-rail"></i><i class="muzium-lamp"></i><i class="muzium-cone"></i><i class="muzium-pool"></i><i class="muzium-glow"></i>
-     <div class="muzium-head"><p class="muzium-ex">${en?'Exhibition':'Pameran'}</p><p class="muzium-ttl">${ev(o,L)}</p><p class="muzium-who">${esc(n1)} &amp; ${esc(n2)}</p></div>
-     <${tag} class="muzium-tap" ${attr} aria-label="${L.open}">${mzFrame(c,u,false)}</${tag}>
-     ${mzPlacard(o,L,false)}
-     <i class="muzium-floor"></i><i class="muzium-post l"></i><i class="muzium-post r"></i><svg class="muzium-rope" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="${c.rope}" stroke-width="7" stroke-linecap="round"/><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="3 4" transform="translate(0 -1.5)"/></svg>
-     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),y=isNaN(d)?'':d.getFullYear();
-    el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p3',c.p3);
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('muzium-sec');const h=$('h2',s);if(!h)return;
-      h.innerHTML=`<span class="muzium-hp"><em>No. ${y}.${String(i+1).padStart(2,'0')}</em><b>${h.innerHTML}</b><i>${ev(o,L)}, ${y}</i></span>`})},
+/* muzium: a quiet gallery wall. One public-domain painting in a carved gilt frame under a brass picture light,
+   the couple's names set as the exhibition title, and a museum wall label with the date, time and venue.
+   Cover: tap "Buka Jemputan" and the view walks along the wall to the next room.
+   Page: the next wall: the couple photo framed like a gallery print (or the painting again), the names and a
+   wall text, with small room signs that lead to the details. Skin: white museum text panels on the wall colour. */
+const GM_ART={
+  'still-1':['Rachel Ruysch','Still Life with Flowers','c. 1750'],'still-2':['Jan Davidsz. de Heem','Vase of Flowers','c. 1670'],
+  'still-3':['Abraham Mignon','Flowers in a Metal Vase','c. 1670'],'still-4':['Rachel Ruysch','Flowers in a Glass Vase','1686'],
+  'paint-monet-irises':['Claude Monet',"The Artist's Garden in Giverny",'1900'],'paint-monet-poppies':['Claude Monet','Poppy Field (Giverny)','1890–91'],
+  'paint-hassam-island':['Childe Hassam','The Island Garden','1892'],'paint-hassam-water':['Childe Hassam','The Water Garden','1909'],
+  'paint-hokusai-fuji':['Katsushika Hokusai','Fine Wind, Clear Weather','c. 1830–31']};
+/* photographed carved gilt frames (Met Museum, CC0); the opening of each, as % of the image */
+const GM_FR={2:{ar:'900/1204',o:'left:15.6%;top:11.5%;width:69.4%;height:76.3%'},3:{ar:'900/1097',o:'left:15.3%;top:12.1%;width:69.6%;height:75.7%'}};
+const gmFrame=(c,cls='')=>{const f=GM_FR[c.fr]||GM_FR[2];return `<span class="gm-frame ${cls}" style="aspect-ratio:${f.ar}"><span class="gm-canvas" style="${f.o}"><img src="${A}pd-${c.art}.jpg" alt="" style="object-position:${c.pos||'50% 50%'}"><i class="gm-varnish"></i></span><img class="gm-gilt" src="${A}pd-frame-${c.fr||2}.webp" alt=""></span>`};
+const gmCredit=c=>{const a=GM_ART[c.art];return a?`${esc(a[0])}, <i>${esc(a[1])}</i>, ${esc(a[2])}`:''};
+FAMILY({key:'muzium',name:'Galeri',meaning:'Museum gallery wall',
+  blurb:'A gallery wall with one real painting in a gilt frame under a warm picture light, the names as the exhibition title and the details on a museum label.',
+  fonts:{d:"'Jost', sans-serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',photo=typeof couplePhotoOf==='function'&&couplePhotoOf(o);
+    return `<section class="page pg-muzium"><i class="gm-wall"></i><i class="gm-glow gm-pglow"></i>
+      ${photo?'':`<div class="gm-pframe reveal"><i class="gm-lamp"></i>${gmFrame(c)}</div>`}
+      <p class="gm-k kicker reveal d1">${ev(o,L)}</p>
+      <h1 class="names gm-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+      <p class="gm-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>
+      ${o.hosts?`<p class="gm-intro reveal d2">${en?`${esc(o.hosts)} warmly invite you to celebrate with us.`:`${esc(o.hosts)} menjemput tuan/puan meraikan hari bahagia ini bersama kami.`}</p>`:''}
+      <nav class="gm-signs reveal d3"><a data-go="when" href="#"><small>${en?'Room 1':'Bilik 1'}</small>${en?'Details':'Butiran'}<i>&rarr;</i></a>${o.x_rsvp?`<a data-go="rsvp" href="#"><small>${en?'Room 2':'Bilik 2'}</small>RSVP<i>&rarr;</i></a>`:''}<a data-go="loc" href="#"><small>${en?'Way in':'Arah'}</small>${en?'Map':'Lokasi'}<i>&rarr;</i></a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',y=String(o.date||'').slice(0,4);
+    return `<div class="cover cv-muzium"><div class="gm-room"><i class="gm-wall"></i><i class="gm-glow"></i>
+      <div class="gm-title"><p class="gm-k">${ev(o,L)}</p><p class="gm-tn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="gm-hang"><i class="gm-lamp"></i>${gmFrame(c)}</div>
+      <div class="gm-label"><b>${esc(n1)} &amp; ${esc(n2)}</b><em>${ev(o,L)}, ${esc(y)}</em>
+        <span>${esc(fmtDate(o.date,o.lang))} · ${esc(fmtTime(o.start,o.lang))}</span><span>${esc(o.venue)}</span>
+        ${guest?`<span class="gm-for">${L.dear} <strong>${esc(guest)}</strong></span>`:''}
+        <small>${en?'On the wall':'Di dinding'}: ${gmCredit(c)}</small></div>
+      </div>
+      <${tag} class="gm-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th){K.cards(el);el.classList.toggle('gm-dark',!!th.c.dark);const sc=$('.scroller',el),en=o.lang==='en';
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.dataset.room=(en?'Room ':'Bilik ')+(i+1)});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'hijau',n:'Hijau Galeri',desc:'Museum-green wall, terracotta canvas',c:{ground:'#2f4a40',sheet:'#f7f4ee',ink:'#22201c',accent:'#a5482f',gold:'#c9a24f',pagefg:'#efe9dc',p1:'#b0503a',p2:'#e2b46a',p3:'#3d2a2a',rope:'#6e1a22'}},
-    {k:'merah',n:'Merah',desc:'Oxblood wall, blue and sand canvas',c:{ground:'#5a1e22',sheet:'#f8f4ec',ink:'#241c1a',accent:'#1f3a5a',gold:'#d0aa58',pagefg:'#f3e6d6',p1:'#1f3a5a',p2:'#d9c39a',p3:'#7a2a24',rope:'#1e2a3c'}},
-    {k:'putih',n:'Putih',desc:'White gallery, blue and ochre canvas',c:{ground:'#e9e6e0',sheet:'#ffffff',ink:'#22201d',accent:'#2e4a6b',gold:'#c39a4c',pagefg:'#2a2622',p1:'#2e4a6b',p2:'#d7a541',p3:'#a33b2e',rope:'#7a1f28'}},
-    {k:'nila',n:'Nila',desc:'Navy wall, rust and cream canvas',c:{ground:'#1d2a44',sheet:'#f7f4ee',ink:'#1e2230',accent:'#b0563a',gold:'#d2ac60',pagefg:'#ece6d8',p1:'#c2603e',p2:'#ead7b5',p3:'#2a3f5f',rope:'#7a2228'}},
-    {k:'kelabu',n:'Kelabu',desc:'Slate wall, ochre and teal canvas',c:{ground:'#5f5e5a',sheet:'#f7f5f0',ink:'#22211f',accent:'#3b5a54',gold:'#cfaa5c',pagefg:'#f1ece2',p1:'#d4a64a',p2:'#3b5a54',p3:'#e8dcc4',rope:'#2c2a28'}},
-    {k:'jambu',n:'Jambu',desc:'Blush wall, plum and peach canvas',c:{ground:'#d4b2ac',sheet:'#fffaf7',ink:'#2e2224',accent:'#7a2f3f',gold:'#b88f4e',pagefg:'#3a2628',p1:'#7a2f3f',p2:'#e8c9a8',p3:'#4a5a4e',rope:'#5a1f2c'}},
-    {k:'hitam',n:'Hitam',desc:'Black wall, deep red and gold canvas',c:{ground:'#171616',sheet:'#f6f2ea',ink:'#1d1b18',accent:'#8a2f2a',gold:'#cfa75c',pagefg:'#ece4d4',p1:'#8a2f2a',p2:'#c49a52',p3:'#2d2b28',rope:'#5c1a1e'}},
-    {k:'sage',n:'Sage',desc:'Sage wall, forest and wheat canvas',c:{ground:'#949f88',sheet:'#fbf9f2',ink:'#1f241c',accent:'#2f4a3a',gold:'#c3a058',pagefg:'#1f241c',p1:'#2f4a3a',p2:'#e3cfa0',p3:'#9a4a30',rope:'#2f4a3a'}},
+    {k:'hijau',n:'Hijau Galeri',desc:'Museum-green wall, Dutch flower painting',c:{ground:'#2f4a40',sheet:'#f8f5ee',ink:'#22201c',accent:'#2f4a40',gold:'#c9a24f',pagefg:'#efe9dc',art:'still-2',fr:2,pos:'50% 40%',dark:1}},
+    {k:'merah',n:'Merah',desc:'Oxblood wall, Dutch flower painting',c:{ground:'#5a1e22',sheet:'#f8f4ec',ink:'#241c1a',accent:'#5a1e22',gold:'#d0aa58',pagefg:'#f3e6d6',art:'still-1',fr:3,pos:'50% 35%',dark:1}},
+    {k:'putih',n:'Putih',desc:'White gallery, Monet poppy field',c:{ground:'#e9e6e0',sheet:'#ffffff',ink:'#22201d',accent:'#6b4a2e',gold:'#c39a4c',pagefg:'#2a2622',art:'paint-monet-poppies',fr:2,pos:'50% 60%'}},
+    {k:'nila',n:'Nila',desc:'Navy wall, Hokusai red Fuji',c:{ground:'#1d2a44',sheet:'#f7f4ee',ink:'#1e2230',accent:'#1d2a44',gold:'#d2ac60',pagefg:'#ece6d8',art:'paint-hokusai-fuji',fr:3,pos:'50% 50%',dark:1}},
+    {k:'kelabu',n:'Kelabu',desc:'Slate wall, Hassam water garden',c:{ground:'#5f5e5a',sheet:'#f7f5f0',ink:'#22211f',accent:'#3b5a54',gold:'#cfaa5c',pagefg:'#f1ece2',art:'paint-hassam-water',fr:2,pos:'50% 50%',dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Blush wall, Hassam island garden',c:{ground:'#d9bcb5',sheet:'#fffaf7',ink:'#2e2224',accent:'#7a2f3f',gold:'#b88f4e',pagefg:'#3a2628',art:'paint-hassam-island',fr:3,pos:'50% 50%'}},
+    {k:'hitam',n:'Hitam',desc:'Black wall, Dutch flower painting',c:{ground:'#171616',sheet:'#f6f2ea',ink:'#1d1b18',accent:'#3a2a1c',gold:'#cfa75c',pagefg:'#ece4d4',art:'still-3',fr:3,pos:'50% 35%',dark:1}},
+    {k:'sage',n:'Sage',desc:'Sage wall, Monet iris garden',c:{ground:'#a3ac97',sheet:'#fbf9f2',ink:'#1f241c',accent:'#2f4a3a',gold:'#c3a058',pagefg:'#1f241c',art:'paint-monet-irises',fr:2,pos:'50% 50%'}},
   ]});
 
 })()}catch(e){console.error("family muzium failed",e)}
@@ -4729,65 +5637,50 @@ FAMILY({key:'muzium',name:'Muzium',meaning:'Gallery painting',
 
 /* ===== family: neon ===== */
 try{(()=>{
-/* neon: script names bent in glass tube, mounted on clear acrylic with standoffs against a brick or tiled wall, clips and a cable.
-   Cover: the names are unlit glass while the small gold line glows; press the wall switch and they flicker on once, light the wall, then fade to the page.
-   Page: a smaller lit sign over a brass plaque. Skin: dark cards with neon-tube heading frames. */
+/* neon: one line of script neon glowing on a plaster wall at dusk, with an engraved brass plaque under it.
+   Cover: almost all darkness; the names in monoline glass tube light a pool of wall around them. Tap "Buka Jemputan":
+   the tube brightens, the wall falls away into the same wall on the front page.
+   Page: a smaller sign, the plaque with date and venue, and three little brass name plates that lead to the sections.
+   Skin: dark plaster cards with a brass hairline and a softly lit script heading. */
 needFont('Sacramento');
-needFont('Tilt+Neon');
-const SC="'Sacramento', cursive",TN="'Tilt Neon', sans-serif",J="'Jost', sans-serif";
-let uid=0;
-const fit=(s,max,fs,k=.44)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-function wall(c){const r=K.rnd(7);
-  if(c.wt==='t'){let t='';for(let y=0;y<4;y++)for(let x=-1;x<3;x++){const ox=(y%2)*22,v=(r()*.16-.08);t+=`<rect x="${x*44+ox+1.5}" y="${y*22+1.5}" width="41" height="19" rx="2.5" fill="${c.wall}" style="filter:brightness(${(1+v).toFixed(2)})"/><path d="M${x*44+ox+4} ${y*22+4.5}h35" stroke="#fff" stroke-opacity=".09" stroke-width="1.2"/>`}
-    return K.uri(`<svg ${NS} width="88" height="88" viewBox="0 0 88 88"><rect width="88" height="88" fill="${c.mortar}"/>${t}</svg>`)}
-  let b='';for(let y=0;y<4;y++)for(let x=-1;x<3;x++){const ox=(y%2)*31,v=r()*.3-.15,w=r()*.5;b+=`<rect x="${x*62+ox+1.6}" y="${y*24+1.6}" width="58.8" height="20.8" rx="1.2" fill="${c.wall}" opacity="${(.86+v*.4).toFixed(2)}"/>${w>.3?`<rect x="${x*62+ox+6+r()*20}" y="${y*24+5+r()*8}" width="${(6+r()*14).toFixed(1)}" height="${(2+r()*3).toFixed(1)}" fill="#000" opacity=".12"/>`:''}<path d="M${x*62+ox+2} ${y*24+2.4}h58" stroke="#fff" stroke-opacity=".06"/>`}
-  return K.uri(`<svg ${NS} width="124" height="96" viewBox="0 0 124 96"><rect width="124" height="96" fill="${c.mortar}"/>${b}</svg>`)}
-// one neon line: glass tube underlay, glow (filter) and hot core
-function tube(txt,x,y,fs,col,cls,font,u,anchor='middle'){const a=`x="${x}" y="${y}" text-anchor="${anchor}" font-size="${fs.toFixed(1)}"`;
-  return `<g class="nn-line ${cls}"><text ${a} class="nn-glass ${font}" fill="none" stroke="${col}" stroke-width="3.2" stroke-linejoin="round">${txt}</text><text ${a} class="nn-glass2 ${font}" fill="none" stroke="#fff" stroke-width=".7" transform="translate(-.6 -.8)">${txt}</text>
-   <g class="nn-on" filter="url(#ng${u})"><text ${a} class="${font}" fill="${col}" stroke="${col}" stroke-width="2.4" stroke-linejoin="round">${txt}</text></g><text ${a} class="nn-core ${font}" fill="#fff" fill-opacity=".9" stroke="#fff" stroke-width=".6">${txt}</text></g>`}
-function sign(o,th,L,small){const c=th.c,u=++uid,[n1,n2]=coverNames(o),f1=fit(n1,270,78),f2=fit(n2,270,78),en=o.lang==='en';
-  const clip=(x,y)=>`<g transform="translate(${x} ${y})"><rect x="-1.8" y="-7" width="3.6" height="14" rx="1" fill="url(#nm${u})"/><rect x="-3.2" y="5" width="6.4" height="3" rx="1" fill="#3a3a3a"/></g>`;
-  const ys=[118,214];
-  return `<svg class="nn-sign" viewBox="0 0 320 300" aria-hidden="true"><defs>
-   <filter id="ng${u}" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="1.4" result="a"/><feGaussianBlur stdDeviation="5" result="b"/><feGaussianBlur stdDeviation="14" result="d"/><feMerge><feMergeNode in="d"/><feMergeNode in="b"/><feMergeNode in="a"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-   <linearGradient id="nm${u}" x1="0" x2="1"><stop offset="0" stop-color="#6b6b6b"/><stop offset=".45" stop-color="#e9e9e9"/><stop offset="1" stop-color="#5a5a5a"/></linearGradient>
-   <linearGradient id="na${u}" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
-   <radialGradient id="ns${u}"><stop offset="0" stop-color="#f4f4f4"/><stop offset=".6" stop-color="#9a9a9a"/><stop offset="1" stop-color="#555"/></radialGradient></defs>
-   <rect x="8" y="10" width="304" height="282" rx="14" fill="#000" opacity=".28" transform="translate(5 8)" class="nn-shadow"/>
-   <rect x="8" y="10" width="304" height="282" rx="14" fill="url(#na${u})" stroke="#fff" stroke-opacity=".28" stroke-width="1"/>
-   <rect x="11" y="13" width="298" height="276" rx="12" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="1"/>
-   ${[[26,28],[294,28],[26,274],[294,274]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="url(#ns${u})"/><circle cx="${x}" cy="${y}" r="7" fill="none" stroke="#000" stroke-opacity=".35" stroke-width=".6"/><circle cx="${x-2}" cy="${y-2}" r="1.6" fill="#fff" opacity=".7"/>`).join('')}
-   <g opacity=".8">${clip(98,ys[0]-6)}${clip(222,ys[0]-4)}${clip(104,ys[1]-5)}${clip(214,ys[1]-6)}</g>
-   ${tube(ev(o,L).toUpperCase(),160,52,13.5,c.gold,'nn-k on',  'nn-tn',u)}
-   ${tube(esc(n1),160,ys[0],f1,c.accent,'nn-n','nn-sc',u)}
-   ${tube('&amp;',160,150,26,c.gold,'nn-amp on','nn-tn',u)}
-   ${tube(esc(n2),160,ys[1],f2,c.accent,'nn-n','nn-sc',u)}
-   ${tube(esc(fmtShort(o.date)).replace(/\./g,' &#183; '),160,262,15,c.gold,'nn-d'+(small?' on':''),'nn-tn',u)}
-   <path d="M160 292v6" stroke="#111" stroke-width="3"/></svg>`}
-const plaque=(o,L,guest,en)=>`<div class="nn-plaque"><i class="s l"></i><i class="s r"></i>${guest?`<p class="nn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="nn-pl"><span>${esc(fmtDate(o.date,o.lang))}</span><span>${esc(fmtTime(o.start,o.lang))} &#183; ${esc(o.venue)}</span></p></div>`;
-FAMILY({key:'neon',name:'Neon',meaning:'Neon sign on brick',
-  blurb:'Script names bent in neon tube on clear acrylic against a brick or tiled wall; flick the switch and they flicker on, light the wall, and fade to the card.',
-  fonts:{d:TN,s:SC,b:J},ms:1550,
-  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-neon" style="--wallp:${wall(th.c)};--plate:${th.c.plate||'#c6a15b'}"><i class="nn-wall"></i><i class="nn-light"></i>
-    <div class="nn-ps reveal">${sign(o,th,L,true)}</div>
-    <div class="reveal d1">${plaque(o,L,'',en)}</div>
-    <p class="nn-host reveal d2">${en?'Hosted by':'Anjuran'}<b>${esc(o.hosts||'')}</b></p></section>`},
+const NN_SC="'Sacramento', cursive";
+// size the script to the longest name so two names never wrap past the wall
+const nnFs=(o,max,room)=>{const [a,b]=coverNames(o),n=Math.max(5,(a||'').length,(b||'').length);return Math.min(max,room/(n*.4)).toFixed(1)};
+const nnSign=(o,max,room,cls='')=>{const [n1,n2]=coverNames(o);
+  return `<div class="nn-sign ${cls}" style="--fs:${nnFs(o,max,room)}cqi">
+    <p class="nn-tube">${esc(n1)}</p><p class="nn-amp">&amp;</p><p class="nn-tube">${esc(n2)}</p></div>`};
+const nnScrew=p=>`<i class="nn-screw" style="${p}"></i>`;
+const nnPlaque=inner=>`<div class="nn-plaque">${nnScrew('left:9px;top:50%')}${nnScrew('right:9px;top:50%')}<div class="nn-eng">${inner}</div></div>`;
+FAMILY({key:'neon',name:'Neon',meaning:'Neon at dusk',
+  blurb:'One line of script neon glowing on a plaster wall at dusk, with an engraved brass plaque beneath. The light brightens as the card opens.',
+  fonts:{d:"'Cormorant Garamond', serif",s:NN_SC,b:"'Cormorant Garamond', serif"},ms:1300,
+  page(o,th,L){const en=o.lang==='en';
+    return `<section class="page pg-neon2${th.c.day?' nn-day':''}" style="--wall:${th.c.wall}"><div class="nn-wall"></div>
+      <p class="nn-k kicker reveal">${ev(o,L)}</p>
+      <div class="reveal d1" style="width:100%">${nnSign(o,13.5,64,'sm')}</div>
+      <div class="reveal d2" style="width:78%;max-width:320px">${nnPlaque(`<p class="nn-pd">${esc(fmtDate(o.date,o.lang))}</p><p class="nn-pt">${esc(fmtTime(o.start,o.lang))}${o.end?' – '+esc(fmtTime(o.end,o.lang)):''}</p>${o.venue?`<p class="nn-pv">${esc(o.venue)}</p>`:''}`)}</div>
+      <div class="nn-plates reveal d3">
+        <a class="nn-plate" data-go="when" href="#">${en?'Details':'Butiran'}</a>
+        ${o.x_rsvp?`<a class="nn-plate" data-go="rsvp" href="#">RSVP</a>`:''}
+        <a class="nn-plate" data-go="loc" href="#">${en?'Location':'Lokasi'}</a></div></section>`},
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-neon" style="--wallp:${wall(th.c)};--plate:${th.c.plate||'#c6a15b'}"><i class="nn-wall"></i><i class="nn-light"></i><i class="nn-spot"></i>
-    <div class="nn-cs">${sign(o,th,L,false)}<svg class="nn-cable" viewBox="0 0 60 300" preserveAspectRatio="none"><path d="M30 0C30 60 44 90 40 150S18 240 26 300" fill="none" stroke="#0b0b0b" stroke-width="3.4"/><path d="M30 0C30 60 44 90 40 150S18 240 26 300" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".8" transform="translate(-.8 0)"/></svg></div>
-    ${plaque(o,L,guest,en)}
-    <div class="nn-sw"><${tag} class="nn-switch" ${attr} aria-label="${L.open}"><i class="nn-plate"><i class="nn-tog"></i><i class="sc t"></i><i class="sc b"></i></i></${tag}><span>${en?'Switch on':'Hidupkan suis'}</span></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--wallp',wall(th.c));$$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend','<i class="nn-hl"></i>')})},
+    return `<div class="cover cv-neon2${th.c.day?' nn-day':''}" style="--wall:${th.c.wall}"><div class="nn-wall"></div>
+      <div class="nn-stage">${nnSign(o,19,82)}</div>
+      <div class="nn-plq">${nnPlaque(`<p class="nn-pk">${ev(o,L)}</p><p class="nn-pd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>${o.venue?`<p class="nn-pv">${esc(o.venue)}</p>`:''}`)}</div>
+      <div class="nn-foot">${guest?`<p class="nn-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="nn-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('nn-day',!!th.c.day);el.style.setProperty('--wall',th.c.wall);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'jambu',n:'Jambu',desc:'Hot pink tubes on dark brick',c:{ground:'#1d1210',sheet:'#17121a',ink:'#f3e9ec',accent:'#ff4fa3',gold:'#ffcf8a',wall:'#4a2a24',mortar:'#21140f',wt:'b',pagefg:'#f6eef0',line:'rgba(255,255,255,.14)'}},
-    {k:'biru',n:'Biru',desc:'Ice-blue tubes on charcoal tile',c:{ground:'#111317',sheet:'#15181e',ink:'#e8f1f5',accent:'#4fd8ff',gold:'#ff79c0',wall:'#2a2e36',mortar:'#14161a',wt:'t',pagefg:'#eef5f8',line:'rgba(255,255,255,.14)'}},
-    {k:'ungu',n:'Ungu',desc:'Violet and amber on plum brick',c:{ground:'#170f1a',sheet:'#18121c',ink:'#f0e8f4',accent:'#c07bff',gold:'#ffb347',wall:'#3a2638',mortar:'#170f18',wt:'b',pagefg:'#f3ecf6',line:'rgba(255,255,255,.14)'}},
-    {k:'hijau',n:'Hijau',desc:'Mint tubes on bottle-green tile',c:{ground:'#0b1712',sheet:'#111c18',ink:'#e6f5ee',accent:'#45ffb8',gold:'#f3f7ea',wall:'#17352b',mortar:'#0a1611',wt:'t',pagefg:'#eaf7f0',line:'rgba(255,255,255,.14)'}},
-    {k:'emas',n:'Emas',desc:'Warm white and coral on red brick',c:{ground:'#1e120c',sheet:'#1a1310',ink:'#f6ece2',accent:'#ffd07a',gold:'#ff7a59',wall:'#5a3020',mortar:'#24150e',wt:'b',pagefg:'#f8efe5',line:'rgba(255,255,255,.14)'}},
-    {k:'merah',n:'Merah',desc:'Red tubes on black brick',c:{ground:'#0f0c0c',sheet:'#151212',ink:'#f5e9e6',accent:'#ff4141',gold:'#ffe7dc',wall:'#2a2222',mortar:'#0d0a0a',wt:'b',pagefg:'#f7ecea',line:'rgba(255,255,255,.14)'}},
-    {k:'kapur',n:'Kapur',desc:'Pink and blue tubes on whitewashed brick',c:{ground:'#d9d3ca',sheet:'#1c1a20',ink:'#f2eef2',accent:'#ff3f8e',gold:'#1fa6e8',wall:'#ece7df',mortar:'#c9c1b5',wt:'b',pagefg:'#26232a',line:'rgba(255,255,255,.14)'}},
-    {k:'nila',n:'Nila',desc:'Cyan and magenta on navy tile',c:{ground:'#0c1220',sheet:'#111827',ink:'#e8eef8',accent:'#39e6ff',gold:'#ff4fd8',wall:'#1a2540',mortar:'#0b111d',wt:'t',pagefg:'#edf2fa',line:'rgba(255,255,255,.14)'}},
+    {k:'jambu',n:'Jambu',desc:'Rose-pink neon on aubergine plaster',c:{ground:'#140c10',sheet:'#1d1418',ink:'#f2e6ea',accent:'#ff5fa8',gold:'#ffd9a8',wall:'#3a2530',pagefg:'#efe2e6',cover:'#ff5fa8'}},
+    {k:'biru',n:'Biru',desc:'Ice-blue neon on charcoal concrete',c:{ground:'#0d0f13',sheet:'#171a20',ink:'#e6eef3',accent:'#6fdcff',gold:'#fff1d6',wall:'#2a2f37',pagefg:'#e4ecf1'}},
+    {k:'ungu',n:'Ungu',desc:'Violet neon with an amber ampersand on plum plaster',c:{ground:'#130d17',sheet:'#1c1521',ink:'#efe7f3',accent:'#c58bff',gold:'#ffbf6b',wall:'#34253c',pagefg:'#ece3f0'}},
+    {k:'hijau',n:'Hijau',desc:'Mint neon on bottle-green plaster',c:{ground:'#09130f',sheet:'#111c17',ink:'#e4f2eb',accent:'#5dffc0',gold:'#fff4dc',wall:'#1d3a30',pagefg:'#e2efe8'}},
+    {k:'emas',n:'Emas',desc:'Warm-white neon on terracotta plaster',c:{ground:'#160d08',sheet:'#20150f',ink:'#f5eadf',accent:'#ffd38a',gold:'#ff8a66',wall:'#5a3222',pagefg:'#f3e7db'}},
+    {k:'merah',n:'Merah',desc:'Red neon on black plaster',c:{ground:'#0b0909',sheet:'#151212',ink:'#f3e7e4',accent:'#ff4a4a',gold:'#ffe2d0',wall:'#2a2222',pagefg:'#efe3e0'}},
+    {k:'kapur',n:'Kapur',desc:'Pink neon on a limewashed wall at first light',c:{ground:'#e6e1d8',sheet:'#f6f2ea',ink:'#2b262a',accent:'#f2387f',gold:'#2a9fd8',wall:'#e9e3d9',pagefg:'#2b262a',day:'1'}},
+    {k:'nila',n:'Nila',desc:'Cyan neon with a pink ampersand on navy plaster',c:{ground:'#0a0f1b',sheet:'#121a2a',ink:'#e6edf8',accent:'#4fe6ff',gold:'#ff7ad9',wall:'#1d2944',pagefg:'#e4ebf6'}},
   ]});
 
 })()}catch(e){console.error("family neon failed",e)}
@@ -5101,106 +5994,173 @@ FAMILY({key:'pasport',name:'Pasport',meaning:'Passport booklet',
 })()}catch(e){console.error("family pasport failed",e)}
 
 
+/* ===== family: pawagam ===== */
+try{(()=>{
+/* pawagam (round 7 redesign of the old picture-house poster): an old Malayan panggung wayang.
+   Cover: a velvet house curtain under a swagged pelmet with gold fringe, lit by a warm lamp; in front of it a letterpress
+   programme with a perforated admission stub carrying the guest's name. Tap "Buka Jemputan": the programme is put away and the curtain rises.
+   Page: the stage, curtains tied back, the programme and three ticket stubs that lead to the sections.
+   Skin: letterpress programme cards with a double printed rule on the velvet backdrop. */
+// the pelmet: gilded moulding, a pleated band and four swags edged with braid and fringe (drawn in a 400 x 92 box)
+function pwValance(c,u){const sw=4,w=400/sw;let swags='',fringe='',tass='';
+  for(let i=0;i<sw;i++){const x0=i*w,x1=x0+w,xm=x0+w/2;
+    swags+=`<path d="M${x0-2} 30Q${xm} 92 ${x1+2} 30Z" fill="url(#pwS${u})"/><path d="M${x0+6} 34Q${xm} 80 ${x1-6} 34" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.2"/><path d="M${x0+14} 34Q${xm} 70 ${x1-14} 34" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;
+    for(let t=.04;t<.97;t+=.032){const q=(a,b,cc)=>(1-t)*(1-t)*a+2*(1-t)*t*b+t*t*cc;const x=q(x0-2,xm,x1+2),y=q(30,92,30)-1.2;
+      fringe+=`M${x.toFixed(1)} ${y.toFixed(1)}v6.5`}
+    swags+=`<path d="M${x0-2} 30Q${xm} 92 ${x1+2} 30" fill="none" stroke="${c.gold}" stroke-width="2.2"/><path d="M${x0-2} 30Q${xm} 92 ${x1+2} 30" fill="none" stroke="rgba(255,240,200,.55)" stroke-width=".6" stroke-dasharray="1.4 1.6"/>`;
+    if(i)tass+=`<g transform="translate(${x0} 30)"><path d="M0 0v14" stroke="${c.gold}" stroke-width="1"/><circle cy="15" r="2.6" fill="${c.gold}"/><path d="M-3.4 17h6.8l1.6 15h-10z" fill="${c.gold}"/><path d="M-3 19v12M-1 19v13M1 19v13M3 19v12" stroke="rgba(60,40,10,.45)" stroke-width=".5"/></g>`}
+  return `<svg class="pw-val" viewBox="0 0 400 104" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><defs>
+    <linearGradient id="pwS${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.curtain}"/><stop offset=".6" stop-color="${c.curtain}"/><stop offset="1" stop-color="#000" stop-opacity=".9"/></linearGradient>
+    <linearGradient id="pwG${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a4318"/><stop offset=".35" stop-color="#f0d897"/><stop offset=".6" stop-color="#b48a3e"/><stop offset="1" stop-color="#5a4318"/></linearGradient>
+    <pattern id="pwP${u}" width="9" height="30" patternUnits="userSpaceOnUse"><rect width="9" height="30" fill="${c.curtain}"/><rect width="3" height="30" fill="#000" opacity=".28"/><rect x="5" width="2" height="30" fill="#fff" opacity=".08"/></pattern></defs>
+    <rect y="0" width="400" height="32" fill="url(#pwP${u})"/><rect y="0" width="400" height="32" fill="url(#pwS${u})" opacity=".35"/>
+    ${swags}<path d="${fringe}" stroke="${c.gold}" stroke-width=".9" opacity=".95"/>${tass}
+    <rect y="0" width="400" height="9" fill="url(#pwG${u})"/><path d="M0 9.5h400" stroke="#3a2a0c" stroke-width=".8"/><path d="M0 3.6h400" stroke="#fff6d8" stroke-width=".5" stroke-dasharray="1.2 2.2" opacity=".8"/></svg>`}
+let pwU=0;
+const pwRule=()=>`<i class="pw-rule"><b></b></i>`;
+const pwNames=o=>{const [n1,n2]=coverNames(o);return `<p class="pw-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>`};
+const pwSerial=o=>String(fmtShort(o.date)).replace(/\D/g,'').slice(0,6)||'000001';
+const pwVars=c=>`--curtain:${c.curtain};--stub:${c.stub}`;
+FAMILY({key:'pawagam',name:'Pawagam',meaning:'Old picture house',
+  blurb:'A velvet house curtain in an old Malayan panggung, lit by a warm lamp, with a letterpress programme and an admission stub. The curtain rises to open the card.',
+  fonts:{d:"'Bodoni Moda', serif",s:"'Bodoni Moda', serif",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en',c=th.c;
+    return `<section class="page pg-pawagam2${c.light?' pw-light':''}" style="${pwVars(c)}"><div class="pw-back"></div>
+      <div class="pw-drape l"></div><div class="pw-drape r"></div>${pwValance(c,++pwU)}<div class="pw-foot-l"></div>
+      <p class="pw-k kicker reveal">${ev(o,L)}</p>
+      <div class="pw-prog pw-big reveal d1"><div class="pw-in">
+        <p class="pw-pre">${en?'A special screening':'Tayangan istimewa'}</p>${pwRule()}
+        ${pwNames(o)}${pwRule()}
+        <p class="pw-date">${esc(fmtDate(o.date,o.lang))}</p><p class="pw-time">${esc(fmtTime(o.start,o.lang))}</p>${o.venue?`<p class="pw-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <div class="pw-tix reveal d2">
+        <a class="pw-tk" data-go="when" href="#"><small>${en?'Programme':'Aturcara'}</small><b>${en?'Details':'Butiran'}</b></a>
+        ${o.x_rsvp?`<a class="pw-tk" data-go="rsvp" href="#"><small>${en?'Reply':'Sahkan'}</small><b>RSVP</b></a>`:''}
+        <a class="pw-tk" data-go="loc" href="#"><small>${en?'Map':'Peta'}</small><b>${en?'Location':'Lokasi'}</b></a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c,u=++pwU;
+    return `<div class="cover cv-pawagam2${c.light?' pw-light':''}" style="${pwVars(c)}"><div class="pw-curtain"><i class="pw-lamp"></i></div>${pwValance(c,u)}
+      <div class="pw-prog">
+        <div class="pw-in"><p class="pw-pre">${en?'A special screening':'Tayangan istimewa'}</p>${pwRule()}<p class="pw-ev">${ev(o,L)}</p>
+          ${pwNames(o)}${pwRule()}<p class="pw-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>${o.venue?`<p class="pw-ven">${esc(o.venue)}</p>`:''}</div>
+        <div class="pw-stub"><div><small>${en?'Admit one':'Masuk seorang'}</small><b>${guest?esc(guest):(en?'Honoured guest':'Tetamu kehormat')}</b></div><span>No. ${pwSerial(o)}</span></div>
+      </div>
+      <div class="pw-stage"></div><div class="pw-foot"><${tag} class="pw-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--curtain',th.c.curtain);el.style.setProperty('--stub',th.c.stub);el.classList.toggle('pw-light',!!th.c.light);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  // same colourway ids as the old poster family, so published cards keep working
+  themes:[
+    {k:'gading',n:'Gading',desc:'Champagne velvet curtain, ivory programme',c:{ground:'#e9dfcd',sheet:'#fbf6ea',ink:'#2e2419',accent:'#7a2e22',gold:'#b8914a',pagefg:'#3a2c1e',curtain:'#b9a27a',stub:'#efe2c6',light:'1',cover:'#b9a27a'}},
+    {k:'nila',n:'Nila',desc:'Midnight-blue velvet, ivory programme',c:{ground:'#0d1228',sheet:'#f8f2e4',ink:'#1d2238',accent:'#22336a',gold:'#c9a35a',pagefg:'#ece4d2',curtain:'#1d2b5c',stub:'#e3e2dc',cover:'#1d2b5c'}},
+    {k:'marun',n:'Marun',desc:'Maroon velvet, cream programme',c:{ground:'#1e0a0e',sheet:'#faf3e6',ink:'#2c1c18',accent:'#7a1b29',gold:'#c9a35a',pagefg:'#f1e5d4',curtain:'#6c1520',stub:'#f0dccf',cover:'#6c1520'}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald velvet, cream programme',c:{ground:'#081a15',sheet:'#f8f3e6',ink:'#1e2a24',accent:'#14523f',gold:'#c9a35a',pagefg:'#ebe5d4',curtain:'#0f4637',stub:'#e2e6d8',cover:'#0f4637'}},
+    {k:'jambu',n:'Merah Jambu',desc:'Dusty-rose velvet, blush programme',c:{ground:'#f0e0dc',sheet:'#fdf7f2',ink:'#3a2629',accent:'#97424f',gold:'#b8914a',pagefg:'#4a2e33',curtain:'#b8737f',stub:'#f6e1df',light:'1',cover:'#b8737f'}},
+    {k:'sage',n:'Sage',desc:'Sage velvet, cream programme',c:{ground:'#e6e6da',sheet:'#fbf9f1',ink:'#2a3026',accent:'#4c5e41',gold:'#b0904c',pagefg:'#2f3829',curtain:'#7e9070',stub:'#e8ebdc',light:'1',cover:'#7e9070'}},
+    {k:'hitam',n:'Hitam',desc:'Black velvet, gold fringe, ivory programme',c:{ground:'#0b0a09',sheet:'#f6f0e2',ink:'#1d1a17',accent:'#1d1a17',gold:'#c9a35a',pagefg:'#ece4d4',curtain:'#1c1a19',stub:'#e8e1d0',cover:'#1c1a19'}},
+    {k:'terakota',n:'Terakota',desc:'Rust velvet, sand programme',c:{ground:'#200f09',sheet:'#faf2e5',ink:'#2e2018',accent:'#8e3f22',gold:'#c9a35a',pagefg:'#f1e4d4',curtain:'#8a3d22',stub:'#f2dfcd',cover:'#8a3d22'}},
+  ]});
+
+})()}catch(e){console.error("family pawagam failed",e)}
+
+
 /* ===== family: payung ===== */
 try{(()=>{
-/* payung: the oil-paper umbrella (payung kertas). On the cover it lies closed across the card: pleated painted paper,
-   a bamboo shaft with nodes, a corded handle and a silk tassel, over a fine-line rib rosette.
-   Touched, it opens radially (seen from above: bamboo ribs, painted blossoms, waxed sheen) and lifts away.
-   Page: a half-open canopy rising above the names. Skin: headings with radiating ribs, scalloped card tops. */
-const q=n=>+n.toFixed(1);
-let U=0;
-const P=(r,a)=>[q(Math.cos(a)*r),q(Math.sin(a)*r)];
-const D=Math.PI/180;
-// one 45-degree sector of the open canopy, seen from above (4 rib segments)
-function sector(c,id){const a0=-90*D,a1=-45*D,R=190;let seg='',ribs='',edge='';
-  for(let i=0;i<4;i++){const s0=a0+i*11.25*D,s1=s0+11.25*D,sm=(s0+s1)/2;const [x0,y0]=P(R,s0),[x1,y1]=P(R,s1),[cx,cy]=P(R-7,sm);
-    seg+=`<path d="M0 0L${x0} ${y0}Q${cx} ${cy} ${x1} ${y1}Z" fill="${i%2?'#000':'#fff'}" opacity="${i%2?.07:.06}"/>`;
-    edge+=(i?'':`M${x0} ${y0}`)+`Q${cx} ${cy} ${x1} ${y1}`;
-    const [rx,ry]=P(R+2,s0),[ix,iy]=P(26,s0);ribs+=`M${ix} ${iy}L${rx} ${ry}`}
-  const [ex,ey]=P(R+2,a1),[jx,jy]=P(26,a1);ribs+=`M${jx} ${jy}L${ex} ${ey}`;
-  // painted spray along the middle of the sector
-  const am=(a0+a1)/2,fl=(r,da,s)=>{const [x,y]=P(r,am+da*D);return `<g transform="translate(${x} ${y}) scale(${s})">${[0,72,144,216,288].map(a=>`<path d="M0 0C-4 -3 -5 -9 -1.5 -11L0 -9.6L1.5 -11C5 -9 4 -3 0 0Z" transform="rotate(${a})" fill="${c.flower}"/>`).join('')}<circle r="2.2" fill="${c.flowerC}"/></g>`};
-  const lf=(r,da,rot,s)=>{const [x,y]=P(r,am+da*D);return `<path d="M0 0C3 -3 3 -8 0 -12C-3 -8 -3 -3 0 0Z" transform="translate(${x} ${y}) rotate(${q(rot)}) scale(${s})" fill="${c.leaf}"/>`};
-  const [b0x,b0y]=P(70,am-14*D),[b1x,b1y]=P(118,am+6*D),[b2x,b2y]=P(150,am-8*D);
-  const spray=`<path d="M${b0x} ${b0y}Q${b1x} ${b1y} ${b2x} ${b2y}" stroke="${c.branch}" stroke-width="1.6" fill="none"/>${lf(96,-2,(am/D)+150,1.1)}${lf(128,2,(am/D)+20,1)}${lf(84,-12,(am/D)-40,.9)}${fl(112,-6,1.3)}${fl(146,-7,1.05)}${fl(86,4,.9)}${fl(136,10,.75)}`;
-  const ringBand=(r0,r1,col)=>{const [p0x,p0y]=P(r1,a0),[p1x,p1y]=P(r1,a1),[p2x,p2y]=P(r0,a1),[p3x,p3y]=P(r0,a0);return `<path d="M${p0x} ${p0y}A${r1} ${r1} 0 0 1 ${p1x} ${p1y}L${p2x} ${p2y}A${r0} ${r0} 0 0 0 ${p3x} ${p3y}Z" fill="${col}"/>`};
-  let dots='';for(let i=0;i<8;i++){const [x,y]=P(170,a0+(i+.5)*45/8*D);dots+=`<circle cx="${x}" cy="${y}" r="2" fill="${c.flower}"/>`}
-  let sc='';for(let i=0;i<8;i++){const t0=a0+i*45/8*D,t1=t0+45/8*D;const [x0,y0]=P(158,t0),[x1,y1]=P(158,t1),[xm,ym]=P(152,(t0+t1)/2);sc+=`M${x0} ${y0}Q${xm} ${ym} ${x1} ${y1}`}
-  const [w0x,w0y]=P(R,a0),[w1x,w1y]=P(R,a1);
-  return `<svg viewBox="-200 -200 400 400" ${NS}><defs><clipPath id="${id}"><path d="M0 0L${w0x} ${w0y}${edge.replace(/^M[^Q]+/,'')}Z"/></clipPath></defs>
-   <g clip-path="url(#${id})"><circle r="200" fill="url(#${id}g)"/>
-    ${ringBand(164,178,c.band)}${dots}${ringBand(44,60,c.band)}<path d="${sc}" fill="none" stroke="${c.band}" stroke-width="1.2"/>
-    ${spray}${seg}
-    <path d="${ribs}" stroke="${c.rib}" stroke-width="1.6" opacity=".55"/><path d="${ribs}" stroke="#fff" stroke-width=".5" opacity=".35" transform="translate(.6 .6)"/></g>
-   <path d="${edge}" fill="none" stroke="${c.canopyD}" stroke-width="1.4"/></svg>`.replace(`url(#${id}g)`,c.canopyFill)}
-function canopy(c,cls,count=8){const id=`pu${++U}`;const grad=`url(#${id}rg)`;
-  const cc={...c,canopyFill:grad};
-  const secs=Array.from({length:count},(_,k)=>`<i class="pu-sec" style="--a:${k*45}deg;--d:${(k*.025).toFixed(3)}s">${sector(cc,`${id}c${k}`).replace('<defs>',`<defs><radialGradient id="${id}rg" cx="0" cy="0" r="200" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.canopyD}"/><stop offset=".2" stop-color="${c.canopy}"/><stop offset=".75" stop-color="${c.canopyL}"/><stop offset=".97" stop-color="${c.canopy}"/><stop offset="1" stop-color="${c.canopyD}"/></radialGradient>`)}</i>`).join('');
-  let th='';for(let i=0;i<48;i++){const a=i/48*Math.PI*2,[x0,y0]=P(28,a),[x1,y1]=P(38,a+.06);th+=`<path d="M${x0} ${y0}L${x1} ${y1}" stroke="${[c.thread1,c.thread2,c.thread3][i%3]}" stroke-width="2.2"/>`}
-  const cap=`<svg viewBox="-200 -200 400 400" ${NS}><defs><radialGradient id="${id}cap" cx="-.3" cy="-.3" r="1"><stop offset="0" stop-color="${c.bambooL}"/><stop offset="1" stop-color="${c.bambooD}"/></radialGradient></defs>${th}<circle r="26" fill="${c.canopyD}"/><circle r="22" fill="${c.band}"/><circle r="16" fill="${c.canopy}" stroke="${c.flower}" stroke-width="1"/><circle r="9" fill="url(#${id}cap)"/><circle r="3" fill="${c.bambooD}"/></svg>`;
-  return `<div class="pu-can ${cls}">${secs}<i class="pu-cap">${cap}</i><i class="pu-gl"></i></div>`}
-// the closed umbrella lying on its side, tip to the right: a fat pleated bundle of painted paper
-function closedSvg(c){const id=`pc${++U}`,N=16,tip=[552,60],R=rng(3);
-  const hem=Array.from({length:N+1},(_,i)=>{const t=i/N;return [q(206+(i%2?7:0)+Math.sin(t*Math.PI)*-6),q(14+t*92)]});
-  const outline=`M${tip[0]} ${tip[1]}C470 50 330 16 ${hem[0][0]} ${hem[0][1]}L${hem[N][0]} ${hem[N][1]}C330 104 470 70 ${tip[0]} ${tip[1]}Z`;
-  let pl='';for(let i=0;i<N;i++){const [x0,y0]=hem[i],[x1,y1]=hem[i+1];pl+=`<path d="M${tip[0]} ${tip[1]}L${x0} ${y0}L${x1} ${y1}Z" fill="${i%2?c.canopyD:c.canopy}"/>`;
-    const fold=(i%2?'#000':'#fff');pl+=`<path d="M${tip[0]} ${tip[1]}L${x1} ${y1}" stroke="${fold}" stroke-opacity=".18" stroke-width=".8"/>`;
-    if(i%2===0){for(let k=0;k<2;k++){const t=.18+k*.3+R()*.12,fx=x0+(tip[0]-x0)*t,fy=(y0+y1)/2+(tip[1]-(y0+y1)/2)*t;const r=q((4.5-k*1.2)*(1-t*.5));pl+=`<g transform="translate(${q(fx)} ${q(fy)})">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="${q(-r*.6)}" rx="${q(r*.42)}" ry="${q(r*.6)}" transform="rotate(${a})" fill="${c.flower}" opacity=".9"/>`).join('')}<circle r="${q(r*.25)}" fill="${c.flowerC}"/></g>`}}}
-  let hemband='',hemdots='';hem.forEach(([x,y],i)=>{hemband+=(i?'L':'M')+q(x+9)+' '+y;if(i<N&&i%2)hemdots+=`<circle cx="${q(x+9)}" cy="${q(y+2.8)}" r="1.3" fill="${c.flower}"/>`});
-  let nodes='';[96,150].forEach(x=>nodes+=`<path d="M${x} 56.4V63.6" stroke="${c.bambooD}" stroke-width="1.6"/>`);
-  let cord='';for(let x=18;x<88;x+=4.5)cord+=`M${q(x)} 54L${q(x+4)} 66`;
-  let tas='';for(let i=0;i<18;i++){const yy=60+(i-8.5)*.8;tas+=`M-14 ${q(yy)}Q-36 ${q(yy+(i-8.5)*1.4+10)} -58 ${q(yy+(i-8.5)*2.2+18+R()*5)}`}
-  let str='';for(let i=1;i<N;i+=2){const [x,y]=hem[i];str+=`M${x} ${y}L172 ${q(60+(y-60)*.12)}`}
-  return `<svg viewBox="-70 -10 640 140" ${NS}><defs><linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.bambooL}"/><stop offset=".5" stop-color="${c.bamboo}"/><stop offset="1" stop-color="${c.bambooD}"/></linearGradient>
-    <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".3" stop-color="#fff" stop-opacity=".05"/><stop offset=".6" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></linearGradient>
-    <clipPath id="${id}c"><path d="${outline}"/></clipPath></defs>
-   
-   <rect x="-6" y="56.4" width="572" height="7.2" rx="3.4" fill="url(#${id}b)"/>${nodes}
-   <rect x="14" y="53" width="78" height="14" rx="5" fill="${c.cord}"/><path d="${cord}" stroke="#000" stroke-opacity=".28" stroke-width="1.3"/><rect x="14" y="53" width="78" height="14" rx="5" fill="url(#${id}s)"/>
-   <path d="M-8 60C-8 50 -2 48 4 52" stroke="${c.tassel}" stroke-width="1.6" fill="none"/><rect x="-20" y="54" width="10" height="12" rx="3" fill="${c.tassel}"/><path d="M-20 57H-10M-20 63H-10" stroke="${c.flowerC}" stroke-width="1"/><path d="${tas}" stroke="${c.tassel}" stroke-width=".75" fill="none"/>
-   <path d="${str}" stroke="${c.bambooD}" stroke-width=".9"/><path d="M164 54H182V66H164Z" fill="${c.bambooD}"/>${[167,171,175,179].map((x,i)=>`<path d="M${x} 53V67" stroke="${[c.thread1,c.thread2,c.thread3,c.thread1][i]}" stroke-width="1.8"/>`).join('')}
-   <g clip-path="url(#${id}c)">${pl}<path d="${hemband}" stroke="${c.band}" stroke-width="7" fill="none"/>${hemdots}
-    <path d="M378 0V120M386 0V120" stroke="${c.band}" stroke-width="3.2"/><rect x="0" y="0" width="560" height="120" fill="url(#${id}s)"/></g>
-   <path d="${outline}" fill="none" stroke="${c.canopyD}" stroke-width="1"/>
-   <path d="M382 26C394 40 394 80 382 94" stroke="${c.cord}" stroke-width="2.6" fill="none"/><path d="M383 94q8 8 3 18M383 94q-6 9 -2 17" stroke="${c.cord}" stroke-width="1.3" fill="none"/>
-   <path d="M550 56H572Q580 60 572 64H550Z" fill="${c.bambooD}"/><circle cx="576" cy="60" r="2.4" fill="${c.bambooD}"/></svg>`}
-const ROSETTE=K.uri(`<svg ${NS} viewBox="-200 -200 400 400"><g fill="none" stroke="#000"><circle r="196" stroke-width="1.2"/><circle r="188" stroke-width=".6"/><circle r="120" stroke-width=".5"/><circle r="40" stroke-width=".8"/>${Array.from({length:32},(_,i)=>{const [x0,y0]=P(40,i/32*Math.PI*2),[x1,y1]=P(188,i/32*Math.PI*2);return `<path d="M${x0} ${y0}L${x1} ${y1}" stroke-width=".5"/>`}).join('')}${Array.from({length:32},(_,i)=>{const a=(i+.5)/32*Math.PI*2,[x,y]=P(192,a);return `<circle cx="${x}" cy="${y}" r="1.4" fill="#000"/>`}).join('')}</g></svg>`);
-const pal=c=>({canopy:c.canopy,canopyL:c.canopyL,canopyD:c.canopyD,band:c.band,flower:c.flower,flowerC:c.flowerC||'#f2c14e',leaf:c.leaf||'#3f6b4a',branch:c.branch||'#5a3a24',rib:c.rib||'#3a2416',bamboo:'#c9a26a',bambooL:'#ecd3a0',bambooD:'#7a5a32',cord:c.cord||'#2a2a2a',tassel:c.tassel||c.band,thread1:c.thread1||'#d23b3b',thread2:c.thread2||'#2f8a6a',thread3:c.thread3||'#f2c14e'});
-
-// a painted plum-blossom branch for the cover corners
-function blossomBranch(c,seed){const r=rng(seed);let bl='';
-  const pts=[[40,120],[70,96],[96,80],[122,58],[150,46],[176,30],[86,108],[132,74],[160,62]];
-  pts.forEach(([x,y],i)=>{const s=5+r()*4;let pet='';for(let k=0;k<5;k++){const a=k/5*Math.PI*2+r();pet+=`<ellipse cx="${(x+Math.cos(a)*s*.62).toFixed(1)}" cy="${(y+Math.sin(a)*s*.62).toFixed(1)}" rx="${(s*.55).toFixed(1)}" ry="${(s*.42).toFixed(1)}" transform="rotate(${(a*57.3).toFixed(0)} ${(x+Math.cos(a)*s*.62).toFixed(1)} ${(y+Math.sin(a)*s*.62).toFixed(1)})" fill="${c.flower}" stroke="${c.canopyD}" stroke-width=".5"/>`}
-    bl+=`<g opacity="${(.85+r()*.15).toFixed(2)}">${pet}<circle cx="${x}" cy="${y}" r="${(s*.22).toFixed(1)}" fill="${c.flowerC}"/>${Array.from({length:6},(_,k)=>{const a=k/6*Math.PI*2;return `<path d="M${x} ${y}l${(Math.cos(a)*s*.5).toFixed(1)} ${(Math.sin(a)*s*.5).toFixed(1)}" stroke="${c.canopyD}" stroke-width=".4"/>`}).join('')}</g>`});
-  const buds=[[58,104],[110,66],[188,22],[144,58]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="2.6" ry="3.6" fill="${c.canopy}"/>`).join('');
-  return `<svg viewBox="0 0 200 140"><path d="M0 140C30 126 52 106 76 98S118 70 138 56 172 30 200 14" stroke="${c.branch}" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-   <path d="M76 98C80 110 92 114 100 112M122 66C128 76 140 80 150 78M150 46C150 36 158 30 166 28" stroke="${c.branch}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-   <path d="M0 140C30 126 52 106 76 98" stroke="#fff" stroke-opacity=".18" stroke-width="1" fill="none"/>${buds}${bl}</svg>`}
+/* payung: an oil-paper umbrella (payung kertas) lying closed across a sheet of paper (velvet on the dark colourways):
+   pleated waxed paper with a coloured band, tied with a cord, bamboo ribs gathered to the runner and a thread-wrapped handle.
+   Cover: tap "Buka Jemputan" and the umbrella is lifted up and away off the paper.
+   Page: the open canopy, seen from above, rises over the top of the screen like an arch above the card. Skin: paper cards with a fine rib fan
+   over each heading. */
+needFont('Marcellus');
+const pq=n=>+n.toFixed(2);
+const PN=32;
+// the canopy edge: the paper sags a little between rib tips
+const pyEdge=(()=>{const p=[];for(let i=0;i<PN*2;i++){const a=i/(PN*2)*Math.PI*2-Math.PI/2,r=i%2?49.2:50;p.push(`${pq(50+Math.cos(a)*r)}% ${pq(50+Math.sin(a)*r)}%`)}return `polygon(${p.join(',')})`})();
+// fine work drawn over the paper: rim thread, rib tips, the band, thread rings and the wrapped cap
+const pyLines=()=>{let rim='',tips='';
+  for(let i=0;i<PN*2;i++){const a=i/(PN*2)*Math.PI*2-Math.PI/2,r=i%2?98.4:100;rim+=`${i?'L':'M'}${pq(Math.cos(a)*r)} ${pq(Math.sin(a)*r)}`}
+  for(let i=0;i<PN;i++){const a=i/PN*Math.PI*2-Math.PI/2;tips+=`<circle cx="${pq(Math.cos(a)*98.6)}" cy="${pq(Math.sin(a)*98.6)}" r=".9"/>`}
+  const rings=[13.4,14.4].map(r=>`<circle style="stroke:var(--thread)" r="${r}" fill="none" stroke-width=".4" opacity=".9"/>`).join('');
+  const wrap=[6.2,7.2,8.2,9.2,10.2].map((r,i)=>`<circle r="${r}" fill="none" stroke="${i%2?'var(--thread)':'var(--band)'}" stroke-width=".9"/>`).join('');
+  return `<svg class="py-lines" viewBox="-100 -100 200 200" aria-hidden="true">
+    <defs><radialGradient id="pyc" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fffaf0" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></radialGradient>
+    <filter id="pyb"><feGaussianBlur stdDeviation=".35"/></filter></defs>
+    <path d="${rim}Z" fill="none" stroke="rgba(0,0,0,.22)" stroke-width=".6"/><path d="${rim}Z" fill="none" stroke="rgba(255,255,255,.3)" stroke-width=".4" transform="scale(.985)"/>
+    <g fill="rgba(0,0,0,.45)">${tips}</g>
+    ${rings}
+    ${wrap}<circle style="fill:var(--canopy)" r="5.4"/><circle r="5.4" fill="url(#pyc)"/><circle cx="-1" cy="-1.2" r="1.3" fill="rgba(255,255,255,.45)"/></svg>`};
+// the closed umbrella as it lies on the table: tip at the top, pleated paper gathered round the shaft, a cord tied round it,
+// the bamboo ribs gathered to the runner, then the bare shaft and a thread-wrapped handle (120 x 460 box)
+let pyU=0;
+const pyClosed=()=>{const u=++pyU,K=10,hem=Array.from({length:K+1},(_,i)=>30+i*60/K);
+  const hy=x=>300+7*Math.sin((x-30)/60*Math.PI);
+  const ctl=x=>[pq(60+(x-60)*.72),178];
+  let fac='',lines='',scal='';
+  for(let i=0;i<K;i++){const a=hem[i],b=hem[i+1],[ca,cy]=ctl(a),[cb]=ctl(b);
+    fac+=`<path d="M60 32Q${ca} ${cy} ${pq(a)} ${pq(hy(a))}L${pq(b)} ${pq(hy(b))}Q${cb} ${cy} 60 32Z" fill="${i%2?'rgba(0,0,0,.14)':'rgba(255,255,255,.05)'}"/>`;
+    const m=(a+b)/2;scal+=`<path d="M${pq(a)} ${pq(hy(a))}Q${pq(m)} ${pq(hy(m)+3.2)} ${pq(b)} ${pq(hy(b))}"/>`}
+  hem.forEach(x=>{const [c,cy]=ctl(x);lines+=`M60 32Q${c} ${cy} ${pq(x)} ${pq(hy(x))}`});
+  const out=`M57.5 30C46 120 33 230 29.6 300Q60 318 90.4 300C87 230 74 120 62.5 30Z`;
+  const ribs=hem.map(x=>`M${pq(x)} ${pq(hy(x)+2)}L${pq(58+(x-30)/60*4)} 344`).join('');
+  const wrap=Array.from({length:26},(_,i)=>`<path d="M56.6 ${pq(402+i*1.9)}H63.4" style="stroke:${i%6<3?'var(--band)':'var(--thread)'}" stroke-width="1.3"/>`).join('');
+  return `<svg class="py-closed" viewBox="0 0 120 460" aria-hidden="true"><defs><clipPath id="pk${u}"><path d="${out}"/></clipPath>
+    <linearGradient id="pc${u}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".3" stop-color="#fff" stop-opacity=".04"/><stop offset=".65" stop-color="#000" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+    <linearGradient id="pb${u}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9cf9a"/><stop offset=".45" stop-color="#c9a062"/><stop offset="1" stop-color="#7d5a2a"/></linearGradient></defs>
+    <rect x="58.6" y="6" width="2.8" height="18" rx="1.2" fill="url(#pb${u})"/>
+    <rect x="57.9" y="354" width="4.2" height="48" fill="url(#pb${u})"/>
+    <path d="M57.9 384h4.2" stroke="#7d5a2a" stroke-width=".7"/>
+    <path d="M34 306L57 344H63L86 306Z" fill="rgba(40,25,10,.45)"/>
+    <path d="${ribs}" fill="none" stroke="#b8925a" stroke-width="1.1"/>
+    <path d="M42 318L78 318M48 328L72 328" style="stroke:var(--thread)" stroke-width=".45" stroke-dasharray="2 1.4"/>
+    <rect x="56" y="342" width="8" height="14" rx="2" fill="url(#pb${u})"/><path d="M56 346h8M56 350h8" style="stroke:var(--band)" stroke-width="1"/>
+    <rect x="56.2" y="400" width="7.6" height="52" rx="2.4" fill="url(#pb${u})"/>${wrap}
+    <rect x="56.2" y="400" width="7.6" height="52" rx="2.4" fill="url(#pc${u})"/>
+    <path d="M56.4 452h7.2v2.6a3.6 3.6 0 0 1-7.2 0z" fill="#5a3e1c"/>
+    <path d="${out}" style="fill:var(--canopy)"/>
+    <g clip-path="url(#pk${u})">
+      <image href="${A}paper.jpg" x="0" y="0" width="240" height="460" preserveAspectRatio="xMidYMid slice" style="mix-blend-mode:multiply" opacity=".15"/>
+      <rect x="0" y="62" width="120" height="13" style="fill:var(--band)" opacity=".95"/>
+      <rect x="0" y="196" width="120" height="17" style="fill:var(--ring)" opacity=".9"/>
+      ${fac}
+      <path d="${lines}" fill="none" stroke="rgba(0,0,0,.22)" stroke-width=".4"/>
+      <rect width="120" height="460" fill="url(#pc${u})"/></g>
+    <g fill="none" stroke="rgba(0,0,0,.3)" stroke-width=".6">${scal}</g>
+    <path d="${out}" fill="none" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>
+    <path d="M54.6 20h10.8l-1.4 12h-8z" style="fill:var(--band)"/><path d="M55 23.5h10M55.4 27h9.2" style="stroke:var(--thread)" stroke-width=".7"/>
+    <path d="M37 252Q60 259 83 252M36.8 255.2Q60 262 83.2 255.2" fill="none" style="stroke:var(--thread)" stroke-width=".9"/>
+    <circle cx="60" cy="259" r="1.6" style="fill:var(--thread)"/><path d="M59.4 260.4l-2.2 8.6M60.6 260.4l2.4 8" fill="none" style="stroke:var(--thread)" stroke-width=".7"/></svg>`};
+const pyUmb=(cls='')=>`<div class="py-umb ${cls}"><div class="py-paper" style="clip-path:${pyEdge}"></div>${pyLines()}</div>`;
+const pyVars=c=>`--canopy:${c.canopy};--ring:${c.ring};--band:${c.band};--thread:${c.thread||c.gold};--nm:${c.nm||c.accent};--btn:${c.dark?'rgba(0,0,0,.3)':'rgba(255,255,255,.4)'}`;
 FAMILY({key:'payung',name:'Payung',meaning:'Oil-paper umbrella',
-  blurb:'A painted oil-paper umbrella lies closed across the card; touch it and it opens radially, ribs and blossoms, then lifts away.',
-  fonts:{d:"'Marcellus', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=pal(th.c),en=o.lang==='en';
-    return `<section class="page pg-payung" style="--ros:${ROSETTE}"><div class="pu-bg"></div><div class="pu-half">${canopy(c,'half')}</div>
-     <div class="pu-ptxt"><p class="kicker reveal">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="pu-rule reveal d2"></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="pu-v reveal d3">${esc(o.venue)}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=pal(th.c),en=o.lang==='en';
-    return `<div class="cover cv-payung" style="--ros:${ROSETTE}"><div class="pu-bg"></div><i class="pu-frame"></i><i class="pu-ros"></i>
-     <span class="pu-br a">${blossomBranch(c,7)}</span><span class="pu-br b">${blossomBranch(c,19)}</span>
-     <span class="pu-seal">${esc(K.initials(o).join(''))}</span>
-     <div class="pu-head"><p class="pu-k">${ev(o,L)}</p><p class="pu-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pu-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <${tag} class="pu-tap" ${attr} aria-label="${L.open}"><span class="pu-closed">${closedSvg(c)}</span></${tag}>
-     ${canopy(c,'open')}
-     <div class="pu-foot">${guest?`<p class="pu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="pu-hr"></i>'))},
+  blurb:'A closed waxed-paper umbrella lying across a sheet of paper, its pleats, cord, bamboo ribs and wrapped handle finely drawn. Guests lift it away to open the card.',
+  fonts:{d:"'Marcellus', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-payung2${c.dark?' py-dark':''}" style="${pyVars(c)}"><div class="py-ground"></div>
+      <div class="py-archwrap" style="--ring:transparent">${pyUmb('py-arch')}</div>
+      <div class="py-card reveal"><div class="py-ci">
+        <p class="py-k kicker">${ev(o,L)}</p><h1 class="py-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="py-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="py-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<a class="py-ven" data-go="loc" href="#">${esc(o.venue)}</a>`:''}</div></div>
+      <div class="py-links reveal d2"><a data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-payung2${c.dark?' py-dark':''}" style="${pyVars(c)}"><div class="py-ground"></div>
+      <div class="py-top"><p class="py-k">${ev(o,L)}</p><p class="py-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="py-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="py-lift">${pyClosed()}</div>
+      <div class="py-foot">${guest?`<p class="py-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="py-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.classList.toggle('py-dark',!!c.dark);el.style.setProperty('--canopy',c.canopy);el.style.setProperty('--band',c.band);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Red umbrella with plum blossom',c:{ground:'#f3ebde',sheet:'#fcf8f0',ink:'#33241e',accent:'#a6262c',gold:'#b08a48',pagefg:'#33241e',canopy:'#c0303a',canopyL:'#d9524f',canopyD:'#8a1a24',band:'#1f3a5f',flower:'#fbe6dc',flowerC:'#f2c14e'}},
-    {k:'malam',n:'Malam',desc:'Red umbrella on a night ground',c:{ground:'#17202b',sheet:'#f8f2e6',ink:'#2a2320',accent:'#a6262c',gold:'#c9a35c',pagefg:'#efe6d6',canopy:'#bb2f38',canopyL:'#d65450',canopyD:'#7d1820',band:'#e2b04a',flower:'#fbe6dc',cord:'#d8c08a'}},
-    {k:'jed',n:'Jed',desc:'Jade umbrella with white blossom',c:{ground:'#eef1ea',sheet:'#fbfcf8',ink:'#24302a',accent:'#2c6a55',gold:'#a08a50',pagefg:'#24302a',canopy:'#3c8a6e',canopyL:'#62a98a',canopyD:'#235a47',band:'#c0303a',flower:'#f6f2e6',leaf:'#e2c05a',branch:'#1e3a2e'}},
-    {k:'kuning',n:'Kuning',desc:'Saffron umbrella, red bands',c:{ground:'#f6efdf',sheet:'#fffbf2',ink:'#3a2c18',accent:'#a6262c',gold:'#a8823a',pagefg:'#3a2c18',canopy:'#e2a83a',canopyL:'#f0c766',canopyD:'#b07a1e',band:'#a6262c',flower:'#fff4dc',flowerC:'#a6262c',leaf:'#5a7a3a'}},
-    {k:'nila',n:'Nila',desc:'Indigo umbrella on midnight',c:{ground:'#121a2e',sheet:'#f5f2ec',ink:'#1f2433',accent:'#2c4a8a',gold:'#c6a865',pagefg:'#e9e6df',canopy:'#2f4f8f',canopyL:'#4f72b2',canopyD:'#1a2f5c',band:'#e6c27a',flower:'#f3eee4',leaf:'#9fb8a0',cord:'#c6a865'}},
-    {k:'jambu',n:'Jambu',desc:'Rose umbrella on blush',c:{ground:'#f8ece9',sheet:'#fffaf8',ink:'#3e2a2c',accent:'#b23a5a',gold:'#b48c5a',pagefg:'#3e2a2c',canopy:'#df7b93',canopyL:'#efa2b3',canopyD:'#b4506c',band:'#4a6a8a',flower:'#fff3f5',flowerC:'#e2b04a'}},
-    {k:'hitam',n:'Hitam',desc:'Black lacquer umbrella, gold blossom',c:{ground:'#1a1817',sheet:'#f7f2ea',ink:'#262220',accent:'#9a2a2a',gold:'#d0ad62',pagefg:'#efe8dc',canopy:'#2a2624',canopyL:'#4a4440',canopyD:'#141210',band:'#b8323a',flower:'#e6c27a',flowerC:'#b8323a',leaf:'#8a7a50',branch:'#c9a35c',rib:'#000',cord:'#b8323a'}},
-    {k:'ungu',n:'Ungu',desc:'Plum umbrella on lilac',c:{ground:'#efeaf3',sheet:'#fcfaff',ink:'#2e2836',accent:'#6e3a7e',gold:'#a08a6a',pagefg:'#2e2836',canopy:'#7e4a90',canopyL:'#a070b2',canopyD:'#55306a',band:'#e2b04a',flower:'#f6eefa',leaf:'#7aa080'}},
+    {k:'merah',n:'Merah',desc:'Red umbrella with an indigo band',c:{ground:'#efe7da',sheet:'#fcf8f0',ink:'#33241e',accent:'#a6262c',gold:'#b08a48',pagefg:'#33241e',canopy:'#b8282f',ring:'#f2e8d6',band:'#1f3a5f',thread:'#e9d9b4'}},
+    {k:'malam',n:'Malam',desc:'Red umbrella on a night ground',c:{ground:'#18212c',sheet:'#f8f2e6',ink:'#2a2320',accent:'#a6262c',gold:'#c9a35c',pagefg:'#efe6d6',canopy:'#b02a33',ring:'#f0e4cc',band:'#d9a845',thread:'#f1e2c0',nm:'#efd9b0',dark:1}},
+    {k:'jed',n:'Jed',desc:'Jade umbrella with a red band',c:{ground:'#ecefe7',sheet:'#fbfcf8',ink:'#24302a',accent:'#2c6a55',gold:'#a08a50',pagefg:'#24302a',canopy:'#3d8268',ring:'#f4efe2',band:'#b8323a',thread:'#f3ecd6'}},
+    {k:'kuning',n:'Kuning',desc:'Saffron umbrella with a red band',c:{ground:'#f3ecdc',sheet:'#fffbf2',ink:'#3a2c18',accent:'#a6262c',gold:'#a8823a',pagefg:'#3a2c18',canopy:'#dda13a',ring:'#7a1e22',band:'#a6262c',thread:'#4a3418'}},
+    {k:'nila',n:'Nila',desc:'Indigo umbrella on midnight',c:{ground:'#131b2e',sheet:'#f5f2ec',ink:'#1f2433',accent:'#2c4a8a',gold:'#c6a865',pagefg:'#e9e6df',canopy:'#2e4c8a',ring:'#efe6d2',band:'#e0bd72',thread:'#f1e8d4',nm:'#e6d3a6',dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Rose umbrella on blush paper',c:{ground:'#f5e9e5',sheet:'#fffaf8',ink:'#3e2a2c',accent:'#a83a58',gold:'#b48c5a',pagefg:'#3e2a2c',canopy:'#d9788f',ring:'#fff5f2',band:'#4a6a8a',thread:'#fff3f0'}},
+    {k:'hitam',n:'Hitam',desc:'Black lacquer umbrella with a gold band',c:{ground:'#1b1918',sheet:'#f7f2ea',ink:'#262220',accent:'#9a2a2a',gold:'#d0ad62',pagefg:'#efe8dc',canopy:'#2b2725',ring:'#b8323a',band:'#c9a35c',thread:'#b8323a',nm:'#e6cf9e',dark:1}},
+    {k:'ungu',n:'Ungu',desc:'Plum umbrella on lilac paper',c:{ground:'#ede8f1',sheet:'#fcfaff',ink:'#2e2836',accent:'#6e3a7e',gold:'#a08a6a',pagefg:'#2e2836',canopy:'#7a4a8e',ring:'#f4ecf6',band:'#e2b04a',thread:'#f4ecf6'}},
   ]});
 
 })()}catch(e){console.error("family payung failed",e)}
@@ -5208,83 +6168,73 @@ FAMILY({key:'payung',name:'Payung',meaning:'Oil-paper umbrella',
 
 /* ===== family: pelamin ===== */
 try{(()=>{
-/* pelamin: the wedding dais. Tiered swags with gold trim, a carved backdrop panel, two throne chairs as
-   gold silhouettes, flower mounds on the steps. Cover: a sheer voile hangs in front; touching the tassel
-   gathers it upward. Page: the dais with the names carved on the backdrop. Skin: swag valances on each card. */
-let uid=0;
-const f1=v=>(+v).toFixed(1);
-const PANEL='M105 560V262C105 240 128 232 150 222C168 214 184 198 195 176C206 198 222 214 240 222C262 232 285 240 285 262V560Z';
-const scl=(k,cx=195,cy=380)=>`transform="translate(${cx} ${cy}) scale(${k}) translate(${-cx} ${-cy})"`;
-function chair(x,y,s,flip,id){return `<g transform="translate(${x} ${y}) scale(${flip?-s:s} ${s})">
-  <path d="M-23 0V-58C-23 -80 -12 -92 0 -97C12 -92 23 -80 23 -58V0Z" fill="url(#plg${id})"/>
-  <path d="M-10 -94C-9 -104 -2 -106 0 -116C2 -106 9 -104 10 -94Z" fill="url(#plg${id})"/><circle cx="0" cy="-119" r="3" fill="url(#plg${id})"/>
-  <path d="M-23 -70c-8-2-12-10-8-16s12-4 10 2" class="pelamin-gl"/><path d="M23 -70c8-2 12-10 8-16s-12-4-10 2" class="pelamin-gl"/>
-  <path d="M-16 -5V-57C-16 -73 -8 -83 0 -87C8 -83 16 -73 16 -57V-5Z" class="pelamin-uph"/>
-  <path d="M-16 -5V-57C-16 -73 -8 -83 0 -87C8 -83 16 -73 16 -57V-5Z" class="pelamin-ul"/>
-  ${[[-8,-62],[8,-62],[0,-48],[-8,-34],[8,-34],[0,-20],[0,-74]].map(([a,b])=>`<circle cx="${a}" cy="${b}" r="1.1" class="pelamin-tuft"/>`).join('')}
-  <path d="M-23 -34C-36 -36 -40 -22 -33 -12C-29 -6 -32 0 -30 4M23 -34C36 -36 40 -22 33 -12C29 -6 32 0 30 4" class="pelamin-arm"/>
-  <path d="M-31 0H31C31 8 26 12 0 12C-26 12 -31 8 -31 0Z" class="pelamin-uph"/>
-  <path d="M-28 12H28V17H-28Z" fill="url(#plg${id})"/><path d="M-24 17C-27 26 -21 32 -27 41M24 17C27 26 21 32 27 41M-8 17V24M8 17V24" class="pelamin-arm"/></g>`}
-function swags(y,depth,w,cls,phase,tas){let d='',trim='',folds='',t='';const n=Math.ceil(390/w)+2;
-  for(let i=-1;i<n;i++){const x=i*w+phase;d+=`M${x} ${y}Q${x+w/2} ${y+depth*2} ${x+w} ${y}Z`;trim+=`M${x} ${y}Q${x+w/2} ${y+depth*2} ${x+w} ${y}`;
-    for(const k of [.35,.62,.82])folds+=`M${f1(x+w*.08)} ${y+2}Q${x+w/2} ${f1(y+depth*2*k)} ${f1(x+w*.92)} ${y+2}`;
-    if(tas)t+=`<g transform="translate(${x} ${y})" class="pelamin-tas"><circle r="3.4"/><path d="M-2.5 3h5l1.5 14h-8z"/><path d="M-3.4 17.5h6.8" class="pelamin-tl"/></g>`}
-  return `<path d="${d}" class="${cls}"/><path d="${folds}" class="pelamin-fold"/><path d="${trim}" class="pelamin-trim"/><path d="${trim}" class="pelamin-trim2" transform="translate(0 -3)"/>${t}`}
-function drape(side,id){const m=side<0?'':'transform="translate(390 0) scale(-1 1)"';
-  return `<g ${m}><path d="M0 0H86C76 160 58 330 40 418C60 470 74 620 70 760H0Z" fill="url(#plv${id})"/>
-   <path d="M18 0C16 150 14 320 12 420M38 0C34 160 28 330 24 418C30 500 34 640 30 760M60 0C54 160 44 320 32 418C44 490 52 630 50 760" class="pelamin-fold"/>
-   <path d="M86 0C76 160 58 330 40 418C60 470 74 620 70 760" class="pelamin-trim"/><path d="M82 0C72 160 54 330 36 418C56 470 70 620 66 760" class="pelamin-trim2"/>
-   <path d="M10 412Q36 404 50 416Q36 428 10 422" class="pelamin-rope3"/><path d="M10 412Q36 404 50 416Q36 428 10 422" class="pelamin-rope4"/><g transform="translate(46 418)" class="pelamin-tas"><circle r="4.4"/><path d="M-3 4h6l3.5 28h-13z"/><path d="M-3.5 12h7M-4.5 20h9M-5.4 28h10.8" class="pelamin-tl"/><path d="M-6.5 32.5h13" class="pelamin-tl"/></g></g>`}
-function bloom(cx,cy,R,n,seed){const r=rng(seed);let s='';for(let i=0;i<n;i++){const a=r()*Math.PI,d=Math.sqrt(r())*R,x=cx+Math.cos(a)*d*1.3*(r()<.5?-1:1),y=cy-Math.sin(a)*d*.9,k=2.6+r()*1.6;
-    s+=`<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(r()*72)})">${[0,72,144,216,288].map(t=>`<ellipse cx="0" cy="${f1(-k*.55)}" rx="${f1(k*.42)}" ry="${f1(k*.6)}" transform="rotate(${t})" class="${i%3?'pelamin-fl':'pelamin-fl2'}"/>`).join('')}<circle r="${f1(k*.28)}" class="pelamin-flc"/></g>`}return s}
-function scene(id){const lat=`<pattern id="pll${id}" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M6 0L12 6 6 12 0 6Z" fill="none" class="pelamin-latp"/><circle cx="6" cy="6" r=".8" class="pelamin-latd"/></pattern>`;
-  const awan=`<pattern id="pla${id}" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M3 15c0-7 8-9 11-4s-2 8-5 5 1-5 3-3M14 4c4 0 6 3 4 6" fill="none" class="pelamin-awp"/></pattern>`;
-  const dam=`<pattern id="pld${id}" width="44" height="52" patternUnits="userSpaceOnUse"><path d="M22 6c6 8 6 14 0 20-6-6-6-12 0-20zM22 46c6-8 6-14 0-20-6 6-6 12 0 20zM0 26c8-4 12-4 16 0-4 4-8 4-16 0zM44 26c-8-4-12-4-16 0 4 4 8 4 16 0z" class="pelamin-dm"/></pattern>`;
-  return `<svg class="pelamin-svg" viewBox="0 0 390 760" preserveAspectRatio="xMidYMax slice"><defs>${lat}${awan}${dam}
-   <linearGradient id="plg${id}" x1="0" x2="1" y1="0" y2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--gold) 45%,#fff)"/><stop offset=".45" style="stop-color:var(--gold)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--gold) 55%,#000)"/></linearGradient>
-   <linearGradient id="plv${id}" x1="0" x2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--accent) 60%,#000)"/><stop offset=".35" style="stop-color:var(--accent)"/><stop offset=".6" style="stop-color:color-mix(in srgb,var(--accent) 82%,#fff)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--accent) 70%,#000)"/></linearGradient><radialGradient id="pls${id}" cx=".5" cy=".55" r=".55"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
-   <rect width="390" height="760" class="pelamin-wall"/><rect width="390" height="760" fill="url(#pld${id})"/><rect width="390" height="760" fill="url(#pls${id})"/>
-   ${[72,285].map(x=>`<path d="M${x} 560V346C${x} 334 ${x+8} 326 ${x+16.5} 322C${x+25} 326 ${x+33} 334 ${x+33} 346V560Z" class="pelamin-wing"/><path d="M${x+5} 556V348C${x+5} 338 ${x+11} 332 ${x+16.5} 329C${x+22} 332 ${x+28} 338 ${x+28} 348V556Z" fill="url(#pll${id})" class="pelamin-wl"/>`).join('')}
-   <path d="${PANEL}" class="pelamin-panel b"/><path d="${PANEL}" fill="url(#pla${id})"/>
-   <path d="${PANEL}" ${scl(.9)} class="pelamin-panel"/><path d="${PANEL}" ${scl(.9)} fill="url(#pll${id})" opacity=".55"/>
-   <path d="${PANEL}" class="pelamin-edge" stroke-width="1.4"/><path d="${PANEL}" ${scl(.955)} class="pelamin-edge" stroke-width=".6"/><path d="${PANEL}" ${scl(.9)} class="pelamin-edge" stroke-width=".9"/><path d="${PANEL}" ${scl(.875)} class="pelamin-edge" stroke-width=".5" stroke-dasharray="1 2.4"/>
-   <path d="M195 176c-4-10-2-18 0-26 2 8 4 16 0 26zM195 150c-3-4-3-9 0-12 3 3 3 8 0 12z" fill="url(#plg${id})"/><path d="M181 186c-10-4-14-14-8-20 4 6 8 10 8 20zM209 186c10-4 14-14 8-20-4 6-8 10-8 20z" fill="url(#plg${id})"/>
-   <g class="pelamin-chairs">${chair(163,531,.72,false,id)}${chair(227,531,.72,true,id)}</g>
-   <path d="M60 560H330V584H60Z" class="pelamin-step"/><path d="M36 584H354V610H36Z" class="pelamin-step b"/><path d="M10 610H380V638H10Z" class="pelamin-step c"/>
-   <path d="M60 563H330M36 587H354M10 613H380" class="pelamin-trim"/><path d="M60 581H330M36 607H354M10 635H380" class="pelamin-trim2"/>
-   <path d="M155 560H235L262 638H128Z" class="pelamin-carpet"/><path d="M160 560L134 638M230 560L256 638" class="pelamin-trim2"/>
-   <path d="M128 638H262L300 760H90Z" class="pelamin-carpet f"/>
-   <rect y="638" width="390" height="122" class="pelamin-floor"/><path d="M128 638H262L300 760H90Z" class="pelamin-carpet f"/><path d="M134 638L98 760M256 638L292 760" class="pelamin-trim2"/>
-   ${[[56,556],[334,556]].map(([x,y])=>`<path d="M${x-10} ${y+4}h20l-4 26h-12z" fill="url(#plg${id})"/><path d="M${x-14} ${y+4}h28" class="pelamin-trim"/>${bloom(x,y,20,26,x)}`).join('')}
-   ${bloom(118,584,24,30,7)}${bloom(272,584,24,30,9)}${bloom(80,612,22,24,3)}${bloom(310,612,22,24,5)}
-   ${drape(-1,id)}${drape(1,id)}
-   ${swags(0,62,130,'pelamin-sw3',-40,false)}${swags(0,50,112,'pelamin-sw2',22,false)}${swags(0,40,112,'pelamin-sw1',-34,true)}
-  </svg>`}
+/* pelamin: the bridal dais behind heavy velvet curtains with gold-embroidered borders, under a fringed pelmet.
+   Cover: the curtains closed, an embroidered silk medallion with the names hung on gold cords in front.
+   Tap "Buka Jemputan": the medallion rises away and the curtains draw apart to the sides.
+   Page: the dais itself, a gilt arch over embroidered silk with the names, curtains tied back, two carpeted steps.
+   Skin: ivory silk cards with an embroidered gold band at the top and spaced-cap headings. */
+// velvet folds: a run of soft cylinders of uneven width, as one gradient
+function plFolds(seed,n=7){const r=rng(seed);let x=0,st=[];const ws=Array.from({length:n},()=>.6+r()*.9),T=ws.reduce((a,b)=>a+b,0);
+  ws.forEach(w=>{const W=w/T*100,d=(.28+r()*.2).toFixed(2),h=(.1+r()*.12).toFixed(2);
+    st.push(`rgba(0,0,0,${d}) ${x.toFixed(2)}%`,`rgba(255,255,255,${h}) ${(x+W*.42).toFixed(2)}%`,`rgba(0,0,0,.04) ${(x+W*.7).toFixed(2)}%`);x+=W});
+  st.push(`rgba(0,0,0,.3) 100%`);return `linear-gradient(90deg,${st.join(',')})`}
+// a strip of embroidery: a running vine of leaves and seed beads between two couched gold lines (used as a mask)
+const PL_BAND=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 24"><g fill="none" stroke="#000" stroke-width=".9"><path d="M0 2.5H40M0 21.5H40"/><path d="M0 12C6 6 14 6 20 12S34 18 40 12" stroke-width="1"/></g>
+  <path d="M8 8.6c2-3.4 5.4-3.6 7-2.4-1.8 2.4-4.6 3.2-7 2.4ZM28 15.4c2 3.4 5.4 3.6 7 2.4-1.8-2.4-4.6-3.2-7-2.4ZM20 12m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0-3 0M3 12m-.9 0a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0M37 12m-.9 0a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0"/>
+  <path d="M0 6.5h40M0 17.5h40" stroke="#000" stroke-width=".35" stroke-dasharray="1 1.6"/></svg>`);
+const PL_BANDV=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40"><g transform="rotate(90) translate(0 -24)"><g fill="none" stroke="#000" stroke-width=".9"><path d="M0 2.5H40M0 21.5H40"/><path d="M0 12C6 6 14 6 20 12S34 18 40 12" stroke-width="1"/></g>
+  <path d="M8 8.6c2-3.4 5.4-3.6 7-2.4-1.8 2.4-4.6 3.2-7 2.4ZM28 15.4c2 3.4 5.4 3.6 7 2.4-1.8-2.4-4.6-3.2-7-2.4ZM20 12m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0-3 0"/>
+  <path d="M0 6.5h40M0 17.5h40" stroke="#000" stroke-width=".35" stroke-dasharray="1 1.6"/></g></svg>`);
+// pucuk rebung: a row of bamboo-shoot triangles, for the pelmet and the silk
+const PL_REBUNG=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30"><path d="M0 1H24M0 29H24" stroke="#000" stroke-width=".8"/><path d="M2 27L12 5L22 27Z" fill="none" stroke="#000" stroke-width=".9"/><path d="M7 27L12 15L17 27Z"/><circle cx="12" cy="10.5" r="1"/></svg>`);
+// bunga tabur: small scattered eight-petal flowers woven into the silk
+const PL_TABUR=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><g>${[0,1,2,3,4,5,6,7].map(i=>`<ellipse cx="10" cy="6.6" rx="1.1" ry="2.6" transform="rotate(${i*45} 10 10)"/>`).join('')}<circle cx="10" cy="10" r="1.2"/></g>
+  <g transform="translate(20 20)">${[0,1,2,3].map(i=>`<ellipse cx="10" cy="7.4" rx=".8" ry="2" transform="rotate(${i*90+45} 10 10)"/>`).join('')}<circle cx="10" cy="10" r=".9"/></g></svg>`);
+// a tassel hanging from a cord
+const plTassel=(cls='')=>`<svg class="pl-tassel ${cls}" viewBox="0 0 20 54"><defs><linearGradient id="plg" x1="0" x2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--gold) 60%,#000)"/><stop offset=".45" style="stop-color:color-mix(in srgb,var(--gold) 70%,#fff)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--gold) 70%,#000)"/></linearGradient></defs>
+  <g fill="url(#plg)"><circle cx="10" cy="6" r="4.4"/><path d="M6.5 10h7l1 5h-9z"/><path d="M5.2 15h9.6c1.6 10 2.6 22 3.6 37H1.6c1-15 2-27 3.6-37z"/></g>
+  <g stroke="rgba(0,0,0,.28)" stroke-width=".5">${[4,6.5,9,11.5,14,16].map(x=>`<path d="M${10+(x-10)*.55} 17L${x} 51"/>`).join('')}</g></svg>`;
+// the medallion's embroidered rim: scalloped edge, a ring of seed pearls, a couched line
+function plRim(){const pts=K.ring(40,94,100,100).map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="1.5"/>`).join('');
+  const leaves=K.ring(16,84,100,100).map(([x,y,a])=>{const d=a*180/Math.PI+90;return `<path transform="translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${d.toFixed(1)})" d="M0 -4C2.6 -2 2.6 2 0 4C-2.6 2 -2.6 -2 0 -4Z"/>`}).join('');
+  return `<svg class="pl-rim" viewBox="0 0 200 200"><path d="${K.scallop(40,97,4.5,100,100)}" fill="none" style="stroke:var(--gold)" stroke-width="1.6"/>
+    <g style="fill:color-mix(in srgb,var(--gold) 80%,#fff)">${pts}</g><circle cx="100" cy="100" r="89" fill="none" style="stroke:var(--gold)" stroke-width=".8"/>
+    <g style="fill:var(--gold)">${leaves}</g><circle cx="100" cy="100" r="79" fill="none" style="stroke:var(--gold)" stroke-width=".6" stroke-dasharray="1.4 1.8"/></svg>`}
+const plVars=c=>`--drape:${c.drape};--folds-l:${plFolds(3)};--folds-r:${plFolds(11)};--band:${PL_BAND};--bandv:${PL_BANDV};--rebung:${PL_REBUNG};--tabur:${PL_TABUR}`;
+const plPelmet=()=>`<div class="pl-pelmet"><i class="pl-reb"></i></div><div class="pl-fringe"></div>`;
 FAMILY({key:'pelamin',name:'Pelamin',meaning:'Wedding dais',
-  blurb:'A pelamin of tiered swags, a carved backdrop and two gold throne chairs behind a sheer voile that gathers upward when touched.',
-  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  blurb:'Heavy velvet curtains with gold-embroidered borders and an embroidered silk medallion; they draw apart to show the dais with the names on silk under a gilt arch.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1600,
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
-    return `<section class="page pg-pelamin"><div class="pelamin-stage">${scene(++uid)}
-      <div class="pelamin-txt reveal"><p class="pelamin-k">${ev(o,L)}</p><p class="pelamin-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pelamin-d">${esc(fmtShort(o.date))}</p></div>
-      <div class="pelamin-low reveal d2"><p class="pelamin-date">${esc(fmtDate(o.date,o.lang))}</p><p class="pelamin-ven">${esc(o.venue)} · ${en?'from':'jam'} ${esc(fmtTime(o.start,o.lang))}</p></div></div></section>`},
+    return `<section class="page pg-pelamin${th.c.lite?' pl-lite':''}" style="${plVars(th.c)}"><div class="pl-hall"><i></i></div>
+      <div class="pl-tie pl-tl"><i class="pl-hem"></i><i class="pl-edge"></i><span class="pl-knot">${plTassel()}</span></div>
+      <div class="pl-tie pl-tr"><i class="pl-hem"></i><i class="pl-edge"></i><span class="pl-knot">${plTassel()}</span></div>
+      ${plPelmet()}
+      <div class="pl-dais reveal">
+        <div class="pl-arch"><div class="pl-silk">
+          ${o.bismillah?'<p class="pl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}<p class="pl-k kicker">${ev(o,L)}</p>
+          <h1 class="pl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+          <p class="pl-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="pl-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <div class="pl-steps"><i></i><i></i><i></i></div></div>
+      <a class="pl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
-    return `<div class="cover cv-pelamin"><div class="pelamin-stage">${scene(++uid)}
-      <div class="pelamin-sheer"><i class="pelamin-hem"></i></div>
-      <div class="pelamin-txt"><p class="pelamin-k">${ev(o,L)}</p><p class="pelamin-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pelamin-d">${esc(fmtShort(o.date))}</p></div>
-      <${tag} class="pelamin-cord" ${attr} aria-label="${L.open}"><svg viewBox="0 0 40 120"><path d="M20 0V54" class="pelamin-rope"/><path d="M20 0V54" class="pelamin-rope2"/><circle cx="20" cy="60" r="7" class="pelamin-knot"/><path d="M14 66h12l5 44H9z" class="pelamin-knot"/><path d="M12 76h16M11 84h18M10.5 92h19M10 100h20" class="pelamin-tl"/><path d="M9 110h22" class="pelamin-tl"/></svg></${tag}>
-      <div class="pelamin-foot">${guest?`<p class="pelamin-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pelamin-hint">${en?'Pull the tassel to raise the voile':'Tarik jumbai untuk menyingkap tirai'}</p></div></div></div>`},
-  skin(el,o,th){K.cards(el);const c=th.c;
-    const sw=svgUriSq(`<svg ${NS} width="64" height="34" viewBox="0 0 64 34"><path d="M0 0Q32 34 64 0Z" fill="${c.accent}"/><path d="M5 2Q32 22 59 2M9 2Q32 13 55 2" fill="none" stroke="#000" stroke-opacity=".18" stroke-width=".8"/><path d="M0 0Q32 34 64 0" fill="none" stroke="${c.gold}" stroke-width="1.6"/><path d="M0 -2.6Q32 31.4 64 -2.6" fill="none" stroke="${c.gold}" stroke-width=".6"/><circle cx="0" cy="2" r="2.6" fill="${c.gold}"/><circle cx="64" cy="2" r="2.6" fill="${c.gold}"/><path d="M-1.8 4h3.6l1 9h-5.6zM62.2 4h3.6l1 9h-5.6z" fill="${c.gold}"/></svg>`);
-    el.style.setProperty('--pl-sw',sw)},
+    return `<div class="cover cv-pelamin${th.c.lite?' pl-lite':''}" style="${plVars(th.c)}"><div class="pl-hall"><i></i></div>
+      <div class="pl-cur pl-l"><i class="pl-hem"></i><i class="pl-edge"></i></div><div class="pl-cur pl-r"><i class="pl-hem"></i><i class="pl-edge"></i></div>
+      <div class="pl-glow"></div>${plPelmet()}
+      <div class="pl-med"><i class="pl-cord"></i><div class="pl-disc">${plRim()}<div class="pl-mt"><p class="pl-k">${ev(o,L)}</p><p class="pl-mn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pl-md">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>${plTassel('pl-mtas')}</div>
+      <div class="pl-foot">${guest?`<p class="pl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="pl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--drape',th.c.drape);el.style.setProperty('--band',PL_BAND);el.classList.toggle('pl-lite',!!th.c.lite);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Crimson swags, ivory panel, gold',c:{ground:'#3a0e14',sheet:'#fbf3e2',ink:'#2d2018',accent:'#8e1b28',gold:'#cfa24e',pagefg:'#f6e6c6'}},
-    {k:'emas',n:'Emas',desc:'Royal gold on cream',c:{ground:'#5a3f12',sheet:'#fff8e8',ink:'#3a2a12',accent:'#b38328',gold:'#d8b25a',pagefg:'#fbefd2'}},
-    {k:'zamrud',n:'Zamrud',desc:'Emerald velvet swags',c:{ground:'#0e2a20',sheet:'#f8f3e3',ink:'#1e2a22',accent:'#1c5e45',gold:'#d2aa55',pagefg:'#efe7cc'}},
-    {k:'biru',n:'Biru',desc:'Sapphire and silver-gold',c:{ground:'#101b38',sheet:'#f6f3ea',ink:'#1b2236',accent:'#24438a',gold:'#cdb06a',pagefg:'#e9e6dc'}},
-    {k:'jambu',n:'Jambu',desc:'Dusty rose on blush',c:{ground:'#d9b7b4',sheet:'#fff8f4',ink:'#3a2729',accent:'#b0566a',gold:'#b8924e',pagefg:'#3a2729'}},
-    {k:'sage',n:'Sage',desc:'Sage swags, ivory and gold',c:{ground:'#b8c2ad',sheet:'#fbfaf2',ink:'#2c3327',accent:'#6e7f5c',gold:'#b09454',pagefg:'#2a3126'}},
-    {k:'ungu',n:'Ungu',desc:'Amethyst drapes and gold',c:{ground:'#2a1435',sheet:'#fbf5fa',ink:'#2e2232',accent:'#6c2f7d',gold:'#d1a95c',pagefg:'#f1e5f2'}},
-    {k:'krim',n:'Krim',desc:'Champagne drapes on cream, antique gold',c:{ground:'#d8cbb3',sheet:'#fffaf1',ink:'#3a3027',accent:'#9a7a44',gold:'#c3a160',pagefg:'#3a3027'}},
+    {k:'merah',n:'Merah',desc:'Crimson velvet, ivory silk, gold',c:{ground:'#2a0a0f',sheet:'#fbf3e2',ink:'#2d2018',accent:'#7e1624',gold:'#cfa24e',pagefg:'#f6e6c6',drape:'#7a1220'}},
+    {k:'emas',n:'Emas',desc:'Old-gold velvet on cream silk',c:{ground:'#2e2109',sheet:'#fff8e8',ink:'#3a2a12',accent:'#8a6418',gold:'#d8b25a',pagefg:'#fbefd2',drape:'#8f6a22'}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald velvet, ivory silk, gold',c:{ground:'#081d16',sheet:'#f8f3e3',ink:'#1e2a22',accent:'#165440',gold:'#d2aa55',pagefg:'#efe7cc',drape:'#11463a'}},
+    {k:'biru',n:'Biru',desc:'Sapphire velvet, pearl silk, gold',c:{ground:'#0a1229',sheet:'#f6f3ea',ink:'#1b2236',accent:'#22408a',gold:'#cdb06a',pagefg:'#e9e6dc',drape:'#1b2f6a'}},
+    {k:'jambu',n:'Jambu',desc:'Dusty rose velvet on blush',c:{ground:'#e7d3cf',sheet:'#fff8f4',ink:'#3a2729',accent:'#9c4559',gold:'#b8924e',pagefg:'#3a2729',drape:'#c07f8a',lite:1}},
+    {k:'sage',n:'Sage',desc:'Sage velvet, ivory silk and gold',c:{ground:'#dfe2d6',sheet:'#fbfaf2',ink:'#2c3327',accent:'#56664a',gold:'#b09454',pagefg:'#2a3126',drape:'#7d8f6c',lite:1}},
+    {k:'ungu',n:'Ungu',desc:'Amethyst velvet and gold',c:{ground:'#1a0c22',sheet:'#fbf5fa',ink:'#2e2232',accent:'#5e2870',gold:'#d1a95c',pagefg:'#f1e5f2',drape:'#4c1e5e'}},
+    {k:'krim',n:'Krim',desc:'Champagne velvet on cream, antique gold',c:{ground:'#ece3d2',sheet:'#fffaf1',ink:'#3a3027',accent:'#86672f',gold:'#b8954f',pagefg:'#3a3027',drape:'#cdb48a',lite:1}},
   ]});
 
 })()}catch(e){console.error("family pelamin failed",e)}
@@ -5519,81 +6469,72 @@ FAMILY({key:'permaidani',name:'Permaidani',meaning:'Persian carpet',
 
 /* ===== family: piksel ===== */
 try{(()=>{
-/* piksel: an 8-bit game title screen inside a CRT bezel. Dithered sky, pixel castle, hills, trees, floating pixel hearts, scanlines.
-   Cover: PRESS START; the screen is wiped away tile by tile in a stepped diagonal. Page: the title screen with a menu of the details.
-   Skin: RPG dialogue boxes with name tags. */
-needFont('Press+Start+2P');
-needFont('VT323');
-const PS="'Press Start 2P', monospace",VT="'VT323', monospace";
-let uid=0;
-const R=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
-function bmp(rows,x,y,map){let s='';rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const ch=r[i];if(map[ch])s+=R(x+i,y+j,1,1,map[ch])}});return s}
-const HEART=['.XX.XX.','XWXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'];
-const TREE=['..GGG..','.GGgGG.','GGGGGgG','GgGGGGG','GGGGgGG','.GGGGG.','..GgG..','...T...','...T...'];
-const CLOUD=['...WWWW.....','..WWWWWWW.WW','WWWWWWWWWWWW','.SSSSSSSSSS.'];
-const heart=(x,y,c,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${bmp(['.XX.XX.','XWXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'],0,0,{X:c.accent,W:'#fff'})}${bmp(['.......','.......','......S','.....S.','....S..','...S...'],0,0,{S:c.accentS})}</g>`;
-function scene(c,H=180){const r=K.rnd(11);let s='';const sky=[c.sky1,c.sky2,c.sky3,c.sky4];const bands=[0,30,58,82,H];
-  // sky bands with checker dithering at each seam
-  for(let i=0;i<4;i++)s+=R(0,bands[i],96,bands[i+1]-bands[i],sky[i]);
-  for(let i=1;i<4;i++){for(let x=0;x<96;x+=2)s+=R(x,bands[i]-2,1,1,sky[i])+R(x+1,bands[i]-1,1,1,sky[i])+R(x+1,bands[i],1,1,sky[i-1]);for(let x=0;x<96;x+=4)s+=R(x,bands[i]-4,1,1,sky[i])}
-  for(let i=0;i<46;i++){const x=Math.floor(r()*96),y=Math.floor(r()*70);s+=R(x,y,1,1,i%5?c.star:'#fff');if(i%11==0)s+=R(x-1,y,3,1,c.star)+R(x,y-1,1,3,c.star)}
-  // moon or sun
-  s+=bmp(['..MMM..','.MMMMm.','MMMMMmm','MMMMMMm','MMMMMMm','.MMMMm.','..MMM..'],76,60,{M:c.moon,m:c.moonS});
-  s+=`<g opacity=".9">${bmp(CLOUD,6,64,{W:c.cloud,S:c.cloudS})}${bmp(CLOUD,58,44,{W:c.cloud,S:c.cloudS})}</g>`;
-  // far mountains (staircase), near hills
-  let m=`M0 ${H}`;for(let x=0;x<=96;x+=2){const h=Math.round(86+10*Math.sin(x/9)+6*Math.sin(x/4.3+1));m+=`V${h}H${x+2}`}s+=`<path d="${m}V${H}Z" fill="${c.mtn}"/>`;
-  for(let x=0;x<96;x+=2){const h=Math.round(86+10*Math.sin(x/9)+6*Math.sin(x/4.3+1));if(h<88)s+=R(x,h,2,1,c.snow)}
-  let hl=`M0 ${H}`;for(let x=0;x<=96;x+=2){const h=Math.round(108+5*Math.sin(x/7+2)+3*Math.cos(x/3));hl+=`V${h}H${x+2}`}s+=`<path d="${hl}V${H}Z" fill="${c.hill}"/>`;
-  // castle
-  const st=c.stone,sd=c.stoneS,ol=c.outline;let k='';
-  k+=R(28,98,40,24,ol)+R(29,99,38,23,st);
-  for(let x=29;x<67;x+=4)k+=R(x,96,2,2,st)+R(x,95,2,1,ol);
-  [[22,84],[66,84]].forEach(([x,y])=>{k+=R(x,y,9,38,ol)+R(x+1,y+1,7,37,st)+R(x,y-3,9,3,ol);for(let i=0;i<9;i+=3)k+=R(x+i,y-4,2,2,st);k+=R(x+3,y+8,3,4,c.gold)+R(x+3,y+20,3,4,c.gold)+R(x+4,y-14,1,10,ol)+R(x+5,y-14,5,3,c.accent)+R(x+5,y-12,3,1,c.accentS)});
-  k+=R(40,80,16,20,ol)+R(41,81,14,19,st);for(let i=0;i<7;i++)k+=R(40+i,80-i,16-2*i,1,i%2?c.accent:c.accentS);k+=R(47,66,2,8,ol)+R(48,66,6,3,c.gold);
-  k+=R(45,86,6,6,c.gold)+R(47,86,2,6,ol);
-  k+=R(43,110,10,12,ol)+R(44,108,8,2,ol)+R(45,107,6,1,ol)+R(44,111,8,11,c.door);
-  for(let y=102;y<120;y+=4)for(let x=30+(y%8?2:0);x<66;x+=6)if(x<43||x>53)k+=R(x,y,3,1,sd);
-  [[33,104],[58,104],[33,112],[58,112]].forEach(([x,y])=>k+=R(x,y,3,4,c.gold)+R(x,y,3,1,ol));
-  s+=k;
-  // ground, path, grass tufts, trees, flowers
-  s+=R(0,121,96,H-121,c.grass)+R(0,121,96,1,c.grass2);
-  for(let y=124;y<H;y+=3)for(let x=(y%2)*3;x<96;x+=7)s+=R(x,y,2,1,c.grass2);
-  for(let i=0;i<H-121;i++){const w=10+Math.round(i*.9);s+=R(48-w/2,121+i,w,1,i%4==0?c.pathS:c.path)}
-  [[4,108],[14,112],[78,110],[87,106]].forEach(([x,y])=>s+=bmp(TREE,x,y,{G:c.tree,g:c.treeS,T:c.trunk}));
-  for(let i=0;i<18;i++){const x=Math.floor(r()*92)+2,y=126+Math.floor(r()*(H-130));if(Math.abs(x-48)>12+(y-121)*.45)s+=R(x,y,1,1,i%2?c.accent:c.gold)}
-  return s}
-function screenSvg(c,H,cls){const u=++uid;return `<svg class="${cls}" viewBox="0 0 96 ${H}" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges" aria-hidden="true">${scene(c,H)}
-   ${heart(9,48,c)}${heart(82,78,c,.8)}${heart(14,92,c,.6)}</svg>`}
-const scan='<i class="px-scan"></i><i class="px-glass"></i>';
-FAMILY({key:'piksel',name:'Piksel',meaning:'8-bit title screen',
-  blurb:'An 8-bit game title screen in a CRT bezel: a dithered sky, pixel castle and hearts, the names as the game title and PRESS START; the screen wipes away tile by tile.',
-  fonts:{d:PS,s:PS,b:VT},ms:1550,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-piksel" style="--tx:${c.tx||'#fff'};--ol:${c.outline};--tsh:${c.tsh||c.outline};--accentS:${c.accentS};--n:${Math.max(6,(n1||'').length,(n2||'').length)}"><div class="px-bezel reveal"><div class="px-screen">${screenSvg(c,150,'px-scene')}${scan}
-     <div class="px-ptitle"><p class="px-k">${ev(o,L)}</p></div></div></div>
-     <h1 class="names px-nm reveal d1"><span>${esc(n1)}</span><i class="px-h"></i><span>${esc(n2)}</span></h1>
-     <div class="px-menu reveal d1"><p><b>&#9654;</b><span>${en?'DATE':'TARIKH'}</span><em>${esc(fmtDate(o.date,o.lang))}</em></p><p><b></b><span>${en?'TIME':'MASA'}</span><em>${esc(fmtTime(o.start,o.lang))}${o.end?' - '+esc(fmtTime(o.end,o.lang)):''}</em></p><p><b></b><span>${en?'MAP':'LOKASI'}</span><em>${esc(o.venue)}</em></p></div>
-     <p class="px-copy reveal d2">&#169; ${esc(String(new Date((o.date||'2026')+'T00:00:00').getFullYear()))} ${esc(n1)} &amp; ${esc(n2)}</p></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';const d=new Date((o.date||'2026-01-01')+'T00:00:00');
-    const hi=String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')+String(d.getFullYear()).slice(2);
-    let tiles='';for(let y=0;y<16;y++)for(let x=0;x<8;x++)tiles+=`<i style="--d:${(x+y)*38}ms"></i>`;
-    return `<div class="cover cv-piksel" style="--tx:${c.tx||'#fff'};--ol:${c.outline};--tsh:${c.tsh||c.outline};--accentS:${c.accentS};--n:${Math.max(6,(n1||'').length,(n2||'').length)}"><div class="px-case"><div class="px-screen">${screenSvg(c,180,'px-scene')}
-     <div class="px-hud"><span>1UP <b>00${hi.slice(0,4)}</b></span><span>HI <b>${hi}</b></span></div>
-     <div class="px-title"><p class="px-k">${ev(o,L)}</p><p class="px-nm"><span>${esc(n1)}</span><i class="px-h"></i><span>${esc(n2)}</span></p></div>
-     <div class="px-low">${guest?`<p class="px-p1">${en?'PLAYER 1':'PEMAIN 1'}: <b>${esc(guest)}</b></p>`:''}
-      <${tag} class="px-start" ${attr} aria-label="${L.open}">&#9654; PRESS START</${tag}>
-      <p class="px-info">${esc(fmtShort(o.date))} &#183; ${esc(o.venue)}</p><p class="px-c">&#169; ${d.getFullYear()} ${esc(n1)} &amp; ${esc(n2)}</p></div>
-     ${scan}</div><i class="px-led"></i></div><div class="px-wipe">${tiles}</div></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--frame',th.c.frame);el.style.setProperty('--box',th.c.sheet)},
+/* piksel (round 7): a handheld game console photographed on linen like a product shot. Its little screen shows a
+   public-domain painting re-drawn as pixel art (Hokusai, Monet, Hassam, a Chinese album leaf), with the names in a game dialogue box.
+   Cover: tap "Buka Jemputan" and the view moves into the screen until it fills the phone.
+   Page: the pixel painting as a framed screen, the names, and a game menu that leads to the sections.
+   Skin: matte cards with stepped pixel corners and pixel-type labels. */
+needFont('Silkscreen');
+// The paintings are re-drawn once in the browser: shrunk to an 80 x 72 grid, posterised with an ordered dither,
+// and shown with crisp pixels. The Game Boy colourway maps the same picture to four greens.
+const PX_ART={fuji:{src:'pd-paint-hokusai-fuji.jpg',box:[0,.12,1,.92]},poppies:{src:'pd-paint-monet-poppies.jpg',box:[0,.22,1,.92]},loquat:{src:'pd-asia-4.jpg',box:[.1,.02,1,.84]},
+  roses:{src:'pd-still-4.jpg',box:[.12,.15,.92,.723]},bouquet:{src:'pd-bouquet.jpg',box:[.1,.12,.9,.664]},birds:{src:'pd-asia-3.jpg',box:[.1,.42,.75,.953]},
+  tail:{src:'pd-asia-2.jpg',box:[.1,.12,.7,.367]},plate:{src:'pd-asia-1.webp',fit:'#e4ebf1'}};
+const PX_GB=[[15,56,15],[48,98,48],[139,172,15],[155,188,15]];
+let pxCss=null;   // created on first render in the browser; the engine is also imported on the server
+const pxDone=new Set();
+function pxMake(art,pal){const id=art+'-'+pal;if(pxDone.has(id)||!PX_ART[art]||typeof document==='undefined'||typeof Image==='undefined')return;if(!pxCss){pxCss=document.createElement('style');document.head.appendChild(pxCss)}pxDone.add(id);const a=PX_ART[art],img=new Image();
+  img.onload=()=>{try{const W=80,H=72,iw=img.naturalWidth,ih=img.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
+    g.imageSmoothingQuality='high';if(a.fit){g.fillStyle=a.fit;g.fillRect(0,0,W,H);const dh=H*.9,dw=dh*iw/ih;g.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh)}else g.drawImage(img,a.box[0]*iw,a.box[1]*ih,(a.box[2]-a.box[0])*iw,(a.box[3]-a.box[1])*ih,0,0,W,H);
+    const d=g.getImageData(0,0,W,H),p=d.data,B=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const k=(y*W+x)*4,t=(B[(y%4)*4+x%4]/16-.5);
+      if(pal==='gb'){const R=p[k]/255,G=p[k+1]/255,Bl=p[k+2]/255,l=(G+Bl)/2*1.1-R*.25+.1,q=Math.max(0,Math.min(3,Math.round(l*3.8-.55+t*.3))),c=PX_GB[q];p[k]=c[0];p[k+1]=c[1];p[k+2]=c[2]}
+      else for(let i=0;i<3;i++){const v=p[k+i]/255,lv=6;p[k+i]=Math.round(Math.max(0,Math.min(lv,Math.round(v*lv+t*.4)))*255/lv)}}
+    g.putImageData(d,0,0);const u=cv.toDataURL('image/png');pxCss.textContent+=`.inv i.px-art-${id}{background-image:url(${u})}`}catch(e){}};img.src=A+a.src}
+const pxArt=(c,cls='')=>{pxMake(c.art,c.pal);return `<i class="px-art px-art-${c.art}-${c.pal} ${cls}"></i>`};
+const pxVars=c=>`--shell:${c.shell};--bezel:${c.bezel};--btn:${c.btn};--surface:${c.surface}`;
+const pxScreen=(o,c,L,dialog)=>`<div class="px-screen">${pxArt(c)}${dialog?`<div class="px-dlg"><b>${dialog}</b></div>`:''}<i class="px-glass"></i></div>`;
+FAMILY({key:'piksel',name:'Piksel',meaning:'Pixel console',
+  blurb:'A handheld game console resting on linen, its screen showing a famous painting re-drawn in pixels with your names in a dialogue box. The view moves into the screen to open the card.',
+  fonts:{d:"'Silkscreen', monospace",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-piksel2${c.light?' px-light':''}" style="${pxVars(c)}"><div class="px-linen"></div>
+      <div class="px-frame reveal">${pxScreen(o,c,L,'')}<p class="px-cap">${esc(c.credit)}</p></div>
+      <p class="px-k kicker reveal d1">${ev(o,L)}</p>
+      <h1 class="px-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+      <p class="px-date reveal d2">${esc(fmtDate(o.date,o.lang))}${o.venue?`<br><i>${esc(o.venue)}</i>`:''}</p>
+      <nav class="px-menu reveal d3">
+        <a data-go="when" href="#">${en?'Event details':'Butiran majlis'}</a>
+        ${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}
+        <a data-go="loc" href="#">${en?'Location':'Lokasi'}</a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    const dpad=`<i class="px-dpad"><i></i></i>`;
+    return `<div class="cover cv-piksel2${c.light?' px-light':''}" style="${pxVars(c)}"><div class="px-linen"></div>
+      <p class="px-k px-top">${ev(o,L)}</p>
+      <div class="px-con">
+        <div class="px-rim"><span>OFF</span><span>ON</span></div>
+        <div class="px-bezel"><span class="px-led"></span><small class="px-bat">${en?'POWER':'KUASA'}</small>
+          ${pxScreen(o,c,L,`${esc(n1)} ${en?'and':'dan'} ${esc(n2)}`)}<p class="px-model">${esc(fmtShort(o.date))}</p></div>
+        <p class="px-brand"><b>Sanding</b> <span>KAD KAHWIN</span></p>
+        ${dpad}<i class="px-ab b"><small>B</small></i><i class="px-ab a"><small>A</small></i>
+        <i class="px-ss s1"><small>SELECT</small></i><i class="px-ss s2"><small>START</small></i>
+        <i class="px-grille"></i>
+      </div>
+      <div class="px-foot">${guest?`<p class="px-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="px-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;pxMake(c.art,c.pal);['shell','bezel','btn','surface'].forEach(k=>el.style.setProperty('--'+k,c[k]));el.classList.toggle('px-light',!!c.light);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'malam',n:'Malam',desc:'Night sky, violet horizon, pink hearts',c:{ground:'#06070f',sheet:'#101a4a',ink:'#ffffff',accent:'#ff4f79',accentS:'#b8244a',gold:'#ffd447',sky1:'#0b1030',sky2:'#1c2463',sky3:'#3d348b',sky4:'#7a4fa8',star:'#c9c4ff',moon:'#fff3c4',moonS:'#e0c87a',cloud:'#8e86c9',cloudS:'#5d55a0',mtn:'#2a2558',snow:'#c9c4ff',hill:'#1d3b4a',stone:'#9aa3b5',stoneS:'#6b7488',outline:'#1b1a2e',door:'#2b1c12',grass:'#2e8b57',grass2:'#1f6b43',path:'#c9a86a',pathS:'#a8874f',tree:'#1f6b43',treeS:'#2e8b57',trunk:'#5b3a22',frame:'#ffffff',pagefg:'#ffffff',line:'rgba(255,255,255,.3)'}},
-    {k:'senja',n:'Senja',desc:'Sunset over the castle',c:{ground:'#140b1c',sheet:'#3a1838',ink:'#fff4e8',accent:'#ff3d6e',accentS:'#a8173f',gold:'#ffd166',sky1:'#2b1c4f',sky2:'#6b2a6a',sky3:'#c4486a',sky4:'#ffa060',star:'#ffd1e0',moon:'#fff0a8',moonS:'#ffc35a',cloud:'#ff9a8a',cloudS:'#c45a6a',mtn:'#5a2a5a',snow:'#ffb3a0',hill:'#3a2a4a',stone:'#e3c9a8',stoneS:'#b39470',outline:'#2a1424',door:'#2a1424',grass:'#3c7a3c',grass2:'#2c5e2c',path:'#e0b070',pathS:'#b88a50',tree:'#2c5e2c',treeS:'#3c7a3c',trunk:'#5a3a24',frame:'#ffd166',pagefg:'#fff4e8',line:'rgba(255,244,232,.3)'}},
-    {k:'siang',n:'Siang',desc:'Bright blue day, white dialogue boxes',c:{ground:'#cfe8ff',sheet:'#ffffff',ink:'#1a1a2e',accent:'#e83c5a',accentS:'#a3203a',gold:'#ffc83d',sky1:'#3d8bff',sky2:'#5fa8ff',sky3:'#8fd0ff',sky4:'#c8ecff',star:'#cfe6ff',moon:'#fff6b0',moonS:'#ffd84a',cloud:'#ffffff',cloudS:'#b8d8f0',mtn:'#6f8fb5',snow:'#ffffff',hill:'#4caf50',stone:'#d8d8d8',stoneS:'#a8a8a8',outline:'#2a2a3a',door:'#5a3a22',grass:'#5ccf5c',grass2:'#3d9e3d',path:'#e8c88a',pathS:'#c8a46a',tree:'#2e8b3e',treeS:'#4caf50',trunk:'#7a4a2a',frame:'#1a1a2e',pagefg:'#1a1a2e',line:'rgba(26,26,46,.3)'}},
-    {k:'gameboy',n:'Game Boy',desc:'Four shades of pea green',c:{ground:'#8bac0f',sheet:'#9bbc0f',ink:'#0f380f',accent:'#0f380f',accentS:'#306230',gold:'#306230',sky1:'#9bbc0f',sky2:'#9bbc0f',sky3:'#8bac0f',sky4:'#8bac0f',star:'#8bac0f',moon:'#306230',moonS:'#0f380f',cloud:'#9bbc0f',cloudS:'#306230',mtn:'#306230',snow:'#8bac0f',hill:'#306230',stone:'#8bac0f',stoneS:'#306230',outline:'#0f380f',door:'#0f380f',grass:'#8bac0f',grass2:'#306230',path:'#9bbc0f',pathS:'#8bac0f',tree:'#0f380f',treeS:'#306230',trunk:'#0f380f',frame:'#0f380f',tx:'#0f380f',tsh:'#c4d86a',pagefg:'#0f380f',line:'rgba(15,56,15,.35)'}},
-    {k:'pastel',n:'Pastel',desc:'Candy sky and a pearl castle',c:{ground:'#f6e6f2',sheet:'#fff5fb',ink:'#4a2f63',accent:'#ff6fa5',accentS:'#d0407a',gold:'#ffd27a',sky1:'#c8b6ff',sky2:'#e0c3fc',sky3:'#ffd6e8',sky4:'#fff0f5',star:'#ffffff',moon:'#ffffff',moonS:'#ffd6e8',cloud:'#ffffff',cloudS:'#f2c6de',mtn:'#b8a4e3',snow:'#ffffff',hill:'#9ad8b8',stone:'#ffffff',stoneS:'#e6d6f0',outline:'#6b4a8a',door:'#8a5aa8',grass:'#a8e6c4',grass2:'#7cc9a0',path:'#ffe4b8',pathS:'#f2c890',tree:'#7cc9a0',treeS:'#a8e6c4',trunk:'#a8806a',frame:'#6b4a8a',pagefg:'#4a2f63',line:'rgba(74,47,99,.3)'}},
-    {k:'hutan',n:'Hutan',desc:'Forest night with firefly hearts',c:{ground:'#05110d',sheet:'#0f2a22',ink:'#e8fff4',accent:'#ff6b6b',accentS:'#b83a3a',gold:'#ffd166',sky1:'#071712',sky2:'#0d2a20',sky3:'#1f4d3a',sky4:'#4a7f52',star:'#d8ffd0',moon:'#f4ffd8',moonS:'#c8e09a',cloud:'#3a6a50',cloudS:'#244a38',mtn:'#163a2c',snow:'#8ac49a',hill:'#123024',stone:'#a8b8a0',stoneS:'#788870',outline:'#0a1a12',door:'#2a1a10',grass:'#2a6a3a',grass2:'#1a4a28',path:'#b89a5a',pathS:'#8a7040',tree:'#0f3a1f',treeS:'#1f5a30',trunk:'#4a2e1a',frame:'#ffd166',pagefg:'#e8fff4',line:'rgba(232,255,244,.3)'}},
-    {k:'salji',n:'Salji',desc:'Blue winter dusk and snowfields',c:{ground:'#0a1426',sheet:'#142640',ink:'#eef4ff',accent:'#ff5577',accentS:'#b8304c',gold:'#ffe08a',sky1:'#1b2a4a',sky2:'#2c4a7a',sky3:'#4a6fa5',sky4:'#9cc0e8',star:'#ffffff',moon:'#ffffff',moonS:'#c8dcf0',cloud:'#d8e8ff',cloudS:'#8aa8d0',mtn:'#3a5a8a',snow:'#ffffff',hill:'#c8dcf0',stone:'#b8c8dc',stoneS:'#8898b0',outline:'#1a2238',door:'#3a2a24',grass:'#eef4ff',grass2:'#c8dcf0',path:'#a8b8d0',pathS:'#8898b0',tree:'#1f4a3a',treeS:'#ffffff',trunk:'#4a3a2a',frame:'#ffffff',pagefg:'#eef4ff',line:'rgba(238,244,255,.3)'}},
-    {k:'emas',n:'Emas',desc:'Golden desert evening',c:{ground:'#140c08',sheet:'#2a1a10',ink:'#fff2d8',accent:'#ff5a5a',accentS:'#b0302a',gold:'#ffd27a',sky1:'#2a1a3a',sky2:'#6a2a4a',sky3:'#d9822b',sky4:'#ffd27a',star:'#ffe8c0',moon:'#fff4d0',moonS:'#ffcc66',cloud:'#ffb870',cloudS:'#c87a3a',mtn:'#8a4a3a',snow:'#ffb870',hill:'#b86a3a',stone:'#f0d8a8',stoneS:'#c0a070',outline:'#3a2010',door:'#3a2010',grass:'#e0b060',grass2:'#c09040',path:'#f4d49a',pathS:'#d8b070',tree:'#4a7a3a',treeS:'#6a9a4a',trunk:'#6a4a2a',frame:'#ffd27a',pagefg:'#fff2d8',line:'rgba(255,242,216,.3)'}},
+    {k:'malam',n:'Malam',desc:'Midnight console, a Dutch flower painting in pixels',c:{ground:'#10131d',surface:'#1b2030',sheet:'#1b2132',ink:'#e9ecf4',accent:'#e8eefc',gold:'#e46d8c',pagefg:'#e9ecf4',shell:'#2c3553',bezel:'#161a28',btn:'#d9637f',art:'roses',pal:'full',credit:'After a Dutch flower still life',cover:'#2c3553'}},
+    {k:'senja',n:'Senja',desc:'Dusty-rose console, Hokusai’s red Fuji',c:{ground:'#2d1c24',surface:'#3a2630',sheet:'#33222b',ink:'#f6ebe6',accent:'#f7e6de',gold:'#e8a07f',pagefg:'#f6ebe6',shell:'#cf9f98',bezel:'#3b2a30',btn:'#9c3b45',art:'fuji',pal:'full',credit:'After Hokusai, Fine Wind, Clear Morning',cover:'#cf9f98'}},
+    {k:'siang',n:'Siang',desc:'Cream console on pale blue linen, Monet’s poppy field',c:{ground:'#dbe3ea',surface:'#dfe6ec',sheet:'#f7f7f3',ink:'#2a2f38',accent:'#2a3550',gold:'#c4523f',pagefg:'#2a2f38',shell:'#e4dfd3',bezel:'#5d6272',btn:'#b8455a',art:'poppies',pal:'full',credit:'After Claude Monet, a poppy field',light:'1',cover:'#e4dfd3'}},
+    {k:'gameboy',n:'Game Boy',desc:'Classic grey console, Hokusai’s Fuji in four greens',c:{ground:'#d7d6cf',surface:'#dcdbd3',sheet:'#f3f2ec',ink:'#28301f',accent:'#0f380f',gold:'#7a2a5a',pagefg:'#28301f',shell:'#c9c6bc',bezel:'#5a5d6e',btn:'#8a2f5c',art:'fuji',pal:'gb',credit:'After Hokusai, in four shades of green',light:'1',cover:'#9bbc0f'}},
+    {k:'pastel',n:'Pastel',desc:'Lilac console, two bullfinches from a Japanese print',c:{ground:'#f1e6ec',surface:'#f2e8ee',sheet:'#fdf8fa',ink:'#3d2f45',accent:'#4a3560',gold:'#c9718f',pagefg:'#3d2f45',shell:'#cfc4e2',bezel:'#5b5470',btn:'#e08aa6',art:'birds',pal:'full',credit:'After a Japanese print, two bullfinches',light:'1',cover:'#cfc4e2'}},
+    {k:'hutan',n:'Hutan',desc:'Forest-green console, a Dutch bouquet',c:{ground:'#121a15',surface:'#1c2720',sheet:'#1b261f',ink:'#e8f0ea',accent:'#eef5ef',gold:'#c9a35a',pagefg:'#e8f0ea',shell:'#405c4a',bezel:'#18211b',btn:'#c9a35a',art:'bouquet',pal:'full',credit:'After Jan van Huysum, flowers in a vase',cover:'#405c4a'}},
+    {k:'salji',n:'Salji',desc:'White console on cool linen, a blue-and-white dish',c:{ground:'#d5dde6',surface:'#dae1e9',sheet:'#f8fafc',ink:'#253041',accent:'#2b3a55',gold:'#5b8bc0',pagefg:'#253041',shell:'#eef0f1',bezel:'#4a5266',btn:'#5b8bc0',art:'plate',pal:'full',credit:'After a blue-and-white porcelain dish',light:'1',cover:'#eef0f1'}},
+    {k:'emas',n:'Emas',desc:'Mustard console, a Chinese album leaf of loquats',c:{ground:'#22190f',surface:'#2c2116',sheet:'#2a2017',ink:'#f5ecdc',accent:'#f7ead2',gold:'#d9b25a',pagefg:'#f5ecdc',shell:'#d3a94f',bezel:'#2e2418',btn:'#7a3b2a',art:'loquat',pal:'full',credit:'After a Chinese album leaf, loquats and a bird',cover:'#d3a94f'}},
   ]});
 
 })()}catch(e){console.error("family piksel failed",e)}
@@ -5601,70 +6542,84 @@ FAMILY({key:'piksel',name:'Piksel',meaning:'8-bit title screen',
 
 /* ===== family: popup ===== */
 try{(()=>{
-/* popup: a pop-up paper card of a domed pavilion (onion dome, chhatri, pointed arches, jali cutwork), minarets and a
-   garden, cut from layered coloured card with gold-foil linework.
-   Cover: the card lies open flat on the table. Opening: the back folds up and the layers rise one behind the other
-   (rotateX), the view coming down to eye level. Page: the pavilion standing. Skin: layered paper-cut arch frames. */
-let uid=0;
-const arch=(x0,x1,yt,yb)=>{const xm=(x0+x1)/2,ys=yt+(x1-x0)*.55;return `M${x0} ${yb}V${ys}Q${x0} ${yt+(x1-x0)*.12} ${xm} ${yt}Q${x1} ${yt+(x1-x0)*.12} ${x1} ${ys}V${yb}Z`};
-const dome=(cx,w,yb,h)=>`M${cx-w/2} ${yb}C${cx-w*.85} ${yb-h*.45} ${cx-w*.3} ${yb-h*.72} ${cx} ${yb-h}C${cx+w*.3} ${yb-h*.72} ${cx+w*.85} ${yb-h*.45} ${cx+w/2} ${yb}Z`;
-// the pavilion layer, 300x300, base at the bottom
-function pavilion(c,id){const g=c.gold;let jali='';for(let r=0;r<4;r++)for(let i=-r;i<=r;i++){const x=150+i*11-(r%2?0:0),y=68+r*13;if(Math.abs(i)*11<14+r*12)jali+=`<path d="M${x} ${y-4}l3 4-3 4-3-4z"/>`}
-  let scal='';for(let x=56;x<=244;x+=8)scal+=`<circle cx="${x}" cy="176" r="4"/>`;
-  const holes=`<g fill="#000">${arch(122,178,192,281)}${arch(74,112,206,281)}${arch(188,226,206,281)}${jali}${[105,125,175,195].map(x=>`<circle cx="${x}" cy="146" r="3.2"/>`).join('')}<path d="${arch(144,156,118,138)}"/>${Array.from({length:11},(_,i)=>`<path d="M${72+i*15.6} 181l2.4 3-2.4 3-2.4-3z"/>`).join('')}${[86,214].map(x=>`<path d="${arch(x-5,x+5,226,250)}" transform="translate(0 0)"/>`).join('')}</g>`;
-  const solid=`<rect x="36" y="281" width="228" height="19"/><rect x="58" y="172" width="184" height="110"/><rect x="48" y="160" width="204" height="14" rx="2"/>${scal}
-   <rect x="92" y="128" width="116" height="33"/><path d="${dome(150,124,132,98)}"/><rect x="148.6" y="10" width="2.8" height="26"/><circle cx="150" cy="30" r="4"/><circle cx="150" cy="19" r="2.6"/>
-   ${[62,238].map(x=>`<path d="${dome(x,28,162,30)}"/><rect x="${x-1}" y="122" width="2" height="12"/><rect x="${x-12}" y="160" width="24" height="4"/>`).join('')}`;
-  const lines=`<g fill="none" stroke="${g}" stroke-width=".9"><path d="${arch(118,182,186,281)}"/><path d="${arch(70,116,200,281)}"/><path d="${arch(184,230,200,281)}"/>
-   <path d="M58 172H242M48 160H252M92 128H208M36 281H264M40 290H260"/><path d="${dome(150,112,130,88)}" stroke-dasharray="1 2.5"/>
-   ${[66,118,182,234].map(x=>`<path d="M${x} 176V281"/>`).join('')}<path d="M100 140H200" stroke-dasharray="2 3"/></g>`;
-  return `<svg viewBox="0 0 300 300"><defs><mask id="pm${id}"><rect width="300" height="300" fill="#fff"/>${holes}</mask></defs><g fill="${c.p2}" mask="url(#pm${id})">${solid}</g>${lines}
-   <g mask="url(#pm${id})"><rect x="58" y="172" width="184" height="110" fill="url(#ps${id})"/></g><linearGradient id="ps${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient></svg>`}
-// minarets and a balustrade, 300x200
-function minarets(c,id){const g=c.gold;const tower=x=>`<rect x="${x-9}" y="64" width="18" height="136"/><rect x="${x-14}" y="92" width="28" height="7" rx="1.5"/><rect x="${x-12}" y="60" width="24" height="6"/><path d="${dome(x,22,62,26)}"/><rect x="${x-.9}" y="20" width="1.8" height="18"/><circle cx="${x}" cy="24" r="2.4"/>`;
-  let bal='';for(let x=86;x<214;x+=13)bal+=`<path d="${arch(x,x+8,170,194)}"/>`;
-  return `<svg viewBox="0 0 300 200"><defs><mask id="mm${id}"><rect width="300" height="200" fill="#fff"/><g fill="#000">${bal}${[40,260].map(x=>`<path d="${arch(x-4,x+4,110,128)}"/><path d="${arch(x-4,x+4,140,158)}"/>`).join('')}</g></mask></defs>
-   <g fill="${c.p3}" mask="url(#mm${id})">${tower(40)}${tower(260)}<rect x="74" y="160" width="152" height="40"/><rect x="70" y="156" width="160" height="6" rx="2"/>${[74,226].map(x=>`<rect x="${x-5}" y="148" width="10" height="52"/><circle cx="${x}" cy="146" r="5"/>`).join('')}</g>
-   <g fill="none" stroke="${g}" stroke-width=".8"><path d="M31 99H49M251 99H269M31 64V200M49 64V200M251 64V200M269 64V200M70 162H230M74 196H226"/></g></svg>`}
-// garden: leaves and five-petal flowers, 300x90
-function garden(c,id){const r=rng(31+id);let s='';
-  for(let i=0;i<34;i++){const x=r()*300,y=50+r()*36,a=-70+r()*140,L=14+r()*16;s+=`<path d="M0 0C${L*.35} ${-L*.3} ${L*.65} ${-L*.3} ${L} 0C${L*.65} ${L*.3} ${L*.35} ${L*.3} 0 0Z" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(a-90).toFixed(0)})" fill="${c.p4}"/>`}
-  let fl='';for(let i=0;i<9;i++){const x=16+i*34+r()*8,y=44+r()*22;for(let k=0;k<5;k++)fl+=`<ellipse cx="${x}" cy="${y-4.5}" rx="2.6" ry="4.4" transform="rotate(${k*72} ${x} ${y})" fill="${c.p5}"/>`;fl+=`<circle cx="${x}" cy="${y}" r="1.8" fill="${c.gold}"/>`}
-  return `<svg viewBox="0 0 300 90"><rect x="0" y="80" width="300" height="10" fill="${c.p4}"/>${s}${fl}<path d="M0 89H300" stroke="${c.gold}" stroke-width=".8"/></svg>`}
-// printed back panel: stars and a lattice band in gold
-function backArt(c,id){let st='';const r=rng(9+id);for(let i=0;i<30;i++){const x=r()*300,y=r()*180,s=.5+r()*1.4;st+=`<path d="M${x.toFixed(1)} ${(y-s*2.4).toFixed(1)}l${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)} ${(s*1.8).toFixed(2)} ${(s*.6).toFixed(2)}-${(s*1.8).toFixed(2)} ${(s*.6).toFixed(2)}-${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)}-${(s*1.8).toFixed(2)}-${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)}z"/>`}
-  return `<svg viewBox="0 0 300 330" preserveAspectRatio="none"><g fill="${c.gold}" opacity=".85">${st}</g>
-   <path d="${arch(30,270,30,330)}" fill="none" stroke="${c.gold}" stroke-width="1.1"/><path d="${arch(38,262,40,330)}" fill="none" stroke="${c.gold}" stroke-width=".5"/>
-   <circle cx="236" cy="62" r="13" fill="${c.p2}" opacity=".9"/><circle cx="242" cy="58" r="12" fill="${c.p1}"/></svg>`}
-const ARCHF=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 40V22Q0 4 50 0Q100 4 100 22V40Z"/></svg>`);
+/* popup: a real pop-up card. Cut paper layers (far trees, the mosque, frangipani in front) stand up from the fold
+   in front of a starry back panel, with a gold crescent hung on a thread.
+   Cover: the card closed, a die-cut arch in its front showing the night sky. Tap "Buka Jemputan" and the front
+   folds down to become the floor while the paper layers stand up. Page: the open card above the names.
+   Skin: cards of coloured stock with a scored fold line and a small cut-paper dome. */
+const puSvg=(vb,body)=>K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><path fill-rule="evenodd" d="${body}"/></svg>`);
+// an arched window or door, as a hole: x,y = bottom left
+const puArch=(x,y,w,h)=>{const r=w/2;return `M${x} ${y}V${y-h+r}C${x} ${y-h+r*.3} ${x+r*.6} ${y-h+r*.15} ${x+r} ${y-h}C${x+w-r*.6} ${y-h+r*.15} ${x+w} ${y-h+r*.3} ${x+w} ${y-h+r}V${y}Z`};
+// onion dome: base from x0 to x1 at y, tip at y-h
+const puDome=(x0,x1,y,h)=>{const w=x1-x0,c=(x0+x1)/2;return `M${x0} ${y}C${x0-w*.08} ${y-h*.42} ${c-w*.28} ${y-h*.62} ${c} ${y-h}C${c+w*.28} ${y-h*.62} ${x1+w*.08} ${y-h*.42} ${x1} ${y}Z`};
+const puMinaret=(x,w,top)=>{const c=x+w/2;return `M${x} 232V${top+70}H${x-3}V${top+64}H${x+w+3}V${top+70}H${x+w}V232Z`+
+  `M${x+1} ${top+64}V${top+34}H${x-3}V${top+28}H${x+w+3}V${top+34}H${x+w-1}V${top+64}Z`+puDome(x,x+w,top+28,20)+`M${c-.7} ${top+9}V${top-2}H${c+.7}V${top+9}Z`};
+const PU_MOSQUE=(()=>{let d='';
+  d+='M66 232V150H234V232Z';                                     // prayer hall
+  for(let x=66;x<234;x+=8)d+=`M${x} 151V146H${x+5}V151Z`;          // parapet teeth
+  d+='M108 152V112H192V152Z';                                    // drum
+  d+=puDome(102,198,113,74)+'M149.2 40V22H150.8V40Z'+'M150 26a3 3 0 1 0 .01 0Z';
+  d+=puDome(72,112,151,30)+puDome(188,228,151,30)+'M91.4 122V112H92.6V122ZM207.4 122V112H208.6V122Z';
+  d+=puMinaret(32,18,72)+puMinaret(250,18,72);
+  // holes: door, hall windows, drum windows, minaret slits
+  d+=puArch(134,232,32,42);[82,104,180,202].forEach(x=>{d+=puArch(x,214,14,30)});
+  [118,134,150,166,182].forEach(x=>{d+=puArch(x-5,146,10,18)});
+  [41,259].forEach(x=>{d+=puArch(x-3,196,6,16)+puArch(x-3,160,6,12)});
+  return puSvg('0 0 300 232',d)})();
+const PU_FAR=(()=>{let d='M0 150V108';const r=rng(7);let x=0;
+  while(x<300){const w=14+r()*16,h=8+r()*12;d+=`Q${x+w/2} ${108-h*1.6} ${x+w} 108`;x+=w}
+  d+='V150Z';
+  d+=puDome(18,44,96,22)+'M18 110V96H44V110Z'+puDome(258,282,98,20)+'M258 110V98H282V110Z';
+  return puSvg('0 0 300 150',d)})();
+// frangipani and palm fronds in front, open in the middle so the door shows
+const PU_FRONT=(()=>{let d='';const leaf=(x,y,a,l,w)=>{const c=Math.cos(a),s=Math.sin(a),px=-s,py=c;
+    return `M${x} ${y}Q${x+c*l*.5+px*w} ${y+s*l*.5+py*w} ${x+c*l} ${y+s*l}Q${x+c*l*.5-px*w} ${y+s*l*.5-py*w} ${x} ${y}Z`};
+  [[-.2,-2.2,70,13],[-.2,-1.7,78,14],[-.2,-1.2,64,12],[-.2,-2.7,56,11],[-.2,-.8,50,10]].forEach(([dx,a,l,w])=>{d+=leaf(30,124,a,l,w);d+=leaf(270,124,Math.PI-a,l,w)});
+  d+='M0 124V112Q20 92 44 108Q60 96 76 112Q86 104 98 116V124ZM300 124V112Q280 92 256 108Q240 96 224 112Q214 104 202 116V124Z';
+  return puSvg('0 0 300 124',d)})();
+const PU_FLOWERS=(()=>{let d='';const fl=(x,y,r,rot)=>{for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5,c=Math.cos(a),s=Math.sin(a);
+    d+=`M${x} ${y}Q${x+c*r*1.1-s*r*.55} ${y+s*r*1.1+c*r*.55} ${x+c*r} ${y+s*r}Q${x+c*r*.4+s*r*.35} ${y+s*r*.4-c*r*.35} ${x} ${y}Z`}};
+  fl(22,96,9,.3);fl(52,104,7.5,1);fl(10,116,7,2);fl(278,96,9,.6);fl(248,104,7.5,1.4);fl(290,116,7,2.2);
+  return puSvg('0 0 300 124',d)})();
+const PU_DOME_ICON=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50"><path d="${puDome(14,46,40,30)}M12 40H48V50H12ZM29.4 10V2H30.6V10Z"/></svg>`);
+const puCard=(o,L,open)=>{const [n1,n2]=coverNames(o);
+  return `<div class="pu-card${open?' is-open':''}">
+    <div class="pu-back"><i class="pu-arc"></i><i class="pu-moon"><b></b></i></div>
+    <div class="pu-cover"><div class="pu-out"><i class="pu-rim"></i>
+        <div class="pu-ctxt"><p class="pu-k">${ev(o,L)}</p><p class="pu-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pu-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+      <div class="pu-inside"></div></div>
+    <div class="pu-lay pu-far"><i style="-webkit-mask-image:${PU_FAR};mask-image:${PU_FAR}"></i></div>
+    <div class="pu-lay pu-mosque"><i style="-webkit-mask-image:${PU_MOSQUE};mask-image:${PU_MOSQUE}"></i></div>
+    <div class="pu-lay pu-front"><i style="-webkit-mask-image:${PU_FRONT};mask-image:${PU_FRONT}"></i></div>
+    <div class="pu-lay pu-flowers"><i style="-webkit-mask-image:${PU_FLOWERS};mask-image:${PU_FLOWERS}"></i></div>
+  </div>`};
+const puVars=c=>`--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--p4:${c.p4};--p5:${c.p5}`;
 FAMILY({key:'popup',name:'Pop-up',meaning:'Pop-up card',
-  blurb:'A paper pop-up of a domed pavilion lying open on the table; touch it and the layers rise.',
-  fonts:{d:"'Marcellus', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1600,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<section class="page pg-popup" style="${pv(c)}"><div class="pp-bg"></div>
-     <div class="pp-pcard reveal"><span class="pp-pback">${backArt(c,'p'+id)}</span>
-      <span class="pp-pl l3">${pavilion(c,'p'+id)}</span><span class="pp-pl l2">${minarets(c,'p'+id)}</span><span class="pp-pl l1">${garden(c,id)}</span></div>
-     <div class="pp-ptxt"><p class="pp-k reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-      <p class="pp-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="pp-ven reveal d3">${esc(o.venue)} <i>·</i> ${esc(fmtTime(o.start,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<div class="cover cv-popup" style="${pv(c)}"><div class="pp-bg"></div>
-     <div class="pp-head pp-fade"><p class="pp-k">${ev(o,L)}</p><p class="pp-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pp-date">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <${tag} class="pp-scene" ${attr} aria-label="${L.open}"><span class="pp-card">
-      <span class="pp-floor"></span><span class="pp-back">${backArt(c,id)}</span>
-      <span class="pp-l l3">${pavilion(c,id)}</span><span class="pp-l l2">${minarets(c,id)}</span><span class="pp-l l1">${garden(c,id)}</span></span></${tag}>
-     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.cssText+=';'+pv(th.c)+`;--pp-arch:${ARCHF}`},
+  blurb:'A cut-paper pop-up card: open it and the mosque, the far trees and the frangipani stand up from the fold under a hanging gold crescent.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-popup${th.c.dark?' pu-dk':''}" style="${puVars(th.c)}"><div class="pu-table"></div>
+      <div class="pu-stage reveal">${puCard(o,L,true)}</div>
+      <div class="pu-txt"><p class="pu-k kicker reveal d1">${ev(o,L)}</p><h1 class="pu-names reveal d1">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+        <p class="pu-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="pu-ven reveal d2">${esc(o.venue)}</p>`:''}
+        <a class="pu-pill reveal d3" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
+    return `<div class="cover cv-popup${th.c.dark?' pu-dk':''}" style="${puVars(th.c)}"><div class="pu-table"></div>
+      <div class="pu-stage">${puCard(o,L,false)}</div>
+      <div class="pu-foot">${guest?`<p class="pu-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="pu-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p4',c.p4);el.style.setProperty('--pudome',PU_DOME_ICON);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'nila',n:'Nila',desc:'Ivory pavilion on an indigo night',c:{ground:'#e8e1d3',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#2b3266',p2:'#fbf4e4',p3:'#c8a978',p4:'#3f6b55',p5:'#f4dfb0'}},
-    {k:'zamrud',n:'Zamrud',desc:'Emerald and cream with gold',c:{ground:'#e6e3d6',sheet:'#fbf9f1',ink:'#1f2b25',accent:'#1d5a44',gold:'#b8954a',pagefg:'#1f2b25',p1:'#1d5a44',p2:'#fbf5e6',p3:'#e2c88f',p4:'#7a9a62',p5:'#fff7e0',line:'rgba(29,90,68,.2)'}},
-    {k:'marun',n:'Marun',desc:'Maroon sky, blush pavilion',c:{ground:'#efe2da',sheet:'#fdf8f3',ink:'#2e1c20',accent:'#7a1f33',gold:'#bf9157',pagefg:'#2e1c20',p1:'#7a1f33',p2:'#fbefe6',p3:'#e3b5a5',p4:'#5e7a52',p5:'#fde2d6',line:'rgba(122,31,51,.2)'}},
-    {k:'senja',n:'Senja',desc:'Dusk coral and lilac',c:{ground:'#f0e2dc',sheet:'#fffaf6',ink:'#33262e',accent:'#c0504a',gold:'#c3955a',pagefg:'#33262e',p1:'#e08a6a',p2:'#fff6ec',p3:'#b9a2c9',p4:'#6f8a6a',p5:'#ffe7cf',line:'rgba(192,80,74,.2)'}},
-    {k:'laut',n:'Laut',desc:'Sea blue and white',c:{ground:'#e3ebee',sheet:'#fbfdfd',ink:'#1d2f3a',accent:'#2a5f80',gold:'#b7974f',pagefg:'#1d2f3a',p1:'#3b7ea1',p2:'#ffffff',p3:'#a9cfd9',p4:'#4f8a76',p5:'#f2f0dc',line:'rgba(42,95,128,.2)'}},
-    {k:'kunyit',n:'Kunyit',desc:'Turmeric and deep teal',c:{ground:'#efe6cf',sheet:'#fffaee',ink:'#2a2a22',accent:'#1f5560',gold:'#b5862c',pagefg:'#2a2a22',p1:'#1f5560',p2:'#fbf0d0',p3:'#e2ab3a',p4:'#5a7a3a',p5:'#fff3cf',line:'rgba(31,85,96,.2)'}},
-    {k:'malam',n:'Malam',desc:'Midnight with a gold pavilion',c:{ground:'#141a2c',sheet:'#f7f3ea',ink:'#1d2232',accent:'#26305a',gold:'#d6b25c',pagefg:'#efe9da',pageAccent:'#e9cf8a',p1:'#0d1224',p2:'#e9cf8a',p3:'#3a4a7a',p4:'#24463a',p5:'#f3e2b4',line:'rgba(38,48,90,.2)'}},
-    {k:'jambu',n:'Jambu',desc:'Blush pink and sage',c:{ground:'#f3e6e6',sheet:'#fffafa',ink:'#3a2729',accent:'#a54b5f',gold:'#bf946a',pagefg:'#3a2729',p1:'#d88c98',p2:'#fff8f4',p3:'#c7d3bd',p4:'#6f8c6c',p5:'#ffe0e4',line:'rgba(165,75,95,.2)'}},
+    {k:'nila',n:'Nila',desc:'Ivory mosque under an indigo sky',c:{ground:'#e6e0d4',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#273063',p2:'#f8f2e4',p3:'#8f93b8',p4:'#3f6b55',p5:'#fbf4e2'}},
+    {k:'zamrud',n:'Zamrud',desc:'Cream mosque under an emerald sky',c:{ground:'#e4e2d6',sheet:'#fbf9f1',ink:'#1f2b25',accent:'#1d5a44',gold:'#b8954a',pagefg:'#1f2b25',p1:'#1b5541',p2:'#fbf5e6',p3:'#86a893',p4:'#6f8f55',p5:'#fff6dc'}},
+    {k:'marun',n:'Marun',desc:'Blush mosque under a maroon sky',c:{ground:'#ece1d9',sheet:'#fdf8f3',ink:'#2e1c20',accent:'#7a1f33',gold:'#bf9157',pagefg:'#2e1c20',p1:'#6e1c2e',p2:'#fbefe6',p3:'#b88a8f',p4:'#5e7a52',p5:'#fde6da'}},
+    {k:'senja',n:'Senja',desc:'Dusk coral sky, lilac trees',c:{ground:'#efe3dc',sheet:'#fffaf6',ink:'#33262e',accent:'#b0463f',gold:'#c3955a',pagefg:'#33262e',p1:'#d9806a',p2:'#fff6ec',p3:'#b9a2c9',p4:'#6f8a6a',p5:'#ffe9d2'}},
+    {k:'laut',n:'Laut',desc:'White mosque on a sea-blue sky',c:{ground:'#e2e9ec',sheet:'#fbfdfd',ink:'#1d2f3a',accent:'#2a5f80',gold:'#b7974f',pagefg:'#1d2f3a',p1:'#3a7a9c',p2:'#ffffff',p3:'#a3c8d3',p4:'#4f8a76',p5:'#f6f2dc'}},
+    {k:'kunyit',n:'Kunyit',desc:'Turmeric mosque on deep teal',c:{ground:'#ece4cf',sheet:'#fffaee',ink:'#2a2a22',accent:'#1f5560',gold:'#b5862c',pagefg:'#2a2a22',p1:'#1f5560',p2:'#f6e3b0',p3:'#6f9a9a',p4:'#5a7a3a',p5:'#fff6dc'}},
+    {k:'malam',n:'Malam',desc:'Gold mosque on a midnight card',c:{ground:'#151a2b',sheet:'#f7f3ea',ink:'#1d2232',accent:'#26305a',gold:'#d6b25c',pagefg:'#efe9da',p1:'#0f1630',p2:'#ead28e',p3:'#34416e',p4:'#2a4c3e',p5:'#f3e6c0',dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Blush sky, white mosque, sage leaves',c:{ground:'#f2e6e5',sheet:'#fffafa',ink:'#3a2729',accent:'#a54b5f',gold:'#bf946a',pagefg:'#3a2729',p1:'#d4909a',p2:'#fffaf6',p3:'#c7d3bd',p4:'#6f8c6c',p5:'#ffe6ea'}},
   ]});
-function pv(c){return `--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--p4:${c.p4}`}
 
 })()}catch(e){console.error("family popup failed",e)}
 
@@ -5761,151 +6716,263 @@ FAMILY({key:'quilling',name:'Quilling',meaning:'Rolled paper art',
 
 /* ===== family: rama ===== */
 try{(()=>{
-/* rama: Rama-rama, a butterfly specimen box. Malaysian butterflies pinned in rows on linen, each with a tiny typed
-   label, behind a glass lid in a mitred wooden frame. Cover: touch the brass plate and the glass slides away.
-   Page: one large specimen above the names. Skin: cards headed by typed specimen labels, a small pinned butterfly. */
-needFont('Italianno');
-const f1=n=>n.toFixed(1);
-/* simplified real species of the peninsula: wing colours, border, spots and bands */
-const SP={
-  troides:{n:'Troides amphrysus',fw:'#1c1a17',fw2:'#3a3630',hw:'#e8b928',hw2:'#c98c12',edge:'#15130f',streak:'#9a958a',shape:'long',hwEdge:1},
-  graphium:{n:'Graphium sarpedon',fw:'#16191a',fw2:'#22282a',hw:'#16191a',hw2:'#22282a',band:'#4fb8b0',tail:1},
-  delias:{n:'Delias hyparete',fw:'#f4f1e8',fw2:'#e9e3d2',hw:'#f6eecf',hw2:'#efd98a',edge:'#2a2622',vein:'#2a2622',dots:'#e05a3a'},
-  danaus:{n:'Danaus chrysippus',fw:'#d9822b',fw2:'#c0621a',hw:'#de8d33',hw2:'#c7691e',edge:'#1d1612',apex:1,dots:'#f6f2ea'},
-  idea:{n:'Idea stolli',fw:'#f1eee4',fw2:'#e0dbc9',hw:'#f1eee4',hw2:'#e0dbc9',vein:'#3a3530',spots:'#262220',shape:'round'},
-  hypolimnas:{n:'Hypolimnas bolina',fw:'#1e1a1e',fw2:'#2c252c',hw:'#1e1a1e',hw2:'#2c252c',patch:'#e8e4f2',patch2:'#6a5ab0',dots:'#efe9f2'},
-  papilio:{n:'Papilio memnon',fw:'#1f2433',fw2:'#2f3a52',hw:'#1f2433',hw2:'#34405c',streak:'#7f8fae',shape:'long',eye:'#c8432c'},
-  catopsilia:{n:'Catopsilia pomona',fw:'#f2dd6e',fw2:'#e6c33c',hw:'#f4e48a',hw2:'#e9cc52',edge:'#8a6a1c',shape:'round'},
-  appias:{n:'Appias libythea',fw:'#f8f6f0',fw2:'#e8e4da',hw:'#f8f6f0',hw2:'#ece6d6',edge:'#3b3632',vein:'#7a746c'},
+/* rama: a natural-history plate of Malayan butterflies, engraved and lightly hand-tinted, set in a glazed wooden
+   shadow box on a quiet wall. A handwritten label in the middle of the plate carries the names. No pins: the
+   butterflies are drawings on the plate, as in a 19th-century natural-history book.
+   Cover: tap the box (or "Buka Jemputan") and its glazed door swings open on the left hinge.
+   Page: the plate taken out of the box, the couple photo as an oval vignette among the figures.
+   Skin: plate-paper cards with a printed double rule, italic headings numbered like plates. */
+let lpN=0;
+/* wing outlines for the right half (x > 0), in a box of about 100 x 140 units centred on the body */
+const LP_SHAPE={
+  bird:{fw:'M3 -6C20 -40 58 -66 100 -70C96 -52 84 -28 70 -8C50 -2 22 0 3 0Z',hw:'M3 1C30 0 62 6 70 22C72 40 54 56 34 58C20 58 8 40 3 10Z',
+    fv:[[100,-70],[96,-52],[88,-36],[78,-20],[66,-8],[40,-2]],hv:[[66,14],[70,30],[60,48],[44,58],[26,56],[12,40]]},
+  kite:{fw:'M3 -5C14 -46 48 -72 84 -70C98 -56 96 -28 82 -6C56 -1 26 0 3 0Z',hw:'M3 1C34 0 74 10 80 32C82 56 58 72 34 70C16 66 6 44 3 10Z',
+    fv:[[84,-70],[96,-52],[94,-34],[86,-16],[70,-4],[40,-1]],hv:[[76,20],[82,40],[72,60],[52,70],[30,68],[12,48]]},
+  tail:{fw:'M3 -6C18 -42 56 -64 92 -66C92 -46 82 -24 70 -6C48 -1 22 0 3 0Z',hw:'M3 1C30 0 58 6 64 20C66 34 56 46 46 52L52 84L40 56C26 58 10 44 3 10Z',
+    fv:[[92,-66],[92,-48],[86,-32],[78,-18],[66,-6],[40,-1]],hv:[[62,14],[64,30],[52,48],[46,70],[30,56],[12,42]]},
+  pierid:{fw:'M3 -5C14 -42 44 -62 76 -62C82 -44 78 -22 68 -5C46 -1 24 0 3 0Z',hw:'M3 1C30 1 62 8 66 26C66 46 46 58 28 56C14 52 6 38 3 10Z',
+    fv:[[76,-62],[82,-46],[80,-30],[74,-16],[64,-5],[40,-1]],hv:[[62,16],[66,32],[56,48],[40,56],[24,54],[10,40]]},
 };
-let gid=0;
-function wings(s){const L=s.shape==='long',R=s.shape==='round';
-  const fw=L?'M2 -3C12 -22 32 -38 54 -38C54 -26 48 -12 38 -3C26 -1 12 1 3 2Z':R?'M2 -3C8 -24 26 -38 42 -38C52 -30 52 -14 42 -2C28 0 14 1 3 2Z':'M2 -3C12 -20 30 -34 47 -36C50 -26 46 -12 38 -2C26 0 12 1 3 2Z';
-  const hw=s.tail?'M3 1C16 2 32 4 37 12C40 22 32 30 26 33L28 48 22 34C14 36 6 28 2 10Z':R?'M3 1C18 2 36 6 39 16C41 28 30 38 18 38C8 38 4 26 2 10Z':L?'M3 1C14 2 32 6 36 14C38 24 30 32 20 34C10 34 4 24 2 10Z':'M3 1C16 2 34 4 38 12C40 24 30 34 18 36C10 36 4 26 2 10Z';
-  return [fw,hw]}
-/* a butterfly centred on 0,0 with a ~100 unit wingspan; pin=true adds the pin head */
-function bfly(key,pin){const s=SP[key],id='rb'+(++gid),[fw,hw]=wings(s);let half='';
-  const veins=(pts,o)=>pts.map(([x,y])=>`M${o[0]} ${o[1]}L${x} ${y}`).join('');
-  const fv=veins([[46,-34],[48,-26],[46,-18],[42,-10],[36,-4],[28,-1]],[4,-1]),hv=veins([[36,10],[38,18],[34,26],[26,32],[16,35],[8,30]],[4,2]);
-  let extra='';
-  if(s.streak)extra+=`<path d="${veins([[44,-33],[46,-27],[44,-20],[40,-13]],[10,-4])}" stroke="${s.streak}" stroke-width="2.2" opacity=".55" stroke-linecap="round"/>`;
-  if(s.band)extra+=[[14,-14,4],[20,-18,3.4],[26,-22,3],[31,-26,2.4],[10,-6,4.4],[12,8,4.6],[18,12,4.2],[24,17,3.6],[29,22,3]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.75}" fill="${s.band}" opacity=".9"/>`).join('');
-  if(s.apex)extra+=`<path d="M30 -32C40 -37 50 -38 47 -36C50 -26 47 -18 42 -12C38 -18 33 -24 30 -32Z" fill="#1d1612"/>${[[38,-30],[42,-25],[40,-20],[44,-31]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.5" fill="#f6f2ea"/>`).join('')}`;
-  if(s.patch)extra+=`<ellipse cx="22" cy="-14" rx="7" ry="5" fill="${s.patch}" opacity=".95"/><ellipse cx="22" cy="-14" rx="9.5" ry="7" fill="none" stroke="${s.patch2}" stroke-width="2" opacity=".7"/><ellipse cx="20" cy="16" rx="8" ry="6.5" fill="${s.patch}"/><ellipse cx="20" cy="16" rx="10.5" ry="8.5" fill="none" stroke="${s.patch2}" stroke-width="2.2" opacity=".7"/>`;
-  if(s.spots)extra+=[[20,-20],[30,-24],[36,-14],[26,-10],[16,12],[26,18],[30,26],[14,24]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.3" fill="${s.spots}"/>`).join('');
-  if(s.eye)extra+=`<ellipse cx="12" cy="8" rx="6" ry="4" fill="${s.eye}" opacity=".85"/>`;
-  const edge=s.edge?`<path d="${fw}" fill="none" stroke="${s.edge}" stroke-width="${s.hwEdge?2.4:4}"/>${s.hwEdge||s.shape!=='round'?`<path d="${hw}" fill="none" stroke="${s.edge}" stroke-width="${s.hwEdge?5:3.6}"/>`:''}`:'';
-  const dots=s.dots?[[47,-30],[46,-22],[43,-14],[38,-7],[36,13],[36,21],[31,28],[24,33],[15,35]].map(([x,y])=>`<circle cx="${x-2}" cy="${y}" r="1.1" fill="${s.dots}"/>`).join(''):'';
-  half=`<g clip-path="url(#${id}h)"><path d="${hw}" fill="url(#${id}b)"/>${extra}<path d="${hv}" stroke="${s.vein||'#000'}" stroke-width=".5" opacity="${s.vein?.8:.35}"/>${edge}${dots}</g>
-   <g clip-path="url(#${id}f)"><path d="${fw}" fill="url(#${id}a)"/>${extra}<path d="${fv}" stroke="${s.vein||'#000'}" stroke-width=".5" opacity="${s.vein?.8:.35}"/>${edge}${dots}</g>
-   <path d="${hw}" fill="none" stroke="#000" stroke-width=".4" opacity=".35"/><path d="${fw}" fill="none" stroke="#000" stroke-width=".4" opacity=".35"/>`;
-  return `<g><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="-.6"><stop offset="0" stop-color="${s.fw2}"/><stop offset="1" stop-color="${s.fw}"/></linearGradient>
-    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2=".7"><stop offset="0" stop-color="${s.hw2}"/><stop offset="1" stop-color="${s.hw}"/></linearGradient>
-    <clipPath id="${id}f"><path d="${fw}"/></clipPath><clipPath id="${id}h"><path d="${hw}"/></clipPath></defs>
-   <g opacity=".22" transform="translate(3 5)" filter="url(#rmBlur)"><path d="${fw}${hw}" fill="#000"/><path d="${fw}${hw}" transform="scale(-1 1)" fill="#000"/></g>
-   ${half}<g transform="scale(-1 1)">${half}</g>
-   <path d="M-.6 -10Q-6 -24 -9 -30M.6 -10Q6 -24 9 -30" stroke="#1b1612" stroke-width=".55" fill="none"/><circle cx="-9" cy="-30" r=".9" fill="#1b1612"/><circle cx="9" cy="-30" r=".9" fill="#1b1612"/>
-   <ellipse cx="0" cy="-6" rx="2.3" ry="5" fill="#2a221c"/><ellipse cx="0" cy="8" rx="1.7" ry="10" fill="#2f2620"/><circle cx="0" cy="-11.5" r="2" fill="#241d18"/>
-   ${pin?`<circle cx="2" cy="-3" r="2.6" fill="#000" opacity=".25"/><circle cx="0" cy="-6" r="2.6" fill="url(#rmPin)"/>`:''}</g>`}
-const DEFS=c=>`<defs><filter id="rmBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter><radialGradient id="rmPin" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="${c.pin}"/><stop offset="1" stop-color="#000"/></radialGradient></defs>`;
-const ROWS=[['troides','graphium','danaus'],['delias','hypolimnas','catopsilia'],['papilio','idea','appias']];
-let uid=0;
-function tray(c,o){let s='';const no=(r,k)=>String(r*3+k+1).padStart(2,'0');const d=new Date((o.date||'2026-01-01')+'T00:00:00'),ds=isNaN(d)?'':`${d.getDate()}.${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][d.getMonth()]}.${d.getFullYear()}`;
-  ROWS.forEach((row,r)=>row.forEach((k,j)=>{const x=60+j*120,y=52+r*124;
-    s+=`<g transform="translate(${x} ${y}) scale(.86) rotate(${(j-1)*3+(r-1)*2})">${bfly(k,true)}</g>
-     <g transform="translate(${x} ${y+56})"><rect x="-34" y="-8" width="68" height="17" fill="${c.label}" stroke="${c.ink}" stroke-width=".35"/><text y="-.6" text-anchor="middle" font-family="IM Fell English, serif" font-style="italic" font-size="6.4" fill="${c.ink}">${SP[k].n}</text>
-     <text y="6.4" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="4.4" letter-spacing=".3" fill="${c.ink}" opacity=".75">No.${no(r,j)} · ${ds}</text></g>`}));
-  return `<svg class="rm-tray" viewBox="0 0 360 380">${DEFS(c)}${s}</svg>`}
-FAMILY({key:'rama',name:'Rama-rama',meaning:'Butterfly specimen box',
-  blurb:'Malaysian butterflies pinned in rows with tiny typed labels, under a glass lid that slides away.',
-  fonts:{d:"'IBM Plex Mono', monospace",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';return `<section class="page pg-rama" style="--wood:${c.wood};--woodL:${c.woodL};--label:${c.label}"><div class="rm-box reveal"><div class="rm-in"><i class="rm-lin"></i>
-    <svg class="rm-big" viewBox="-60 -50 120 100">${DEFS(c)}${bfly(c.hero,true)}</svg>
-    <p class="rm-sp reveal d1">${SP[c.hero].n} &middot; ${en?'specimen no.':'spesimen no.'} 1</p>
-    <p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-    <div class="rm-rule reveal d2"><i></i><b></b><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(fmtTime(o.start,o.lang))} &middot; ${esc(o.venue)}</p></div><i class="rm-mitre"></i></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',[a,b]=K.initials(o);++uid;
-    return `<div class="cover cv-rama" style="--wood:${c.wood};--woodL:${c.woodL};--label:${c.label}"><div class="rm-box"><div class="rm-in"><i class="rm-lin"></i>
-      <div class="rm-title"><p class="rm-k">${ev(o,L)}</p><p class="rm-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><p class="rm-d">${esc(fmtDate(o.date,o.lang))}</p><i class="rm-tp l"></i><i class="rm-tp r"></i></div>
-      ${tray(c,o)}
-      <div class="rm-guest">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}<i class="rm-tp l"></i></div></div>
-      <div class="rm-glass"><i></i></div><i class="rm-mitre"></i>
-      <${tag} class="rm-plate" ${attr} aria-label="${L.open}"><span>${esc(a)} &amp; ${esc(b)}</span></${tag}></div>
-     <p class="rm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
-  skin(el,o,th){const c=th.c;K.cards(el);const keys=Object.keys(SP);el.style.setProperty("--wood",c.wood);el.style.setProperty("--woodL",c.woodL);el.style.setProperty("--label",c.label);
-    K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<svg class="rm-sk ${i%2?'r':'l'}" viewBox="-60 -50 120 100">${DEFS(c)}<g transform="rotate(${i%2?14:-14})">${bfly(keys[(i*4+1)%keys.length],true)}</g></svg>`);
-      const h=s.querySelector('h2');if(h){h.classList.add('rm-lab');h.insertAdjacentHTML('beforeend',`<small>No. ${String(i+1).padStart(2,'0')} &middot; ${esc(SP[keys[(i*4+1)%keys.length]].n)}</small>`)}})},
+/* species of the peninsula, drawn in the plate's palette: tint, border, hatching and markings */
+const LP_SP={
+  brookiana:{n:'Trogonoptera brookiana',shape:'bird',tint:'#2a2a26',hatch:'light',border:0,
+    mark:(u)=>{let d='';for(let i=0;i<7;i++){const t=i/6,x=16+t*66,y=-12-t*44,w=7-t*2.2;d+=`M${x-w*.4} ${y+8-t*2}L${x+w} ${y-2}L${x+w*.4} ${y+10-t*2}Z`}
+      return `<path d="${d}" fill="#6aa287" opacity=".9"/><path d="M8 6C24 6 46 12 56 22C52 34 40 44 28 46C18 40 10 26 8 6Z" fill="#6aa287" opacity=".85"/>${[[64,40],[56,50],[46,56],[34,58]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.6" fill="#f3efe4"/>`).join('')}`}},
+  idea:{n:'Idea stolli',shape:'kite',tint:'#f3efe3',hatch:'ink',border:2.2,
+    mark:()=>[[30,-30],[46,-44],[60,-30],[74,-50],[42,-14],[70,-14],[30,24],[48,30],[62,44],[40,50],[24,46]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="${3.6-(i%3)*.6}" ry="${2.8-(i%3)*.4}" fill="#2b2824"/>`).join('')},
+  delias:{n:'Delias hyparete',shape:'pierid',tint:'#f6f1e1',hatch:'ink',border:4.4,
+    mark:()=>`<path d="M8 6C26 8 50 14 58 26C56 40 42 50 28 50C16 44 9 28 8 6Z" fill="#e3c463" opacity=".7"/>${[[58,30],[52,42],[40,50],[28,50],[18,44]].map(([x,y])=>`<path d="M${x-3} ${y}l3 -4l3 4l-3 4Z" fill="#c8492e"/>`).join('')}`},
+  graphium:{n:'Graphium agamemnon',shape:'tail',tint:'#3a3227',hatch:'light',border:0,
+    mark:()=>[[24,-14],[34,-24],[44,-34],[56,-42],[70,-48],[30,-6],[42,-14],[56,-22],[16,10],[28,16],[40,24],[48,36],[36,40]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="${3.4-i%2*.6}" ry="${2.4}" transform="rotate(-30 ${x} ${y})" fill="#9cc48a" opacity=".9"/>`).join('')},
+  catopsilia:{n:'Catopsilia pomona',shape:'pierid',tint:'#f1df86',hatch:'ink',border:2.4,
+    mark:()=>`<circle cx="40" cy="-30" r="2.4" fill="#8a6a1c" opacity=".7"/><path d="M30 -42C44 -50 60 -54 70 -54" stroke="#e2b93c" stroke-width="6" fill="none" opacity=".55"/>`},
+};
+/* engraver's hatching: parallel strokes at 38 degrees, kept near the body by a circular clip */
+const LP_HATCH=(()=>{let d='';const t=Math.tan(38*Math.PI/180);for(let x=-220;x<=112;x+=2.3)d+=`M${x.toFixed(1)} -80L${(x+170/t).toFixed(1)} 90`;return d})();
+function lpFly(key,ink){const s=LP_SP[key],sh=LP_SHAPE[s.shape],u='lp'+(++lpN);
+  const veins=(pts,o)=>pts.map(([x,y])=>`M${o[0]} ${o[1]}Q${(o[0]+x)/2+4} ${(o[1]+y)/2+(y<0?6:-6)} ${x*1.08} ${y*1.08}`).join('');
+  const hatchCol=s.hatch==='light'?'rgba(243,239,228,.32)':ink;
+  const half=`<g clip-path="url(#${u}f)"><path d="${sh.fw}" fill="${s.tint}"/><g clip-path="url(#${u}c)"><path d="${LP_HATCH}" fill="none" stroke="${hatchCol}" stroke-width=".4" opacity="${s.hatch==='light'?1:.5}"/></g>${s.mark(u)}
+      ${s.border?`<path d="${sh.fw}" fill="none" stroke="${ink}" stroke-width="${s.border*2}" opacity=".85"/>`:''}<path d="${veins(sh.fv,[4,-2])}" fill="none" stroke="${s.hatch==='light'?'rgba(243,239,228,.4)':ink}" stroke-width=".55"/></g>
+    <g clip-path="url(#${u}h2)"><path d="${sh.hw}" fill="${s.tint}"/><g clip-path="url(#${u}c)"><path d="${LP_HATCH}" fill="none" stroke="${hatchCol}" stroke-width=".4" opacity="${s.hatch==='light'?1:.45}"/></g>${s.mark(u)}
+      ${s.border?`<path d="${sh.hw}" fill="none" stroke="${ink}" stroke-width="${s.border*1.8}" opacity=".85"/>`:''}<path d="${veins(sh.hv,[4,2])}" fill="none" stroke="${s.hatch==='light'?'rgba(243,239,228,.4)':ink}" stroke-width=".5"/></g>
+    <path d="${sh.fw}${sh.hw}" fill="none" stroke="${ink}" stroke-width=".6"/>`;
+  return `<g class="lp-fly"><defs><clipPath id="${u}c"><ellipse cx="0" cy="0" rx="44" ry="40"/></clipPath><clipPath id="${u}f"><path d="${sh.fw}"/></clipPath><clipPath id="${u}h2"><path d="${sh.hw}"/></clipPath></defs>
+    ${half}<g transform="scale(-1 1)">${half}</g>
+    <path d="M-1 -12Q-10 -34 -16 -46M1 -12Q10 -34 16 -46" stroke="${ink}" stroke-width=".6" fill="none"/><ellipse cx="-16.4" cy="-46.6" rx="1.3" ry="2" fill="${ink}"/><ellipse cx="16.4" cy="-46.6" rx="1.3" ry="2" fill="${ink}"/>
+    <ellipse cx="0" cy="-12" rx="2.6" ry="2.4" fill="${ink}"/><ellipse cx="0" cy="-3" rx="3" ry="7.5" fill="${ink}"/><path d="M0 4C3 10 2.4 26 0 34C-2.4 26 -3 10 0 4Z" fill="${ink}"/>
+    <path d="M-1.6 -6h3.2M-1.8 -2h3.6M-1.6 8h3.2M-1.4 13h2.8M-1.2 18h2.4M-1 23h2" stroke="rgba(243,239,228,.45)" stroke-width=".35"/></g>`}
+const lpSvg=(key,ink,cls,fig)=>`<svg class="${cls}" viewBox="-104 -74 208 162" aria-hidden="true">${lpFly(key,ink)}</svg>${fig?`<span class="lp-fig"><i>Fig. ${fig}.</i> ${LP_SP[key].n}</span>`:''}`;
+const LP_ORDER=['brookiana','idea','delias','graphium','catopsilia'];
+const lpSide=hero=>LP_ORDER.filter(k=>k!==hero).slice(0,2);
+const lpPl=o=>['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][(new Date((o.date||'2026-01-01')+'T00:00:00').getMonth())||0]||'XII';
+function lpPlate(o,th,L,inner){const c=th.c,[s1,s2]=lpSide(c.hero),en=o.lang==='en';
+  return `<span class="lp-plate"><i class="lp-ptex"></i><span class="lp-rule"></span>
+    <span class="lp-ph"><span>${en?'Plate':'Plat'} ${lpPl(o)}.</span><span>Lepidoptera Malayana</span></span>
+    <span class="lp-hero">${lpSvg(c.hero,c.ink,'lp-svg',1)}</span>
+    <span class="lp-s1">${lpSvg(s1,c.ink,'lp-svg',2)}</span><span class="lp-s2">${lpSvg(s2,c.ink,'lp-svg',3)}</span>
+    ${ENG(c.eng,'','lp-spray')}${inner}</span>`}
+FAMILY({key:'rama',name:'Rama-rama',meaning:'Natural-history plate',
+  blurb:'An engraved, hand-tinted plate of Malayan butterflies in a glazed wooden shadow box, the names written on a small label in the middle. The glass door swings open.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Pinyon Script', cursive",b:"'IM Fell English', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',[s1,s2]=lpSide(c.hero);
+    return `<section class="page pg-rama" style="--wood:${c.wood};--woodL:${c.woodL}"><i class="lp-wall"></i>
+      <div class="lp-sheet reveal"><i class="lp-ptex"></i><span class="lp-rule"></span>
+        <p class="lp-ph"><span>${en?'Plate':'Plat'} ${lpPl(o)}.</span><span>Lepidoptera Malayana</span></p>
+        <span class="lp-pa">${lpSvg(s1,c.ink,'lp-svg')}</span><span class="lp-pb">${lpSvg(c.hero,c.ink,'lp-svg')}</span>
+        <p class="lp-k kicker">${ev(o,L)}</p>
+        <h1 class="names lp-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="lp-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="lp-hj">${esc(o.hijri)}</p>`:''}
+        <p class="lp-ven">${esc(o.venue)}</p>
+        ${ENG(c.eng,'','lp-pspray')}
+      </div>
+      <nav class="lp-tags reveal d2"><a data-go="when" href="#">${en?'Details':'Butiran'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}<a data-go="loc" href="#">${en?'Location':'Lokasi'}</a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    const label=`<span class="lp-label"><span class="lp-lk">${ev(o,L)}</span><span class="lp-ln">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="lp-ld">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</span></span>`;
+    return `<div class="cover cv-rama" style="--wood:${c.wood};--woodL:${c.woodL}"><i class="lp-wall"></i>
+      ${guest?`<p class="lp-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <${tag} class="lp-stage" ${attr} aria-label="${L.open}">
+        <span class="lp-box"><span class="lp-depth">${lpPlate(o,th,L,label)}</span>
+          <span class="lp-door"><i class="lp-glass"></i></span></span>
+        <span class="lp-btn">${en?'Open invitation':'Buka Jemputan'}</span>
+      </${tag}></div>`},
+  skin(el,o,th){K.cards(el);el.style.setProperty('--wood',th.c.wood);el.style.setProperty('--woodL',th.c.woodL);const sc=$('.scroller',el);
+    const R=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV'];
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.dataset.pl=(o.lang==='en'?'Plate ':'Plat ')+R[i%R.length]});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'walnut',n:'Kayu Walnut',desc:'Walnut frame, cream linen',c:{ground:'#d8cfc2',sheet:'#f4efe4',ink:'#2f2a24',accent:'#5a3a2a',gold:'#b8924e',pagefg:'#2f2a24',wood:'#5a3a24',woodL:'#7a5234',label:'#fbf8f0',pin:'#2a2a2a',hero:'troides'}},
-    {k:'hitam',n:'Hitam',desc:'Ebony frame, ivory linen',c:{ground:'#1a1817',sheet:'#ece6da',ink:'#26221e',accent:'#2c2620',gold:'#c4a15a',pagefg:'#ece4d6',wood:'#1c1916',woodL:'#3a332c',label:'#fbf8f0',pin:'#b8924e',hero:'graphium'}},
-    {k:'oak',n:'Kayu Oak',desc:'Pale oak, white linen',c:{ground:'#ece6dc',sheet:'#faf8f3',ink:'#33302a',accent:'#4a5a3a',gold:'#b49a5a',pagefg:'#33302a',wood:'#b08a5c',woodL:'#cfae80',label:'#ffffff',pin:'#2a2a2a',hero:'danaus'}},
-    {k:'mahogani',n:'Mahogani',desc:'Mahogany frame, blush linen',c:{ground:'#3a1f1a',sheet:'#f5ebe4',ink:'#3a2622',accent:'#7a2f2c',gold:'#c39a5e',pagefg:'#f3e3d8',wood:'#5e2a1e',woodL:'#86402c',label:'#fdf7f2',pin:'#2a2a2a',hero:'hypolimnas'}},
-    {k:'sage',n:'Sage',desc:'Painted sage frame, ivory',c:{ground:'#d9ddd0',sheet:'#f8f6ee',ink:'#2e342a',accent:'#4a5c3e',gold:'#a8955a',pagefg:'#2e342a',wood:'#7c8a6c',woodL:'#9aa888',label:'#fffdf6',pin:'#b8924e',hero:'catopsilia'}},
-    {k:'nila',n:'Nila',desc:'Indigo frame, pale linen',c:{ground:'#1c2438',sheet:'#f2efe8',ink:'#252a38',accent:'#2c3a62',gold:'#c4a868',pagefg:'#e8e8ee',wood:'#22304e',woodL:'#3a4a6e',label:'#fbfaf6',pin:'#b8924e',hero:'papilio'}},
-    {k:'gading',n:'Gading',desc:'Ivory painted frame, gilt',c:{ground:'#e6dfd2',sheet:'#fbf9f4',ink:'#38322a',accent:'#7a5a3a',gold:'#b8944e',pagefg:'#38322a',wood:'#e4dccb',woodL:'#f6f0e2',label:'#ffffff',pin:'#2a2a2a',hero:'delias'}},
-    {k:'zamrud',n:'Zamrud',desc:'Deep green frame, cream',c:{ground:'#132a22',sheet:'#f3efe4',ink:'#24302a',accent:'#1f4a3a',gold:'#c4a45e',pagefg:'#e6eee8',wood:'#1c3a2e',woodL:'#2e5444',label:'#fbf8f0',pin:'#b8924e',hero:'idea'}},
+    {k:'walnut',n:'Kayu Walnut',desc:'Walnut box on a warm stone wall',c:{ground:'#d9d0c2',sheet:'#f5efe2',ink:'#2c2620',accent:'#5a3a24',gold:'#a8844a',pagefg:'#2f2a24',wood:'#5a3a24',woodL:'#7e5636',hero:'brookiana',eng:'jasmine'}},
+    {k:'hitam',n:'Hitam',desc:'Ebony box on a charcoal wall',c:{ground:'#1d1b19',sheet:'#efe8da',ink:'#26221e',accent:'#2c2620',gold:'#c4a15a',pagefg:'#ece4d6',wood:'#1e1b18',woodL:'#3a342d',hero:'brookiana',eng:'white-roses'}},
+    {k:'oak',n:'Kayu Oak',desc:'Pale oak box on a chalk-white wall',c:{ground:'#ebe6dc',sheet:'#faf7f0',ink:'#33302a',accent:'#4a5a3a',gold:'#a8955a',pagefg:'#33302a',wood:'#b48d5e',woodL:'#d2b07f',hero:'idea',eng:'forget-me-not'}},
+    {k:'mahogani',n:'Mahogani',desc:'Mahogany box on an oxblood wall',c:{ground:'#3b1f1b',sheet:'#f5ece2',ink:'#3a2622',accent:'#7a2f2c',gold:'#c39a5e',pagefg:'#f3e3d8',wood:'#5a2619',woodL:'#86402c',hero:'delias',eng:'wild-rose'}},
+    {k:'sage',n:'Sage',desc:'Painted sage box on a pale green wall',c:{ground:'#d5dacb',sheet:'#f8f6ee',ink:'#2e342a',accent:'#4a5c3e',gold:'#a8955a',pagefg:'#2e342a',wood:'#7c8a6c',woodL:'#a0ad8e',hero:'catopsilia',eng:'jasmine'}},
+    {k:'nila',n:'Nila',desc:'Indigo box on a midnight wall',c:{ground:'#1b2336',sheet:'#f2eee5',ink:'#252a38',accent:'#2c3a62',gold:'#c4a868',pagefg:'#e8e8ee',wood:'#22304e',woodL:'#3d4f78',hero:'graphium',eng:'iris'}},
+    {k:'gading',n:'Gading',desc:'Ivory painted box with a gilt edge',c:{ground:'#e5dece',sheet:'#fbf8f1',ink:'#38322a',accent:'#7a5a3a',gold:'#b8944e',pagefg:'#38322a',wood:'#dcd2bd',woodL:'#f4ecda',hero:'idea',eng:'blush-rose'}},
+    {k:'zamrud',n:'Zamrud',desc:'Deep green box on a forest wall',c:{ground:'#142a22',sheet:'#f3eee2',ink:'#24302a',accent:'#1f4a3a',gold:'#c4a45e',pagefg:'#e6eee8',wood:'#1c3a2e',woodL:'#335a48',hero:'brookiana',eng:'hibiscus'}},
   ]});
 
 })()}catch(e){console.error("family rama failed",e)}
 
 
+/* ===== family: renda ===== */
+try{(()=>{
+/* renda: a card folded inside a lace handkerchief, the four corners brought to the middle and held with a pearl pin.
+   Cover: tap "Buka Jemputan", the pin lifts, the four lace corners fold back and the card comes forward.
+   Page: the card lying on the opened handkerchief, lace corners spreading out round it.
+   Skin: ivory cards with a scalloped lace edge top and bottom.
+   The lace is drawn here: a tulle net, a solid border band with a row of eyelets, a scalloped edge with picots,
+   and a cutwork flower spray in each corner. */
+needFont('Great+Vibes');
+let rdN=0;
+const f2=v=>v.toFixed(2);
+// one corner of the handkerchief, drawn pointing down in a 200x100 box: base along y=0, tip at (100,TIP)
+function rdFlap(lace,u){const TIP=90,W=6.5,n=7,G=15;
+  const A=[G,0],T=[100,TIP],B=[200-G,0],cen=[100,TIP*.33];
+  // scallops along a->b, bulging away from the middle of the flap; one eyelet per scallop in the band, a picot at each join
+  let eyes='',pic='';
+  const edge=(a,b,first)=>{let d=first?`M${f2(a[0])} ${f2(a[1])}`:'';const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);
+    let nx=-dy/L,ny=dx/L;const mx=(a[0]+b[0])/2-cen[0],my=(a[1]+b[1])/2-cen[1];if(nx*mx+ny*my<0){nx=-nx;ny=-ny}
+    for(let i=0;i<n;i++){const t0=i/n,t1=(i+1)/n,tm=(t0+t1)/2,P=t=>[a[0]+dx*t,a[1]+dy*t];const m=P(tm),e=P(t1);
+      d+=`Q${f2(m[0]+nx*10)} ${f2(m[1]+ny*10)} ${f2(e[0])} ${f2(e[1])}`;
+      eyes+=`<circle cx="${f2(m[0]-nx*3.2)}" cy="${f2(m[1]-ny*3.2)}" r="1.25"/><circle cx="${f2(m[0]+nx*2.4)}" cy="${f2(m[1]+ny*2.4)}" r="1.5"/><circle cx="${f2(m[0]+dx/L*5-nx*3.2)}" cy="${f2(m[1]+dy/L*5-ny*3.2)}" r=".6"/><circle cx="${f2(m[0]-dx/L*5-nx*3.2)}" cy="${f2(m[1]-dy/L*5-ny*3.2)}" r=".6"/>`;
+      if(i<n-1)pic+=`<circle cx="${f2(e[0]+nx*1.6)}" cy="${f2(e[1]+ny*1.6)}" r=".8"/>`;pic+=`<circle cx="${f2(m[0]+nx*10.6)}" cy="${f2(m[1]+ny*10.6)}" r=".7"/>`}
+    return d};
+  const outline=edge(B,T,true)+edge(T,A,false)+'Z';
+  // the inner edge of the band: the triangle pulled in by W
+  const off=(P,Q)=>{const dx=Q[0]-P[0],dy=Q[1]-P[1],L=Math.hypot(dx,dy);let nx=-dy/L,ny=dx/L;if(nx*(cen[0]-P[0])+ny*(cen[1]-P[1])<0){nx=-nx;ny=-ny}return[[P[0]+nx*W,P[1]+ny*W],[dx,dy]]};
+  const x0=([p,d])=>p[0]-d[0]*p[1]/d[1],[l1,l2]=[off(A,T),off(T,B)];
+  const t=((l2[0][0]-l1[0][0])*l2[1][1]-(l2[0][1]-l1[0][1])*l2[1][0])/(l1[1][0]*l2[1][1]-l1[1][1]*l2[1][0]),ap=[l1[0][0]+l1[1][0]*t,l1[0][1]+l1[1][1]*t];
+  const inner=`M${f2(x0(l1))} 0L${f2(ap[0])} ${f2(ap[1])}L${f2(x0(l2))} 0Z`;
+  // a cutwork petal: solid with a slit of net showing inside
+  const petal=(x,y,r,s)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="M0 0C4.5-3 4.6-10 0-14C-4.6-10-4.5-3 0 0ZM0-3.2C1.6-5 1.6-8.6 0-10.6C-1.6-8.6-1.6-5 0-3.2Z" fill-rule="evenodd"/></g>`;
+  const leaf=(x,y,r,s)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="M0 0C3-2 7-2 11 0C7 2 3 2 0 0Z"/><path d="M1 0H9" stroke="rgba(0,0,0,.18)" stroke-width=".35" fill="none"/></g>`;
+  const flower=(x,y,s)=>`${[0,60,120,180,240,300].map(r=>petal(x,y,r,s)).join('')}<circle cx="${x}" cy="${y}" r="${2.2*s}" fill="none" stroke="${lace}" stroke-width="${1.4*s}"/>`;
+  const spray=`<path d="M100 40C88 34 76 30 62 31M100 40C112 34 124 30 138 31M100 40C96 48 98 56 100 62" fill="none" stroke="${lace}" stroke-width=".9"/>
+    ${leaf(86,35,200,1)}${leaf(74,31.5,190,.9)}${leaf(114,35,-20,1)}${leaf(126,31.5,-10,.9)}${leaf(99,52,95,.8)}
+    ${flower(100,30,1.05)}${flower(60,31,.55)}${flower(140,31,.55)}
+    ${[[52,22],[148,22],[84,58],[116,58],[100,70]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.1"/><circle cx="${x+2.6}" cy="${y+1.4}" r=".7"/><circle cx="${x-2.6}" cy="${y+1.4}" r=".7"/>`).join('')}`;
+  return `<defs><clipPath id="rdc${u}"><path d="${outline}"/></clipPath>
+    <pattern id="rdt${u}" width="3.6" height="6.24" patternUnits="userSpaceOnUse"><path d="M0 0L1.8 1.04V3.12L0 4.16M1.8 1.04L3.6 0M1.8 3.12L3.6 4.16M0 4.16V6.24M3.6 4.16V6.24" fill="none" stroke="${lace}" stroke-width=".38" opacity=".95"/></pattern>
+    <mask id="rdm${u}"><path d="${outline}" fill="#fff"/><path d="${inner}" fill="#000"/><g fill="#000">${eyes}</g></mask></defs>
+    <g clip-path="url(#rdc${u})"><rect width="200" height="100" fill="url(#rdt${u})"/></g>
+    <rect width="200" height="100" fill="${lace}" mask="url(#rdm${u})"/>
+    <path d="${inner}" fill="none" stroke="rgba(0,0,0,.16)" stroke-width=".5"/>
+    <path d="${outline}" fill="none" stroke="rgba(0,0,0,.14)" stroke-width=".45"/>
+    <g fill="${lace}">${pic}</g>
+    <g fill="${lace}" stroke="rgba(0,0,0,.16)" stroke-width=".3">${spray}</g>
+    <path d="M${G} .8H${200-G}" stroke="${lace}" stroke-width="1.6"/>`}
+// four corners folded to the middle of a square, each its own layer so it can fold back
+const rdPacket=(c)=>{const u=++rdN;const g=(r,i)=>`<svg class="rd-flap rd-f${i}" viewBox="0 0 200 200" ${NS}><g transform="rotate(${r} 100 100)">${rdFlap(c.lace,u+'_'+i)}</g></svg>`;
+  return g(180,2)+g(90,3)+g(-90,4)+g(0,1)};
+const rdOpen=(c)=>{const u=++rdN;return [1,2].map(i=>`<svg class="rd-op rd-o${i}" viewBox="0 0 200 100" ${NS}>${rdFlap(c.lace,u+'_'+i)}</svg>`).join('')+
+  [3,4].map(i=>`<svg class="rd-op rd-o${i}" viewBox="0 0 100 200" ${NS} preserveAspectRatio="xMinYMid meet"><g transform="translate(0 200) rotate(-90)">${rdFlap(c.lace,u+'_'+i)}</g></svg>`).join('')};
+const rdGo=(el)=>{const sc=$('.scroller',el);
+  $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))};
+// a scalloped lace edging for the section cards
+const rdStrip=lace=>{const h=(x,y,r)=>`M${x-r} ${y}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+  return K.uri(`<svg ${NS} width="24" height="12" viewBox="0 0 24 12"><path fill-rule="evenodd" fill="${lace}" d="M0 0H24V4Q18 12.5 12 4Q6 12.5 0 4Z${h(6,6.4,1.5)}${h(18,6.4,1.5)}${h(3,2,.6)}${h(9,2,.6)}${h(15,2,.6)}${h(21,2,.6)}"/><circle cx="12" cy="5.6" r=".8" fill="${lace}"/><circle cx="0" cy="5.6" r=".8" fill="${lace}"/><circle cx="24" cy="5.6" r=".8" fill="${lace}"/></svg>`)};
+FAMILY({key:'renda',name:'Sapu Tangan Renda',meaning:'Lace handkerchief',
+  blurb:'Your card folded inside a lace handkerchief and held with a pearl pin. The four lace corners fold back to open it.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Great Vibes', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-renda2" style="--lace:${c.lace};--card:${c.card}"><div class="rd-silk"></div>
+      <div class="rd-sheet reveal">${rdOpen(c)}<div class="rd-paper">
+        <p class="rd-k kicker">${ev(o,L)}</p>
+        <h1 class="rd-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="rd-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="rd-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="rd-ven">${esc(o.venue)}</p>`:''}
+        <a class="rd-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-renda2" style="--lace:${c.lace};--card:${c.card}"><div class="rd-silk"></div>
+      <div class="rd-top"><p class="rd-k">${ev(o,L)}</p><p class="rd-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="rd-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="rd-pack"><div class="rd-card"></div>${rdPacket(c)}<i class="rd-pin"></i></div>
+      <div class="rd-foot">${guest?`<p class="rd-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="rd-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--rdstrip',rdStrip(th.c.lace));rdGo(el)},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Ivory lace on sage silk',c:{ground:'#b7c0a6',sheet:'#fdfbf4',lace:'#fffdf6',ink:'#2f322b',accent:'#4f5d47',gold:'#a8935e',pagefg:'#2c3327',card:'#56664c'}},
+    {k:'putih',n:'Putih',desc:'White lace on cornflower silk',c:{ground:'#5f7898',sheet:'#fcfcfb',lace:'#ffffff',ink:'#2b3038',accent:'#2d4b78',gold:'#b29a66',pagefg:'#ffffff',card:'#2d4670'}},
+    {k:'marun',n:'Marun',desc:'Cream lace on maroon silk',c:{ground:'#4e1624',sheet:'#fbf6ec',lace:'#f6eddc',ink:'#33292a',accent:'#6a1f30',gold:'#b8955e',pagefg:'#f6ecdf',card:'#7a2a3c'}},
+    {k:'jambu',n:'Jambu',desc:'White lace on blush silk',c:{ground:'#e6c3be',sheet:'#fffaf7',lace:'#ffffff',ink:'#3a2d30',accent:'#9c4a5a',gold:'#b49064',pagefg:'#4a2e36',card:'#a8606c'}},
+    {k:'hitam',n:'Hitam',desc:'Ivory lace on black silk',c:{ground:'#171616',sheet:'#fbf7ef',lace:'#efe6d4',ink:'#2c2826',accent:'#3a2c20',gold:'#b49a62',pagefg:'#efe6d4',card:'#2a2624'}},
+    {k:'zaitun',n:'Zaitun',desc:'Cream lace on olive silk',c:{ground:'#5d6a37',sheet:'#fbf8ee',lace:'#f6efdc',ink:'#2f3226',accent:'#4a5530',gold:'#b49a5a',pagefg:'#f4efdc',card:'#4a5530'}},
+    {k:'pandan',n:'Pandan',desc:'Cream lace on pandan-green silk',c:{ground:'#2f5a3e',sheet:'#fdfbf3',lace:'#f6f1e2',ink:'#25302a',accent:'#0d4a32',gold:'#c6a44e',pagefg:'#f3f0e0',card:'#1d5a3e'}},
+    {k:'kopi',n:'Kopi Susu',desc:'Cream lace on milky-coffee silk',c:{ground:'#c6a684',sheet:'#fffcf6',lace:'#fbf5ea',ink:'#33291f',accent:'#6b4a3a',gold:'#a8875a',pagefg:'#3a2a20',card:'#7a5442'}},
+    {k:'hujan',n:'Biru Hujan',desc:'Pearl lace on rain-blue silk',c:{ground:'#5c7690',sheet:'#fcfcfa',lace:'#f6f7f8',ink:'#2a3038',accent:'#3a5570',gold:'#aea58c',pagefg:'#f4f6f8',card:'#3a5570'}},
+    {k:'fajar',n:'Fajar',desc:'Ivory lace on dawn-rose silk',c:{ground:'#c9667e',sheet:'#fffaf6',lace:'#fff6ef',ink:'#3a2a2e',accent:'#a3465f',gold:'#c89a6a',pagefg:'#fff6f0',card:'#8e3550'}},
+  ]});
+
+})()}catch(e){console.error("family renda failed",e)}
+
+
 /* ===== family: resit ===== */
 try{(()=>{
-/* resit: a thermal receipt coming out of a small receipt printer. "PESANAN: 1x Majlis Perkahwinan", a barcode.
-   Opening: press FEED and the receipt feeds down out of the slot. Page: the whole receipt, torn with zig-zag edges.
-   Skin: monospace receipt sections with zig-zag edges and dashed rules. */
+/* resit: a letterpress receipt slip from an old receipt book, on cotton paper. Printed in one ink with a red serial number,
+   filled in by hand (the guest's name, the date) and finished with a round rubber stamp "Dijemput".
+   Cover: the slip still in the book with its stub; tap "Buka Jemputan" and it is torn off along the perforation.
+   Page: the torn slip with the full details, the programme written in as the items. Skin: ruled cotton slips with a perforated top. */
 let rsN=0;
-const rsLum=h=>{h=h.replace('#','');const [r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255);return .2126*r+.7152*g+.0722*b};
-function rsBars(seed,h=40){const r=rng(seed);let x=0,s='';const W=200;while(x<W-2){const w=[1,1,1,2,2,3][Math.floor(r()*6)];if(r()>.45)s+=`<rect x="${x}" y="0" width="${w}" height="${h}"/>`;x+=w+(r()<.3?1:0)}
-  return `<svg class="resit-bc" viewBox="0 0 200 ${h}" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="2" height="${h}"/><rect x="3" y="0" width="1" height="${h}"/>${s}<rect x="196" y="0" width="1" height="${h}"/><rect x="198" y="0" width="2" height="${h}"/></svg>`}
-const rsRow=(a,b,cls='')=>`<p class="resit-r ${cls}"><span>${a}</span><b>${b}</b></p>`;
-function rsReceipt(o,th,L,guest,full){const [n1,n2]=coverNames(o),en=o.lang==='en',[i1,i2]=K.initials(o),d=new Date((o.date||'')+'T00:00:00'),ok=!isNaN(d);
-  const no=ok?`${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getFullYear()).slice(2)}`:'000000';
-  const dd=ok?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`:'';
-  const sc=(o.schedule||[]).filter(s=>s.label);
-  const free=en?'FREE':'PERCUMA',pl=en?'PRICELESS':'TAK TERNILAI';
-  return `<div class="resit-head"><span class="resit-logo"><b>${esc(i1)}</b><i>&amp;</i><b>${esc(i2)}</b></span>
-     <p class="resit-ev">${ev(o,L)}</p><p class="resit-nm">${esc(n1)} &amp; ${esc(n2)}</p>
-     <p class="resit-c">${esc(o.venue)}</p>${o.address?`<p class="resit-c sm">${esc(o.address)}</p>`:''}</div>
-    <p class="resit-hr"></p>
-    ${rsRow(en?'RECEIPT NO':'NO. RESIT',`${no}-0001`)}${rsRow(en?'DATE':'TARIKH',esc(dd))}${rsRow(en?'TIME':'MASA',`${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}`)}
-    ${guest?rsRow(en?'GUEST':'TETAMU',esc(guest)):rsRow(en?'COUNTER':'KAUNTER',en?'Honoured guest':'Tetamu istimewa')}
-    <p class="resit-hr"></p>
-    <p class="resit-sub">${en?'ORDER':'PESANAN'}:</p>
-    ${rsRow(`1x ${en?'Wedding reception':'Majlis Perkahwinan'}`,free,'od')}<p class="resit-note">${esc(n1)} &amp; ${esc(n2)}</p>
-    ${rsRow(`1x ${en?'Prayers & blessings':'Doa restu'}`,free,'od')}
-    ${rsRow(`1x ${en?'Your presence':'Kehadiran anda'}`,free,'od')}
-    ${full&&sc.length?`<p class="resit-hr thin"></p><p class="resit-sub">${en?'PROGRAMME':'ATURCARA'}:</p>${sc.map(s=>rsRow(esc(s.label),esc(fmtTime(s.time,o.lang)),'sch')).join('')}`:''}
-    <p class="resit-hr dbl"></p>
-    ${rsRow(en?'TOTAL':'JUMLAH',pl,'tot')}${rsRow(en?'PAID BY':'BAYARAN',en?'Your prayers':'Doa anda')}
-    ${full&&o.deadline?rsRow(en?'REPLY BY':'SAHKAN SEBELUM',esc(fmtDate(o.deadline,o.lang,false)).toUpperCase()):''}
-    <p class="resit-hr"></p>
-    <div class="resit-foot">${rsBars(no.split('').reduce((a,c)=>a*7+ +c,3)%997+11)}<p class="resit-c sm">${no} 0001 ${ok?d.getFullYear():''}</p>
-     <p class="resit-ty">${en?'Thank you · see you there':'Terima kasih · jumpa di sana'}</p><p class="resit-c sm">*** ${en?'KEEP THIS RECEIPT':'SIMPAN RESIT INI'} ***</p></div>`}
+const rsVars=c=>`--stamp:${c.stamp};--num:${c.num};--pen:${c.pen};--slip:${c.slip||c.sheet}`;
+const rsNo=o=>{const d=new Date((o.date||'')+'T00:00:00');return isNaN(d)?'0001':String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')};
+const rsHand=o=>{const d=new Date((o.date||'')+'T00:00:00');if(isNaN(d))return esc(fmtShort(o.date));const m=(o.lang==='en'?['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']:['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'])[d.getMonth()];return `${d.getDate()} ${m} ${d.getFullYear()}`};
+// the rubber stamp: two rings, the couple's names around, the word in the middle; worn a little by a noise mask
+function rsStamp(o,L,uid){const [n1,n2]=coverNames(o),en=o.lang==='en',ring=`${n1} & ${n2} · ${rsHand(o)} · `.toUpperCase();
+  return `<svg class="rs-stamp" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="rsp${uid}" d="M60 60m-41 0a41 41 0 1 1 82 0a41 41 0 1 1 -82 0"/>
+    <filter id="rsf${uid}" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.6"/><feComposite in="SourceGraphic" operator="in"/></filter></defs>
+   <g filter="url(#rsf${uid})" fill="currentColor" stroke="currentColor">
+    <circle cx="60" cy="60" r="56" fill="none" stroke-width="2.6"/><circle cx="60" cy="60" r="51.5" fill="none" stroke-width=".9"/><circle cx="60" cy="60" r="31" fill="none" stroke-width=".9"/>
+    <text font-family="'IM Fell English SC',serif" font-size="9.6" letter-spacing="1.6" stroke="none"><textPath href="#rsp${uid}" textLength="252">${esc(ring)}</textPath></text>
+    <path d="M27 52h66M27 68h66" stroke-width=".9"/>
+    <text x="60" y="64.2" text-anchor="middle" font-family="'IM Fell English SC',serif" font-size="12.5" letter-spacing="1.4" stroke="none">${en?'INVITED':'DIJEMPUT'}</text></g></svg>`};
+const rsHead=(o,L,pg)=>{const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="rs-head">
+    <p class="rs-no">N<sup>o</sup> ${rsNo(o)}</p><svg class="rs-orn" viewBox="0 0 60 12" aria-hidden="true"><path d="M2 6.5C10 6.5 12 2 19 3.4S25 9 22 9.4 18.6 6 22 5.4M58 6.5C50 6.5 48 2 41 3.4S35 9 38 9.4 41.4 6 38 5.4" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/><path d="M30 2.2L33.6 6 30 9.8 26.4 6Z" fill="currentColor"/><circle cx="30" cy="6" r="1" fill="var(--sheet)"/></svg>
+    <p class="rs-title">${en?'Receipt':'Resit'}</p><i class="rs-dbl"></i>
+    <p class="rs-k${pg?' kicker':''}">${ev(o,L)}</p>
+    ${pg?`<h1 class="names rs-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>`:`<p class="rs-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>`}
+    ${o.venue?`<p class="rs-ven">${esc(o.venue)}</p>`:''}</div>`};
+const rsLine=(lab,val,cls='')=>`<p class="rs-line ${cls}"><span>${lab}</span><b>${val}</b></p>`;
 
-FAMILY({key:'resit',name:'Resit',meaning:'Thermal receipt',
-  blurb:'A receipt printer on a counter; press FEED and a thermal receipt rolls out: 1x Majlis Perkahwinan, total priceless, with a barcode.',
-  fonts:{d:"'IBM Plex Mono', monospace",s:"'IBM Plex Mono', monospace",b:"'IBM Plex Mono', monospace"},ms:1500,
-  page(o,th,L){return `<section class="page pg-resit"><div class="resit-counter"></div><div class="resit-shad reveal"><div class="resit-paper resit-zz">${rsReceipt(o,th,L,'',true)}</div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c;
-    return `<div class="cover cv-resit" style="--pr:${c.pr};--prfg:${rsLum(c.pr)>.5?'#2a2723':'#e9e5dc'}"><div class="resit-counter"></div>
-    <div class="resit-feed"><div class="resit-paper">${rsReceipt(o,th,L,guest,false)}</div><i class="resit-curl"></i></div>
-    <div class="resit-pr"><i class="resit-seam"></i><i class="resit-lip"></i><i class="resit-slot"></i><i class="resit-tear"></i><i class="resit-led"></i>
-     <span class="resit-plate">${en?'Thermal · 80 mm':'Terma · 80 mm'}</span><i class="resit-grille"></i>
-     <span class="resit-hint">${en?'Open invitation':'Buka Jemputan'}</span>
-     <${tag} class="resit-btn" ${attr} aria-label="${L.open}"><span>FEED</span></${tag}></div>
-    </div>`},
-  skin(el,o){K.cards(el);const d=new Date((o.date||'')+'T00:00:00'),dd=isNaN(d)?'':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('resit-sec');s.insertAdjacentHTML('afterbegin',`<span class="resit-meta"><span>#${String(i+2).padStart(4,'0')}</span><span>${dd}</span></span>`);const h=$('h2',s);if(h)h.innerHTML=`<span>${h.innerHTML}</span>`})},
+FAMILY({key:'resit',name:'Resit',meaning:'Letterpress receipt',
+  blurb:'A letterpress receipt slip on cotton paper, filled in by hand with the guest’s name and stamped “Dijemput”. Guests tear it off the book to open the card.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Homemade Apple', cursive",b:"'IM Fell English', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en',u=++rsN,tr=(o.schedule||[]).filter(s=>s.label).slice(0,4);
+    return `<section class="page pg-resit2${th.c.dark?' rs-dark':''}" style="${rsVars(th.c)}"><div class="rs-counter"></div>
+    <div class="rs-slip rs-torn reveal">${rsHead(o,L,true)}
+      ${rsLine(en?'Date':'Tarikh',esc(fmtDate(o.date,o.lang)))}
+      ${tr.length?`<div class="rs-tab"><p class="rs-th"><span>${en?'Particulars':'Butiran'}</span><span>${en?'Time':'Masa'}</span></p>
+        ${tr.map(s=>`<p class="rs-tr"><span>${esc(s.label)}</span><b>${esc(fmtTime(s.time,o.lang))}</b></p>`).join('')}</div>`:''}
+      <div class="rs-foot"><p class="rs-ty">${en?'Thank you. See you there.':'Terima kasih. Jumpa di majlis nanti.'}</p><div class="rs-st rs-st-pg">${rsStamp(o,L,'p'+u)}</div></div>
+      <div class="rs-pills"><a class="rs-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="rs-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+    </div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',u=++rsN;
+    return `<div class="cover cv-resit2${th.c.dark?' rs-dark':''}" style="${rsVars(th.c)}"><div class="rs-counter"></div>
+    <div class="rs-book">
+      <div class="rs-stub"><p class="rs-sno">N<sup>o</sup> ${rsNo(o)}</p><p class="rs-sv">${en?'Counterfoil':'Salinan'}</p><p class="rs-sh">${guest?esc(guest):(en?'Guest':'Tetamu')}</p></div>
+      <div class="rs-slip rs-main">${rsHead(o,L,false)}
+        ${rsLine(en?'To':'Kepada',guest?esc(guest):(en?'Our honoured guest':'Tetamu yang dihormati'),'hand')}
+        ${rsLine(en?'Date':'Tarikh',esc(rsHand(o)),'hand')}
+        <div class="rs-tab"><p class="rs-th"><span>${en?'Particulars':'Perkara'}</span><span>${en?'Amount':'Jumlah'}</span></p>
+          <p class="rs-tr"><span>${en?'Invitation to the wedding':'Jemputan ke majlis perkahwinan'}</span><b>${en?'With love':'Ikhlas'}</b></p>
+          <p class="rs-tr"><span>${en?'Your prayers and blessings':'Doa restu tuan/puan'}</span><b>${en?'Much loved':'Dihargai'}</b></p>
+          <p class="rs-tr rs-tot"><span>${en?'Total':'Jumlah'}</span><b>${en?'Priceless':'Tak ternilai'}</b></p></div>
+        <div class="rs-st">${rsStamp(o,L,'c'+u)}</div>
+      </div>
+    </div>
+    <${tag} class="rs-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.setAttribute('style',(el.getAttribute('style')||'')+';'+rsVars(th.c));el.classList.toggle('rs-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'putih',n:'Putih',desc:'White printer on a stone counter',c:{ground:'#d8d3cb',sheet:'#fbfaf6',ink:'#24211d',accent:'#24211d',gold:'#b89458',pagefg:'#2b2824',pr:'#f1efea'}},
-    {k:'hitam',n:'Hitam',desc:'Black printer on a dark counter',c:{ground:'#1b1b1b',sheet:'#f8f6f0',ink:'#1f1d1a',accent:'#1f1d1a',gold:'#c8a45e',pagefg:'#ece6da',pr:'#2b2b2b'}},
-    {k:'merah',n:'Merah',desc:'Red counter, red total',c:{ground:'#7a1f24',sheet:'#fbf8f3',ink:'#2a1c1c',accent:'#a3222b',gold:'#c9a35a',pagefg:'#f6ede2',pr:'#f4efe8'}},
-    {k:'biru',n:'Biru',desc:'Navy printer, pale blue counter',c:{ground:'#dde5ee',sheet:'#fbfbf8',ink:'#1d2433',accent:'#2c4a7c',gold:'#b8975a',pagefg:'#1d2433',pr:'#26324a'}},
-    {k:'pic',n:'Pic',desc:'Peach counter, coral print',c:{ground:'#f2d8c5',sheet:'#fffbf6',ink:'#3a2620',accent:'#c4573a',gold:'#b8894a',pagefg:'#3a2620',pr:'#fffaf5'}},
-    {k:'hijau',n:'Hijau',desc:'Forest counter, sage printer',c:{ground:'#22362c',sheet:'#fafaf5',ink:'#1e2822',accent:'#2f5c46',gold:'#c4a45e',pagefg:'#e6ece4',pr:'#e7ebe4'}},
-    {k:'ungu',n:'Ungu',desc:'Plum printer on lilac',c:{ground:'#e5dfee',sheet:'#fcfbfd',ink:'#251f33',accent:'#5d4686',gold:'#b8975a',pagefg:'#251f33',pr:'#3b2f52'}},
-    {k:'kuning',n:'Kuning',desc:'Sunny counter, black printer',c:{ground:'#efd998',sheet:'#fffdf6',ink:'#26231f',accent:'#9a5f0c',gold:'#9a5f0c',pagefg:'#2b2418',pr:'#26231f'}},
+    {k:'putih',n:'Putih',desc:'White cotton slip, black letterpress, red stamp, on pale marble',c:{ground:'#dcd8d1',sheet:'#fbf9f4',ink:'#24211d',accent:'#24211d',gold:'#9c8458',pagefg:'#2b2824',stamp:'#b0303a',num:'#b0303a',pen:'#1f2f63',dark:''}},
+    {k:'hitam',n:'Hitam',desc:'Ivory slip, black ink, red stamp, on black marble',c:{ground:'#1a1918',sheet:'#f6f2e8',ink:'#1f1d1a',accent:'#1f1d1a',gold:'#9c8458',pagefg:'#ece6da',stamp:'#a8323a',num:'#a8323a',pen:'#1f2f63',dark:'1'}},
+    {k:'merah',n:'Merah',desc:'Cream slip, maroon ink and stamp, on a red counter',c:{ground:'#6a1d22',sheet:'#fbf6ee',ink:'#2a1c1c',accent:'#7a1d26',gold:'#a8844a',pagefg:'#f6ede2',stamp:'#9a1f2b',num:'#9a1f2b',pen:'#1f2f63',dark:'1'}},
+    {k:'biru',n:'Biru',desc:'White slip, navy letterpress, blue stamp',c:{ground:'#d9e0e8',sheet:'#fbfbf8',ink:'#1d2433',accent:'#22385e',gold:'#9c8a62',pagefg:'#1d2433',stamp:'#2a4f8e',num:'#b0303a',pen:'#22385e',dark:''}},
+    {k:'pic',n:'Pic',desc:'Warm slip, brown ink, coral stamp, peach counter',c:{ground:'#efd9c8',sheet:'#fffaf4',ink:'#3a2620',accent:'#5a3326',gold:'#a88358',pagefg:'#3a2620',stamp:'#c4573a',num:'#c4573a',pen:'#3a2a5a',dark:''}},
+    {k:'hijau',n:'Hijau',desc:'Cream slip, green ink and stamp, forest counter',c:{ground:'#1f3229',sheet:'#f9f8f1',ink:'#1e2822',accent:'#24503c',gold:'#9c8a5a',pagefg:'#e6ece4',stamp:'#2f6b4f',num:'#a8323a',pen:'#1f2f63',dark:'1'}},
+    {k:'ungu',n:'Ungu',desc:'White slip, plum ink, violet stamp, lilac counter',c:{ground:'#e3dde9',sheet:'#fcfbfd',ink:'#251f33',accent:'#45325f',gold:'#9a8a6a',pagefg:'#251f33',stamp:'#6a4a9a',num:'#6a4a9a',pen:'#45325f',dark:''}},
+    {k:'kuning',n:'Kuning',desc:'Buttery slip, brown ink, red stamp, turmeric counter',c:{ground:'#e8d398',sheet:'#fffcf2',ink:'#2e2418',accent:'#5a3c12',gold:'#9a7034',pagefg:'#2b2418',stamp:'#b0303a',num:'#b0303a',pen:'#1f2f63',dark:''}},
   ]});
 
 })()}catch(e){console.error("family resit failed",e)}
@@ -5913,148 +6980,116 @@ FAMILY({key:'resit',name:'Resit',meaning:'Thermal receipt',
 
 /* ===== family: retro ===== */
 try{(()=>{
-/* retro: a 1970s screen-printed card. Stacked wavy names, a rainbow arch of brown, orange and mustard bands, a sunburst.
-   Cover: the arch rises from the foot of the card; tap the sun sticker and the bands slide out sideways, inner first.
-   Page: the stacked arch with the sun on its sill. Skin: rounded cards under striped bands. */
-needFont('Shrikhand');
-needFont('Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800');
-const FR="'Fraunces', serif",SHR="'Shrikhand', cursive";
-let uid=0;
-const fit=(s,max,fs,k=.64)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-// half of a rainbow arch: bands between offsets o[i] and o[i+1] from the outer edge; W = half width, cy = centre of the arch circle, B = bottom
-function halfArch(cols,o,W,cy,B,side,cls=''){return cols.map((col,i)=>{const a=o[i],b=o[i+1],R=W-a,r=W-b;
-  const d=side==='l'?`M${a} ${B}V${cy}A${R} ${R} 0 0 1 ${W} ${cy-R}V${cy-r}A${r} ${r} 0 0 0 ${b} ${cy}V${B}Z`:`M${W-a} ${B}V${cy}A${R} ${R} 0 0 0 0 ${cy-R}V${cy-r}A${r} ${r} 0 0 1 ${W-b} ${cy}V${B}Z`;
-  const mid=(a+b)/2,Rm=W-mid,dm=side==='l'?`M${mid} ${B}V${cy}A${Rm} ${Rm} 0 0 1 ${W} ${cy-Rm}`:`M${W-mid} ${B}V${cy}A${Rm} ${Rm} 0 0 0 0 ${cy-Rm}`;
-  return `<g class="rt-band ${cls}" style="--i:${i}"><path d="${d}" fill="${col}"/><path d="${dm}" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width=".8" stroke-dasharray="1 5" stroke-linecap="round"/>
-   <path d="${side==='l'?`M${b} ${B}V${cy}A${r} ${r} 0 0 1 ${W} ${cy-r}`:`M${W-b} ${B}V${cy}A${r} ${r} 0 0 0 0 ${cy-r}`}" fill="none" stroke="#000" stroke-opacity=".14" stroke-width="1.6"/></g>`}).join('')}
-// full arch for the page
-function arch(cols,o,W,cy,B){return `<g>${halfArch(cols,o,W,cy,B,'l')}</g><g transform="translate(${W} 0)">${halfArch(cols,o,W,cy,B,'r')}</g>`}
-// wavy stacked type: three layers (shadow block, cream keyline, colour face)
-function wavy(txt,y,fs,amp,c,id,face){const p=`M10 ${y}C90 ${y-amp} 130 ${y+amp} 200 ${y}S310 ${y-amp} 390 ${y}`;const t=`<textPath href="#${id}" startOffset="50%" text-anchor="middle">${txt}</textPath>`;
-  return `<path id="${id}" d="${p}" fill="none"/><text class="rt-w" font-size="${fs.toFixed(1)}" transform="translate(4 5)" fill="${c.s1}" stroke="${c.s1}" stroke-width="7" stroke-linejoin="round">${t}</text>
-  <text class="rt-w" font-size="${fs.toFixed(1)}" fill="${face}" stroke="${c.sheet}" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${t}</text>
-  <text class="rt-w" font-size="${fs.toFixed(1)}" fill="${face}">${t}</text>`}
-const spark=(x,y,s,col)=>`<path d="M${x} ${y-s}C${x+s*.12} ${y-s*.12} ${x+s*.12} ${y-s*.12} ${x+s} ${y}C${x+s*.12} ${y+s*.12} ${x+s*.12} ${y+s*.12} ${x} ${y+s}C${x-s*.12} ${y+s*.12} ${x-s*.12} ${y+s*.12} ${x-s} ${y}C${x-s*.12} ${y-s*.12} ${x-s*.12} ${y-s*.12} ${x} ${y-s}Z" fill="${col}"/>`;
-function nameBlock(o,L,c,top){const [n1,n2]=coverNames(o),u=++uid;const f1=fit(n1,330,60),f2=fit(n2,330,60);
-  return `<svg class="rt-names" viewBox="0 0 400 ${top?250:236}" aria-hidden="true"><path id="rk${u}" d="M70 64Q200 14 330 64" fill="none"/>
-   <text class="rt-k" fill="${c.ink}" font-size="13"><textPath href="#rk${u}" startOffset="50%" text-anchor="middle">${ev(o,L)}</textPath></text>
-   ${spark(46,54,9,c.s4)}${spark(354,54,9,c.s4)}${spark(30,82,4.5,c.s2)}${spark(370,82,4.5,c.s2)}
-   ${wavy(esc(n1),112,f1,11,c,'ra'+u,c.s2)}
-   <text x="200" y="${150}" text-anchor="middle" class="rt-amp" fill="${c.s1}" font-size="26">&amp;</text>
-   ${wavy(esc(n2),196,f2,11,c,'rb'+u,c.s3)}
-   ${spark(364,166,6,c.s4)}${spark(38,210,6,c.s4)}</svg>`}
-function sun(c,cls,inner){const rays=Array.from({length:24},(_,i)=>`<path d="M100 100L${(100+Math.cos(i/24*Math.PI*2)*100).toFixed(1)} ${(100+Math.sin(i/24*Math.PI*2)*100).toFixed(1)}" />`).join('');
-  return `<svg class="${cls}" viewBox="0 0 200 200"><path d="${K.scallop(22,64,7,100,100)}" fill="${c.s4}"/><circle cx="100" cy="100" r="58" fill="${c.sheet}"/><circle cx="100" cy="100" r="53" fill="none" stroke="${c.s2}" stroke-width="1.4"/><circle cx="100" cy="100" r="49" fill="none" stroke="${c.s1}" stroke-width=".8" stroke-dasharray="1 3.2" stroke-linecap="round"/>${inner||''}</svg>`}
-FAMILY({key:'retro',name:'Retro 70-an',meaning:'Seventies rainbow print',
-  blurb:'A 1970s screen print: stacked wavy names over a rainbow arch of brown, orange and mustard with a sunburst; the bands slide out sideways to open.',
-  fonts:{d:FR,s:SHR,b:FR},ms:1350,
-  page(o,th,L){const c=th.c,u=++uid,en=o.lang==='en',cols=[c.s1,c.s2,c.s3,c.s4],o4=[8,30,52,74,96];
-    return `<section class="page pg-retro" style="--s1:${c.s1};--s2:${c.s2};--s3:${c.s3};--s4:${c.s4}"><i class="rt-grain"></i><i class="rt-frame"></i>
-    <div class="rt-pn reveal">${nameBlock(o,L,c,true)}</div>
-    <p class="rt-pill reveal d1"><span>${esc(fmtDate(o.date,o.lang))}</span></p>
-    <p class="rt-host reveal d2">${esc(o.hijri||'')}</p><p class="rt-host2 reveal d2">${en?'Hosted by':'Anjuran'} <b>${esc(o.hosts||'')}</b></p>
-    <div class="rt-parch reveal d2"><i class="rt-burst"></i><svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax meet">${arch(cols,o4,200,226,360)}</svg>
-     <div class="rt-sill">${sun(c,'rt-psun')}<span class="rt-t"><small>${en?'from':'mula'}</small><b>${esc(fmtTime(o.start,o.lang))}</b></span></div>
-     <p class="rt-ven">${esc(o.venue)}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',cols=[c.s1,c.s2,c.s3,c.s4],o4=[12,33,54,75,96];
-    const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=String(d.getFullYear()).slice(2);
-    const u=++uid;
-    return `<div class="cover cv-retro" style="--s1:${c.s1};--s2:${c.s2};--s3:${c.s3};--s4:${c.s4}"><div class="rt-bg"></div><i class="rt-grain"></i><i class="rt-frame"></i>
-    <div class="rt-top">${nameBlock(o,L,c)}${guest?`<p class="rt-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}</div>
-    <div class="rt-arch"><i class="rt-burst"></i>
-     <svg class="rt-half l" viewBox="0 0 200 520" preserveAspectRatio="xMaxYMax meet">${halfArch(cols,o4,200,312,520,'l')}</svg>
-     <svg class="rt-half r" viewBox="0 0 200 520" preserveAspectRatio="xMinYMax meet">${halfArch(cols,o4,200,312,520,'r')}</svg>
-     <${tag} class="rt-sun" ${attr} aria-label="${L.open}">${sun(c,'rt-sunsvg',`<path id="rs${u}" d="M58 104A42 42 0 0 1 142 104" fill="none"/><text class="rt-k" font-size="11" fill="${c.ink}"><textPath href="#rs${u}" startOffset="50%" text-anchor="middle">${esc(fmtDate(o.date,o.lang).split(',')[0])}</textPath></text>
-       <text x="100" y="122" text-anchor="middle" class="rt-d" fill="${c.s2}" font-size="30">${dd}.${mm}</text><text x="100" y="138" text-anchor="middle" class="rt-k" fill="${c.ink}" font-size="9">&#8217;${yy} &#183; ${en?'open':'buka'}</text>`)}</${tag}>
-     <p class="rt-ven">${esc(o.venue)}</p></div>
-    <p class="rt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
-  skin(el,o,th){K.cards(el);const c=th.c;['s1','s2','s3','s4'].forEach(k=>el.style.setProperty('--'+k,c[k]));
-    $$('.sheet > .sec',el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="rt-bands ${i%2?'r':''}"><i></i><i></i><i></i><i></i></i>`);const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend','<i class="rt-hsun"></i>')})},
+/* retro (redesign): 1970s wedding stationery done with restraint. A thick cream card with rounded corners,
+   an arched window holding a soft-focus field of flowers (Monet and Hassam, public domain) warmed like a period photograph,
+   a soft gold-foil sunburst rising behind the arch, the names in Fraunces italic.
+   Cover: tap "Buka Jemputan" and the card turns over. Page: the card again with the day set beneath the arch.
+   Skin: rounded cream cards with a small foil sun over each heading. */
+needFont('Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100');
+let rtN=0;
+// the sunburst: fine wedge rays from the top of the arch, drawn as a mask for the foil
+const RT_RAYS=(()=>{let d='';const cx=100,cy=100,n=36;for(let i=0;i<n;i++){const a0=Math.PI+(i/n)*Math.PI,a1=a0+Math.PI/n*.5;
+  d+=`M${cx} ${cy}L${(cx+Math.cos(a0)*140).toFixed(1)} ${(cy+Math.sin(a0)*140).toFixed(1)}L${(cx+Math.cos(a1)*140).toFixed(1)} ${(cy+Math.sin(a1)*140).toFixed(1)}Z`}
+  return K.uri(`<svg ${NS} viewBox="0 0 200 100" preserveAspectRatio="none"><path d="${d}" fill="#000"/></svg>`)})();
+const rtWin=(th,cls='')=>`<div class="rt2-win ${cls}"><div class="rt2-photo" style="--pic:url(${A}${th.c.pic});--pos:${th.c.pos||'50% 60%'}"></div></div>`;
+const rtArch=(th,cls)=>`<div class="rt2-arch ${cls}"><i class="rt2-sun" style="--rays:${RT_RAYS}"></i>${rtWin(th)}</div>`;
+FAMILY({key:'retro',name:'Retro 70-an',meaning:'Seventies stationery',
+  blurb:'A thick cream card from the seventies: an arched window of soft-focus flowers, a gold-foil sunburst behind it and the names in a warm italic. It turns over to open.',
+  fonts:{d:"'Fraunces', serif",s:"'Fraunces', serif",b:"'Jost', sans-serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',t=[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ');
+    return `<section class="page pg-retro2" style="${rtVars(th)}"><div class="rt2-ground"></div>
+      <div class="rt2-card reveal"><div class="rt2-face">
+        ${rtArch(th,'pg')}
+        <p class="rt2-k kicker">${ev(o,L)}</p><h1 class="rt2-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="rt2-date">${esc(fmtDate(o.date,o.lang))}</p>${t?`<p class="rt2-time">${esc(t)}</p>`:''}${o.venue?`<p class="rt2-ven">${esc(o.venue)}</p>`:''}
+        ${o.hijri?`<p class="rt2-hj">${esc(o.hijri)}</p>`:''}</div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',[a,b]=K.initials(o);
+    return `<div class="cover cv-retro2" style="${rtVars(th)}"><div class="rt2-ground"></div>
+      <div class="rt2-flip"><div class="rt2-card"><div class="rt2-face">
+        ${rtArch(th,'cv')}
+        <p class="rt2-k">${ev(o,L)}</p><p class="rt2-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <p class="rt2-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+        ${guest?`<p class="rt2-to"><small>${L.dear}</small>${esc(guest)}</p>`:''}</div></div>
+        <div class="rt2-card rt2-back"><i class="rt2-sun" style="--rays:${RT_RAYS}"></i><p>${esc(a)}<span>&amp;</span>${esc(b)}</p></div></div>
+      <div class="rt2-foot"><${tag} class="rt2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el)},
   themes:[
-    {k:'klasik',n:'Klasik',desc:'Brown, orange and mustard on cream',c:{ground:'#f1e1c0',sheet:'#f7ead0',ink:'#4a2814',accent:'#c2551f',gold:'#e8a92f',s1:'#6b3418',s2:'#c2551f',s3:'#e48a2a',s4:'#e8b23a',pagefg:'#4a2814',line:'rgba(74,40,20,.28)'}},
-    {k:'coklat',n:'Coklat',desc:'Warm bands on chocolate brown',c:{ground:'#3a2116',sheet:'#f4e4c4',ink:'#3a2116',accent:'#c2551f',gold:'#e8b23a',s1:'#7a3418',s2:'#cf5a22',s3:'#ec8f2c',s4:'#efbd45',pagefg:'#f4e4c4',line:'rgba(58,33,22,.28)'}},
-    {k:'alpukat',n:'Alpukat',desc:'Avocado, harvest gold and rust',c:{ground:'#ebe0bf',sheet:'#f5ecd2',ink:'#3a3317',accent:'#7d8429',gold:'#d9a62e',s1:'#4b5320',s2:'#828a2c',s3:'#d9a62e',s4:'#c9692b',pagefg:'#3a3317',line:'rgba(58,51,23,.28)'}},
-    {k:'jambu',n:'Jambu',desc:'Burgundy, rose and salmon',c:{ground:'#f6dccd',sheet:'#fbeadf',ink:'#4a1a24',accent:'#b83f55',gold:'#ee8a7f',s1:'#6e1f2e',s2:'#b83f55',s3:'#e9776f',s4:'#f2ae8f',pagefg:'#4a1a24',line:'rgba(74,26,36,.26)'}},
-    {k:'laut',n:'Laut',desc:'Teal and mustard with a coral sun',c:{ground:'#e6e0c8',sheet:'#f4eed9',ink:'#1d3338',accent:'#2b7f80',gold:'#e8b23a',s1:'#1f4e57',s2:'#2b8584',s3:'#e8b23a',s4:'#e4703a',pagefg:'#1d3338',line:'rgba(29,51,56,.26)'}},
-    {k:'senja',n:'Senja',desc:'Sunset bands on dusky plum',c:{ground:'#2b1d33',sheet:'#f5e6cb',ink:'#2f1f35',accent:'#d9534f',gold:'#f6c453',s1:'#8e3b6e',s2:'#d9534f',s3:'#f08a4b',s4:'#f6c453',pagefg:'#f5e6cb',line:'rgba(47,31,53,.26)'}},
-    {k:'kunyit',n:'Kunyit',desc:'Turmeric yellow with brown and orange',c:{ground:'#f0bf48',sheet:'#fcefd2',ink:'#4a2614',accent:'#b8481f',gold:'#f7d68a',s1:'#5a2e1a',s2:'#b8481f',s3:'#ef7f2d',s4:'#f7d68a',pagefg:'#3d1f10',line:'rgba(74,38,20,.28)'}},
-    {k:'lumut',n:'Lumut',desc:'Gold and rust on forest green',c:{ground:'#25321f',sheet:'#f3e4c4',ink:'#25321f',accent:'#c0562a',gold:'#e9b949',s1:'#5d6e2f',s2:'#a8421f',s3:'#d9772e',s4:'#e9b949',pagefg:'#f3e4c4',line:'rgba(37,50,31,.26)'}},
+    {k:'klasik',n:'Klasik',desc:'Cream card, poppy field, rust and gold',c:{ground:'#d9c29b',sheet:'#f8eedb',ink:'#4a2a17',accent:'#a5481f',gold:'#c8963e',pagefg:'#4a2a17',s1:'#6b3418',s2:'#c2551f',s3:'#e0a33a',pic:'pd-paint-monet-poppies.jpg',pos:'50% 72%'}},
+    {k:'coklat',n:'Coklat',desc:'Chocolate ground, poppy field, gold',c:{ground:'#3a2317',sheet:'#f6ead3',ink:'#3e2416',accent:'#9a4420',gold:'#cf9d48',pagefg:'#f2e3c8',s1:'#7a3418',s2:'#cf5a22',s3:'#e7ae45',pic:'pd-paint-monet-poppies.jpg',pos:'50% 64%'}},
+    {k:'alpukat',n:'Alpukat',desc:'Avocado ground, iris garden, harvest gold',c:{ground:'#b6ad7a',sheet:'#f6efd9',ink:'#363016',accent:'#6a6a22',gold:'#c39a3c',pagefg:'#2e2a12',s1:'#4b5320',s2:'#828a2c',s3:'#d9a62e',pic:'pd-paint-monet-irises.jpg',pos:'50% 60%'}},
+    {k:'jambu',n:'Jambu',desc:'Dusty rose, flower bank, rose gold',c:{ground:'#e3c0b0',sheet:'#fbefe4',ink:'#4a1f24',accent:'#a3474f',gold:'#c48a6a',pagefg:'#4a1f24',s1:'#6e1f2e',s2:'#b83f55',s3:'#e9886f',pic:'pd-paint-hassam-island.jpg',pos:'50% 55%'}},
+    {k:'laut',n:'Laut',desc:'Sea green, water garden, mustard',c:{ground:'#a9b8a6',sheet:'#f5f0de',ink:'#1f3433',accent:'#2c6763',gold:'#c4983e',pagefg:'#1d2e2c',s1:'#1f4e57',s2:'#2b8584',s3:'#e0a83a',pic:'pd-paint-hassam-water.jpg',pos:'50% 50%'}},
+    {k:'senja',n:'Senja',desc:'Dusky plum, poppy field, sunset gold',c:{ground:'#3b2433',sheet:'#f7e9d4',ink:'#3a2030',accent:'#a3444a',gold:'#d9a250',pagefg:'#f3e2cd',s1:'#8e3b6e',s2:'#d9534f',s3:'#f0a64b',pic:'pd-paint-monet-poppies.jpg',pos:'50% 40%'}},
+    {k:'kunyit',n:'Kunyit',desc:'Turmeric ground, flower bank, brown',c:{ground:'#d8a641',sheet:'#fbf0d6',ink:'#4a2614',accent:'#9a4a1c',gold:'#b9852f',pagefg:'#3d1f10',s1:'#5a2e1a',s2:'#b8481f',s3:'#ef7f2d',pic:'pd-paint-hassam-island.jpg',pos:'50% 70%'}},
+    {k:'lumut',n:'Lumut',desc:'Forest green, iris garden, gold',c:{ground:'#28331f',sheet:'#f5ead0',ink:'#2a3220',accent:'#5e6b2a',gold:'#d0a64c',pagefg:'#efe4c8',s1:'#5d6e2f',s2:'#a8421f',s3:'#e0a43e',pic:'pd-paint-monet-irises.jpg',pos:'50% 45%'}},
   ]});
+function rtVars(th){const c=th.c;return `--s1:${c.s1};--s2:${c.s2};--s3:${c.s3}`}
 
 })()}catch(e){console.error("family retro failed",e)}
 
 
 /* ===== family: riso ===== */
 try{(()=>{
-/* riso: a two-colour risograph poster. Each ink is its own layer (halftone screens at different angles, speckled coverage),
-   overprinting where they meet, slightly out of register. Cover: on tap the two layers slide into register, then the sheet slides away.
-   Page: a riso poster with the names. Skin: overprinted grainy headings and halftone corners. */
-needFont('Bricolage+Grotesque:opsz,wght@12..96,400..800');
-const BG="'Bricolage Grotesque', sans-serif",MONO="'IBM Plex Mono', monospace";
-let uid=0;
-const fit=(s,max,fs,k=.6)=>Math.min(fs,max/Math.max(1,(s||'').length*k));
-// halftone dots on a rotated screen inside a box; f(x,y) -> 0..1 dot size
-function ht(x0,y0,w,h,step,ang,maxR,f){let d='';const a=ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),cx=x0+w/2,cy=y0+h/2,R=Math.hypot(w,h)/2+step;
-  for(let i=-R;i<=R;i+=step)for(let j=-R;j<=R;j+=step){const x=cx+i*ca-j*sa,y=cy+i*sa+j*ca;if(x<x0||x>x0+w||y<y0||y>y0+h)continue;const t=f(x,y);if(t<=.04)continue;
-    const r=+Math.min(maxR,maxR*Math.sqrt(Math.min(1,t))).toFixed(1);if(r<.3)continue;d+=`M${(x-r).toFixed(1)} ${y.toFixed(1)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`}
-  return d}
-const flower=(cx,cy,r,rot=0)=>Array.from({length:5},(_,i)=>`<ellipse cx="${cx}" cy="${(cy-r*.55).toFixed(1)}" rx="${(r*.36).toFixed(1)}" ry="${(r*.55).toFixed(1)}" transform="rotate(${rot+i*72} ${cx} ${cy})"/>`).join('');
-const leaf=(x,y,l,rot)=>`<path d="M0 0C${l*.3} ${-l*.28} ${l*.7} ${-l*.28} ${l} 0C${l*.7} ${l*.28} ${l*.3} ${l*.28} 0 0Z" transform="translate(${x} ${y}) rotate(${rot})"/>`;
-// paper speckle: ink drops out where the noise is high, like a riso drum running a little dry
-const inkF=(id,seed)=>`<filter id="${id}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="1" seed="${seed}" result="n"/><feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.9" result="m"/><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="${seed+7}" result="b"/><feColorMatrix in="b" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.75" result="bm"/><feComposite in="m" in2="bm" operator="in" result="mm"/><feComposite in="SourceGraphic" in2="mm" operator="in"/></filter>`;
-function layers(o,th,L,guest,mode){const c=th.c,u=++uid,[n1,n2]=coverNames(o),en=o.lang==='en',A=c.accent,B=c.gold;
-  const d=new Date((o.date||'2026-01-01')+'T00:00:00'),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=String(d.getFullYear());
-  const N1=(n1||'').toUpperCase(),N2=(n2||'').toUpperCase(),f1=fit(N1,262,64),f2=fit(N2,232,64);
-  const page=mode==='page';const H=page?560:600;
-  // ink one (accent): halftone sun, flowers, overprint blocks
-  const sunY=page?150:168,sunX=page?196:178;
-  const a=`<svg class="rs-l rs-a" viewBox="0 0 300 ${H}" aria-hidden="true"><defs>${inkF('ra'+u,3+u%5)}</defs><g filter="url(#ra${u})" fill="${A}"><g fill="none" stroke="${A}" stroke-width=".7"><circle cx="150" cy="14" r="4.2"/><path d="M143 14h14M150 7v14"/><circle cx="14" cy="${H-14}" r="4.2"/><path d="M7 ${H-14}h14M14 ${H-21}v14"/></g>
-   <path d="${ht(sunX-112,sunY-112,224,224,5.6,15,2.7,(x,y)=>{const r=Math.hypot(x-sunX,y-sunY)/112;return r>1?0:1.08-r*.95})}"/>
-   <circle cx="${sunX}" cy="${sunY}" r="46"/>
-   <g transform="translate(${page?262:34} ${page?268:92})">${flower(0,0,26,8)}</g><g transform="translate(${page?78:262} ${page?40:300})">${flower(0,0,15,30)}</g><g transform="translate(${page?260:250} ${page?312:52})">${flower(0,0,12,-10)}</g>
-   <rect x="${page?14:18}" y="${page?268:316}" width="${page?150:120}" height="${page?54:58}"/>
-   <path d="${ht(170,H-210,130,210,5,15,2.4,(x,y)=>1.1-Math.hypot(300-x,H-y)/165)}"/>
-   ${page?`<text x="14" y="214" class="rs-big" font-size="118">${dd}</text>`:`<text x="282" y="${H-38}" text-anchor="end" class="rs-big" font-size="64">${dd}.${mm}</text>`}
-   <path d="M${page?20:22} ${page?236:278}h${page?132:96}" stroke="${A}" stroke-width="5"/>
-  </g></svg>`;
-  // ink two (gold slot = second drum): type, rings, rules, info
-  const ny=page?300:356;
-  const b=`<svg class="rs-l rs-b" viewBox="0 0 300 ${H}" aria-hidden="true"><defs>${inkF('rb'+u,11+u%5)}</defs><g filter="url(#rb${u})" fill="${B}"><g fill="none" stroke="${B}" stroke-width=".7"><circle cx="150" cy="14" r="4.2"/><path d="M143 14h14M150 7v14"/><circle cx="14" cy="${H-14}" r="4.2"/><path d="M7 ${H-14}h14M14 ${H-21}v14"/></g>
-   <g transform="translate(0 ${page?26:0})"><text x="22" y="36" class="rs-mono" font-size="8.6">${en?'INVITATION':'KAD JEMPUTAN'} &#8212; NO.${dd}/${mm}</text><text x="278" y="36" text-anchor="end" class="rs-mono" font-size="8.6">${yy}</text>
-   <rect x="22" y="44" width="256" height="2.2"/></g>
-   <g fill="none" stroke="${B}" stroke-width="6.5"><circle cx="${sunX-24}" cy="${sunY+6}" r="40"/><circle cx="${sunX+26}" cy="${sunY+6}" r="40"/></g>
-   <path d="M${sunX-24} ${sunY-48}l8 9-8 9-8-9z"/><path d="M${sunX-36} ${sunY-48}h24" stroke="${B}" stroke-width="1.6"/>
-   <g>${[[34,92],[262,300],[250,52]].slice(0,page?0:3).map(([x,y],i)=>`<circle cx="${x+2}" cy="${y-1}" r="${[7,4.5,3.6][i]}"/>`).join('')}${page?`<circle cx="264" cy="267" r="7"/><circle cx="80" cy="39" r="4.5"/><circle cx="262" cy="311" r="3.6"/>`:''}</g>
-   ${page?'':`<g stroke="${B}" stroke-width="1.6" fill="none"><path d="M${page?40:34} ${page?104:118}C${page?44:38} ${page?150:170} ${page?30:26} ${page?190:200} ${page?36:30} ${page?230:262}"/></g>
-   ${leaf(31,166,22,-30)}${leaf(29,198,18,200)}`}
-   <text x="20" y="${ny-58}" class="rs-mono" font-size="9">${ev(o,L).toUpperCase()}</text>
-   <text x="18" y="${ny}" class="rs-name" font-size="${f1.toFixed(1)}">${esc(N1)}</text>
-   <text x="18" y="${(ny+f2*.92+4).toFixed(1)}" class="rs-name" font-size="${f2.toFixed(1)}"><tspan class="rs-amp" font-size="${(f2*.7).toFixed(1)}">&amp;</tspan>${esc(N2)}</text>
-   <g class="rs-info"><rect x="22" y="${H-150}" width="${page?150:160}" height="1.4"/>
-    <text x="22" y="${H-134}" class="rs-mono" font-size="8">${en?'DATE':'TARIKH'}</text><text x="22" y="${H-120}" class="rs-val" font-size="12.5">${esc(fmtDate(o.date,o.lang))}</text>
-    <text x="22" y="${H-102}" class="rs-mono" font-size="8">${en?'TIME':'MASA'}</text><text x="22" y="${H-88}" class="rs-val" font-size="12.5">${esc(fmtTime(o.start,o.lang))}${o.end?' &#8211; '+esc(fmtTime(o.end,o.lang)):''}</text>
-    <text x="22" y="${H-70}" class="rs-mono" font-size="8">${en?'VENUE':'TEMPAT'}</text><text x="22" y="${H-56}" class="rs-val" font-size="12.5">${esc(o.venue)}</text>
-    ${guest?`<text x="22" y="${H-34}" class="rs-mono" font-size="8">${en?'FOR':'KEPADA'}</text><text x="${en?50:64}" y="${H-34}" class="rs-val rs-g" font-size="11">${esc(guest)}</text>`:''}</g>
-   ${page?'':`<text x="280" y="${H-14}" text-anchor="end" class="rs-mono" font-size="6.5">${en?'printed in two inks':'dicetak dua warna'} &#183; riso</text>`}
-  </g></svg>`;
-  return a+b}
-FAMILY({key:'riso',name:'Risograf',meaning:'Two-colour riso print',
-  blurb:'A two-colour risograph poster in fluorescent ink, halftones and speckled grain, slightly out of register; the inks slide into register and the sheet slides away.',
-  fonts:{d:BG,s:BG,b:BG},ms:1400,
-  page(o,th,L){return `<section class="page pg-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-sheet">${layers(o,th,L,'','page')}<i class="rs-grain"></i></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-table"></div>
-    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Open invitation':'Buka Jemputan'} &#8594;</span></${tag}></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--blend',th.c.blend||'multiply');$$('.sheet > .sec',el).forEach((s,i)=>{s.classList.add(i%2?'rs-odd':'rs-even');const h=$('h2',s);if(h)h.setAttribute('data-t',h.textContent)})},
+/* riso (redesign): a true two-ink risograph print. A pair of bullfinches on a blossoming branch (Kubo Shunman, c. 1815,
+   public domain) separated into two inks: the warm ink takes the birds' breasts and the buds, the key ink takes the line.
+   Each ink is stochastic grain, slightly out of register, overprinting where they meet, on toothy paper.
+   Cover: the poster pinned flat; tap "Buka Jemputan" and it is lifted away. Page: the same print with the details set in mono.
+   Skin: riso cards: paper grain, serif headings with a misregistered second ink, key-ink hairlines. */
+needFont('Instrument+Serif:ital@0;1');
+let rsN=0;
+// the art crop: the two birds, the branch and the blossoms, without the poem
+const RS_VB='0 470 690 628';
+// one ink: alpha is pulled from the picture by a colour matrix, then dithered against fine noise like a riso drum
+const rsInk=(id,m,seed,col,blur=0)=>`<filter id="${id}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+  <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${m}" result="a"/>
+  <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="1" seed="${seed}" result="t"/>
+  <feColorMatrix in="t" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="n"/>
+  <feComposite in="a" in2="n" operator="arithmetic" k1="0" k2="3.4" k3="-3.4" k4=".62" result="d"/>
+  ${blur?`<feGaussianBlur in="d" stdDeviation="${blur}" result="d"/>`:''}
+  <feFlood flood-color="${col}"/><feComposite in2="d" operator="in"/></filter>`;
+function rsArt(c,cls=''){const u=++rsN,A=c.accent,B=c.gold;
+  // warm ink: (R - B) of the print; key ink: darkness of the print
+  const warm='4.6 0 -4.6 0 -.62',key='-1.05 -1.05 -1.05 0 1.98';
+  return `<svg class="rs2-art ${cls}" viewBox="${RS_VB}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    ${rsInk('rsa'+u,warm,11+u,A)}${rsInk('rsb'+u,key,29+u,B)}
+    <filter id="rsf${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="1" seed="${5+u}" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="n"/>
+      <feComposite in="SourceAlpha" in2="n" operator="arithmetic" k1="0" k2="1" k3="-3.4" k4=".78" result="d"/><feFlood flood-color="${A}"/><feComposite in2="d" operator="in"/></filter></defs>
+    <g class="rs2-ink a"><circle cx="455" cy="700" r="196" fill="#000" filter="url(#rsf${u})"/>
+      <image href="${A_}pd-asia-3.jpg" width="1000" height="1098" filter="url(#rsa${u})"/></g>
+    <g class="rs2-ink b"><image href="${A_}pd-asia-3.jpg" width="1000" height="1098" filter="url(#rsb${u})"/></g></svg>`}
+const A_=A;
+const rsDate=o=>{const d=new Date((o.date||'2026-01-01')+'T00:00:00');return [String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),String(d.getFullYear())]};
+FAMILY({key:'riso',name:'Risograf',meaning:'Two-ink riso print',
+  blurb:'A two-ink risograph print of two bullfinches on a blossoming branch, grainy and a touch out of register, with the names set large in a fine serif.',
+  fonts:{d:"'Instrument Serif', serif",s:"'Instrument Serif', serif",b:"'IBM Plex Mono', monospace"},ms:1300,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',[d,m,y]=rsDate(o);
+    const rows=[[en?'Date':'Tarikh',fmtDate(o.date,o.lang)],[en?'Time':'Masa',[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ')],[en?'Venue':'Tempat',o.venue]].filter(r=>r[1]);
+    return `<section class="page pg-riso2${th.c.blend==='screen'?' rs2-dark':''}"><div class="rs2-poster reveal">
+      <div class="rs2-head"><span>${en?'Invitation':'Kad Jemputan'}</span><span>No. ${d}${m}</span><span>${y}</span></div>
+      ${rsArt(th.c,'pg')}
+      <div class="rs2-body"><p class="rs2-k kicker">${ev(o,L)}</p><h1 class="rs2-names">${esc(n1)}<span><i>&amp;</i> ${esc(n2)}</span></h1>
+      <dl class="rs2-rows">${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${o.hijri?`<p class="rs2-hj">${esc(o.hijri)}</p>`:''}</div>
+      <i class="rs2-grain"></i></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',[d,m,y]=rsDate(o);
+    return `<div class="cover cv-riso2${th.c.blend==='screen'?' rs2-dark':''}"><div class="rs2-wall"></div>
+      <div class="rs2-poster">
+        <div class="rs2-head"><span>${en?'Invitation':'Kad Jemputan'}</span><span>No. ${d}${m}</span><span>${y}</span></div>
+        ${rsArt(th.c,'cv')}
+        <div class="rs2-body"><p class="rs2-k">${ev(o,L)}</p><p class="rs2-names">${esc(n1)}<span><i>&amp;</i> ${esc(n2)}</span></p>
+        <p class="rs2-date">${d} · ${m} · ${y}</p>${guest?`<p class="rs2-to"><small>${L.dear}</small> ${esc(guest)}</p>`:''}</div>
+        <i class="rs2-grain"></i></div>
+      <div class="rs2-foot"><${tag} class="rs2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('rs2-dark',th.c.blend==='screen')},
   themes:[
-    {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4',line:'rgba(0,120,191,.35)'}},
-    {k:'merah',n:'Merah Teal',desc:'Bright red and teal on chalk',c:{ground:'#d9d4c8',sheet:'#f2ede2',ink:'#00646a',accent:'#ff665e',gold:'#00838a',pagefg:'#23302f',line:'rgba(0,131,138,.35)'}},
-    {k:'kuning',n:'Kuning',desc:'Yellow and medium blue',c:{ground:'#24304f',sheet:'#f7f2e6',ink:'#25418a',accent:'#ffd400',gold:'#3255a4',pagefg:'#f7f2e6',line:'rgba(50,85,164,.35)'}},
-    {k:'oren',n:'Oren Hijau',desc:'Fluorescent orange and green',c:{ground:'#e6e1d4',sheet:'#f4efe4',ink:'#00753f',accent:'#ff6c2f',gold:'#00a95c',pagefg:'#22301f',line:'rgba(0,169,92,.35)'}},
-    {k:'ungu',n:'Ungu',desc:'Purple and fluorescent pink on lilac',c:{ground:'#2c2438',sheet:'#efe9ef',ink:'#5a4290',accent:'#ff48b0',gold:'#765ba7',pagefg:'#efe9ef',line:'rgba(118,91,167,.35)'}},
-    {k:'emas',n:'Emas Marun',desc:'Burgundy and sunflower on cream',c:{ground:'#efe5d3',sheet:'#f6eddc',ink:'#7a3b5e',accent:'#ffb511',gold:'#914e72',pagefg:'#3b2230',line:'rgba(145,78,114,.35)'}},
-    {k:'hitam',n:'Hitam',desc:'Pink and yellow on black stock',c:{ground:'#0e0e10',sheet:'#1d1d21',ink:'#ffe800',accent:'#ff48b0',gold:'#ffe800',blend:'screen',pagefg:'#f2efe8',line:'rgba(255,232,0,.35)'}},
-    {k:'laut',n:'Laut',desc:'Coral and mint on navy stock',c:{ground:'#0f1428',sheet:'#1d2340',ink:'#9be3df',accent:'#ff7477',gold:'#82d8d5',blend:'screen',pagefg:'#eef2f6',line:'rgba(130,216,213,.35)'}},
+    {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4'}},
+    {k:'merah',n:'Merah Teal',desc:'Bright red and teal on chalk',c:{ground:'#d4cfc3',sheet:'#f2ede2',ink:'#005f66',accent:'#ff665e',gold:'#00838a',pagefg:'#23302f'}},
+    {k:'kuning',n:'Kuning',desc:'Yellow and medium blue',c:{ground:'#24304f',sheet:'#f7f2e6',ink:'#25418a',accent:'#ffc400',gold:'#3255a4',pagefg:'#f7f2e6'}},
+    {k:'oren',n:'Oren Hijau',desc:'Fluorescent orange and green',c:{ground:'#e2ddd0',sheet:'#f4efe4',ink:'#00703c',accent:'#ff6c2f',gold:'#00a95c',pagefg:'#22301f'}},
+    {k:'ungu',n:'Ungu',desc:'Purple and fluorescent pink on lilac',c:{ground:'#2c2438',sheet:'#efe9ef',ink:'#4f3a85',accent:'#ff48b0',gold:'#765ba7',pagefg:'#efe9ef'}},
+    {k:'emas',n:'Emas Marun',desc:'Burgundy and sunflower on cream',c:{ground:'#e9dfcc',sheet:'#f6eddc',ink:'#7a3b5e',accent:'#ffb511',gold:'#914e72',pagefg:'#3b2230'}},
+    {k:'hitam',n:'Hitam',desc:'Pink and yellow on black stock',c:{ground:'#0e0e10',sheet:'#1d1d21',ink:'#ffe800',accent:'#ff48b0',gold:'#ffe800',blend:'screen',pagefg:'#f2efe8'}},
+    {k:'laut',n:'Laut',desc:'Coral and mint on navy stock',c:{ground:'#0f1428',sheet:'#1d2340',ink:'#9be3df',accent:'#ff7477',gold:'#82d8d5',blend:'screen',pagefg:'#eef2f6'}},
   ]});
 
 })()}catch(e){console.error("family riso failed",e)}
@@ -6422,12 +7457,12 @@ FAMILY({key:'sianotip',name:'Sianotip',meaning:'Cyanotype sun print',
 
 /* ===== family: silangkata ===== */
 try{(()=>{
-/* silangkata: a criss-cross puzzle on newsprint where the couple's names cross.
-   Cover: the puzzle page with its clues and a pencil; touching the grid writes the names into the squares (about 1.2 s).
-   Page: the solved grid with clues that give the day, date and venue. Skin: headings set in answer boxes. */
-needFont('Caveat:wght@400;600');
-needFont('Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900');
-needFont('Jost:wght@300;400;500;600');
+/* silangkata: the weekend puzzle page of a broadsheet, folded on a desk beside a fountain pen.
+   The couple's names cross in the grid, printed by hand in ink; the other answers (the day, the venue, the month) wait to be filled.
+   Cover: tap "Buka Jemputan"; the pen lifts away and the rest of the answers ink in, then the page clears.
+   Page: the solved puzzle set as a newspaper column with the names as the headline. Skin: newsprint columns with a thick-thin rule under each heading. */
+needFont('Old+Standard+TT:ital,wght@0,400;0,700;1,400');
+needFont('Caveat:wght@600');
 let skN=0;
 const SK_CLEAN=s=>String(s||'').normalize('NFD').replace(/[^A-Za-z]/g,'').toUpperCase();
 const SK_EXTRA={
@@ -6473,53 +7508,63 @@ function skBuild(o){const en=o.lang==='en',[a,b]=coverNames(o),n1=SK_CLEAN(a).sl
   words.forEach(w=>w.num=starts.indexOf(w.y*100+w.x)+1);
   out.forEach(c=>{const i=starts.indexOf(c.y*100+c.x);c.num=i<0?0:i+1});
   return {cols,rows,cells:out,words}}
-function skGrid(P,mode){const nameCells=P.cells.filter(c=>c.nm).sort((p,q)=>p.y-q.y||p.x-q.x);const step=1.05/Math.max(1,nameCells.length);
-  return `<span class="silangkata-grid" style="--cols:${P.cols};--rows:${P.rows}">${P.cells.map(c=>{const fill=mode==='page'||c.nm;
-    const dl=c.nm?(nameCells.indexOf(c)*step).toFixed(2):0;
-    return `<span class="silangkata-c${c.nm?' nm':''}" style="left:${(c.x*100/P.cols).toFixed(3)}%;top:${(c.y*100/P.rows).toFixed(3)}%">${c.num?`<i>${c.num}</i>`:''}${fill?`<b class="silangkata-l" style="--d:${dl}s">${c.ch}</b>`:''}</span>`}).join('')}</span>`}
-function skClues(P,en,full){const li=w=>`<li class="${w.info?'inf':''}${w.nm?' nm':''}"><b>${w.num}</b><span>${esc(w.clue)}${full&&!w.nm?'':` <em>(${w.w.length})</em>`}</span></li>`;
+const skNo=o=>{const d=new Date((o.date||'')+'T00:00:00');return isNaN(d)?'1':String(d.getDate())+String(d.getMonth()+1).padStart(2,'0')};
+const skVars=c=>`--pen:${c.pen};--rule:${c.line}`;
+function skGrid(P,mode){const rest=P.cells.filter(c=>!c.nm).sort((p,q)=>p.y-q.y||p.x-q.x),step=.9/Math.max(1,rest.length);
+  return `<div class="sk-grid ${mode}" style="--cols:${P.cols};--rows:${P.rows}">${P.cells.map(c=>{
+    const dl=c.nm?0:(.15+rest.indexOf(c)*step).toFixed(2);
+    return `<span class="sk-c" style="left:${(c.x*100/P.cols).toFixed(3)}%;top:${(c.y*100/P.rows).toFixed(3)}%">${c.num?`<i>${c.num}</i>`:''}<b class="sk-l${c.nm?' nm':' x'}" style="--d:${dl}s">${c.ch}</b></span>`}).join('')}</div>`}
+function skClues(P,en){const li=w=>`<li><b>${w.num}</b> ${esc(w.clue)} <em>(${w.w.length})</em></li>`;
   const ac=P.words.filter(w=>!w.dir).sort((p,q)=>p.num-q.num),dn=P.words.filter(w=>w.dir).sort((p,q)=>p.num-q.num);
-  return `<div class="silangkata-clues"><div><h4>${en?'Across':'Mendatar'}</h4><ol>${ac.map(li).join('')}</ol></div><div><h4>${en?'Down':'Menurun'}</h4><ol>${dn.map(li).join('')}</ol></div></div>`}
-const SK_PENCIL=(c,u)=>`<svg class="silangkata-pencil" viewBox="0 0 320 26" aria-hidden="true"><defs><linearGradient id="skp${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a3a"/><stop offset=".35" stop-color="#1b1b1b"/><stop offset=".36" stop-color="#2a2a2a"/><stop offset=".65" stop-color="#141414"/><stop offset=".66" stop-color="#232323"/><stop offset="1" stop-color="#0c0c0c"/></linearGradient>
-  <linearGradient id="skf${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e7b8"/><stop offset=".45" stop-color="${c.gold}"/><stop offset="1" stop-color="#6b5226"/></linearGradient></defs>
-  <path d="M40 3H262V23H40z" fill="url(#skp${u})"/><path d="M40 3L8 13 40 23z" fill="#e8cfa4"/><path d="M8 13l9-2.8v5.6z" fill="#2a2a2a"/><path d="M40 3l-6 3 6 2-6 3 6 2-6 3 6 2-6 3 6 3" fill="none" stroke="#c9ad80" stroke-width=".6"/>
-  <path d="M262 2.4h26v21.2h-26z" fill="url(#skf${u})"/><path d="M266 2.4v21.2M270 2.4v21.2M280 2.4v21.2M284 2.4v21.2" stroke="#6b5226" stroke-width=".7"/>
-  <path d="M288 3.4h22a6 6 0 0 1 6 6v7.2a6 6 0 0 1-6 6h-22z" fill="${c.accent}"/><path d="M288 6h22" stroke="#fff" stroke-opacity=".25" stroke-width="1.4"/>
-  <path d="M60 9.4h110" stroke="${c.gold}" stroke-width=".6" opacity=".8"/></svg>`;
+  return `<div class="sk-clues"><div><h4>${en?'Across':'Mendatar'}</h4><ol>${ac.map(li).join('')}</ol></div><div><h4>${en?'Down':'Menurun'}</h4><ol>${dn.map(li).join('')}</ol></div></div>`}
+// a fountain pen: black resin barrel and cap, gold clip and bands, a two-tone nib
+const skPen=u=>`<svg class="sk-pen" viewBox="0 0 400 40" aria-hidden="true"><defs>
+  <linearGradient id="skr${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4743"/><stop offset=".18" stop-color="#d9d4cb" stop-opacity=".9"/><stop offset=".3" stop-color="#2a2826"/><stop offset=".7" stop-color="#121110"/><stop offset="1" stop-color="#050505"/></linearGradient>
+  <linearGradient id="skg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3cf"/><stop offset=".35" stop-color="#d6b066"/><stop offset=".7" stop-color="#8a6a2c"/><stop offset="1" stop-color="#5a4318"/></linearGradient></defs>
+  <path d="M2 20L40 12.6 40 27.4Z" fill="url(#skg${u})"/><path d="M2 20L24 17.6 24 22.4Z" fill="#cfd2d6" opacity=".55"/><path d="M4 20H30" stroke="#3a2c10" stroke-width=".6"/><circle cx="28" cy="20" r="1.3" fill="#3a2c10"/>
+  <path d="M40 12.2H72L76 11V29L72 27.8H40Z" fill="url(#skr${u})"/><path d="M44 13.6v12.8M48 13.6v12.8" stroke="#000" stroke-opacity=".35" stroke-width=".5"/>
+  <path d="M76 9.8H210V30.2H76Z" fill="url(#skr${u})"/>
+  <path d="M206 8.6H222V31.4H206Z" fill="url(#skg${u})"/><path d="M210 8.6v22.8M218 8.6v22.8" stroke="#5a4318" stroke-width=".6"/>
+  <path d="M222 8.6H382Q396 8.6 396 20Q396 31.4 382 31.4H222Z" fill="url(#skr${u})"/>
+  <path d="M370 8.6h5v22.8h-5z" fill="url(#skg${u})"/>
+  <path d="M236 5.6H354Q362 5.6 362 9.4V11.2H244Q238 11.2 236 9Z" fill="url(#skg${u})"/><circle cx="244" cy="8.4" r="2.6" fill="url(#skg${u})" stroke="#5a4318" stroke-width=".4"/></svg>`;
 
-FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Crossword puzzle',
-  blurb:'A criss-cross puzzle on newsprint where the couple’s names cross; touch the grid and the names are written in, the clues giving the date and venue.',
-  fonts:{d:"'Bodoni Moda', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1650,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',P=skBuild(o);
-    return `<section class="page pg-silangkata" style="--pen:${c.pen}"><div class="silangkata-desk"></div>
-     <div class="silangkata-paper reveal"><div class="silangkata-mast"><span>${en?'Solution':'Jawapan'}</span><b>${en?'Crossword':'Silang Kata'}</b><span>No. ${esc((fmtShort(o.date)||'').replace(/\./g,''))}</span></div>
-      <p class="silangkata-sub">${ev(o,L)}</p><h1 class="names silangkata-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
-      <div class="silangkata-wrap">${skGrid(P,'page')}</div>${skClues(P,en,true)}
-      <p class="silangkata-foot">${esc(o.address||'')}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',P=skBuild(o);
-    return `<div class="cover cv-silangkata" style="--pen:${c.pen}"><div class="silangkata-desk"></div>
-     <div class="silangkata-paper"><div class="silangkata-mast"><span>${en?'Special edition':'Edisi istimewa'}</span><b>${en?'Crossword':'Silang Kata'}</b><span>No. ${esc((fmtShort(o.date)||'').replace(/\./g,''))}</span></div>
-      <p class="silangkata-sub">${ev(o,L)} · ${esc(fmtDate(o.date,o.lang))}</p>
-      <p class="silangkata-q">${en?'Who are the happy couple?':'Siapakah mempelai kita?'}</p>
-      <${tag} class="silangkata-tap" ${attr} aria-label="${L.open}">${skGrid(P,'cover')}</${tag}>
-      ${skClues(P,en,false)}
-      <div class="silangkata-bot"><div class="silangkata-coupon"><p class="silangkata-ch">${en?'Entry coupon':'Kupon penyertaan'}</p>
-        <p class="silangkata-cl"><span>${en?'Name':'Nama'}</span><b>${guest?esc(guest):'&nbsp;'}</b></p>
-        <p class="silangkata-cl"><span>${en?'Reply by':'Jawab sebelum'}</span><b>${esc(o.deadline?fmtDate(o.deadline,o.lang,false):fmtDate(o.date,o.lang,false))}</b></p></div>
-       <p class="silangkata-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>
-     ${SK_PENCIL(c,++skN)}</div>`},
-  skin(el,o,th,L){K.cards(el);el.style.setProperty('--pen',th.c.pen);
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('silangkata-sec');const h=$('h2',s);if(!h)return;const t=h.textContent.trim();
-      let first=true;h.innerHTML=t.split(/\s+/).map(w=>`<span class="silangkata-w">${[...w].map(ch=>{const out=`<span class="silangkata-bx">${first?`<i>${i+1}</i>`:''}${esc(ch)}</span>`;first=false;return out}).join('')}</span>`).join('');h.classList.add('silangkata-h')})},
+FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Weekend crossword',
+  blurb:'The weekend crossword page of a newspaper, folded on a desk beside a fountain pen, with the couple’s names crossing in the grid in ink.',
+  fonts:{d:"'Old Standard TT', serif",s:"'Old Standard TT', serif",b:"'Old Standard TT', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',P=skBuild(o);
+    return `<section class="page pg-silangkata2${th.c.dark?' sk-dark':''}" style="${skVars(th.c)}"><div class="sk-desk"></div>
+    <div class="sk-paper sk-pp reveal"><i class="sk-crease"></i>
+      <p class="sk-dl"><span>${en?'Weekend edition':'Edisi Hujung Minggu'}</span><span>${en?'Puzzle':'Teka-teki'} No. ${skNo(o)}</span></p>
+      <p class="sk-k kicker">${ev(o,L)}</p>
+      <h1 class="names sk-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+      <p class="sk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="sk-ven">${esc(o.venue)}</p>`:''}
+      <i class="sk-tt"></i>
+      ${skGrid(P,'pg')}
+      <div class="sk-pills"><a class="sk-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="sk-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+    </div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',P=skBuild(o),u=++skN;
+    return `<div class="cover cv-silangkata2${th.c.dark?' sk-dark':''}" style="${skVars(th.c)}"><div class="sk-desk"></div>
+    <div class="sk-paper sk-cp"><i class="sk-crease"></i>
+      <p class="sk-dl"><span>${en?'Weekend edition':'Edisi Hujung Minggu'}</span><span>${esc(fmtShort(o.date))}</span></p>
+      <h2 class="sk-title">${en?'The Crossword':'Silang Kata'}</h2>
+      <p class="sk-deck">${ev(o,L)} · No. ${skNo(o)}</p>
+      ${skGrid(P,'cv')}${skClues(P,en)}
+    </div>
+    <div class="sk-penw">${skPen(u)}</div>
+    <div class="sk-foot">${guest?`<p class="sk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="sk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.setAttribute('style',(el.getAttribute('style')||'')+';'+skVars(th.c));el.classList.toggle('sk-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'kertas',n:'Kertas',desc:'Newsprint on a walnut desk, blue pen',c:{ground:'#3a322a',sheet:'#f2ecdf',ink:'#1c1a17',accent:'#a3222b',gold:'#b08a4a',pagefg:'#efe7d6',pen:'#1f3a8a',line:'rgba(28,26,23,.28)'}},
-    {k:'biru',n:'Biru',desc:'Cool white paper, blue ink',c:{ground:'#d7dde5',sheet:'#f7f5ef',ink:'#1a2233',accent:'#2350a0',gold:'#9c7a3c',pagefg:'#1a2233',pen:'#2350a0',line:'rgba(26,34,51,.28)'}},
-    {k:'merah',n:'Merah',desc:'Red pen on cream, maroon desk',c:{ground:'#5b1c1f',sheet:'#f6efe4',ink:'#221a18',accent:'#b0242c',gold:'#b8914c',pagefg:'#f6efe4',pen:'#b0242c',line:'rgba(34,26,24,.28)'}},
-    {k:'hitam',n:'Hitam',desc:'Black ink, gold pencil, night desk',c:{ground:'#151515',sheet:'#efebe2',ink:'#161616',accent:'#161616',gold:'#c8a25a',pagefg:'#ece5d6',pen:'#161616',line:'rgba(22,22,22,.3)'}},
-    {k:'hijau',n:'Hijau',desc:'Green ink on pale paper',c:{ground:'#d4dbcd',sheet:'#f6f4ea',ink:'#1e2a22',accent:'#2f6b4f',gold:'#a48748',pagefg:'#24302a',pen:'#2f6b4f',line:'rgba(30,42,34,.28)'}},
-    {k:'jambu',n:'Jambu',desc:'Rose ink on blush paper',c:{ground:'#eed9d6',sheet:'#fdf8f3',ink:'#2f2226',accent:'#b65466',pen:'#8a2f4a',gold:'#b08a55',pagefg:'#4a3036',line:'rgba(47,34,38,.26)'}},
-    {k:'sepia',n:'Sepia',desc:'Aged newsprint, brown ink',c:{ground:'#e3d7bf',sheet:'#efe3c9',ink:'#2e2214',accent:'#7a4a22',gold:'#8c6a34',pagefg:'#3a2a1a',pen:'#4a2c16',line:'rgba(46,34,20,.3)'}},
-    {k:'nila',n:'Nila',desc:'Indigo pen on a midnight desk',c:{ground:'#16213a',sheet:'#f3efe6',ink:'#181d2a',accent:'#3b4f8f',gold:'#c4a25e',pagefg:'#e8e4da',pen:'#22336b',line:'rgba(24,29,42,.28)'}},
+    {k:'kertas',n:'Kertas',desc:'Newsprint on a walnut desk, blue-black ink',c:{ground:'#3a3029',sheet:'#f1ebdd',ink:'#1c1a17',accent:'#1c1a17',gold:'#a8884a',pagefg:'#efe7d6',pen:'#1f2f6b',line:'rgba(28,26,23,.5)',dark:'1'}},
+    {k:'biru',n:'Biru',desc:'Cool white paper on a pale blue desk, blue ink',c:{ground:'#d5dce5',sheet:'#f8f6f0',ink:'#1a2233',accent:'#23417e',gold:'#9c7a3c',pagefg:'#1a2233',pen:'#23417e',line:'rgba(26,34,51,.5)',dark:''}},
+    {k:'merah',n:'Merah',desc:'Cream paper on a maroon desk, red ink',c:{ground:'#561a1e',sheet:'#f6efe3',ink:'#221a18',accent:'#8e1f29',gold:'#b8914c',pagefg:'#f6efe4',pen:'#8e1f29',line:'rgba(34,26,24,.5)',dark:'1'}},
+    {k:'hitam',n:'Hitam',desc:'Newsprint on a black desk, black ink',c:{ground:'#151515',sheet:'#eeeae0',ink:'#161616',accent:'#161616',gold:'#c8a25a',pagefg:'#ece5d6',pen:'#161616',line:'rgba(22,22,22,.5)',dark:'1'}},
+    {k:'hijau',n:'Hijau',desc:'Pale paper on a sage desk, green ink',c:{ground:'#d2d9cb',sheet:'#f6f4ea',ink:'#1e2a22',accent:'#2c5a43',gold:'#a48748',pagefg:'#24302a',pen:'#2c5a43',line:'rgba(30,42,34,.5)',dark:''}},
+    {k:'jambu',n:'Jambu',desc:'Blush paper on a rose desk, plum ink',c:{ground:'#ead6d3',sheet:'#fdf8f3',ink:'#2f2226',accent:'#7a2f45',gold:'#b08a55',pagefg:'#3a262c',pen:'#7a2f45',line:'rgba(47,34,38,.48)',dark:''}},
+    {k:'sepia',n:'Sepia',desc:'Aged newsprint on oak, brown ink',c:{ground:'#d9ccb2',sheet:'#efe4cb',ink:'#2e2214',accent:'#6a3f1c',gold:'#8c6a34',pagefg:'#3a2a1a',pen:'#4a2c16',line:'rgba(46,34,20,.5)',dark:''}},
+    {k:'nila',n:'Nila',desc:'Newsprint on a midnight desk, indigo ink',c:{ground:'#151f36',sheet:'#f2eee5',ink:'#181d2a',accent:'#2c3d74',gold:'#c4a25e',pagefg:'#e8e4da',pen:'#22336b',line:'rgba(24,29,42,.5)',dark:'1'}},
   ]});
 
 })()}catch(e){console.error("family silangkata failed",e)}
@@ -6615,6 +7660,131 @@ FAMILY({key:'sireh',name:'Tepak Sireh',meaning:'Brass betel box',
   ]});
 
 })()}catch(e){console.error("family sireh failed",e)}
+
+
+/* ===== family: skrol ===== */
+try{(()=>{
+/* skrol: a parchment scroll on two turned wooden rollers, tied with a silk ribbon and closed with a wax seal.
+   Cover: the rolled scroll lies on velvet; tap "Buka Jemputan", the seal and ribbon fall away and the scroll unrolls down the screen.
+   Page: the open scroll, the invitation written on it. Skin: parchment leaves with deckled edges and a ruled heading. */
+let srN=0;
+// a turned roller: rod, collars, necks, beads and ball finials, lit from above, with a faint grain
+const srRoller=()=>{const u=++srN,g=`url(#srg${u})`;
+  const end=x=>{const m=v=>x<0?-v:v,X=v=>160+m(v);
+    return `<rect x="${Math.min(X(126),X(134))}" y="4" width="8" height="32" rx="1.5" fill="${g}"/><rect x="${Math.min(X(134),X(140))}" y="11" width="6" height="18" fill="${g}"/>
+      <ellipse cx="${X(143)}" cy="20" rx="4.5" ry="11.5" fill="${g}"/><rect x="${Math.min(X(147),X(150))}" y="15" width="3" height="10" fill="${g}"/><circle cx="${X(153)}" cy="20" r="6.5" fill="${g}"/>`};
+  return `<svg class="sr-roll" viewBox="0 0 320 40" aria-hidden="true"><defs>
+    <linearGradient id="srg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--wood) 55%,#000)"/><stop offset=".26" style="stop-color:color-mix(in srgb,var(--wood) 55%,#fff)"/><stop offset=".42" style="stop-color:var(--wood)"/><stop offset=".8" style="stop-color:color-mix(in srgb,var(--wood) 70%,#000)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--wood) 40%,#000)"/></linearGradient>
+    <filter id="srw${u}" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".012 .55" numOctaves="3" seed="${u}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 .9"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
+    <rect x="30" y="8.5" width="260" height="23" fill="${g}"/>${end(-1)}${end(1)}
+    <rect x="30" y="8.5" width="260" height="23" fill="#2a1a0e" filter="url(#srw${u})" opacity=".35"/></svg>`};
+const srSeal=(o,c)=>{const j=String(o.jawi||'').trim(),[a,b]=K.initials(o);
+  return `<span class="sr-seal" style="--seal:url(${A}seal-${c.seal}.webp)">${j?`<b class="sr-jw">${esc(j)}</b>`:`<b>${esc(a)}<i>&amp;</i>${esc(b)}</b>`}</span>`};
+const srText=(o,L,big)=>{const [n1,n2]=coverNames(o),en=o.lang==='en';
+  return `${o.bismillah?`<p class="sr-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
+    <p class="sr-k kicker">${ev(o,L)}</p>
+    <${big?'h1':'p'} class="sr-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${big?'h1':'p'}>
+    <p class="sr-rule"><i></i></p>
+    <p class="sr-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="sr-hj">${esc(o.hijri)}</p>`:''}
+    ${big?`${o.venue?`<p class="sr-ven">${esc(o.venue)}</p>`:''}<a class="sr-go" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>`:''}`};
+const srVars=c=>`--wood:${c.wood};--ribbon:${c.ribbon}`;
+FAMILY({key:'skrol',name:'Warkah',meaning:'Royal scroll',
+  blurb:'A parchment scroll on two turned wooden rollers, tied with silk ribbon and a wax seal. It unrolls down the screen to open.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Pinyon Script', cursive",b:"'IM Fell English', serif"},ms:1650,
+  page(o,th,L){return `<section class="page pg-skrol2" style="${srVars(th.c)}"><div class="sr-vel"></div>
+    <div class="sr-scroll open reveal"><div class="sr-sheet"><div class="sr-text">${srText(o,L,true)}</div></div><div class="sr-r t">${srRoller()}</div><div class="sr-r b">${srRoller()}</div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-skrol3" style="${srVars(c)}"><div class="sr-vel"></div>
+      <div class="sr-head"><p class="sr-hk">${ev(o,L)}</p><p class="sr-hn">${esc(coverNames(o)[0])}<span>&amp;</span>${esc(coverNames(o)[1])}</p><p class="sr-hd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      ${guest?`<p class="sr-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="sr-scroll"><div class="sr-sheet"><div class="sr-text">${srText(o,L,false)}</div></div>
+        <div class="sr-r t">${srRoller()}</div><div class="sr-r b">${srRoller()}</div>
+        <i class="sr-ribbon"></i>${srSeal(o,c)}</div>
+      <${tag} class="sr-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--wood',th.c.wood);el.style.setProperty('--ribbon',th.c.ribbon);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Oak rollers, gold seal, ivory linen',c:{ground:'#e7dfd0',sheet:'#f3e8cf',ink:'#3a2c20',accent:'#6e4f24',gold:'#b08a4a',pagefg:'#3a2c20',line:'rgba(80,55,25,.25)',wood:'#8a5e34',ribbon:'#b8975a',seal:'emas'}},
+    {k:'nila',n:'Nila',desc:'Walnut rollers, blue seal, midnight velvet',c:{ground:'#141c31',sheet:'#f2e6c9',ink:'#2e2a2a',accent:'#22355f',gold:'#c9a55e',pagefg:'#ece6d8',line:'rgba(34,53,95,.25)',wood:'#6a4426',ribbon:'#2b4170',seal:'biru'}},
+    {k:'marun',n:'Marun',desc:'Walnut rollers, red seal, wine velvet',c:{ground:'#2c0d15',sheet:'#f2e5c8',ink:'#3a2420',accent:'#7a1b29',gold:'#c9a055',pagefg:'#f1e5d6',line:'rgba(122,27,41,.25)',wood:'#6a4224',ribbon:'#7a1b29',seal:'merah'}},
+    {k:'zamrud',n:'Zamrud',desc:'Walnut rollers, gold seal, emerald velvet',c:{ground:'#0e231b',sheet:'#f1e6c8',ink:'#2e2a22',accent:'#1d4a35',gold:'#c6a35a',pagefg:'#e9e6d6',line:'rgba(29,74,53,.25)',wood:'#6b4527',ribbon:'#1f5a40',seal:'emas'}},
+    {k:'jambu',n:'Jambu',desc:'Oak rollers, ivory seal, blush linen',c:{ground:'#efdcd6',sheet:'#f6ead3',ink:'#3a2a28',accent:'#9b4f5e',gold:'#b98f62',pagefg:'#3a2a28',line:'rgba(155,79,94,.25)',wood:'#8a5c3a',ribbon:'#c48a94',seal:'gading'}},
+    {k:'sage',n:'Sage',desc:'Walnut rollers, sage seal, olive velvet',c:{ground:'#29321f',sheet:'#f1e7cc',ink:'#2c2e24',accent:'#4f6347',gold:'#bfa064',pagefg:'#e8e6d8',line:'rgba(79,99,71,.25)',wood:'#6e4a2a',ribbon:'#6f8462',seal:'sage'}},
+    {k:'hitam',n:'Hitam',desc:'Ebony rollers, red seal, black velvet',c:{ground:'#121011',sheet:'#f0e3c4',ink:'#2e2620',accent:'#7a5a2a',gold:'#d2ad62',pagefg:'#ece4d6',line:'rgba(122,90,42,.25)',wood:'#3a2a20',ribbon:'#8f1d2a',seal:'merah'}},
+    {k:'terakota',n:'Terakota',desc:'Walnut rollers, red seal, clay velvet',c:{ground:'#3a1d13',sheet:'#f3e5c7',ink:'#3a2a20',accent:'#a24a26',gold:'#d4a468',pagefg:'#f2e5d6',line:'rgba(162,74,38,.25)',wood:'#6e4426',ribbon:'#a8532e',seal:'merah'}},
+  ]});
+
+})()}catch(e){console.error("family skrol failed",e)}
+
+
+/* ===== family: songket ===== */
+try{(()=>{
+/* songket: a folded length of real songket (a 19th-c. Malay silk-and-gold-thread cloth, public domain photograph, pd-textile-2),
+   recoloured per colourway with an SVG duotone so the gold thread stays photographic.
+   Cover: the folded cloth lies on a linen table, held by a paper band with the names. Tap "Buka Jemputan": the band slips off
+   and the cloth lifts away. Page: the invitation card lying on the open cloth. Skin: paper cards edged with a woven strip. */
+let sgN=0;
+const sgHex=h=>{h=String(h).replace('#','');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)};
+const sgMix=(a,b,t)=>{const A=sgHex(a),B=sgHex(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')};
+// grey value of the photo -> ground colour (dark) ... thread colour (light). The curve pushes the silk down and lifts the gold.
+function sgFilter(id,ground,thread){const g=sgHex(ground),t=sgHex(thread),curve=[0,0,.04,.3,.72,.95,1,1.04];
+  const tv=i=>curve.map(k=>Math.max(0,Math.min(1,g[i]+(t[i]-g[i])*k)).toFixed(3)).join(' ');
+  return `<svg class="sg-defs" width="0" height="0" aria-hidden="true"><filter id="${id}" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0 .33 .5 .17 0 0 .33 .5 .17 0 0 0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="table" tableValues="${tv(0)}"/><feFuncG type="table" tableValues="${tv(1)}"/><feFuncB type="table" tableValues="${tv(2)}"/></feComponentTransfer></filter></svg>`}
+const sgVars=c=>`--cloth:${c.cloth};--thread:${c.thread}`;
+FAMILY({key:'songket',name:'Songket',meaning:'Woven gold',
+  blurb:'A folded length of real songket, gold thread on silk, held by a paper band with your names. The band slips off and the cloth lifts away.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id='sgf'+(++sgN);
+    return `<section class="page pg-songket2" style="${sgVars(c)};--sgfx:url(#${id})">${sgFilter(id,c.cloth,c.thread)}
+      <div class="sg-bed"><i class="sg-weave"></i><i class="sg-sheen"></i></div>
+      <div class="sg-cardw reveal"><div class="sg-card"><div class="sg-cin">
+        <p class="sg-k kicker">${ev(o,L)}</p>
+        <h1 class="sg-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="sg-rule"></i>
+        <p class="sg-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="sg-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="sg-ven">${esc(o.venue)}</p>`:''}</div></div></div>
+      <a class="sg-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id='sgf'+(++sgN);
+    return `<div class="cover cv-songket2" style="${sgVars(c)};--sgfx:url(#${id})">${sgFilter(id,c.cloth,c.thread)}<i class="sg-table"></i>
+      <p class="sg-k sg-top">${ev(o,L)}</p>
+      <div class="sg-parcel"><i class="sg-under b"></i><i class="sg-under a"></i>
+        <div class="sg-cloth"><i class="sg-weave"></i><i class="sg-sheen"></i><i class="sg-fold"></i></div>
+        <div class="sg-band"><p class="sg-k">${en?'Together with their families':'Dengan penuh kesyukuran'}</p>
+          <p class="sg-bn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="sg-bd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+      <div class="sg-foot">${guest?`<p class="sg-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="sg-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--cloth',c.cloth);el.style.setProperty('--thread',c.thread);
+    const f=$('.pg-songket2 .sg-defs filter',el);if(f)el.style.setProperty('--sgfx',`url(#${f.id})`);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    // [key, name, desc, cloth, thread]; light cloths get a dark walnut table
+    ['merah','Merah Diraja','Royal red silk, gold thread','#5c0f1c','#e2b862'],
+    ['nila','Biru Nila','Indigo silk, gold thread','#15224a','#dcb769'],
+    ['zamrud','Hijau Zamrud','Emerald silk, gold thread','#0f3d2e','#d8b462'],
+    ['hitam','Hitam Malam','Black silk, gold thread','#161313','#d8b46a'],
+    ['terung','Ungu Terung','Aubergine silk, gold thread','#3b1838','#dfb874'],
+    ['gading','Gading','Ivory silk, dark gold thread','#efe5cf','#8a6428'],
+    ['terakota','Terakota','Terracotta silk, gold thread','#7a3522','#eac27a'],
+    ['biru-lembut','Biru Lembut','Dusty blue silk, pale gold','#4f6684','#ecd9ae'],
+    ['sage','Sage','Sage silk, gold thread','#55634b','#e3c890'],
+    ['champagne','Champagne','Champagne silk, dark gold','#dccaa4','#6e5020'],
+    ['marun','Marun Tua','Deep burgundy silk, gold thread','#3e0f1a','#dcb46e'],
+    ['mauve','Mauve Zaitun','Mauve silk, gold thread','#5a1a2a','#d2b072'],
+    ['pic','Pic Sage','Sage-green silk, peach gold','#4f5d47','#e8b58c'],
+    ['kunyit','Kunyit Nila','Navy silk, turmeric gold','#1d2b4a','#e8b44e'],
+    ['lavender','Lavender Arang','Charcoal silk, pale gold','#3f3d46','#d8cca8'],
+    ['karang','Teal Karang','Teal silk, gold thread','#0b4a4a','#e2bd80'],
+    ['pandan','Pandan','Pandan-green silk, gold thread','#0d4a32','#dcbb62'],
+    ['kopi','Kopi Susu','Coffee silk, gold thread','#3b2a22','#d6b077'],
+    ['hujan','Biru Hujan','Rain-blue silk, silver-gold','#26394d','#d6d0bc'],
+    ['fajar','Fajar','Dawn plum silk, gold thread','#4a2238','#e8bb84'],
+  ].map(([k,n,desc,cloth,thread])=>{const light=sgHex(cloth).reduce((a,b)=>a+b)>1.8;
+    const ground=light?'#3d3129':sgMix('#eee8dd',cloth,.07);
+    return {k,n,desc,c:{ground,sheet:'#fcf8ef',ink:'#2e2620',accent:light?'#6e1a26':cloth,gold:light?thread:sgMix(thread,'#8a6428',.35),pagefg:light?'#f3ead9':'#2e2620',cover:cloth,cloth,thread}}})});
+
+})()}catch(e){console.error("family songket failed",e)}
 
 
 /* ===== family: taman ===== */
@@ -6719,81 +7889,62 @@ FAMILY({key:'taman',name:'Taman',meaning:'English garden',
 
 /* ===== family: teh ===== */
 try{(()=>{
-/* teh: an afternoon-tea invitation. A vintage lithographed tea tin with a gold-bordered label,
-   a fine porcelain cup and saucer with gilt rims, a botanical tea sprig and a little bunting overhead.
-   Cover: touching the tin lifts its lid away, then the table fades. Page: a tea card with a dotted-leader menu of the details.
-   Skin: porcelain saucer badges over the headings, gilt-ruled cards on a fine ticking cloth. */
+/* teh: an afternoon-tea flat-lay shot from above. A Ming blue-and-white dish (Met Museum, public domain) used as the
+   saucer, a porcelain cup of tea on it, a folded linen napkin in the colourway's colour, all on a linen cloth.
+   Cover: tap "Buka Jemputan" and the dish slides away across the cloth. Page: a menu card with the names, the cup at its
+   corner, a place card and a tea-bag tag that lead to the details and RSVP. Skin: paper cards ruled like a china band. */
 needFont('Great+Vibes');
-const f1=v=>(+v).toFixed(1);
-// a camellia (tea) sprig: serrated leaves, a white flower with gold stamens and a bud
-function sprig(c,w='100%'){const leaf=(x,y,r,s)=>{let d='M0 0';for(let i=1;i<=8;i++){const t=i/8,yy=-t*30,xx=Math.sin(t*Math.PI)*9.5;d+=`L${f1(xx+(i%2?1.1:0))} ${f1(yy)}`}for(let i=7;i>=0;i--){const t=i/8,yy=-t*30,xx=-Math.sin(t*Math.PI)*9.5;d+=`L${f1(xx-(i%2?1.1:0))} ${f1(yy)}`}
-   return `<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="${d}Z" fill="${c.leaf}"/><path d="M0 0V-30" stroke="${c.sheet}" stroke-width=".5" opacity=".7"/>${[-8,-14,-20].map(v=>`<path d="M0 ${v}l5 -4M0 ${v}l-5 -4" stroke="${c.sheet}" stroke-width=".35" opacity=".55"/>`).join('')}</g>`};
-  const pet=Array.from({length:6},(_,i)=>`<ellipse cx="0" cy="-6.5" rx="4.4" ry="6.2" transform="rotate(${i*60})" fill="#fffdf8" stroke="rgba(0,0,0,.18)" stroke-width=".4"/>`).join('');
-  return `<svg class="th-sprig" viewBox="0 0 120 90" style="width:${w}"><path d="M8 82C30 70 52 56 70 40S98 16 112 10" fill="none" stroke="${c.wood||'#6b4a2e'}" stroke-width="1.4" stroke-linecap="round"/>
-   ${leaf(30,68,-118,1)}${leaf(44,60,-30,.9)}${leaf(62,46,-120,.85)}${leaf(78,34,-28,.8)}${leaf(96,22,-110,.62)}
-   <g transform="translate(52 56)">${pet}<circle r="3" fill="${c.gold}"/>${Array.from({length:12},(_,i)=>`<circle cx="${f1(Math.cos(i/12*6.28)*3.6)}" cy="${f1(Math.sin(i/12*6.28)*3.6)}" r=".6" fill="${c.gold}"/>`).join('')}</g>
-   <g transform="translate(110 11) rotate(40)"><ellipse rx="3" ry="4.4" fill="#fffdf8" stroke="${c.leaf}" stroke-width=".8"/><path d="M-3 1C-2 5 2 5 3 1" fill="${c.leaf}"/></g></svg>`}
-// porcelain cup and saucer, gilt rims, a band of tiny painted roses, tea showing at the brim
-function cup(c,u){const roses=[34,50,66,82,98,114,126].map((x,i)=>{const y=40+Math.pow((x-80)/56,2)*-2;return `<g transform="translate(${x} ${f1(y+3)})"><circle r="2.6" fill="${c.accent}" opacity=".85"/><circle r="1.1" fill="#fff" opacity=".5"/><path d="M2.4 1.4l3 1.4M-2.4 1.4l-3 1.4" stroke="${c.leaf}" stroke-width="1.1" stroke-linecap="round"/></g>`}).join('');
-  return `<svg class="th-cup" viewBox="0 0 170 112"><defs>
-   <linearGradient id="tpc${u}" x1="0" x2="1"><stop offset="0" stop-color="#d9d6d0"/><stop offset=".3" stop-color="#ffffff"/><stop offset=".62" stop-color="#f6f4ef"/><stop offset="1" stop-color="#bdb8b0"/></linearGradient>
-   <radialGradient id="tps${u}" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#eeebe5"/><stop offset="1" stop-color="#cfcac2"/></radialGradient>
-   <radialGradient id="tpt${u}" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="${c.tea}" stop-opacity=".75"/><stop offset="1" stop-color="${c.tea}"/></radialGradient></defs>
-   <ellipse cx="82" cy="100" rx="78" ry="11" fill="rgba(0,0,0,.18)"/>
-   <ellipse cx="80" cy="94" rx="76" ry="14" fill="url(#tps${u})"/><ellipse cx="80" cy="94" rx="74.5" ry="12.8" fill="none" stroke="${c.gold}" stroke-width="1.5"/><ellipse cx="80" cy="94" rx="70" ry="10.6" fill="none" stroke="${c.gold}" stroke-width=".5"/>
-   <ellipse cx="80" cy="93" rx="38" ry="6.5" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="1.4"/>
-   <path d="M134 44C156 40 160 64 140 72C134 75 128 76 124 76" fill="none" stroke="url(#tpc${u})" stroke-width="7" stroke-linecap="round"/><path d="M134 44C156 40 160 64 140 72C134 75 128 76 124 76" fill="none" stroke="${c.gold}" stroke-width=".8"/>
-   <path d="M66 90H94L92 96H68Z" fill="#e7e3dc"/>
-   <path d="M22 34H138C137 70 114 92 80 92C46 92 23 70 22 34Z" fill="url(#tpc${u})"/>
-   <path d="M24 42H136" stroke="${c.gold}" stroke-width=".7" opacity=".9"/><path d="M27 52C46 55 114 55 133 52" stroke="${c.gold}" stroke-width=".6" fill="none"/>${roses}
-   <path d="M40 78C54 88 106 88 120 78" stroke="${c.gold}" stroke-width=".5" fill="none" opacity=".8"/>
-   <ellipse cx="80" cy="34" rx="58" ry="8.5" fill="#f4f1ec"/><ellipse cx="80" cy="35" rx="53" ry="6.6" fill="url(#tpt${u})"/><ellipse cx="70" cy="34" rx="16" ry="1.6" fill="#fff" opacity=".25"/>
-   <ellipse cx="80" cy="34" rx="58" ry="8.5" fill="none" stroke="${c.gold}" stroke-width="1.6"/></svg>`}
-// bunting on a fine cord: little pennants in turn plain, dotted and striped, stitched along their edges
-function bunting(c,u){let g='';const n=11;
-  for(let i=0;i<n;i++){const t=(i+.5)/n,x=8+t*374,y=10+Math.sin(t*Math.PI)*26,ang=Math.cos(t*Math.PI)*-12,col=[c.buntA||c.accent,c.gold,c.bunt][i%3],pat=i%3===1?`url(#tbd${u})`:i%3===2?`url(#tbs${u})`:'none';
-    g+=`<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(ang)})"><path d="M-12 0H12L0 26Z" fill="${col}"/>${pat!=='none'?`<path d="M-12 0H12L0 26Z" fill="${pat}"/>`:''}<path d="M-9.6 2H9.6L0 22Z" fill="none" stroke="rgba(255,255,255,.65)" stroke-width=".5" stroke-dasharray="1.6 1.4"/><path d="M-12 0H12" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/></g>`}
-  return `<svg class="th-bunt" viewBox="0 0 390 52" preserveAspectRatio="xMidYMin meet"><defs><pattern id="tbd${u}" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r=".9" fill="#fff" opacity=".7"/></pattern>
-   <pattern id="tbs${u}" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(90)"><rect width="1.6" height="4" fill="#fff" opacity=".45"/></pattern></defs>
-   <path d="M0 6Q195 66 390 6" fill="none" stroke="${c.ink}" stroke-width=".8" opacity=".6"/>${g}</svg>`}
-// the tin's lithographed lattice and the porcelain badge for the skin
-const LATTICE=c=>svgUriSq(`<svg ${NS} width="18" height="18" viewBox="0 0 18 18"><path d="M9 0L18 9L9 18L0 9Z" fill="none" stroke="${c.gold}" stroke-width=".6" opacity=".55"/><circle cx="9" cy="9" r="1.3" fill="${c.gold}" opacity=".6"/></svg>`);
-const TICK=c=>svgUriSq(`<svg ${NS} width="14" height="14"><rect width="14" height="14" fill="none"/><path d="M0 0V14M7 0V14" stroke="${c.ink}" stroke-width=".5" opacity=".06"/></svg>`);
-const SAUCER=c=>svgUriSq(`<svg ${NS} viewBox="0 0 60 60"><defs><radialGradient id="s" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".75" stop-color="#f1eee8"/><stop offset="1" stop-color="#d4cfc6"/></radialGradient></defs>
-  <circle cx="30" cy="31.5" r="27" fill="rgba(0,0,0,.12)"/><circle cx="30" cy="30" r="27" fill="url(#s)"/><circle cx="30" cy="30" r="25.6" fill="none" stroke="${c.gold}" stroke-width="1.4"/><circle cx="30" cy="30" r="23" fill="none" stroke="${c.gold}" stroke-width=".4"/>
-  ${Array.from({length:10},(_,i)=>{const a=i/10*Math.PI*2;return `<circle cx="${f1(30+Math.cos(a)*19)}" cy="${f1(30+Math.sin(a)*19)}" r="1.7" fill="${c.accent}" opacity=".85"/><circle cx="${f1(30+Math.cos(a+.16)*19.6)}" cy="${f1(30+Math.sin(a+.16)*19.6)}" r=".9" fill="${c.leaf}"/>`}).join('')}
-  <circle cx="30" cy="30" r="13" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="1.6"/><circle cx="30" cy="30" r="11.4" fill="none" stroke="${c.gold}" stroke-width=".6"/><circle cx="30" cy="30" r="3" fill="${c.accent}" opacity=".8"/></svg>`);
-let n=0;
+let thU=0;
+// a porcelain cup seen from directly above: lip, inner wall in shade, tea with a window reflection, handle to the right
+const thCup=()=>{const u=++thU;return `<svg class="th-cup" viewBox="0 0 120 100" aria-hidden="true"><defs>
+  <radialGradient id="thl${u}" cx="45%" cy="40%" r="60%"><stop offset=".8" stop-color="#fdfcf9"/><stop offset="1" stop-color="#e4e0d8"/></radialGradient>
+  <linearGradient id="thw${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfc9be"/><stop offset=".45" stop-color="#ece8e1"/><stop offset="1" stop-color="#fffefb"/></linearGradient>
+  <radialGradient id="tht${u}" cx="56%" cy="58%" r="58%"><stop offset="0" stop-color="#8a4a1c"/><stop offset=".55" stop-color="#6a3310"/><stop offset=".9" stop-color="#43200a"/><stop offset="1" stop-color="#2e1606"/></radialGradient>
+  <linearGradient id="thh${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffefb"/><stop offset=".6" stop-color="#ebe7df"/><stop offset="1" stop-color="#d2ccc1"/></linearGradient>
+  <filter id="thb${u}"><feGaussianBlur stdDeviation="1.6"/></filter></defs>
+  <path d="M84 41c9-3 22-3 25 7s-8 15-24 12" fill="none" stroke="url(#thh${u})" stroke-width="6.5" stroke-linecap="round"/>
+  <path d="M84 41c9-3 22-3 25 7s-8 15-24 12" fill="none" stroke="rgba(120,110,95,.35)" stroke-width=".5" transform="translate(0 3.1)"/>
+  <circle cx="50" cy="50" r="41" fill="url(#thl${u})"/>
+  <circle cx="50" cy="50" r="39.6" fill="none" stroke="var(--gold)" stroke-width=".7" opacity=".9"/>
+  <circle cx="50" cy="50" r="37.8" fill="url(#thw${u})"/>
+  <circle cx="50" cy="50" r="30.5" fill="url(#tht${u})"/>
+  <path d="M22 44a30 30 0 0 1 34 -24.5a33 33 0 0 0 -34 24.5z" fill="rgba(0,0,0,.28)" filter="url(#thb${u})"/>
+  <ellipse cx="41" cy="38" rx="11" ry="5" transform="rotate(-32 41 38)" fill="#fff6e8" opacity=".22" filter="url(#thb${u})"/>
+  <circle cx="50" cy="50" r="30.2" fill="none" stroke="rgba(255,226,180,.45)" stroke-width=".6"/></svg>`};
+const thDish=(cls='')=>`<div class="th-dish ${cls}"><img class="th-ming" src="${A}pd-asia-1.webp" alt="">${thCup()}</div>`;
+const thFl=(th,style)=>th.c.dark?'':`<img class="th-fl" src="${A}flower-jasmine.webp" alt="" style="${style}">`;
 FAMILY({key:'teh',name:'Petang Teh',meaning:'Afternoon tea',
-  blurb:'A lithographed tea tin with a gilt label, a porcelain cup and saucer, tea leaves and a little bunting. Touch the tin and its lid lifts.',
-  fonts:{d:"'Old Standard TT', serif",s:"'Great Vibes', cursive",b:"'Cormorant Garamond', serif"},ms:1300,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u='p'+(++n);
-    const row=(k,v)=>`<li><span>${k}</span><i></i><b>${esc(v)}</b></li>`;
-    return `<section class="page pg-teh" style="--tick:${TICK(c)}"><div class="th-card">
-     <div class="th-cupw reveal">${cup(c,u)}</div>
-     <p class="th-k reveal">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="th-orn reveal d1"><i></i><b></b><i></i></div>
-     <ul class="th-menu reveal d2">${row(en?'Date':'Tarikh',fmtDate(o.date,o.lang))}${row(en?'Time':'Masa',fmtTime(o.start,o.lang)+' – '+fmtTime(o.end,o.lang))}${row(en?'Place':'Tempat',o.venue)}</ul>
-     <div class="th-sp reveal d3">${sprig(c)}</div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u='c'+(++n),y=(o.date||'').slice(0,4);
-    return `<div class="cover cv-teh" style="--tick:${TICK(c)};--lat:${LATTICE(c)}"><div class="th-table"></div>
-     <div class="th-buntw">${bunting(c,u)}</div>
-     <div class="th-top">${guest?`<p class="th-to">${L.dear}</p><p class="th-guest">${esc(guest)}</p>`:`<p class="th-to">${en?'You are warmly invited':'Dengan segala hormatnya'}</p>`}</div>
-     <${tag} class="th-tin" ${attr} aria-label="${L.open}"><span class="th-body"><span class="th-band t"></span><span class="th-band b"></span>
-       <span class="th-label"><span class="th-lk">${ev(o,L)}</span>${sprig(c,'34%')}<span class="th-ln">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="th-lr"></span><span class="th-ld">${esc(fmtShort(o.date).replace(/\./g,' · '))}</span><span class="th-le">${en?'Est.':'Sejak'} ${esc(y)}</span></span></span>
-      <span class="th-lid"><span class="th-knob"></span></span></${tag}>
-     <div class="th-cupc">${cup(c,u)}</div><div class="th-spc">${sprig(c)}</div>
-     <p class="th-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--saucer',SAUCER(th.c));el.style.setProperty('--tick',TICK(th.c))},
+  blurb:'An afternoon-tea table seen from above: a Ming blue-and-white dish, a cup of tea and a linen napkin. Open it and the dish slides away to the menu card.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Great Vibes', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-teh2"><div class="th-cloth"></div>
+      ${thDish('th-pgdish')}
+      <div class="th-menu reveal"><div class="th-mi">
+        <p class="th-k kicker">${ev(o,L)}</p><h1 class="th-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="th-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="th-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<a class="th-ven" data-go="loc" href="#">${esc(o.venue)}</a>`:''}</div></div>
+      <div class="th-pieces">
+        <a class="th-place reveal d1" data-go="when" href="#"><small>${en?'Tap for':'Tekan untuk'}</small><b>${en?'Event details':'Butiran Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="th-tag reveal d2" data-go="rsvp" href="#"><i></i><b>RSVP</b><small>${en?'Kindly reply':'Sudi hadir?'}</small></a>`:''}
+      </div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-teh2" style="--nm:${th.c.nm||th.c.accent};--btn:${th.c.dark?'rgba(0,0,0,.25)':'rgba(255,255,255,.35)'}"><div class="th-cloth"></div>
+      <div class="th-top"><p class="th-k">${ev(o,L)}</p><p class="th-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="th-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="th-set">${thFl(th,'width:46%;left:-14%;top:-8%;transform:rotate(-24deg)')}<div class="th-nap"></div>${thDish()}</div>
+      <div class="th-foot">${guest?`<p class="th-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="th-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('th-dark',!!th.c.dark);el.style.setProperty('--nap',th.c.nap);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Crimson tin on a cream cloth',c:{ground:'#efe6d9',sheet:'#fdf9f1',ink:'#33251f',accent:'#8e2430',gold:'#c49a4c',pagefg:'#33251f',tea:'#7a4320',leaf:'#4f6b3a',bunt:'#e8d9c2',wood:'#6b4a2e'}},
-    {k:'hijau',n:'Hijau',desc:'Bottle-green tin, gilt label',c:{ground:'#e7e3d4',sheet:'#fcfaf2',ink:'#25302a',accent:'#1f5040',gold:'#c49a4c',pagefg:'#25302a',tea:'#7a4320',leaf:'#4a6b3c',bunt:'#e9d9b9',wood:'#6b4a2e'}},
-    {k:'biru',n:'Biru',desc:'Navy tin with blue porcelain',c:{ground:'#e3e6e6',sheet:'#fcfcf8',ink:'#232b3a',accent:'#23395f',gold:'#bf9a55',pagefg:'#232b3a',tea:'#7a4320',leaf:'#4f6b48',bunt:'#d9e1ec',wood:'#6b4a2e'}},
-    {k:'jambu',n:'Jambu',desc:'Rose tin on blush linen',c:{ground:'#f3e5e1',sheet:'#fffaf6',ink:'#3b2a2b',accent:'#a84a60',gold:'#bf9758',pagefg:'#3b2a2b',tea:'#7a4320',leaf:'#5a7444',bunt:'#f2d5d6',wood:'#6b4a2e'}},
-    {k:'kuning',n:'Kuning',desc:'Mustard tin, olive leaves',c:{ground:'#efe8d6',sheet:'#fdfaf0',ink:'#33291b',accent:'#8f6414',gold:'#c09a46',pagefg:'#33291b',tea:'#6e3c1c',leaf:'#56693a',bunt:'#ece0c0',wood:'#6b4a2e'}},
-    {k:'laut',n:'Laut',desc:'Teal tin on a sea-glass cloth',c:{ground:'#dde8e5',sheet:'#fbfcf8',ink:'#1f2f30',accent:'#24656b',gold:'#c09a52',pagefg:'#1f2f30',tea:'#7a4320',leaf:'#4f6b48',bunt:'#d3e6e2',wood:'#6b4a2e'}},
-    {k:'hitam',n:'Hitam',desc:'Black lacquer tin on dark wood',c:{ground:'#2b2420',sheet:'#fbf6ec',ink:'#2a221c',accent:'#1f1b19',gold:'#cfa95c',pagefg:'#efe4d2',tea:'#7a4320',leaf:'#5a7444',bunt:'#efe4d2',wood:'#6b4a2e',buntA:'#9a3a34'}},
-    {k:'ungu',n:'Ungu',desc:'Plum tin at dusk',c:{ground:'#2e2334',sheet:'#fcf8f3',ink:'#2d2430',accent:'#5b3466',gold:'#c9a35a',pagefg:'#efe6f0',tea:'#7a4320',leaf:'#5a7444',bunt:'#e6d8ec',wood:'#6b4a2e',buntA:'#a06cb0'}},
+    {k:'merah',n:'Merah',desc:'Crimson napkin on a cream cloth',c:{ground:'#ebe3d6',sheet:'#fdf9f1',ink:'#33251f',accent:'#8e2430',gold:'#b8914a',pagefg:'#33251f',nap:'#8e2a33'}},
+    {k:'hijau',n:'Hijau',desc:'Bottle-green napkin, oat linen',c:{ground:'#e6e2d5',sheet:'#fcfaf2',ink:'#25302a',accent:'#1f5040',gold:'#b8914a',pagefg:'#25302a',nap:'#2c5a48'}},
+    {k:'biru',n:'Biru',desc:'Indigo napkin to match the porcelain',c:{ground:'#e3e5e4',sheet:'#fcfcf8',ink:'#232b3a',accent:'#23395f',gold:'#b29256',pagefg:'#232b3a',nap:'#2b3f66'}},
+    {k:'jambu',n:'Jambu',desc:'Rose napkin on blush linen',c:{ground:'#f0e2dd',sheet:'#fffaf6',ink:'#3b2a2b',accent:'#a84a60',gold:'#b8915a',pagefg:'#3b2a2b',nap:'#d49aa3'}},
+    {k:'kuning',n:'Kuning',desc:'Mustard napkin on wheat linen',c:{ground:'#ece4d0',sheet:'#fdfaf0',ink:'#33291b',accent:'#8a5f12',gold:'#b8923f',pagefg:'#33291b',nap:'#c9952e'}},
+    {k:'laut',n:'Laut',desc:'Teal napkin on sea-glass linen',c:{ground:'#dce5e2',sheet:'#fbfcf8',ink:'#1f2f30',accent:'#24656b',gold:'#b29252',pagefg:'#1f2f30',nap:'#3f7b7e'}},
+    {k:'hitam',n:'Hitam',desc:'Ivory napkin on a charcoal cloth',c:{ground:'#29241f',sheet:'#fbf6ec',ink:'#2a221c',accent:'#6a2a22',gold:'#cfa95c',pagefg:'#efe4d2',nap:'#ece3d2',nm:'#e6cf9e',dark:1}},
+    {k:'ungu',n:'Ungu',desc:'Lilac napkin on a plum cloth',c:{ground:'#2e2334',sheet:'#fcf8f3',ink:'#2d2430',accent:'#5b3466',gold:'#c9a35a',pagefg:'#efe6f0',nap:'#b7a0c4',nm:'#dcc5e4',dark:1}},
   ]});
 
 })()}catch(e){console.error("family teh failed",e)}
@@ -6878,6 +8029,82 @@ FAMILY({key:'tekan',name:'Bunga Tekan',meaning:'Pressed flowers',
   ]});
 
 })()}catch(e){console.error("family tekan failed",e)}
+
+
+/* ===== family: telegram ===== */
+try{(()=>{
+/* telegram (redesign): a vintage telegram kept like a museum piece.
+   Cover: a buff window envelope on a linen desk cloth, the guest's name typed behind the glassine window,
+   a rubber date stamp struck across the corner. Tap "Buka Jemputan": the envelope sinks away and the telegram rises out.
+   Page: the telegram form itself, on aged cream paper in a fine engraved border, typed strips pasted on, stamped.
+   Skin: cream form cards with an engraved double rule, spaced serif caps headings, typed labels. */
+let tgN=0;
+const tgDate=o=>{const d=new Date((o.date||'2026-01-01')+'T00:00:00'),M=(MONTHS[o.lang]||MONTHS.ms)[d.getMonth()]||'';
+  return {d:String(d.getDate()).padStart(2,'0'),m:M.slice(0,3).toUpperCase(),y:String(d.getFullYear())}};
+// a rubber date stamp: double ring, wording round the ring, the date across the middle; inked unevenly
+function tgStamp(o,L,cls=''){const u=++tgN,{d,m,y}=tgDate(o),[n1,n2]=coverNames(o);
+  const ring=`${String(ev(o,L)).replace(/<[^>]*>/g,'')} · ${n1} & ${n2} · `.toUpperCase();
+  return `<svg class="tl-stamp ${cls}" viewBox="0 0 120 120" aria-hidden="true"><defs>
+    <filter id="tls${u}" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="${u*7}" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="${u*3}" result="m"/>
+      <feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 2.15" result="ma"/>
+      <feComposite in="d" in2="ma" operator="in"/></filter>
+    <path id="tgr${u}" d="M60 60m-41 0a41 41 0 1 1 82 0a41 41 0 1 1 -82 0"/></defs>
+    <g filter="url(#tls${u})" fill="currentColor" stroke="currentColor">
+      <circle cx="60" cy="60" r="55" fill="none" stroke-width="2.2"/><circle cx="60" cy="60" r="50" fill="none" stroke-width=".9"/><circle cx="60" cy="60" r="32" fill="none" stroke-width=".9"/>
+      <text font-family="'Old Standard TT',serif" font-size="9.4" letter-spacing="1.2" stroke="none"><textPath href="#tgr${u}" textLength="252" lengthAdjust="spacingAndGlyphs">${esc(ring)}</textPath></text>
+      <path d="M30 51h60M30 69h60" stroke-width=".9"/>
+      <text x="60" y="47" text-anchor="middle" font-family="'Special Elite',monospace" font-size="8" stroke="none" letter-spacing="1.5">${esc(y)}</text>
+      <text x="60" y="65.5" text-anchor="middle" font-family="'Special Elite',monospace" font-size="15" stroke="none" letter-spacing=".5">${esc(d)} ${esc(m)}</text>
+      <text x="60" y="81" text-anchor="middle" font-family="'Old Standard TT',serif" font-size="6.6" stroke="none" letter-spacing="1.6">${o.lang==='en'?'RECEIVED':'DITERIMA'}</text>
+    </g></svg>`}
+const tgTyped=s=>esc(String(s).toUpperCase());
+const tgLines=o=>{const [n1,n2]=coverNames(o),en=o.lang==='en',t=o.start?fmtTime(o.start,o.lang):'';
+  return en?[`${n1} and ${n2} to wed stop`,`${fmtDate(o.date,'en')} stop`,`${t?t+' at ':''}${o.venue||''} stop`,'please come stop bring your prayers stop']
+    :[`${n1} dan ${n2} akan bernikah stop`,`${fmtDate(o.date,'ms')} stop`,`${t?t+' di ':''}${o.venue||''} stop`,'sila datang stop iringi dengan doa stop']};
+FAMILY({key:'telegram',name:'Telegram',meaning:'Vintage telegram',
+  blurb:'A buff window envelope with the guest’s name typed behind the glassine and a rubber date stamp; the telegram inside rises out, typed strips pasted on aged paper.',
+  fonts:{d:"'Old Standard TT', serif",s:"'Old Standard TT', serif",b:"'Old Standard TT', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',lines=tgLines(o),words=lines.join(' ').split(/\s+/).length;
+    const office=String(o.address||'').split(',').map(s=>s.trim()).filter(Boolean).slice(-2,-1)[0]||'Kuala Lumpur';
+    return `<section class="page pg-telegram2" style="--env:${th.c.env};--stamp:${th.c.stamp}"><div class="tl-cloth"></div>
+      <div class="tl-form reveal"><div class="tl-paper">
+        <div class="tl-head"><span>${en?'Posts &amp; Telegraphs':'Pos &amp; Telegraf'}</span><b>Telegram</b><span>No. ${esc(fmtShort(o.date).split('.').slice(0,2).join(''))}</span></div>
+        <div class="tl-boxes"><span><i>${en?'Office of origin':'Pejabat asal'}</i>${tgTyped(office)}</span><span><i>${en?'Words':'Perkataan'}</i>${words}</span><span><i>${en?'Time':'Masa'}</i>${tgTyped(fmtTime(o.start,o.lang)||'—')}</span></div>
+        <p class="tl-to"><i>${en?'To':'Kepada'}</i>${tgTyped(o.__guest||(en?'Our honoured guest':'Tetamu yang dihormati'))}</p>
+        <p class="tl-k kicker">${ev(o,L)}</p><h1 class="tl-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+        <div class="tl-strips">${lines.map((l,i)=>`<span class="tl-strip" style="--r:${[-.5,.4,-.25,.55][i%4]}deg">${tgTyped(l)}</span>`).join('')}</div>
+        ${o.hijri?`<p class="tl-hj">${esc(o.hijri)}</p>`:''}
+        ${tgStamp(o,L,'pg')}
+      </div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-telegram2" style="--env:${th.c.env};--stamp:${th.c.stamp}"><div class="tl-cloth"></div>
+      <div class="tl-top"><p class="tl-k">${ev(o,L)}</p><p class="tl-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="tl-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="tl-stage">
+        <div class="tl-inside"><div class="tl-paper"><div class="tl-head"><span>${en?'Posts &amp; Telegraphs':'Pos &amp; Telegraf'}</span><b>Telegram</b><span>No. ${esc(fmtShort(o.date).split('.').slice(0,2).join(''))}</span></div>
+          <p class="tl-k">${ev(o,L)}</p><p class="tl-in-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><span class="tl-strip">${tgTyped(tgLines(o)[0])}</span></div></div>
+        <div class="tl-env">
+          <div class="tl-mast"><small>${en?'Posts &amp; Telegraphs':'Pos &amp; Telegraf'}</small><b>Telegram</b><i>${en?'Deliver at once':'Serahan segera'}</i></div>
+          <div class="tl-win"><small>${en?'To':'Kepada'}</small><span>${tgTyped(guest||(en?'Our honoured guest':'Tetamu yang dihormati'))}</span></div>
+          ${tgStamp(o,L,'cv')}
+        </div>
+      </div>
+      <div class="tl-foot"><${tag} class="tl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty("--env",th.c.env);el.style.setProperty("--stamp",th.c.stamp);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Buff envelope on oatmeal linen, red ink',c:{ground:'#d8ccb4',sheet:'#f7f0e0',ink:'#2a2620',accent:'#7a1b29',gold:'#a8834a',pagefg:'#2a2620',env:'#eadcbc',stamp:'#7a1b29'}},
+    {k:'nila',n:'Nila',desc:'Navy desk cloth, blue-black ink',c:{ground:'#1b2540',sheet:'#f6efdf',ink:'#1f2433',accent:'#22355f',gold:'#c4a35e',pagefg:'#ece4d2',env:'#e9ddc0',stamp:'#2b4a86'}},
+    {k:'marun',n:'Marun',desc:'Maroon cloth, oxblood ink',c:{ground:'#3a1219',sheet:'#f7efe1',ink:'#2d1d1c',accent:'#7a1b29',gold:'#c9a25e',pagefg:'#f1e3d2',env:'#ecdcc0',stamp:'#8f1f2e'}},
+    {k:'zamrud',n:'Zamrud',desc:'Bottle green cloth, green ink',c:{ground:'#132e27',sheet:'#f5efe0',ink:'#1f2a24',accent:'#1f4f3d',gold:'#c6a560',pagefg:'#e9e3d0',env:'#e7dcbf',stamp:'#7a1b29'}},
+    {k:'jambu',n:'Merah Jambu',desc:'Blush linen, rose ink',c:{ground:'#e6d2cb',sheet:'#fbf3ea',ink:'#3a2a2a',accent:'#94394f',gold:'#b38d62',pagefg:'#3a2a2a',env:'#f1e2d2',stamp:'#94394f'}},
+    {k:'sage',n:'Sage',desc:'Sage linen, red stamp',c:{ground:'#cdd2c0',sheet:'#f7f3e6',ink:'#2c3027',accent:'#3f5a3c',gold:'#a48d55',pagefg:'#2c3027',env:'#ece2c8',stamp:'#7a1b29'}},
+    {k:'hitam',n:'Hitam',desc:'Black cloth, black ink, red stamp',c:{ground:'#171615',sheet:'#f4eddd',ink:'#1b1916',accent:'#1b1916',gold:'#c9a35e',pagefg:'#ece4d4',env:'#e6d9bc',stamp:'#9a2230'}},
+    {k:'terakota',n:'Terakota',desc:'Rust cloth, sepia ink',c:{ground:'#5e2a1a',sheet:'#f7eee0',ink:'#33261f',accent:'#8e3f1f',gold:'#d4a46a',pagefg:'#f3e3d0',env:'#efdfc4',stamp:'#8e3f1f'}},
+  ]});
+
+})()}catch(e){console.error("family telegram failed",e)}
 
 
 /* ===== family: tenun ===== */
@@ -6982,6 +8209,373 @@ FAMILY({key:'tenun',name:'Pua Kumbu',meaning:'Iban ikat cloth',
   ]});
 
 })()}catch(e){console.error("family tenun failed",e)}
+
+
+/* ===== family: tiket ===== */
+try{(()=>{
+/* tiket: a cloth-bound passport with a foil-stamped guilloche rosette, and a boarding pass tucked inside it.
+   Cover: tap "Buka Jemputan" and the pass slides up out of the passport. Page: the full boarding pass, printed on security paper
+   with guilloche bands, a perforated stub and a barcode; the passport lies under it. Skin: security-paper cards with a guilloche rule. */
+needFont('Old+Standard+TT:ital,wght@0,400;0,700;1,400');
+// guilloche rosette: overlapping hypotrochoids, drawn once per size and reused
+const tkRoseCache={};
+function tkRose(sw=.32){if(tkRoseCache[sw])return tkRoseCache[sw];let p='';
+  const curve=(R,r,d,ph,N=720)=>{let s='';const k=(R-r)/r,T=Math.PI*2*r/gcd(R,r);for(let i=0;i<=N;i++){const t=i/N*T;
+    const x=100+(R-r)*Math.cos(t+ph)+d*Math.cos(k*t+ph),y=100+(R-r)*Math.sin(t+ph)-d*Math.sin(k*t+ph);s+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}return s};
+  function gcd(a,b){return b?gcd(b,a%b):a}
+  p+=`<path d="${curve(60,9,34,0)}"/><path d="${curve(60,9,34,Math.PI/24)}"/><path d="${curve(40,8,18,0,560)}" opacity=".8"/>`;
+  return tkRoseCache[sw]=`<svg viewBox="0 0 200 200" class="tp-rose" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="${sw}">${p}<circle cx="100" cy="100" r="96" stroke-width="${sw*1.6}"/><circle cx="100" cy="100" r="93.5"/><circle cx="100" cy="100" r="14"/></g></svg>`}
+// guilloche band: interlaced sine waves, used as a repeating security background
+const tkBand=(col,op)=>K.uri(`<svg xmlns="http://www.w3.org/2000/svg" width="240" height="44" viewBox="0 0 240 44"><g fill="none" stroke="${col}" stroke-width=".45" opacity="${op}">${
+  Array.from({length:9},(_,j)=>{let s='';for(let x=0;x<=240;x+=3){const y=22+Math.sin(x/240*Math.PI*4+j*.7)*14*Math.cos(j*.35);s+=(x?'L':'M')+x+' '+y.toFixed(2)}return `<path d="${s}"/>`}).join('')}</g></svg>`);
+// a barcode, from the names so it never changes for one couple
+const tkBars=o=>{const r=rng([...coverNames(o).join('')].reduce((a,c)=>a+c.charCodeAt(0),7));let x=0,s='';while(x<196){const w=1+Math.floor(r()*3.2);if(r()>.38)s+=`<rect x="${x}" y="0" width="${w}" height="30"/>`;x+=w+1}
+  return `<svg class="tp-bars" viewBox="0 0 200 30" preserveAspectRatio="none" aria-hidden="true"><g fill="currentColor">${s}</g></svg>`};
+const tkCode=o=>{const [a,b]=K.initials(o);return (esc(a)+esc(b)).toUpperCase()};
+const tkVars=c=>`--tpband:${tkBand(c.accent,.32)};--pp:${c.cover}`;
+// the passport front, cloth with foil
+let tkRoseUri='';
+const tkPassport=(o,L,en,cls='')=>{const [n1,n2]=coverNames(o);if(!tkRoseUri)tkRoseUri=K.uri(tkRose(.55).replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replace(/currentColor/g,'#000'));
+  return `<div class="tp-pp ${cls}" style="--rose:${tkRoseUri}"><div class="tp-ppin">
+  <p class="tp-pp1">${en?'Passport':'Pasport'}</p><p class="tp-pp2">${en?'of love':'kasih sayang'}</p>
+  <i class="tp-ppr"></i>
+  <p class="tp-ppn">${esc(n1)} &amp; ${esc(n2)}</p></div></div>`};
+FAMILY({key:'tiket',name:'Tiket',meaning:'Boarding pass',
+  blurb:'A cloth passport with a foil guilloche rosette and a boarding pass tucked inside, printed on security paper. The pass slides out to open the card.',
+  fonts:{d:"'IBM Plex Mono', monospace",s:"'Old Standard TT', serif",b:"'Old Standard TT', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    const f=(k,v,cls='')=>`<div class="${cls}"><span>${k}</span><b>${v}</b></div>`;
+    return `<section class="page pg-tiket2" style="${tkVars(c)}"><div class="tp-table"></div>
+      <div class="tp-underw">${tkPassport(o,L,en,'tp-under reveal')}</div>
+      <div class="tp-passw"><div class="tp-pass reveal d1">
+        <div class="tp-hd"><span>${en?'Boarding pass':'Pas menaiki'}</span><span>${tkCode(o)} ${esc(fmtShort(o.date).slice(0,5).replace('.',''))}</span></div>
+        <div class="tp-body"><div class="tp-wm">${tkRose(.3)}</div>
+          <p class="tp-k kicker">${ev(o,L)}</p>
+          <h1 class="tp-names">${esc(n1)}<span>${en?'and':'dan'}</span>${esc(n2)}</h1>
+          <div class="tp-fields">${f(en?'Date':'Tarikh',esc(fmtDate(o.date,o.lang)),'w')}${f(en?'Boarding':'Masa',esc(fmtTime(o.start,o.lang)))}${f(en?'Seat':'Tempat duduk',en?'Reserved':'Dikhaskan')}${o.venue?f(en?'Venue':'Tempat',esc(o.venue),'w'):''}</div>
+        </div>
+        <div class="tp-perf"></div>
+        <div class="tp-stub">
+          <a class="tp-go" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="tp-go" data-go="rsvp" href="#">RSVP</a>`:''}
+          ${tkBars(o)}</div>
+      </div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-tiket2" style="${tkVars(c)}"><div class="tp-table"></div>
+      ${guest?`<p class="tp-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="tp-stage">
+        <div class="tp-slip"><div class="tp-hd"><span>${en?'Boarding pass':'Pas menaiki'}</span><span>${tkCode(o)}</span></div>
+          <div class="tp-slipb"><small>${ev(o,L)}</small><b>${esc(n1)} &amp; ${esc(n2)}</b><small>${esc(fmtShort(o.date)).replace(/\./g,' · ')}</small></div></div>
+        ${tkPassport(o,L,en,'tp-front')}
+      </div>
+      <${tag} class="tp-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--tpband',tkBand(th.c.accent,.32));const sc=$('.scroller',el);
+    K.secs(el).forEach(s=>s.removeAttribute('data-gate'));
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    ['laut','Laut','Navy passport on a pale blue desk','#e6eaee','#1d2b4a','#1d2b4a'],
+    ['merah','Merah','Burgundy passport on a linen desk','#ece4db','#7a1b29','#5e1622'],
+    ['hutan','Hutan','Forest passport on a sage desk','#e4e8de','#2c5a43','#1f3a2c'],
+    ['malam','Malam','Black passport on a night desk','#1f1e1c','#26262a','#141414',1],
+    ['jambu','Jambu','Rose passport on a blush desk','#f3e7e3','#9b4a5e','#8a4c5a'],
+    ['langit','Langit','Sky passport on a pale desk','#eaf0f4','#2f5a85','#4f7aa3'],
+    ['terakota','Terakota','Clay passport on a sand desk','#f0e6dc','#a24f33','#8a3f28'],
+    ['sage','Sage','Sage passport on a pale desk','#e9ebe2','#4f5d47','#5f6d55'],
+    ['champagne','Champagne','Champagne passport on an ivory desk','#f2ece2','#6e542b','#7a6343'],
+    ['ungu','Ungu','Plum passport on a lilac-grey desk','#ece6ea','#4a2541','#4a2541'],
+    ['zamrud','Zamrud','Emerald passport on a dark green desk','#13261e','#0f3d2e','#0f3d2e',1],
+    ['mauve','Mauve','Wine passport on a mauve desk','#efe5e5','#6e4a5a','#5a1a2a'],
+    ['pic','Pic','Olive passport on a peach desk','#f8ece2','#a55a3b','#4f5d47'],
+    ['kunyit','Kunyit','Navy passport on a turmeric desk','#f1e5c8','#a24a22','#1d2b4a'],
+    ['lavender','Lavender','Slate passport on a lavender desk','#eeebf5','#5f53a0','#3f3d46'],
+    ['karang','Karang','Teal passport on a coral desk','#f6e6dc','#0f6b6b','#0b4a4a'],
+    ['pandan','Pandan','Pandan passport on a cream desk','#f1ecda','#0d4a32','#0d4a32'],
+    ['kopi','Kopi','Coffee passport on a latte desk','#efe4d4','#6b4a3a','#3b2a22'],
+    ['hujan','Hujan','Slate-blue passport on a rain-grey desk','#e8ecf0','#3a5570','#26394d'],
+    ['fajar','Fajar','Plum passport on a dawn-pink desk','#f8e8e0','#a3465f','#4a2238'],
+  ].map(([k,n,desc,ground,accent,cover,dark])=>({k,n,desc,c:{ground,accent,cover,sheet:'#fbf8f1',ink:'#26262a',gold:'#d2b06a',pagefg:dark?'#ece6da':'#2a2826',line:'rgba(40,40,45,.18)'}}))});
+
+})()}catch(e){console.error("family tiket failed",e)}
+
+
+/* ===== family: tingkap ===== */
+try{(()=>{
+/* tingkap: a carved timber window of a Malay house on a lime-washed wall. The fanlight is pierced awan-larat carving with daylight
+   coming through it; the panelled shutters have small carved panels and brass knobs. Behind them, a hand-tinted view of old Malaya
+   (public-domain postcards) or Hassam's garden painting.
+   Cover: tap "Buka Jemputan" and the shutters swing open onto the view. Page: the open window, a card resting on the sill.
+   Skin: plaster cards framed by a thin timber moulding with a carved head. */
+let tkN=0;
+const tkF=v=>(+v).toFixed(1);
+// wood grain: stretched fractal noise as dark streaks; layered over the theme's wood colour
+const tkGrain=(fx,fy,seed,w,h,k=1)=>K.uri(`<svg ${NS} width="${w}" height="${h}"><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="${fx} ${fy}" numOctaves="4" seed="${seed}" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .06  0 0 0 0 .04  0 0 0 0 .02  ${-1.5*k} 0 0 0 ${.84*k}"/></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>`);
+const TK_GV=tkGrain(.15,.004,7,240,600),TK_GH=tkGrain(.004,.15,11,600,240),TK_GVL=tkGrain(.15,.004,7,240,600,.22),TK_GHL=tkGrain(.004,.15,11,600,240,.22);
+// weathering, all procedural noise: chipped paint showing bare timber, dense chips for worn edges, uneven paint and grime, lime-wash stains
+const tkNoise=(w,h,freq,oct,seed,mat,afunc)=>K.uri(`<svg ${NS} width="${w}" height="${h}"><filter id="n" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="${oct}" seed="${seed}" stitchTiles="stitch"/><feColorMatrix values="${mat}"/>${afunc?`<feComponentTransfer><feFuncA type="${afunc[0]}" tableValues="${afunc[1]}"/></feComponentTransfer>`:''}</filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`);
+const BARE='0 0 0 0 .56  0 0 0 0 .47  0 0 0 0 .36';
+const TK_CHIP=tkNoise(260,260,'.16 .045',4,3,`${BARE}  1 0 0 0 0`,['discrete','0 0 0 0 0 0 0 0 0 0 .95 1']);
+const TK_EDGE=tkNoise(200,200,'.09 .2',3,8,`${BARE}  1 0 0 0 0`,['discrete','0 0 0 0 0 .9 1 1']);
+const TK_MOT=tkNoise(320,320,'.012',3,21,'0 0 0 0 .14  0 0 0 0 .09  0 0 0 0 .05  1.1 0 0 0 -.46',null);
+const TK_LIME=tkNoise(420,420,'.006 .022',4,5,'0 0 0 0 .5  0 0 0 0 .42  0 0 0 0 .3  .75 0 0 0 -.32',null);
+const TK_PLAS=tkNoise(160,160,'.7',2,9,'0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1.2 0 0 0 .7',null);
+// a spiral curl as a polyline: starts at (x,y) heading a0, winds inward
+function tkCurl(x,y,a0,r,turns,dir){let d=`M${tkF(x)} ${tkF(y)}`,a=a0,cx=x,cy=y;const n=28;
+  for(let i=1;i<=n;i++){const t=i/n,step=r*(1-t*.82)*(turns*2*Math.PI/n);a+=dir*turns*2*Math.PI/n;cx+=Math.cos(a)*step;cy+=Math.sin(a)*step;d+=`L${tkF(cx)} ${tkF(cy)}`}return d}
+const tkLeaf=(x,y,deg,s=1)=>`<path d="M0 0C${4*s} ${-3*s} ${10*s} ${-3*s} ${15*s} 0C${10*s} ${3*s} ${4*s} ${3*s} 0 0Z" transform="translate(${tkF(x)} ${tkF(y)}) rotate(${tkF(deg)})"/>`;
+// fanlight carving, viewBox 300x84: wood is opaque, cut-outs transparent (used as a mask)
+function tkFanSvg(){let half='';
+  // main stem from the bud to the right edge, rising and falling
+  half+=`<path d="M164 42C182 26 200 26 214 40S246 58 262 42S284 28 290 34" fill="none" stroke="#000" stroke-width="4.2" stroke-linecap="round"/>`;
+  half+=`<path d="${tkCurl(214,40,-2.2,7.5,1.15,-1)}" fill="none" stroke="#000" stroke-width="3.3" stroke-linecap="round"/>`;
+  half+=`<path d="${tkCurl(238,52,2.4,7,1.1,1)}" fill="none" stroke="#000" stroke-width="3.3" stroke-linecap="round"/>`;
+  half+=`<path d="${tkCurl(186,30,-2.6,8,1.2,-1)}" fill="none" stroke="#000" stroke-width="3.3" stroke-linecap="round"/>`;
+  half+=`<path d="${tkCurl(270,38,-1.6,6,1.1,-1)}" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
+  half+=`<path d="M176 34C172 22 178 14 188 12M200 54C206 66 220 70 228 66M250 50C254 62 266 66 276 62" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
+  half+=`<g fill="#000">${tkLeaf(188,12,-15,1.15)}${tkLeaf(228,66,-20,1.15)}${tkLeaf(276,62,-25,1)}${tkLeaf(196,40,40,1)}${tkLeaf(250,38,-40,1)}${tkLeaf(168,54,25,1)}${tkLeaf(226,24,-150,.9)}${tkLeaf(262,22,-160,.8)}</g>`;
+  // centre bud: eight petals around a boss
+  const pet=K.ring(8,10,150,42).map(([x,y,a])=>`<ellipse cx="${tkF(x)}" cy="${tkF(y)}" rx="6.4" ry="3.2" transform="rotate(${tkF(a*180/Math.PI)} ${tkF(x)} ${tkF(y)})"/>`).join('');
+  return `<svg ${NS} viewBox="0 0 300 84" preserveAspectRatio="none"><rect x="2.5" y="2.5" width="295" height="79" fill="none" stroke="#000" stroke-width="5"/><rect x="8.5" y="8.5" width="283" height="67" fill="none" stroke="#000" stroke-width="1.6"/>
+    <g fill="#000">${pet}<circle cx="150" cy="42" r="5.2"/></g><circle cx="150" cy="42" r="16" fill="none" stroke="#000" stroke-width="2"/>
+    ${half}<g transform="translate(300 0) scale(-1 1)">${half}</g>
+    <path d="M150 9V24M150 60V75" stroke="#000" stroke-width="2.6"/></svg>`}
+// small pierced panel for the top of each shutter, viewBox 60x64: a lozenge with a four-petal flower, quarter flowers in the corners
+function tkPanelSvg(){const flower=(x,y,r)=>[0,90,180,270].map(a=>`<ellipse cx="${tkF(x+Math.cos(a*Math.PI/180)*r*.55)}" cy="${tkF(y+Math.sin(a*Math.PI/180)*r*.55)}" rx="${tkF(r*.55)}" ry="${tkF(r*.3)}" transform="rotate(${a} ${tkF(x+Math.cos(a*Math.PI/180)*r*.55)} ${tkF(y+Math.sin(a*Math.PI/180)*r*.55)})"/>`).join('')+`<circle cx="${x}" cy="${y}" r="${tkF(r*.2)}"/>`;
+  return `<svg ${NS} viewBox="0 0 60 64" preserveAspectRatio="none"><g fill="none" stroke="#000"><rect x="2" y="2" width="56" height="60" stroke-width="4"/><rect x="6.5" y="6.5" width="47" height="51" stroke-width="1.2"/>
+    <path d="M30 7L53 32L30 57L7 32Z" stroke-width="2.6"/><path d="M30 13L47 32L30 51L13 32Z" stroke-width="1.1"/></g>
+    <g fill="#000">${flower(30,32,11)}${flower(6,6,7)}${flower(54,6,7)}${flower(6,58,7)}${flower(54,58,7)}</g></svg>`}
+const TK_FAN=K.uri(tkFanSvg()),TK_PAN=K.uri(tkPanelSvg());
+const TK_VIEW={timah:'pc-timah.jpg',boyan:'pc-boyan.jpg',stjames:'pc-stjames.jpg',pinang:'pc-pinang.jpg',hassam:'pd-paint-hassam-water.jpg'};
+const TK_POS={timah:'50% 50%',boyan:'30% 50%',stjames:'50% 55%',pinang:'45% 50%',hassam:'50% 60%'};
+const tkVars=c=>`--gv:${c.paint?TK_GVL:TK_GV};--gh:${c.paint?TK_GHL:TK_GH};--fan:${TK_FAN};--chip:${TK_CHIP};--edge:${TK_EDGE};--mot:${TK_MOT};--lime:${TK_LIME};--plas:${TK_PLAS};--pan:${TK_PAN};--view:url(${A}${TK_VIEW[c.view]});--vpos:${TK_POS[c.view]};--skyf:${c.paint?"blur(4px) brightness(.62) saturate(.8)":"blur(5px) brightness(1.55) saturate(.6) contrast(.8)"};--bloom:${c.paint?.25:1}`;
+const tkShut=s=>`<span class="tgk-shut ${s}"><i class="tgk-pw"><i class="tgk-sky"></i><i class="tgk-pc"></i></i><i class="tgk-raise"><i class="tgk-field"></i></i><i class="tgk-knob"></i><i class="tgk-wear"></i></span>`;
+const tkWindow=(inner,open)=>`<span class="tgk-win${open?' open':''}"><span class="tgk-arch"><span class="tgk-fanw"><i class="tgk-sky"></i><i class="tgk-fan"></i></span><i class="tgk-tran"></i>
+  <span class="tgk-open"><i class="tgk-view"></i>${tkShut('l')}${tkShut('r')}</span></span><i class="tgk-sill"><i class="tgk-wear"></i></i><i class="tgk-wear"></i>${inner||''}</span>`;
+FAMILY({key:'tingkap',name:'Tingkap',meaning:'The window',
+  blurb:'A carved timber window on a lime-washed wall, daylight through its awan-larat fanlight. The shutters swing open onto a hand-tinted view of old Malaya.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-tingkap2" style="${tkVars(c)}"><i class="tgk-wall"></i>
+      <div class="tgk-pw2 reveal">${tkWindow('',true)}</div>
+      <div class="tgk-card reveal d1"><p class="tgk-k kicker">${ev(o,L)}</p><h1 class="tgk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="tgk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="tgk-ven">${esc(o.venue)}</p>`:''}</div>
+      <a class="tgk-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-tingkap2" style="${tkVars(c)}"><i class="tgk-wall"></i><i class="tgk-light"></i>
+      <div class="tgk-head"><p class="tgk-k">${ev(o,L)}</p><p class="tgk-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="tgk-stage">${tkWindow()}</div>
+      <div class="tgk-foot">${guest?`<p class="tgk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="tgk-btn" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.cssText+=';'+tkVars(th.c);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'hijau',n:'Kayu Hijau',desc:'Green shutters, a river in Perak',c:{ground:'#ebe4d2',wood:'#2f5a3c',sheet:'#fbf8f1',ink:'#2e2620',accent:'#2f5a3c',gold:'#a8894c',pagefg:'#2e2620',view:'timah'}},
+    {k:'biru',n:'Biru Laut',desc:'Blue shutters, a river kampung',c:{ground:'#ece6d6',wood:'#2d4b78',sheet:'#fbf8f1',ink:'#2a2a30',accent:'#2d4b78',gold:'#a8894c',pagefg:'#2a2a30',view:'boyan'}},
+    {k:'jati',n:'Kayu Jati',desc:'Teak window, a lake village',c:{ground:'#efe6d4',wood:'#7a4a28',sheet:'#fbf8f1',ink:'#2e2620',accent:'#6b4226',gold:'#a8894c',pagefg:'#2e2620',view:'stjames'}},
+    {k:'merah',n:'Merah Bata',desc:'Oxblood shutters, a garden painting',c:{ground:'#efe3d3',wood:'#6e1b25',sheet:'#fbf8f1',ink:'#2e2620',accent:'#7a1b29',gold:'#a8894c',pagefg:'#2e2620',view:'hassam'}},
+    {k:'kuning',n:'Rumah Kedai',desc:'Yellow wall, green shutters, palms by the sea',c:{ground:'#e3bf62',wood:'#2c5a4a',sheet:'#fbf8f1',ink:'#2e2620',accent:'#2c5a4a',gold:'#8a6a2c',pagefg:'#2b2416',view:'pinang'}},
+    {k:'putih',n:'Putih',desc:'White shutters on a grey wall',c:{paint:1,ground:'#cfc9bd',wood:'#efebe2',sheet:'#fbf8f1',ink:'#2e2620',accent:'#3b4a3f',gold:'#8f7a4f',pagefg:'#2a2a26',view:'timah'}},
+    {k:'pandan',n:'Pandan',desc:'Pandan shutters, a garden painting',c:{ground:'#f3eedc',wood:'#0d4a32',sheet:'#fbf8f1',ink:'#23302a',accent:'#0d4a32',gold:'#a8894c',pagefg:'#23302a',view:'hassam'}},
+    {k:'kopi',n:'Kopi Malam',desc:'Teak window on a dark evening wall',c:{ground:'#2b2420',wood:'#8a5e3c',sheet:'#f8f2e6',ink:'#2e2620',accent:'#6b4226',gold:'#c9a25a',pagefg:'#efe4d0',view:'stjames'}},
+    {k:'hujan',n:'Biru Hujan',desc:'Slate-blue shutters, a river kampung',c:{ground:'#e2e6e8',wood:'#3a5570',sheet:'#fbfbf8',ink:'#24303a',accent:'#3a5570',gold:'#9a8a62',pagefg:'#24303a',view:'boyan'}},
+    {k:'fajar',n:'Fajar',desc:'Plum shutters on a blush wall',c:{ground:'#f4e3da',wood:'#6a2e44',sheet:'#fffaf6',ink:'#33242a',accent:'#7a3550',gold:'#b08a5a',pagefg:'#33242a',view:'pinang'}},
+  ]});
+
+})()}catch(e){console.error("family tingkap failed",e)}
+
+
+/* ===== family: tipografi ===== */
+try{(()=>{
+/* tipografi: an editorial poster set in one typeface (Bodoni Moda), printed on cotton stock with a light letterpress bite.
+   Cover: the names set large, a single coloured ampersand, a hairline grid; tap "Buka Jemputan" and the sheet is lifted off the pad.
+   Page: the date set large beside the names, venue in italic, two text links. Skin: one long printed page, numbered sections, hairlines only. */
+const tyRoman=n=>{const m=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,r] of m)while(n>=v){s+=r;n-=v}return s};
+// split the engine's long date into day, month and year so the day can be set large
+const tyDate=o=>{const f=fmtDate(o.date,o.lang),m=f.match(/(\d{1,2})\s+(\S+)\s+(\d{4})/),wd=f.split(',')[0];return m?{day:m[1],mon:m[2],yr:m[3],wd:wd===f?'':wd,full:f}:{day:'',mon:f,yr:'',wd:'',full:f}};
+// names are set as large as their length allows
+// estimated set width (in em) of a name in Bodoni italic: capitals are wide, spaces narrow
+const tyEm=t=>[...String(t)].reduce((w,ch)=>w+(ch===' '?.26:/[MW]/.test(ch)?.95:/[A-Z]/.test(ch)?.7:/[mw]/.test(ch)?.78:/[ijlt.,']/.test(ch)?.3:.5),0);
+// names are set as large as the measure allows: budget is the usable width in cqi, extra is em added to the second line
+const tySize=(o,max,budget,extra=0)=>{const [a,b]=coverNames(o);return Math.max(8,Math.min(max,budget/Math.max(2.4,tyEm(a),tyEm(b)+extra))).toFixed(1)+'cqi'};
+FAMILY({key:'tipografi',name:'Tipografi',meaning:'Editorial poster',
+  blurb:'An editorial poster set in a single Bodoni: the names large, one coloured ampersand, hairline rules and generous white space. The sheet lifts off to open.',
+  fonts:{d:"'Bodoni Moda', serif",s:"'Bodoni Moda', serif",b:"'Bodoni Moda', serif"},ms:1300,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',d=tyDate(o);
+    return `<section class="page pg-tipografi2" style="--lp:${th.c.lp}"><div class="ty-paper"></div>
+      <div class="ty-pg reveal">
+        <div class="ty-bar"><span>${en?'Invitation':'Jemputan'}</span><span>${tyRoman(+d.yr||new Date(o.date).getFullYear()||2026)}</span></div>
+        <p class="ty-k kicker">${ev(o,L)}</p>
+        <h1 class="ty-pn" style="font-size:${tySize(o,17,74,1.5)}"><span>${esc(n1)}</span><span><i>&amp;</i>${esc(n2)}</span></h1>
+        <div class="ty-big"><b>${esc(d.day)}</b><div><span>${esc(d.mon)} ${esc(d.yr)}</span>${d.wd?`<span>${esc(d.wd)}</span>`:''}${o.start?`<span>${esc(fmtTime(o.start,o.lang))}</span>`:''}</div></div>
+        ${o.venue?`<p class="ty-ven">${esc(o.venue)}</p>`:''}
+        <nav class="ty-links"><a data-go="when" href="#">${en?'Event details':'Butiran Majlis'}<i>→</i></a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP<i>→</i></a>`:''}</nav>
+      </div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',d=tyDate(o);
+    return `<div class="cover cv-tipografi2" style="--lp:${th.c.lp}"><div class="ty-sheet"><div class="ty-paper"></div>
+      <div class="ty-bar"><span>${ev(o,L)}</span><span>${tyRoman(+d.yr||2026)}</span></div>
+      <div class="ty-names" style="font-size:${tySize(o,24,80)}"><span class="a">${esc(n1)}</span><span class="amp">&amp;</span><span class="b">${esc(n2)}</span></div>
+      <div class="ty-meta"><div><small>${en?'Date':'Tarikh'}</small>${esc(d.day)} ${esc(d.mon)} ${esc(d.yr)}</div><div><small>${en?'Time':'Masa'}</small>${esc(fmtTime(o.start,o.lang))}</div>${o.venue?`<div class="w"><small>${en?'Venue':'Tempat'}</small>${esc(o.venue)}</div>`:''}</div>
+      <div class="ty-foot">${guest?`<p class="ty-to"><small>${L.dear}</small>${esc(guest)}</p>`:''}<${tag} class="ty-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>
+    </div></div>`},
+  skin(el,o,th,L){const sc=$('.scroller',el);el.style.setProperty('--lp',th.c.lp);
+    K.secs(el).forEach((s,i)=>s.dataset.no=String(i+1).padStart(2,'0'));
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    ['gading','Gading','Black ink on ivory cotton','#f3eee4','#1a1816','#1a1816'],
+    ['batu','Batu','Ivory ink on stone grey','#5f5751','#f4efe6','#ead9bd',1],
+    ['cili','Cili','Chilli-red ampersand on cream','#f6efe4','#1f1a17','#b3261e'],
+    ['zaitun','Zaitun','Olive ink on putty','#e6e3d6','#262a1c','#5d6b3a'],
+    ['kobalt','Kobalt','Cobalt ampersand on white','#f7f7f4','#16182a','#2341a8'],
+    ['arang','Arang','Ivory ink on charcoal','#232220','#efe9df','#d9c7a6',1],
+    ['terakota','Terakota','Terracotta ampersand on sand','#f5ece2','#2a201b','#b5593b'],
+    ['sage','Sage','Sage ampersand on chalk','#f2f1ea','#262b22','#6c7b60'],
+    ['biru-lembut','Biru Lembut','Dusty blue ampersand on white','#f6f7f8','#1e2632','#56708f'],
+    ['marun','Marun','Maroon ampersand on blush','#f3e4e0','#2a1a1c','#6b1a2a'],
+    ['champagne','Champagne','Cocoa ink on champagne','#d6c4a1','#2a2018','#6b4a3a'],
+    ['zamrud','Zamrud','Gold ink on emerald','#0f3d2e','#eee9da','#d8b46a',1],
+    ['mauve','Mauve','Mauve ampersand on pale rose','#f4ecec','#2a2024','#6e4a5a'],
+    ['pic','Pic','Peach-brown ampersand on cream','#fcf4ed','#2a201b','#b4603f'],
+    ['kunyit','Kunyit','Turmeric ampersand on cream','#f7f0e1','#2a201b','#a24a22'],
+    ['lavender','Lavender','Violet ampersand on lilac white','#f6f4fa','#22202e','#6f62a8'],
+    ['karang','Karang','Teal ampersand on coral white','#fcf5ef','#1d2626','#0f6b6b'],
+    ['pandan','Pandan','Pandan ampersand on cream','#f6f1e2','#1d2620','#0d4a32'],
+    ['kopi','Kopi','Coffee ampersand on latte','#f7efe4','#2a201b','#6b4a3a'],
+    ['hujan','Hujan','Rain-blue ampersand on white','#f4f6f8','#1e2632','#3a5570'],
+    ['fajar','Fajar','Rose ampersand on dawn pink','#fdf3ec','#2a1e22','#a3465f'],
+  ].map(([k,n,desc,ground,ink,accent,dark])=>({k,n,desc,c:{ground,sheet:ground,ink,accent,gold:accent,pagefg:ink,cover:accent,line:dark?'rgba(255,255,255,.22)':'rgba(30,25,20,.2)',lp:dark?'rgba(0,0,0,.3)':'rgba(255,255,255,.55)'}}))});
+
+})()}catch(e){console.error("family tipografi failed",e)}
+
+
+/* ===== family: ukiran ===== */
+try{(()=>{
+/* ukiran: a carved plaster panel (ukiran plaster, like the stucco of old mosques and palaces) in raking morning light:
+   star-and-cross strapwork in relief, the hollows washed with the colourway's ink, and a smooth recessed medallion with the names painted in it.
+   Cover: tap "Buka Jemputan", a band of sunlight passes over the carving and the panel gives way to the page.
+   Page: the medallion between two carved friezes. Skin: plaster cards under a carved frieze, headings in old-style small caps. */
+let ukN=0;
+const u2=n=>n.toFixed(2);
+// a polylobed medallion: an ellipse with n shallow lobes
+const ukLobed=(cx,cy,rx,ry,n,dep)=>{let d='';for(let i=0;i<n;i++){const a0=i/n*Math.PI*2-Math.PI/2,a1=(i+1)/n*Math.PI*2-Math.PI/2,am=(a0+a1)/2;
+  const P=(a,k)=>[cx+Math.cos(a)*rx*k,cy+Math.sin(a)*ry*k];const [x0,y0]=P(a0,1),[x1,y1]=P(a1,1),[qx,qy]=P(am,1+dep);
+  d+=(i?'':`M${u2(x0)} ${u2(y0)}`)+`Q${u2(qx)} ${u2(qy)} ${u2(x1)} ${u2(y1)}`}return d+'Z'};
+// one tile of strapwork: an 8-point star outline, a rosette at its heart, a small cross between stars
+const ukTile=s=>{const h=s/2;return `<path d="${K.star(8,h*.96,h*.6,h,h)}" fill="none" stroke-width="${u2(s*.085)}" stroke-linejoin="round"/>
+  <path d="${K.star(8,h*.38,h*.2,h,h)}"/><circle cx="${h}" cy="${h}" r="${u2(s*.03)}" fill="none" stroke-width="${u2(s*.02)}"/>
+  ${[[0,0],[s,0],[0,s],[s,s]].map(([x,y])=>`<path d="${K.star(4,s*.17,s*.06,x,y)}"/>`).join('')}`};
+const ukRelief=uid=>`<filter id="ukr${uid}" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation=".35" result="b"/>
+  <feDiffuseLighting in="b" surfaceScale="1.7" diffuseConstant="1" lighting-color="#fffaf0" result="d"><feDistantLight azimuth="225" elevation="56"/></feDiffuseLighting>
+  <feComposite in="d" in2="SourceGraphic" operator="arithmetic" k1=".62" k2=".44" result="lit"/><feComposite in="lit" in2="SourceAlpha" operator="in" result="top"/>
+  <feOffset in="SourceAlpha" dx=".45" dy=".6"/><feGaussianBlur stdDeviation=".45"/><feColorMatrix values="0 0 0 0 .1  0 0 0 0 .08  0 0 0 0 .05  0 0 0 .32 0" result="sh"/>
+  <feMerge><feMergeNode in="sh"/><feMergeNode in="top"/></feMerge></filter>`;
+// the panel: viewBox 100 x H; carving everywhere but the medallion
+function ukPanel(uid,H,my,mrx,mry){const med=ukLobed(50,my,mrx,mry,16,.06),rim=ukLobed(50,my,mrx+2.2,mry+2.2,16,.06);
+  return `<svg class="uk-svg" viewBox="0 0 100 ${H}" preserveAspectRatio="xMidYMid slice" ${NS} aria-hidden="true"><defs>${ukRelief(uid)}
+    <pattern id="ukp${uid}" width="19" height="19" patternUnits="userSpaceOnUse" x="-9.5" y="${u2(my-9.5)}"><g class="uk-plaster">${ukTile(19)}</g></pattern>
+    <mask id="ukm${uid}"><rect x="-10" y="-10" width="120" height="${H+20}" fill="#fff"/><path d="${rim}" fill="#000"/></mask>
+    <filter id="uki${uid}"><feGaussianBlur stdDeviation="1.4"/></filter></defs>
+    <rect x="-10" y="-10" width="120" height="${H+20}" class="uk-wash"/>
+    <rect x="-10" y="-10" width="120" height="${H+20}" fill="url(#ukp${uid})" mask="url(#ukm${uid})" filter="url(#ukr${uid})"/>
+    <path d="${rim}" class="uk-smooth"/>
+    <path d="${med}" fill="none" stroke="#2a2016" stroke-opacity=".35" stroke-width="2.2" filter="url(#uki${uid})" clip-path="url(#ukc${uid})"/>
+    <clipPath id="ukc${uid}"><path d="${med}"/></clipPath>
+    <g class="uk-plaster" filter="url(#ukr${uid})"><path d="${rim}" fill="none" stroke-width="1.5"/><path d="${ukLobed(50,my,mrx+4.4,mry+4.4,16,.06)}" fill="none" stroke-width=".5"/></g>
+    <path d="${ukLobed(50,my,mrx-2.6,mry-2.6,16,.06)}" fill="none" class="uk-ink" stroke-width=".3" stroke-dasharray=".6 .9"/>
+  </svg>`}
+const ukTxt=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="uk-txt">${big&&o.bismillah?'<p class="uk-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}<p class="uk-k${big?' kicker':''}">${ev(o,L)}</p>
+  <p class="uk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="uk-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>
+  ${big&&o.hijri?`<p class="uk-hj">${esc(o.hijri)}</p>`:''}${big&&o.venue?`<p class="uk-ven">${esc(o.venue)}</p>`:''}</div>`};
+const ukT=(k,n,desc,ground,ink,extra={})=>({k,n,desc,c:{ground,sheet:ground,ink,accent:ink,gold:ink,pagefg:ink,plaster:'#f4efe4',...extra}});
+FAMILY({key:'ukiran',name:'Ukiran',meaning:'Carved plaster',
+  blurb:'A carved plaster panel in raking morning light, star strapwork in relief washed with one ink colour, your names painted in a smooth medallion at its heart.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'IM Fell English', serif",b:"'IM Fell English', serif"},ms:1300,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-ukiran2" style="--plaster:${th.c.plaster}"><div class="uk-wall"></div>${ukPanel(++ukN,195,80,41,64)}
+    <div class="uk-med reveal">${ukTxt(o,L,true).replace(/<\/div>$/,`<a class="uk-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></div>`)}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-ukiran2" style="--plaster:${th.c.plaster}"><div class="uk-wall"></div>
+    <div class="uk-panel">${ukPanel(++ukN,146,70,31,47)}<div class="uk-in">${ukTxt(o,L,false)}</div><i class="uk-sun"></i></div>
+    <div class="uk-foot">${guest?`<p class="uk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="uk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('uk-dark',!!th.c.dark);el.style.setProperty('--plaster',th.c.plaster);
+    el.style.setProperty('--frieze',K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 12.5"><defs>${ukRelief('s')}</defs><g fill="${th.c.plaster}" stroke="${th.c.plaster}" filter="url(#ukrs)">${ukTile(12.5)}<g transform="translate(12.5 0)">${ukTile(12.5)}</g><g transform="translate(25 0)">${ukTile(12.5)}</g><g transform="translate(37.5 0)">${ukTile(12.5)}</g></g></svg>`));
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    ukT('sepia','Sepia','Warm plaster, sepia wash','#efe4cc','#5b3d24',{plaster:'#f6eedc'}),
+    ukT('dakwat','Dakwat Biru','White plaster, blue-black wash','#eceae3','#253a63'),
+    ukT('melati','Melati','White plaster, jasmine-leaf green wash','#ecede4','#2e4637'),
+    ukT('merah','Dakwat Merah','White plaster, oxblood wash','#f1e9df','#6e1a26'),
+    ukT('hijau-tua','Hijau Tua','White plaster, deep green wash','#eaede3','#24412f'),
+    ukT('ungu','Ungu','White plaster, plum wash','#f0eaec','#4a2541'),
+    ukT('terakota','Terakota','Sand plaster, terracotta wash','#f1e7dc','#8a3f28'),
+    ukT('arang','Arang','Charcoal plaster, chalk-white lines','#2e2d2b','#ece6da',{plaster:'#4a4844',dark:'1'}),
+    ukT('nila','Nila','White plaster, indigo wash','#eaedf1','#1d2b4a'),
+    ukT('mauve','Mauve Zaitun','Rose plaster, mulberry wash','#f2e7e6','#5a1a2a',{plaster:'#f8f0ee'}),
+    ukT('pic','Pic Sage','Peach plaster, sage wash','#f8ece2','#4f5d47',{plaster:'#fbf3ec'}),
+    ukT('kunyit','Kunyit Nila','Saffron plaster, indigo wash','#f5ead2','#1d2b4a',{plaster:'#f9f1df'}),
+    ukT('lavender','Lavender Arang','Lilac plaster, charcoal wash','#f0edf5','#3f3d46',{plaster:'#f7f5fa'}),
+    ukT('karang','Teal Karang','Coral plaster, teal wash','#f8ece4','#0b4a4a',{plaster:'#fbf3ee'}),
+    ukT('pandan','Pandan','Cream plaster, pandan wash','#f2ecda','#0d4a32',{plaster:'#f7f2e4'}),
+    ukT('kopi','Kopi Susu','Coffee plaster, cream lines','#4a382c','#f1e5d2',{plaster:'#63503f',dark:'1'}),
+    ukT('hujan','Biru Hujan','Grey plaster, slate wash','#ebeef1','#26394d',{plaster:'#f4f6f8'}),
+    ukT('fajar','Fajar','Blush plaster, plum wash','#f8ebe6','#4a2238',{plaster:'#fcf3ef'}),
+  ]});
+
+})()}catch(e){console.error("family ukiran failed",e)}
+
+
+/* ===== family: vinyl ===== */
+try{(()=>{
+/* vinyl (Piring Hitam): a collector's-edition record. A heavyweight cloth-bound sleeve with a public-domain painting
+   tipped on, the names foil-stamped below it, and the black record standing in the sleeve, half risen.
+   Cover: tap "Buka Jemputan"; the sleeve sinks away and the record rises out of it.
+   Page: the record above a cotton liner-notes card that holds the names, date and the programme as a tracklist.
+   Skin: liner-notes cards with track numbers before each heading and a fine double rule. */
+const vyVars=c=>`--board:${c.board};--label:${c.label};--foil:${c.foil};--art:url(${A}${c.art});--artpos:${c.artpos||'50% 40%'}`;
+const vyDate=o=>esc(fmtShort(o.date)).replace(/\./g,' · ');
+const vyMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<b class="vy-jw">${esc(j)}</b>`;const [a,b]=K.initials(o);return `<b>${esc(a)}<i>&amp;</i>${esc(b)}</b>`};
+// the record: grooves, sheen and a printed paper label
+const vyDisc=(o,L,cls='')=>{const en=o.lang==='en';return `<div class="vy-disc ${cls}"><i class="vy-sheen"></i><div class="vy-label">
+  <svg class="vy-ring" viewBox="0 0 100 100"><defs><path id="vyc${cls}" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1 -76 0"/></defs>
+   <circle cx="50" cy="50" r="46.5" fill="none" stroke="currentColor" stroke-width=".5" opacity=".7"/><circle cx="50" cy="50" r="44.6" fill="none" stroke="currentColor" stroke-width=".25" opacity=".6"/>
+   <text font-size="5.6" letter-spacing="2.2" fill="currentColor"><textPath href="#vyc${cls}" startOffset="2%">${en?'SIDE A · 33⅓ RPM · STEREO · WEDDING EDITION':'SISI A · 33⅓ RPM · STEREO · EDISI PERKAHWINAN'}</textPath></text></svg>
+  <span class="vy-lm">${vyMono(o)}</span><i class="vy-hole"></i></div></div>`};
+FAMILY({key:'vinyl',name:'Piring Hitam',meaning:'Vinyl record',
+  blurb:'A collector’s-edition record: a cloth sleeve with a classic painting tipped on and your names in gold foil. The record rises out of the sleeve to open the card.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Bodoni Moda', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',tr=(o.schedule||[]).filter(s=>s.label).slice(0,4);
+    return `<section class="page pg-vinyl2${th.c.dark?' vy-dark':''}" style="${vyVars(th.c)}"><div class="vy-cloth"></div>
+      <div class="vy-prec reveal">${vyDisc(o,L,'pg')}</div>
+      <div class="vy-notes reveal d1"><div class="vy-nin">
+        <p class="vy-k kicker">${ev(o,L)}</p>
+        <h1 class="names vy-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="vy-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="vy-ven">${esc(o.venue)}</p>`:''}
+        ${tr.length?`<div class="vy-rule"></div><ol class="vy-tracks">${tr.map((s,i)=>`<li><b>A${i+1}</b><span>${esc(s.label)}</span><i>${esc(fmtTime(s.time,o.lang))}</i></li>`).join('')}</ol>`:''}
+        <div class="vy-pills"><a class="vy-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="vy-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+      </div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-vinyl2${th.c.dark?' vy-dark':''}" style="${vyVars(th.c)}"><div class="vy-cloth"></div>
+      <p class="vy-k vy-top">${ev(o,L)}</p>
+      <div class="vy-stage">
+        <div class="vy-rec">${vyDisc(o,L,'cv')}</div>
+        <div class="vy-sleeve"><i class="vy-mouth"></i>
+          <div class="vy-tip"><div class="vy-art"></div></div>
+          <div class="vy-title"><p class="vy-sn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="vy-sd">${vyDate(o)}</p></div>
+          <i class="vy-spine"></i></div>
+      </div>
+      <div class="vy-foot">${guest?`<p class="vy-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="vy-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en';
+    el.setAttribute('style',(el.getAttribute('style')||'')+';'+vyVars(c));el.classList.toggle('vy-dark',!!c.dark);
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!h.querySelector('.vy-no'))h.insertAdjacentHTML('afterbegin',`<small class="vy-no">${i<5?'A':'B'}${i<5?i+1:i-4}</small>`)});
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Ivory cloth sleeve, Dutch flower painting, gold foil',c:{ground:'#e9e2d5',sheet:'#fbf8f1',ink:'#2c2721',accent:'#7a5a2a',gold:'#b8914a',pagefg:'#2c2721',board:'#efe6d4',label:'#7a5a2a',foil:'#b8914a',art:'pd-still-1.jpg',artpos:'50% 30%',dark:''}},
+    {k:'nila',n:'Nila',desc:'Navy cloth sleeve, Hokusai’s red Fuji, gold foil',c:{ground:'#171d2b',sheet:'#f6f3ec',ink:'#1f2433',accent:'#22345c',gold:'#c9a660',pagefg:'#e9e4d8',board:'#22304f',label:'#b8473a',foil:'#d8b66e',art:'pd-paint-hokusai-fuji.jpg',artpos:'50% 26%',dark:'1'}},
+    {k:'marun',n:'Marun',desc:'Maroon cloth sleeve, tulips in oil, gold foil',c:{ground:'#e8ddd2',sheet:'#fcf7f0',ink:'#33221f',accent:'#6e1f2a',gold:'#b38b45',pagefg:'#33221f',board:'#5f1b25',label:'#e9dcc4',foil:'#d6b06a',art:'pd-still-3.jpg',artpos:'50% 22%',dark:''}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald cloth sleeve, Hassam’s garden, gold foil',c:{ground:'#e3e4da',sheet:'#fafaf4',ink:'#24302a',accent:'#1f4a3a',gold:'#b39050',pagefg:'#24302a',board:'#1f4536',label:'#efe6d0',foil:'#d4b26c',art:'pd-paint-hassam-water.jpg',artpos:'50% 40%',dark:''}},
+    {k:'jambu',n:'Merah Jambu',desc:'Blush cloth sleeve, a field of poppies, rose-gold foil',c:{ground:'#f2e6e1',sheet:'#fffaf7',ink:'#3a2a2c',accent:'#9c4a5e',gold:'#b98a6a',pagefg:'#3a2a2c',board:'#e3c3c0',label:'#9c4a5e',foil:'#a8735a',art:'pd-paint-hassam-island.jpg',artpos:'50% 45%',dark:''}},
+    {k:'sage',n:'Sage',desc:'Sage cloth sleeve, Monet’s irises, gold foil',c:{ground:'#e7e8df',sheet:'#fbfbf5',ink:'#2c3027',accent:'#4f5f45',gold:'#a98f55',pagefg:'#2c3027',board:'#6c7c5e',label:'#4f5f45',foil:'#efe2bd',art:'pd-paint-monet-irises.jpg',artpos:'50% 55%',dark:''}},
+    {k:'hitam',n:'Hitam',desc:'Black cloth sleeve, a still life in oil, gold foil',c:{ground:'#141312',sheet:'#f3eee4',ink:'#211e1b',accent:'#5a4630',gold:'#c9a660',pagefg:'#ece5d8',board:'#1e1c1b',label:'#c9a660',foil:'#d9b874',art:'pd-still-4.jpg',artpos:'50% 30%',dark:'1'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta cloth sleeve, Monet’s poppy field, gold foil',c:{ground:'#eee3d8',sheet:'#fcf6ee',ink:'#33261f',accent:'#9a4524',gold:'#b5884a',pagefg:'#33261f',board:'#a24f30',label:'#f1e4cc',foil:'#f0d79c',art:'pd-paint-monet-poppies.jpg',artpos:'50% 60%',dark:''}},
+  ]});
+
+})()}catch(e){console.error("family vinyl failed",e)}
 
 
 /* ===== family: warkah ===== */
@@ -7132,47 +8726,67 @@ FAMILY({key:'washi',name:'Washi',meaning:'Japanese paper',
 
 /* ===== family: wau ===== */
 try{(()=>{
-/* wau: the Kelantan moon kite (wau bulan), layered paper cutwork with awan larat scrolls.
-   Cover: the kite hangs in a dusk sky on its string; touching it sends it up and away.
-   Page: a smaller kite over the names inside an awan larat frame. Skin: sky cards with kite headings. */
+/* wau: the Kelantan moon kite (wau bulan) made as a cut-paper object: a coloured base sheet, a gold foil sheet with a row of
+   punched eyelets, and an ivory top sheet cut with awan-larat scrolls, each layer lifted on its own shadow; silk tassels at the
+   wing tips and the bow string across the shoulders. It hangs on a plain sky-tinted paper with plenty of room around it.
+   Cover: tap "Buka Jemputan" and the wau rises away. Page: the wau resting over the top of a deckled card with the names.
+   Skin: ivory cards with a gold hairline and a small cut-paper rosette over each heading. */
 const WAU='M100 14C122 30 134 58 128 92C150 92 178 86 196 70C192 104 160 128 118 132C116 150 118 166 124 184C146 182 168 178 186 168C178 220 140 252 100 252C60 252 22 220 14 168C32 178 54 182 76 184C82 166 84 150 82 132C40 128 8 104 4 70C22 86 50 92 72 92C66 58 78 30 100 14Z';
-// awan larat: a curling cloud-scroll, drawn once and mirrored
+const wF=v=>(+v).toFixed(1);
+const wSc=s=>`transform="translate(100 136) scale(${s}) translate(-100 -136)"`;
+// awan larat: a leaf-tipped curling scroll
 const CURL='M0 0c6-10 20-12 26-4s0 18-9 16-8-11-1-12';
-function wauSvg(c,uid){const inset=(s,fill,extra='')=>`<path d="${WAU}" transform="translate(100 140) scale(${s}) translate(-100 -140)" fill="${fill}" ${extra}/>`;
-  const curls=[[64,112,-20,1],[136,112,20,-1],[40,96,-8,1],[160,96,8,-1],[70,200,-160,1],[130,200,160,-1],[52,218,-140,1],[148,218,140,-1]]
-    .map(([x,y,r,s])=>`<path d="${CURL}" transform="translate(${x} ${y}) rotate(${r}) scale(${s} 1)" fill="none" stroke="${c.accent}" stroke-width="2.2" stroke-linecap="round"/>`).join('');
-  const petals=K.ring(8,10,100,62).map(([x,y,a])=>`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="5" ry="2.6" transform="rotate(${(a*180/Math.PI).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="${c.gold}"/>`).join('');
-  const fringe=x=>Array.from({length:7},(_,i)=>`<path d="M${x+(i-3)*1.6} 74q${(i-3)*1.2} 10 ${(i-3)*2} 22" stroke="${c.gold}" stroke-width=".9" fill="none"/>`).join('');
-  return `<svg class="wau-k" viewBox="0 -4 200 266"><defs><clipPath id="wc${uid}"><path d="${WAU}"/></clipPath><pattern id="wp${uid}" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M5.5 1l1.4 3.1 3.1 1.4-3.1 1.4-1.4 3.1-1.4-3.1-3.1-1.4 3.1-1.4z" fill="${c.accent}" opacity=".2"/></pattern></defs>
-   <path d="M30 98Q100 70 170 98" fill="none" stroke="${c.ink}" stroke-width="1.2"/>
-   ${inset(1,c.accent,`stroke="${c.ink}" stroke-width="1.4"`)}${inset(.93,'none',`stroke="${c.sheet}" stroke-width=".8" stroke-dasharray="2 2"`)}${inset(.88,c.gold)}${inset(.84,c.ink)}${inset(.82,c.sheet)}${inset(.82,`url(#wp${uid})`)}
-   <g clip-path="url(#wc${uid})" opacity=".9">${curls}</g>
-   ${inset(.62,'none',`stroke="${c.accent}" stroke-width="1" stroke-dasharray="1 3" stroke-linecap="round"`)}
-   <circle cx="100" cy="62" r="17" fill="${c.accent}"/><circle cx="100" cy="62" r="13" fill="${c.sheet}"/>${petals}<circle cx="100" cy="62" r="4" fill="${c.accent}"/>
-   <path d="M100 196l9 12-9 12-9-12z" fill="${c.accent}"/><path d="M100 202l4.5 6-4.5 6-4.5-6z" fill="${c.gold}"/>
-   <path d="M100 100V176" stroke="${c.accent}" stroke-width="1.6"/>${fringe(196)}${fringe(4)}</svg>`}
-let n=0;
+const wCurls=(list,w)=>list.map(([x,y,r,s,k=1])=>`<path d="${CURL}" transform="translate(${x} ${y}) rotate(${r}) scale(${s*k} ${k})" stroke-width="${wF(w/k)}"/>`).join('');
+// right-half scroll positions, mirrored for the left
+const W_CURLS=[[112,104,10,-1,.9],[142,100,-8,-1,.9],[166,92,-20,-1,.7],[110,52,60,-1,.6],[114,196,170,-1,.9],[140,206,150,-1,.85],[160,196,128,-1,.7],[108,160,100,-1,.6]];
+const wMirror=list=>list.flatMap(([x,y,r,s,k])=>[[x,y,r,s,k],[200-x,y,-r,-s,k]]);
+const wMask=(inner)=>K.uri(`<svg ${NS} viewBox="0 0 200 266"><defs><mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="266">${inner}</mask></defs><rect width="200" height="266" mask="url(#m)"/></svg>`);
+// layer 1: the coloured base sheet
+const W_M1=wMask(`<path d="${WAU}" fill="#fff"/>`);
+// layer 2: gold foil, inset, with punched eyelets near its edge
+const W_M2=wMask(`<path d="${WAU}" ${wSc(.92)} fill="#fff"/><path d="${WAU}" ${wSc(.875)} fill="none" stroke="#000" stroke-width="2.3" stroke-dasharray="0 5.2" stroke-linecap="round"/>`);
+// layer 3: ivory top sheet cut with scrolls, a rosette at the head, lozenges down the spine and a crescent slit on the tail
+const petals=K.ring(8,9,100,60).map(([x,y,a])=>`<ellipse cx="${wF(x)}" cy="${wF(y)}" rx="4.6" ry="2.2" transform="rotate(${wF(a*180/Math.PI)} ${wF(x)} ${wF(y)})"/>`).join('');
+const loz=[96,110,124,138,152,166].map(y=>`<path d="M100 ${y-4.5}l3.4 4.5-3.4 4.5-3.4-4.5z"/>`).join('');
+const W_M3=wMask(`<path d="${WAU}" ${wSc(.82)} fill="#fff"/><g fill="none" stroke="#000" stroke-linecap="round">${wCurls(wMirror(W_CURLS),2.3)}</g>
+  <g fill="#000">${petals}<circle cx="100" cy="60" r="2.6"/>${loz}</g><circle cx="100" cy="60" r="15" fill="none" stroke="#000" stroke-width="1.3"/>
+  <path d="M46 196C66 224 134 224 154 196" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M60 206C76 220 124 220 140 206" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="0 4" stroke-linecap="round"/>`);
+// the bow string, the spine stick, the tassels and a stitched edge line: fine strokes over the paper
+const wTassel=(x,y,s)=>Array.from({length:6},(_,i)=>`<path d="M${x} ${y}q${wF(s*(i-2.5)*1.1)} 14 ${wF(s*(i-2.5)*2.4+s*3)} 34"/>`).join('');
+const wLines=()=>`<svg class="wu-lines" viewBox="0 0 200 266" aria-hidden="true">
+  <path d="M8 66Q100 34 192 66" fill="none" style="stroke:var(--ink)" stroke-width=".6" opacity=".7"/>
+  <path d="${WAU}" ${wSc(.965)} fill="none" style="stroke:var(--sheet)" stroke-width=".55" stroke-dasharray="1.6 1.8" opacity=".75"/>
+  <g fill="none" style="stroke:var(--gold)" stroke-width=".55">${wTassel(196,70,1)}${wTassel(4,70,-1)}</g>
+  <circle cx="196" cy="70" r="2.4" style="fill:var(--accent)"/><circle cx="4" cy="70" r="2.4" style="fill:var(--accent)"/></svg>`;
+const wKite=()=>`<span class="wu-kite"><span class="wu-l l1"><i></i></span><span class="wu-l l2"><i></i></span><span class="wu-l l3"><i></i></span>${wLines()}</span>`;
+const W_ROS=K.uri(`<svg ${NS} viewBox="-20 -20 40 40">${K.ring(8,10,0,0).map(([x,y,a])=>`<ellipse cx="${wF(x)}" cy="${wF(y)}" rx="8" ry="3.6" transform="rotate(${wF(a*180/Math.PI)} ${wF(x)} ${wF(y)})"/>`).join('')}<circle r="4.2"/></svg>`);
+const wVars=`--wm1:${W_M1};--wm2:${W_M2};--wm3:${W_M3};--wros:${W_ROS}`;
 FAMILY({key:'wau',name:'Wau',meaning:'Moon kite',
-  blurb:'A Kelantan wau bulan in layered paper cutwork, hanging in a dusk sky. Touch it and it flies.',
-  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c;return `<section class="page pg-wau"><div class="wau-sky"></div>
-    <div class="wau-frame"></div><div class="wau-mini reveal">${wauSvg(c,++n)}</div>
-    <p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-    <div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';return `<div class="cover cv-wau"><div class="wau-sky"></div><i class="wau-cloud a"></i><i class="wau-cloud b"></i>
-    <div class="wau-head"><p class="kicker">${ev(o,L)}</p><p class="wau-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
-    <${tag} class="wau-fly" ${attr} aria-label="${L.open}">${wauSvg(c,++n)}<svg class="wau-str" viewBox="0 0 40 300" preserveAspectRatio="none"><path d="M20 0C32 90 6 180 22 300" fill="none" stroke="${c.sheet}" stroke-width="1" opacity=".75"/></svg></${tag}>
-    <div class="wau-foot">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wau-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="wau-h"></i>'))},
+  blurb:'A Kelantan wau bulan made of layered cut paper, ivory scrolls over gold foil over colour, with silk tassels, floating in a calm paper sky. It rises away to open.',
+  fonts:{d:"'Marcellus', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-wau2" style="${wVars}"><i class="wu-sky"></i>
+      <div class="wu-pk reveal">${wKite()}</div>
+      <div class="wu-cardw reveal d1"><div class="wu-card">
+        <p class="wu-k kicker">${ev(o,L)}</p><h1 class="wu-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="wu-rule"></i><p class="wu-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="wu-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <a class="wu-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<div class="cover cv-wau2" style="${wVars}"><i class="wu-sky"></i>
+      <div class="wu-head"><p class="wu-k">${ev(o,L)}</p><p class="wu-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="wu-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="wu-fly"><i class="wu-str"></i>${wKite()}</div>
+      <div class="wu-foot">${guest?`<p class="wu-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="wu-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.cssText+=';'+wVars;const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Red wau in a blue dusk',c:{ground:'#1f3a5f',sheet:'#fbf5e8',ink:'#2a2320',accent:'#b3262e',gold:'#d9a43a',pagefg:'#f6eedd'}},
-    {k:'kuning',n:'Kuning Diraja',desc:'Royal yellow on deep blue',c:{ground:'#16294a',sheet:'#fff8e6',ink:'#2a2320',accent:'#d8a21b',gold:'#7a1d2b',pagefg:'#f6eedd'}},
-    {k:'hijau',n:'Hijau',desc:'Emerald wau at sunset',c:{ground:'#7a3b2e',sheet:'#fbf5e8',ink:'#20261f',accent:'#1f6b4a',gold:'#e0b04a',pagefg:'#fbefe0'}},
-    {k:'biru',n:'Biru',desc:'Indigo wau in a morning sky',c:{ground:'#7fa7c9',sheet:'#fdfaf2',ink:'#1d2533',accent:'#1f3f7a',gold:'#c9973a',pagefg:'#fdfaf2'}},
-    {k:'ungu',n:'Ungu',desc:'Plum wau on lilac dusk',c:{ground:'#4a3a66',sheet:'#fbf6ee',ink:'#2a2330',accent:'#6b2d5c',gold:'#d6a84e',pagefg:'#f5eefa'}},
-    {k:'jingga',n:'Jingga',desc:'Orange wau over the sea',c:{ground:'#2a5a6b',sheet:'#fff7ea',ink:'#2a2320',accent:'#d0632a',gold:'#f0c35a',pagefg:'#f3f0e6'}},
-    {k:'malam',n:'Malam',desc:'Gold wau in a night sky',c:{ground:'#0f1424',sheet:'#f6efdc',ink:'#1b1712',accent:'#b8862f',gold:'#7a1d2b',pagefg:'#efe6d0'}},
-    {k:'pastel',n:'Pastel',desc:'Blush wau in a pale sky',c:{ground:'#c9d8e6',sheet:'#fffdf8',ink:'#3a2f2b',accent:'#c97a86',gold:'#8fa98a',pagefg:'#3a2f2b'}},
+    {k:'merah',n:'Merah',desc:'Red wau on a dusk-blue paper sky',c:{ground:'#2a4466',sheet:'#fbf6ea',ink:'#2a2320',accent:'#a8242c',gold:'#c9a050',pagefg:'#f3ecdf'}},
+    {k:'kuning',n:'Kuning Diraja',desc:'Royal yellow wau on deep blue',c:{ground:'#1c2f52',sheet:'#fff8e8',ink:'#2a2320',accent:'#d39c1c',gold:'#c9a050',pagefg:'#f3ecdf'}},
+    {k:'hijau',n:'Hijau',desc:'Emerald wau on warm clay',c:{ground:'#94543f',sheet:'#fbf6ea',ink:'#20261f',accent:'#1f5e44',gold:'#c9a050',pagefg:'#fff6ec'}},
+    {k:'biru',n:'Biru',desc:'Indigo wau on a pale morning sky',c:{ground:'#c5d6e4',sheet:'#fdfaf2',ink:'#1d2533',accent:'#22407a',gold:'#b8924a',pagefg:'#1d2533'}},
+    {k:'ungu',n:'Ungu',desc:'Plum wau on lilac paper',c:{ground:'#d9d0e2',sheet:'#fdf9f4',ink:'#2a2330',accent:'#6b2d5c',gold:'#b8924a',pagefg:'#2a2330'}},
+    {k:'jingga',n:'Jingga',desc:'Orange wau on a sea-teal paper',c:{ground:'#2f5f6c',sheet:'#fff8ec',ink:'#2a2320',accent:'#cf6129',gold:'#d6ab55',pagefg:'#f3f0e6'}},
+    {k:'malam',n:'Malam',desc:'Black-and-gold wau on night paper',c:{ground:'#131a2c',sheet:'#f6efdc',ink:'#1b1712',accent:'#7a1d2b',gold:'#cfa651',pagefg:'#efe6d0'}},
+    {k:'pastel',n:'Pastel',desc:'Blush wau on a pale sky',c:{ground:'#e3e9ee',sheet:'#fffdf8',ink:'#3a2f2b',accent:'#c27482',gold:'#b5975a',pagefg:'#3a2f2b'}},
   ]});
 
 })()}catch(e){console.error("family wau failed",e)}
@@ -7180,16 +8794,16 @@ FAMILY({key:'wau',name:'Wau',meaning:'Moon kite',
 
 /* ===== family: wayang ===== */
 try{(()=>{
-/* wayang: the kelir screen of the Kelantan shadow play, glowing amber from the lamp behind it.
-   Only the gunungan (the tree-of-life mountain leaf) is shown, in pierced-leather lattice; no figures.
-   Cover: the gunungan stands on the screen; touching it lifts it up and away as the lamplight warms.
-   Page: a smaller gunungan with the names printed on the screen. Skin: amber screen cards with dark pierced borders. */
-let uid=0;
+/* wayang: the gunungan (tree-of-life leaf) of the Kelantan shadow play, made as a real puppet: translucent rawhide punched with
+   hundreds of tiny holes (tatahan), painted in gold prada and one colour, on a dark horn rod, glowing from the lamp behind it.
+   No figures, only the tree, its branches, cloud scrolls and the small gateway at its foot.
+   Cover: the puppet held still in lamplight. Tap "Buka Jemputan" and it sweeps aside, as the dalang opens a play.
+   Page: the kelir screen with the gunungan's soft shadow behind the names. Skin: screen-cloth cards edged with punched hide. */
+let wyN=0;
 const f1=v=>(+v).toFixed(1);
 // the leaf outline from a half-width profile, so the edge flames and inner borders can follow it
 const W=t=>t<.62?92*Math.pow(Math.sin(t/.62*Math.PI/2),1.55)+.4:92-34*Math.pow((t-.62)/.38,1.6);
 const Y=t=>4+268*t;
-const OUT=edge(1)+'Z';
 function edge(k){let r='';for(let i=0;i<=60;i++){const t=i/60;r+=`${i?'L':'M'}${f1(100+W(t)*k)} ${f1(Y(t))}`}let l='';for(let i=60;i>=0;i--){const t=i/60;l+=`L${f1(100-W(t)*k)} ${f1(Y(t))}`}return r+l}
 function flames(){let d='';for(let i=3;i<58;i+=2){const t=i/60,t2=(i+1)/60,x=W(t),y=Y(t),dx=W(t2)-x,dy=Y(t2)-y,L=Math.hypot(dx,dy),nx=dy/L,ny=-dx/L;
   for(const s of [1,-1]){const bx=100+s*x,tx=bx+s*nx*6+dx*.5,ty=y+ny*6+dy*.5;d+=`M${f1(bx)} ${f1(y)}Q${f1(bx+s*nx*2)} ${f1(y+ny*2-1.5)} ${f1(tx)} ${f1(ty)}Q${f1(bx+s*nx*1.5+dx*.6)} ${f1(y+ny*1.5+dy*.6)} ${f1(100+s*W(t2+.004))} ${f1(Y(t2+.004))}`}}return d}
@@ -7197,61 +8811,65 @@ function flames(){let d='';for(let i=3;i<58;i+=2){const t=i/60,t2=(i+1)/60,x=W(t
 function branch(x0,y0,s,L,turn){let d=`M${x0} ${y0}`;let x=x0,y=y0,a=-Math.PI/2+s*1.15,st=L/16;const pts=[];
   for(let i=0;i<22;i++){const k=i/22;a+=s*(.02+k*k*turn*1.6);const r=st*(1-k*.55);x+=Math.cos(a)*r;y+=Math.sin(a)*r;d+=`L${f1(x)} ${f1(y)}`;pts.push([x,y,a])}
   return {d,pts}}
-function gunungan(small){const id=++uid,R=rng(11);let br='',lv='';
-  for(const [y,L,tu] of [[64,50,.4],[100,84,.36],[142,104,.34],[184,96,.38]])for(const s of [-1,1]){const b=branch(100,y,s,L,tu);br+=b.d;
-    b.pts.forEach(([x,y2,a],i)=>{if(i%2!==1||i>19)return;const deg=a*180/Math.PI;lv+=`<path d="M0 0q2.6-5 0-10q-2.6 5 0 10z" transform="translate(${f1(x)} ${f1(y2)}) rotate(${f1(deg+s*(((i-1)/2)%2?55:-55)-90+180)})"/>`})}
-  const awan=s=>`<path d="M${100+s*14} 232c${s*10} -2 ${s*22} -10 ${s*20} -22c${-s*2} -9 ${-s*14} -10 ${-s*16} -2c${-s*1} 6 ${s*6} 8 ${s*8} 3" class="wy-br"/><path d="M${100+s*40} 238c${s*8} -2 ${s*16} -10 ${s*14} -18c${-s*2} -6 ${-s*10} -6 ${-s*11} 0" class="wy-br"/>`;
-  return `<svg class="wy-g" viewBox="-12 -6 224 344"><defs><clipPath id="wyc${id}"><path d="${edge(.9)}Z"/></clipPath>
-   <pattern id="wyp${id}" width="5" height="4.4" patternUnits="userSpaceOnUse"><circle cx="1.25" cy="1.1" r=".62"/><circle cx="3.75" cy="3.3" r=".62"/></pattern></defs>
-   <path d="M98.4 280V336M101.6 280V336" class="wy-rod"/><path d="M100 300l3 4-3 4-3-4z" class="wy-sil"/>
-   <path d="${flames()}" class="wy-sil"/>
-   <path d="${OUT}" class="wy-sil"/>
-   <g class="wy-cut">
-    <rect x="0" y="0" width="200" height="290" fill="url(#wyp${id})" clip-path="url(#wyc${id})" class="wy-lat"/>
-    <path d="${edge(.955)}" class="wy-holes"/><path d="${edge(.91)}" class="wy-slit"/>
-    <path d="M100 236C98 206 103 180 99 150C96 120 102 90 100 40" class="wy-trunk"/>
-    <path d="M100 236C98 206 103 180 99 150C96 120 102 90 100 40" class="wy-trunkh"/>
-    <path d="${br}" class="wy-br"/><g class="wy-lv">${lv}</g>${awan(1)}${awan(-1)}
-    <path d="M100 18l5 8-5 8-5-8z"/><circle cx="100" cy="12" r="2.2"/>
-   </g>
-   <path d="M62 272V232H138V272Z" class="wy-sil"/><path d="M54 232L68 218H132L146 232ZM68 218L80 207H120L132 218ZM80 207L93 196H107L120 207Z" class="wy-sil"/>
-   <g class="wy-cut"><path d="M58 230.5L69 220H131L142 230.5M71 216L81 209H119L129 216M83 205L94 198H106L117 205" class="wy-slit"/>
-    <path d="M60 232H140M70 218H130M82 207H118" class="wy-holes"/>
-    <path d="M70 268V240H96V268ZM104 268V240H130V268Z" class="wy-door"/>
-    <path d="M83 246l6 8-6 8-6-8zM117 246l6 8-6 8-6-8z" class="wy-door"/><circle cx="100" cy="190" r="2"/></g>
-   <path d="M44 272H156V280H44Z" class="wy-sil"/><path d="M36 280H164V288H36Z" class="wy-sil"/><g class="wy-cut"><path d="M48 276H152M40 284H160" class="wy-holes"/></g>
-  </svg>`}
-const PIERCE=c=>svgUriSq(`<svg ${NS} width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="${c.ink}"/><path d="M8 3.2l2.2 4.8L8 12.8 5.8 8z" fill="${c.sheet}" opacity=".85"/><circle cx="0" cy="0" r="1" fill="${c.sheet}" opacity=".75"/><circle cx="16" cy="0" r="1" fill="${c.sheet}" opacity=".75"/><circle cx="0" cy="16" r="1" fill="${c.sheet}" opacity=".75"/><circle cx="16" cy="16" r="1" fill="${c.sheet}" opacity=".75"/><circle cx="8" cy="0" r=".6" fill="${c.sheet}" opacity=".6"/><circle cx="0" cy="8" r=".6" fill="${c.sheet}" opacity=".6"/></svg>`);
-const KAWUNG=c=>svgUriSq(`<svg ${NS} width="22" height="22" viewBox="0 0 22 22"><g fill="none" stroke="${c.gold}" stroke-width=".7" opacity=".55"><ellipse cx="11" cy="5.5" rx="3" ry="4.6"/><ellipse cx="11" cy="16.5" rx="3" ry="4.6"/><ellipse cx="5.5" cy="11" rx="4.6" ry="3"/><ellipse cx="16.5" cy="11" rx="4.6" ry="3"/></g><circle cx="11" cy="11" r=".9" fill="${c.gold}" opacity=".6"/></svg>`);
-const vars=c=>`--wy-pierce:${PIERCE(c)};--wy-kaw:${KAWUNG(c)};--wy-gn:${c.gn||c.gold}`;
-FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play screen',
-  blurb:'A kelir screen glowing amber from the lamp behind it, with a gunungan in pierced-leather lattice that rises away when touched.',
-  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+// the tree: branches and leaves (computed once)
+let BR='',LV='';
+for(const [y,L,tu] of [[64,50,.4],[100,84,.36],[142,104,.34],[184,96,.38]])for(const s of [-1,1]){const b=branch(100,y,s,L,tu);BR+=b.d;
+  b.pts.forEach(([x,y2,a],i)=>{if(i%2!==1||i>19)return;const deg=a*180/Math.PI;LV+=`<path d="M0 0q2.8-5.4 0-11q-2.8 5.4 0 11z" transform="translate(${f1(x)} ${f1(y2)}) rotate(${f1(deg+s*(((i-1)/2)%2?55:-55)-90+180)})"/>`})}
+const AWAN=s=>`M${100+s*14} 232c${s*10} -2 ${s*22} -10 ${s*20} -22c${-s*2} -9 ${-s*14} -10 ${-s*16} -2c${-s*1} 6 ${s*6} 8 ${s*8} 3M${100+s*40} 238c${s*8} -2 ${s*16} -10 ${s*14} -18c${-s*2} -6 ${-s*10} -6 ${-s*11} 0`;
+const TRUNK='M100 236C98 206 103 180 99 150C96 120 102 90 100 40';
+const ROOF='M54 232L68 218H132L146 232ZM68 218L80 207H120L132 218ZM80 207L93 196H107L120 207Z';
+const BASE='M62 272V232H138V272ZM44 272H156V280H44ZM36 280H164V288H36Z';
+// the hide: solid leather, punched with a lattice of small holes inside the border, with the tree and gateway left solid
+const WY_MASK=K.uri(`<svg ${NS} viewBox="-12 -6 224 300"><defs>
+  <pattern id="p" width="4.6" height="4" patternUnits="userSpaceOnUse"><circle cx="1.15" cy="1" r=".72"/><circle cx="3.45" cy="3" r=".72"/></pattern>
+  <clipPath id="c"><path d="${edge(.9)}Z"/></clipPath>
+  <mask id="m" maskUnits="userSpaceOnUse" x="-12" y="-6" width="224" height="300">
+   <path d="${edge(1)}Z${flames()}" fill="#fff"/><path d="${ROOF}${BASE}" fill="#fff"/>
+   <rect x="0" y="0" width="200" height="232" fill="url(#p)" clip-path="url(#c)"/>
+   <path d="${edge(.91)}" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="3 2.2"/>
+   <g fill="none" stroke="#fff" stroke-linecap="round"><path d="${TRUNK}" stroke-width="7"/><path d="${BR}" stroke-width="3.4"/><path d="${AWAN(1)}${AWAN(-1)}" stroke-width="3.4"/></g>
+   <g fill="#fff" stroke="#fff" stroke-width="1.6">${LV}</g><path d="M100 14l7 11-7 11-7-11z" fill="#fff"/><circle cx="100" cy="11" r="3.4" fill="#fff"/>
+   <path d="M58 230.5L69 220H131L142 230.5M71 216L81 209H119L129 216M83 205L94 198H106L117 205" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2 1.6"/>
+   <path d="M71 267V241H95V267ZM105 267V241H129V267Z" fill="#000"/><path d="M48 276H152M40 284H160" stroke="#000" stroke-width="1" stroke-dasharray="1.6 1.6"/>
+  </mask></defs><rect x="-12" y="-6" width="224" height="300" mask="url(#m)"/></svg>`);
+// paint on the hide: gold prada lines and one colour, drawn in the same box; uses the theme through CSS variables
+const wyPaint=()=>`<svg class="wy-paint" viewBox="-12 -6 224 300" aria-hidden="true">
+  <path d="${flames()}" style="fill:var(--accent)" opacity=".75"/>
+  <path d="${edge(.955)}Z" fill="none" style="stroke:var(--gold)" stroke-width="2.2"/><path d="${edge(.975)}Z" fill="none" style="stroke:var(--accent)" stroke-width="1"/>
+  <g fill="none" stroke-linecap="round"><path d="${TRUNK}" style="stroke:var(--accent)" stroke-width="4.6"/><path d="${TRUNK}" style="stroke:var(--gold)" stroke-width="1.6"/>
+   <path d="${BR}" style="stroke:var(--gold)" stroke-width="1.5"/><path d="${AWAN(1)}${AWAN(-1)}" style="stroke:var(--gold)" stroke-width="1.5"/></g>
+  <g style="fill:var(--accent)" opacity=".9">${LV}</g><path d="M100 17l4.6 8-4.6 8-4.6-8z" style="fill:var(--gold)"/>
+  <path d="${ROOF}" style="fill:var(--accent)"/><path d="M54 232L68 218H132L146 232M68 218L80 207H120L132 218M80 207L93 196H107L120 207" fill="none" style="stroke:var(--gold)" stroke-width="1.2"/>
+  <path d="M62 272V232H138V272Z" fill="none" style="stroke:var(--gold)" stroke-width="1.4"/><path d="M71 267V241H95V267ZM105 267V241H129V267Z" fill="none" style="stroke:var(--gold)" stroke-width="1.2"/>
+  <path d="M44 272H156V280H44ZM36 280H164V288H36Z" style="fill:var(--accent)" opacity=".8"/><path d="M44 272H156M36 280H164M36 288H164" style="stroke:var(--gold)" stroke-width=".9"/></svg>`;
+// the puppet: horn rod, leather (masked), paint (masked), and a grain pass over both
+const wyPuppet=()=>`<span class="wy-pup"><i class="wy-rod"></i><span class="wy-hide"><i class="wy-skin"></i><span class="wy-pt">${wyPaint()}</span><i class="wy-grain"></i></span></span>`;
+const wyVars=c=>`--wymask:${WY_MASK};--hide:${c.hide}`;
+FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play puppet',
+  blurb:'A gunungan made as a real shadow-play puppet: punched rawhide painted in gold, glowing in lamplight. It sweeps aside to open, and its shadow falls on the screen behind your names.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-wayang" style="${vars(c)}"><i class="wy-wood"></i><div class="wy-scr"><i class="wy-glow"></i><i class="wy-cloth"></i>
-     <div class="wy-mini reveal">${gunungan(true)}</div>
-     <p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-     <div class="wy-rule reveal d2"><i></i><b></b><i></i></div>
-     <p class="wy-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="wy-ven reveal d3">${esc(o.venue)} · ${esc(fmtTime(o.start,o.lang))}</p></div>
-     <i class="wy-trunkbar"></i></section>`},
+    return `<section class="page pg-wayang2" style="${wyVars(c)}"><i class="wy-dark"></i>
+      <div class="wy-screen reveal"><i class="wy-lamp"></i><i class="wy-shadow"></i>
+        <div class="wy-txt"><p class="wy-k kicker">${ev(o,L)}</p><h1 class="wy-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="wy-rule"></i><p class="wy-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="wy-ven">${esc(o.venue)}</p>`:''}</div></div>
+      <a class="wy-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<div class="cover cv-wayang" style="${vars(c)}"><i class="wy-wood"></i>
-     <div class="wy-val"><span>${ev(o,L)}</span></div>
-     <div class="wy-scr"><i class="wy-glow"></i><i class="wy-warm"></i><i class="wy-cloth"></i>
-      <${tag} class="wy-lift" ${attr} aria-label="${L.open}">${gunungan(false)}</${tag}>
-      <div class="wy-nm"><p class="wy-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="wy-d">${esc(fmtDate(o.date,o.lang))}</p></div></div>
-     <i class="wy-trunkbar"></i>
-     <div class="wy-foot">${guest?`<p class="wy-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wy-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
+    return `<div class="cover cv-wayang2" style="${wyVars(c)}"><i class="wy-dark"></i><i class="wy-lamp"></i>
+      <div class="wy-head"><p class="wy-k">${ev(o,L)}</p><p class="wy-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="wy-stage">${wyPuppet()}</div>
+      <div class="wy-foot">${guest?`<p class="wy-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="wy-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.cssText+=';'+wyVars(th.c);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'merah',n:'Merah',desc:'Amber screen, red valance, night-dark frame',c:{ground:'#1a0f0a',sheet:'#f7e3b9',ink:'#26140b',accent:'#8c1f1c',gold:'#d9a441',pagefg:'#f3e2c0'}},
-    {k:'biru',n:'Biru',desc:'Amber screen in an indigo night',c:{ground:'#0b1323',sheet:'#f4e6c4',ink:'#141a2b',accent:'#24406e',gold:'#d6a64b',pagefg:'#eae2cf'}},
-    {k:'hijau',n:'Hijau',desc:'Lamplight with forest-green cloth',c:{ground:'#0d1911',sheet:'#f0e3bd',ink:'#13200f',accent:'#2f5d3a',gold:'#cfa24a',pagefg:'#e9e2c8'}},
-    {k:'senja',n:'Senja',desc:'Rose-amber screen at dusk',c:{ground:'#28101e',sheet:'#f9ddc2',ink:'#2a1220',accent:'#8a2c4c',gold:'#e0a65a',pagefg:'#f6e0d6'}},
-    {k:'kunyit',n:'Kunyit',desc:'Turmeric-gold screen, umber frame',c:{ground:'#3a2306',sheet:'#fbe7a8',ink:'#2b1906',accent:'#a3601a',gold:'#e8b640',pagefg:'#fbedc9'}},
-    {k:'gading',n:'Gading',desc:'Pale screen in an ivory frame',c:{ground:'#e6d9bf',sheet:'#fff3d9',ink:'#2d2116',accent:'#7a3b22',gold:'#b88a3e',pagefg:'#2d2116',gn:'#7a3b22'}},
-    {k:'malam',n:'Malam',desc:'A single lamp in deep black',c:{ground:'#060607',sheet:'#ead6a6',ink:'#0d0b09',accent:'#4a3a2a',gold:'#c79b49',pagefg:'#e9dcc0'}},
-    {k:'ungu',n:'Ungu',desc:'Amber light, plum cloth',c:{ground:'#1c1028',sheet:'#f3e1c6',ink:'#1e1129',accent:'#5b2d7a',gold:'#d4a457',pagefg:'#ede0ee'}},
+    {k:'merah',n:'Merah',desc:'Red-painted gunungan in lamplight',c:{ground:'#1a0f0a',sheet:'#f6e6c6',ink:'#2a170c',accent:'#8c1f1c',gold:'#d9a441',pagefg:'#f3e2c0',hide:'#c99a5a'}},
+    {k:'biru',n:'Biru',desc:'Indigo-painted gunungan, night blue',c:{ground:'#0b1323',sheet:'#f3e7cc',ink:'#141a2b',accent:'#24406e',gold:'#d6a64b',pagefg:'#eae2cf',hide:'#c69c62'}},
+    {k:'hijau',n:'Hijau',desc:'Green-painted gunungan, forest dark',c:{ground:'#0d1911',sheet:'#f1e6c6',ink:'#13200f',accent:'#2f5d3a',gold:'#cfa24a',pagefg:'#e9e2c8',hide:'#c49a5c'}},
+    {k:'senja',n:'Senja',desc:'Rose-painted gunungan at dusk',c:{ground:'#28101e',sheet:'#f8e2cc',ink:'#2a1220',accent:'#8a2c4c',gold:'#e0a65a',pagefg:'#f6e0d6',hide:'#cc9a66'}},
+    {k:'kunyit',n:'Kunyit',desc:'Turmeric light, umber ground',c:{ground:'#2e1c06',sheet:'#fbeab8',ink:'#2b1906',accent:'#8a4614',gold:'#e8b640',pagefg:'#fbedc9',hide:'#d1a050'}},
+    {k:'gading',n:'Gading',desc:'Pale hide on an ivory ground',c:{ground:'#e8dcc4',sheet:'#fff6e2',ink:'#2d2116',accent:'#7a3b22',gold:'#b88a3e',pagefg:'#2d2116',hide:'#c9a06a'}},
+    {k:'malam',n:'Malam',desc:'Black-and-gold gunungan, one lamp',c:{ground:'#070708',sheet:'#ecdcb4',ink:'#0d0b09',accent:'#2a211a',gold:'#d2a650',pagefg:'#e9dcc0',hide:'#b98c50'}},
+    {k:'ungu',n:'Ungu',desc:'Plum-painted gunungan in amber light',c:{ground:'#1c1028',sheet:'#f3e4cc',ink:'#1e1129',accent:'#5b2d7a',gold:'#d4a457',pagefg:'#ede0ee',hide:'#c89a62'}},
   ]});
 
 })()}catch(e){console.error("family wayang failed",e)}

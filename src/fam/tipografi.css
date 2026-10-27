@@ -1,0 +1,79 @@
+/* ===== tipografi (redesign) ===== */
+.inv .ty-paper{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:multiply;pointer-events:none}
+.inv .ty-paper::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 60%,rgba(0,0,0,.07))}
+/* letterpress: a faint lit lower edge on every printed line */
+.inv .cv-tipografi2 .ty-sheet > :not(.ty-paper),.inv .pg-tipografi2 .ty-pg{text-shadow:0 1px 0 var(--lp)}
+.inv .ty-bar{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:9px;border-bottom:1px solid color-mix(in srgb,var(--ink) 55%,transparent);
+  font-family:"Bodoni Moda",serif;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink)}
+
+/* ---------- cover: the poster ---------- */
+.inv .cv-tipografi2{background:transparent;overflow:hidden;transition:opacity .3s 1.15s}
+.inv .ty-sheet{position:absolute;inset:0;display:flex;flex-direction:column;padding:72px 7.5cqi 0;color:var(--ink);
+  transition:transform 1.15s cubic-bezier(.6,0,.25,1),box-shadow 1.15s;box-shadow:0 0 0 rgba(0,0,0,0)}
+.inv .ty-sheet > :not(.ty-paper){position:relative}
+.inv .ty-names{margin:auto 0 0;display:flex;flex-direction:column;font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;line-height:.98;letter-spacing:-.015em;font-optical-sizing:auto}
+.inv .ty-names .a{align-self:flex-start}
+.inv .ty-names span,.inv .ty-pn span{padding-left:.06em;padding-right:.04em;max-width:100%}
+.inv .ty-names .b{text-align:right}
+/* a text optical size keeps the hairlines visible at display sizes */
+.inv .ty-names,.inv .ty-pn,.inv .ty-big b{font-optical-sizing:none;font-variation-settings:'opsz' 18}
+.inv .ty-names .b{align-self:flex-end}
+.inv .ty-names .amp{align-self:center;color:var(--accent);font-size:1.25em;line-height:.85;margin:-.04em 0 -.02em}
+.inv .ty-meta{display:grid;grid-template-columns:1fr 1fr;margin-top:28px;border-top:1px solid color-mix(in srgb,var(--ink) 55%,transparent);font-family:"Bodoni Moda",serif;font-size:15px;line-height:1.3}
+.inv .ty-meta > div{padding:10px 0 9px;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.inv .ty-meta > div + div{padding-left:14px;border-left:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.inv .ty-meta > div.w{grid-column:1 / -1;padding-left:0;border-left:0;font-style:italic}
+.inv .ty-meta small{display:block;font-size:9px;letter-spacing:.28em;text-transform:uppercase;font-style:normal;opacity:.7;margin-bottom:3px}
+.inv .ty-foot{margin:auto 0 7.5%;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;min-height:46px}
+.inv .ty-to{flex:1;font-family:"Bodoni Moda",serif;font-style:italic;font-size:16px;line-height:1.25;text-align:left}
+.inv .ty-to small{display:block;font-style:normal;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.7;margin-bottom:3px}
+.inv .ty-open{flex:none;margin-left:auto;cursor:pointer;padding:12px 24px;border-radius:999px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+  font-family:"Bodoni Moda",serif;font-size:11px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;transition:background .3s,color .3s}
+/* opening: the sheet is lifted off the pad */
+.inv.opening .ty-sheet{transform:translateY(-104%);box-shadow:0 26px 34px rgba(0,0,0,.28)}
+.inv.opening .cv-tipografi2{opacity:0}
+
+/* ---------- page: the date set large ---------- */
+.inv .pg-tipografi2{color:var(--ink);padding:72px 7.5cqi 128px;justify-content:flex-start;align-items:stretch;text-align:left}
+.inv .pg-tipografi2 > .ty-pg{position:relative;display:flex;flex-direction:column;flex:1}
+.inv .ty-k{font-family:"Bodoni Moda",serif;font-size:10.5px;letter-spacing:.32em;color:var(--ink);opacity:.8;margin-top:44px}
+.inv .ty-pn{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;line-height:1.02;letter-spacing:-.015em;margin:12px 0 0;color:var(--ink);display:flex;flex-direction:column}
+.inv .ty-pn span + span{padding-left:.5em}
+.inv .ty-pn i{color:var(--accent);margin:0 .14em}
+.inv .ty-big{display:flex;align-items:flex-end;gap:18px;margin-top:auto;padding-top:30px;border-bottom:1px solid color-mix(in srgb,var(--ink) 55%,transparent);padding-bottom:14px}
+.inv .ty-big b{font-family:"Bodoni Moda",serif;font-weight:400;font-size:min(40cqi,160px);line-height:.74;letter-spacing:-.04em;color:var(--accent);font-optical-sizing:auto}
+.inv .ty-big div{display:flex;flex-direction:column;gap:5px;padding-bottom:2px;font-family:"Bodoni Moda",serif}
+.inv .ty-big span:first-child{font-size:20px;font-style:italic}
+.inv .ty-big span + span{font-size:10px;letter-spacing:.26em;text-transform:uppercase;opacity:.75}
+.inv .ty-ven{font-family:"Bodoni Moda",serif;font-style:italic;font-size:18px;padding:12px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.inv .ty-links{display:flex;flex-direction:column;margin-bottom:6px}
+.inv .ty-links a{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent);color:var(--ink);text-decoration:none;cursor:pointer;
+  font-family:"Bodoni Moda",serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase}
+.inv .ty-links a i{font-style:normal;color:var(--accent);font-size:15px;letter-spacing:0}
+
+/* ---------- skin: one long printed page, numbered sections, hairlines only ---------- */
+.fam-tipografi .scroller{background:url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:multiply}
+.fam-tipografi .sheet{background:transparent;color:var(--ink)}
+.fam-tipografi .sheet::after{display:none}
+.fam-tipografi .sec{align-items:stretch;text-align:left;padding:34px 7.5cqi 38px;gap:14px;border-top:0!important;color:var(--ink)}
+.fam-tipografi .sec::before{content:attr(data-no);display:block;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--ink) 55%,transparent);
+  font-family:"Bodoni Moda",serif;font-size:10px;letter-spacing:.3em;color:var(--accent)}
+.fam-tipografi .sec h2{font-family:"Bodoni Moda",serif;font-style:italic;text-transform:none;letter-spacing:-.01em;font-size:34px;line-height:1.05;color:var(--ink);border:0;padding:0;margin-top:-4px}
+.fam-tipografi .sec p,.fam-tipografi .info b{color:var(--ink)}
+.fam-tipografi .person{font-family:"Bodoni Moda",serif;font-style:italic;font-size:26px;color:var(--ink)}
+.fam-tipografi .bismillah{text-align:center}
+.fam-tipografi .info{max-width:none}
+.fam-tipografi .info,.fam-tipografi .info > div{border:0!important;background:none!important;text-align:left}
+.fam-tipografi .info > div{border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)!important;padding:12px 0!important}
+.fam-tipografi .info span{font-family:"Bodoni Moda",serif;color:var(--accent);opacity:1;letter-spacing:.26em}
+.fam-tipografi .info b{font-family:"Bodoni Moda",serif}
+.fam-tipografi .count b{font-family:"Bodoni Moda",serif;font-size:44px;color:var(--accent)}
+.fam-tipografi .ibtn{color:var(--ink);border-color:color-mix(in srgb,var(--ink) 40%,transparent);border-radius:999px;background:transparent}
+.fam-tipografi input,.fam-tipografi select,.fam-tipografi textarea{background:transparent;color:var(--ink);border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 45%,transparent)!important;border-radius:0}
+.fam-tipografi .seg button{color:var(--ink);border-radius:999px;border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+.fam-tipografi .seg button[aria-pressed="true"],.fam-tipografi button.submit{background:var(--ink)!important;color:var(--ground)!important;border-color:var(--ink)}
+.fam-tipografi button.submit{border-radius:999px;font-family:"Bodoni Moda",serif}
+.fam-tipografi .dock{background:color-mix(in srgb,var(--ground) 94%,transparent);color:var(--ink);border-top:1px solid color-mix(in srgb,var(--ink) 30%,transparent)}
+.fam-tipografi .foot{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){.inv .ty-sheet{transition:none}}
+.fam-tipografi button.submit{font-size:12.5px;letter-spacing:.22em}

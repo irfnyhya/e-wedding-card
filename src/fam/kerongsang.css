@@ -1,87 +1,75 @@
 /* ===== kerongsang ===== */
-/* lace and voile */
-.inv .kerongsang-voile{fill:var(--sheet)}
-.inv .kerongsang-scal{fill:var(--sheet)}
-.inv .kerongsang-scl{fill:none;stroke:var(--accent);stroke-width:.6}
-.inv .kerongsang-scat ellipse{fill:none;stroke:var(--accent);stroke-width:.45;opacity:.42}
-.inv .kerongsang-v1{fill:none;stroke:var(--accent);stroke-width:.7}
-.inv .kerongsang-v2{fill:none;stroke:var(--accent);stroke-width:.65;stroke-dasharray:2.2 1.4}
-.inv .kerongsang-holes circle{fill:var(--ground)}
-.inv .kerongsang-fl ellipse{fill:none;stroke:var(--accent);stroke-width:.55}
-.inv .kerongsang-lf path{fill:var(--accent);opacity:.6}
-/* gold filigree */
-.inv .kerongsang-rim{stroke:color-mix(in srgb,var(--gold) 45%,#000);stroke-width:.5}
-.inv .kerongsang-in{fill:color-mix(in srgb,var(--gold) 30%,#000);opacity:.88}
-.inv .kerongsang-fil2{fill:color-mix(in srgb,var(--gold) 70%,#fff);stroke:none}
-.inv .kerongsang-ball circle{stroke:color-mix(in srgb,var(--gold) 45%,#000);stroke-width:.3}
-.inv .kerongsang-chain2{fill:none;stroke:var(--gold);stroke-width:1.3;stroke-dasharray:2.4 1.2}
-.inv .kerongsang-fil{fill:none;stroke:color-mix(in srgb,var(--gold) 70%,#fff);stroke-width:1.5;stroke-linecap:round}
-.inv .kerongsang-filo{fill:none;stroke:var(--gold);stroke-width:1.1}
-.inv .kerongsang-bead circle{fill:color-mix(in srgb,var(--gold) 55%,#fff)}
-.inv .kerongsang-stone{stroke:color-mix(in srgb,var(--gem) 50%,#000);stroke-width:.5}
-.inv .kerongsang-wst{stroke:#7f8a92;stroke-width:.3}
-.inv .kerongsang-facet{fill:none;stroke:#fff;stroke-width:.45;opacity:.45}
-.inv .kerongsang-glint{fill:#fff;opacity:.85}
-.inv .kerongsang-chain{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:2.4 1.2}
+/* songket: the woven textile photo; on the "tone" colourways it is reduced to its weave and laid over the colour */
+.inv .kr-cloth{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .kr-cloth::before{content:"";position:absolute;inset:-4%;background:var(--tx) 64% 50%/auto 125%}
+.inv .kr-tone .kr-cloth::before,.inv.kr-tone .kr-cloth::before{filter:grayscale(1) contrast(1.35) brightness(1.05);mix-blend-mode:overlay;opacity:var(--txo,.9)}
+.inv .kr-cloth::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 60% at 30% 22%,rgba(255,240,215,.16),transparent 60%),radial-gradient(120% 80% at 50% 50%,transparent 45%,rgba(0,0,0,.45))}
+.inv .kr-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.38em;text-transform:uppercase;color:var(--accent)}
+.inv .kr-ibu,.inv .kr-anak{display:block;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.55)) drop-shadow(2px 7px 6px rgba(0,0,0,.4))}
+.inv .kr-card{position:relative;background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;border-radius:2px;
+  box-shadow:0 1px 1px rgba(0,0,0,.25),0 18px 30px -10px rgba(0,0,0,.6),0 4px 8px rgba(0,0,0,.25)}
+.inv .kr-ci{text-align:center;color:var(--ink);border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-5px}
+
 /* cover */
-.inv .cv-kerongsang{background:var(--ground);overflow:hidden;transition:opacity .7s .8s}
-.inv .kerongsang-under{position:absolute;inset:0;background:radial-gradient(ellipse 70% 45% at 50% 18%,color-mix(in srgb,var(--ground) 80%,#fff),transparent 70%),url(assets/silk.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,soft-light,normal}
-.inv .kerongsang-tex{position:absolute;inset:0;z-index:2;background:url(assets/linen.jpg) 0 0/160px;mix-blend-mode:soft-light;opacity:.45;pointer-events:none}
-.inv .kerongsang-stage{position:absolute;left:0;right:0;top:0;width:100%;aspect-ratio:390/760;z-index:1}
-.inv .kerongsang-pan{position:absolute;top:0;width:50%;aspect-ratio:195/1000;filter:drop-shadow(0 6px 10px rgba(0,0,0,.28));transition:transform 1.3s cubic-bezier(.55,0,.2,1),opacity 1s .3s}
-.inv .kerongsang-pan svg{display:block;width:100%;height:100%;overflow:visible}
-.inv .kerongsang-pan.l{left:0}.inv .kerongsang-pan.r{right:0;transform:scaleX(-1)}
-.inv .kerongsang-head{position:absolute;left:0;right:0;top:6%;z-index:3;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--pagefg);transition:opacity .5s}
-.inv .kerongsang-k{font-family:var(--d);font-weight:600;font-size:10px;letter-spacing:.42em;text-transform:uppercase;opacity:.85}
-.inv .kerongsang-n{font-family:var(--s);font-size:clamp(34px,10.4cqi,44px);line-height:1.1;color:var(--kr-nm,color-mix(in srgb,var(--gold) 70%,#fff));text-shadow:0 1px 0 rgba(0,0,0,.35),0 0 14px rgba(0,0,0,.2);padding:0 30px}
-.inv .kerongsang-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;margin:0 .3em;color:var(--pagefg)}
-.inv .kerongsang-d{font-family:var(--d);font-weight:600;font-size:11.5px;letter-spacing:.3em;text-transform:uppercase}
-.inv .kerongsang-set{position:absolute;left:50%;top:calc(40.26% - 75px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;border:0;padding:0;margin:0;background:none;cursor:pointer;z-index:4;filter:drop-shadow(0 5px 5px rgba(0,0,0,.35));transition:transform 1.2s cubic-bezier(.5,0,.2,1),opacity .8s .35s}
-.inv .kerongsang-b{display:block}
-.inv .kerongsang-b svg{display:block;width:100%;height:auto}
-.inv .kerongsang-b.ibu{width:136px}.inv .kerongsang-b.anak{width:70px}
-.inv .kerongsang-ch{display:block;width:60px;height:72px;margin:-6px 0;overflow:visible}
-.inv .kerongsang-ch:first-of-type{height:84px}
-.inv .kerongsang-foot{position:absolute;left:0;right:0;bottom:4.5%;z-index:4;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink);transition:opacity .4s}
-.inv .kerongsang-foot > *{padding:2px 16px;background:radial-gradient(closest-side,var(--sheet) 55%,transparent)}
-.inv .kerongsang-to{font-family:var(--b);font-style:italic;font-size:14px}
-.inv .kerongsang-to b{display:block;font-family:var(--s);font-style:normal;font-weight:400;font-size:26px;line-height:1.2;color:var(--accent)}
-.inv .kerongsang-hint{font-family:var(--d);font-weight:600;font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
-.inv.opening .kerongsang-set{transform:translate(-50%,-26cqh) scale(1.04);opacity:0}
-.inv.opening .kerongsang-pan.l{transform:translateX(-64%);opacity:0}
-.inv.opening .kerongsang-pan.r{transform:scaleX(-1) translateX(-64%);opacity:0}
-.inv.opening .kerongsang-head,.inv.opening .kerongsang-foot{opacity:0}
-.inv.opening .cv-kerongsang{opacity:0}
-/* page: lace border, one brooch above the names */
-.inv .pg-kerongsang{background:url(assets/silk.jpg) 0 0/300px,var(--ground);background-blend-mode:soft-light;padding:30px 26px}
-.inv .kerongsang-sheet{position:relative;width:100%;flex:1;align-self:stretch;background:url(assets/silk.jpg) 0 0/300px,var(--sheet);background-blend-mode:soft-light;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:36px 24px;text-align:center;color:var(--ink);box-shadow:inset 0 0 0 10px var(--sheet),inset 0 0 0 10.7px color-mix(in srgb,var(--accent) 55%,transparent),0 12px 26px rgba(0,0,0,.3)}
-.inv .kerongsang-ed{position:absolute;pointer-events:none}
-.inv .kerongsang-ed.t,.inv .kerongsang-ed.b{left:0;right:0;height:16px;background:var(--kr-lace) 0 0/28px 16px repeat-x}
-.inv .kerongsang-ed.t{top:-15px;transform:scaleY(-1)}.inv .kerongsang-ed.b{bottom:-15px}
-.inv .kerongsang-ed.l,.inv .kerongsang-ed.r{top:0;bottom:0;width:16px;background:var(--kr-lacev) 0 0/16px 28px repeat-y}
-.inv .kerongsang-ed.l{left:-15px}.inv .kerongsang-ed.r{right:-15px;transform:scaleX(-1)}
-.inv .kerongsang-one{width:min(34%,130px);filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
-.inv .kerongsang-one svg{display:block;width:100%;height:auto}
-.inv .pg-kerongsang .kicker{color:var(--ink);opacity:.8;font-weight:600;letter-spacing:.4em}
-.inv .pg-kerongsang .names{font-size:clamp(42px,13cqi,54px);color:var(--accent)}
-.inv .pg-kerongsang .names .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold)}
-.inv .kerongsang-rule{display:flex;align-items:center;gap:8px;width:170px}
-.inv .kerongsang-rule i{flex:1;height:1px;background:color-mix(in srgb,var(--gold) 80%,transparent)}
-.inv .kerongsang-rule b{width:26px;display:block}.inv .kerongsang-rule b svg{display:block;width:100%;height:auto}
-.inv .kerongsang-date{font-family:var(--d);font-weight:600;font-size:13px;letter-spacing:.26em;text-transform:uppercase}
-.inv .kerongsang-ven{font-family:var(--b);font-size:15px;line-height:1.5}
-.inv .kerongsang-ven span{font-style:italic;opacity:.8}
-/* skin: lace-edged cards with brooch bullets */
-.fam-kerongsang .scroller{background:url(assets/silk.jpg) 0 0/300px,var(--ground);background-blend-mode:soft-light}
-.fam-kerongsang.cardsecs .sec{margin:34px 18px;background:url(assets/silk.jpg) 0 0/300px,var(--sheet);background-blend-mode:soft-light;box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 7.6px color-mix(in srgb,var(--accent) 45%,transparent),0 10px 22px rgba(0,0,0,.25)}
-.fam-kerongsang.cardsecs .sec::before,.fam-kerongsang.cardsecs .sec::after{content:"";position:absolute;left:0;right:0;height:16px;background:var(--kr-lace) 0 0/28px 16px repeat-x;pointer-events:none}
-.fam-kerongsang.cardsecs .sec::before{top:-15px;transform:scaleY(-1)}
-.fam-kerongsang.cardsecs .sec::after{bottom:-15px}
-.fam-kerongsang .sec h2{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent);letter-spacing:.3em}
-.fam-kerongsang .kerongsang-hb{width:18px;height:18px;flex:none;background:var(--kr-bul) center/contain no-repeat;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
-.fam-kerongsang .info,.fam-kerongsang .info > div{border-color:color-mix(in srgb,var(--accent) 22%,transparent)}
-.fam-kerongsang .submit{background:var(--accent)}
+.inv .cv-kerongsang2{background:transparent;overflow:hidden;transition:opacity .45s 1.05s}
+.inv .kr-stage{position:absolute;left:12%;right:12%;top:15%;z-index:2}
+.inv .cv-kerongsang2 .kr-card{padding:9px;transform:rotate(-1deg);transition:transform 1s cubic-bezier(.55,0,.3,1) .4s}
+.inv .cv-kerongsang2 .kr-ci{padding:104px 12px 30px}
+.inv .kr-cn{font-family:"Pinyon Script",cursive;font-size:clamp(34px,11cqi,46px);line-height:1.02;margin:12px 0 10px;display:flex;flex-direction:column;align-items:center}
+.inv .kr-cn span,.inv .kr-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--gold);margin:2px 0}
+.inv .kr-cd{font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.34em;color:var(--accent)}
+.inv .kr-brooch{position:absolute;left:50%;top:-10%;width:46%;transform:translateX(-50%) rotate(-4deg);transition:transform .7s cubic-bezier(.4,0,.2,1),opacity .5s .2s}
+/* the pin line through the card, under the brooch */
+.inv .kr-brooch::before{content:"";position:absolute;left:12%;right:12%;top:54%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.25) 20%,rgba(0,0,0,.25) 80%,transparent);filter:blur(1px)}
+.inv .kr-foot{position:absolute;left:0;right:0;bottom:6%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .kr-to{text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.inv .kr-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.85}
+.inv .kr-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:27px}
+.inv .kr-open{border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:var(--btn);backdrop-filter:blur(4px);color:var(--pagefg);cursor:pointer;
+  padding:13px 36px;border-radius:999px;font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+/* opening: unpin the brooch, then draw the card up and off the cloth */
+.inv.opening .kr-brooch{transform:translate(-30%,-60%) rotate(8deg) scale(1.08);opacity:0}
+.inv.opening .cv-kerongsang2 .kr-card{transform:translateY(-135%) rotate(-3deg)}
+.inv.opening .kr-foot{opacity:0}
+.inv.opening .cv-kerongsang2{opacity:0}
+
+/* page */
+.inv .pg-kerongsang2{background:var(--ground);color:var(--pagefg);padding:58px 22px 118px;justify-content:center;overflow:hidden}
+.inv .pg-kerongsang2 > :not(.kr-cloth){position:relative;z-index:2}
+.inv .kr-pcard{width:86%;max-width:330px;padding:9px;transform:rotate(.8deg)}
+.inv .kr-pcard .kr-ibu{position:absolute;left:50%;top:-44px;width:28%;transform:translateX(-50%) rotate(-5deg);z-index:2}
+.inv .kr-pcard .kr-ci{padding:46px 14px 18px}
+.inv .kr-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(38px,11.5cqi,48px);line-height:1;margin:8px 0 8px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .kr-date{font-family:"Cormorant Garamond",serif;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.inv .kr-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:3px;opacity:.75}
+.inv .kr-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;margin-top:10px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--ink);text-decoration:none}
+.inv .kr-ven::after{content:" \2192";font-style:normal;color:var(--accent)}
+.inv .kr-set{display:flex;justify-content:space-between;width:74%;max-width:290px;margin-top:16px}
+.inv .kr-chain{position:absolute;left:0;top:14px;width:100%;height:40px;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+.inv .kr-chain path{fill:none;stroke:#d9b45e;stroke-width:2.2;stroke-dasharray:2.2 1.3;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.inv .kr-pin{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--pagefg);width:40%}
+.inv .kr-pin .kr-anak{width:54px}
+.inv .kr-pin b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:11px;letter-spacing:.26em;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.5);white-space:nowrap}
+
+/* skin: ivory cards on the songket, headings under a small anak brooch */
+.fam-kerongsang .scroller{background:var(--ground)}
+.fam-kerongsang .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:var(--tx) 64% 50%/auto 125%;opacity:.55}
+.fam-kerongsang.kr-tone .scroller::before{filter:grayscale(1) contrast(1.3);mix-blend-mode:overlay;opacity:.7}
+.fam-kerongsang.cardsecs .sec{background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;color:var(--ink);border-radius:2px;
+  box-shadow:inset 0 0 0 8px var(--sheet),inset 0 0 0 9px color-mix(in srgb,var(--gold) 65%,transparent),0 16px 28px -10px rgba(0,0,0,.6)}
+.fam-kerongsang .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent);padding-top:34px;background:var(--kr-bul) 50% 0/28px no-repeat}
+.fam-kerongsang .sec,.fam-kerongsang .sec p,.fam-kerongsang .info b{color:var(--ink)}
+.fam-kerongsang .info,.fam-kerongsang .info > div{border:0!important;background:none!important}
+.fam-kerongsang .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important;padding:14px 6px!important}
+.fam-kerongsang .info > div:last-child{border-bottom:0!important}
+.fam-kerongsang .info span{color:var(--accent)}
+.fam-kerongsang .ibtn{border-color:color-mix(in srgb,var(--gold) 60%,transparent);border-radius:999px;color:var(--accent);background:transparent}
+.fam-kerongsang .seg button[aria-pressed="true"],.fam-kerongsang button.submit{color:var(--sheet)!important;background:var(--accent)!important}
+.fam-kerongsang .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
 .fam-kerongsang .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .kerongsang-set,.inv .kerongsang-pan,.inv .cv-kerongsang{transition:none}}
-.inv .kerongsang-mesh{fill:none;stroke:color-mix(in srgb,var(--gold) 75%,#fff);stroke-width:.8}
-.inv .kerongsang-meshd{fill:color-mix(in srgb,var(--gold) 75%,#fff)}
+@media (prefers-reduced-motion: reduce){.inv .kr-brooch,.inv .cv-kerongsang2 .kr-card{transition:none}}
+.inv .pg-kerongsang2 .couple-ph.front{width:30%;margin-bottom:8px}
+/* a soft fall-off of light at the foot of the cloth so the guest's name reads */
+.inv .kr-scrim{position:absolute;left:0;right:0;bottom:0;height:34%;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,var(--scrim) 55%);transition:opacity .4s}
+.inv.opening .kr-scrim{opacity:0}
+.inv .pg-kerongsang2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:42%;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,var(--scrim) 70%)}

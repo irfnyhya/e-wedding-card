@@ -1,79 +1,97 @@
-/* ===== silangkata ===== */
-.inv .cv-silangkata{background:var(--ground);overflow:hidden;transition:opacity .45s 1.3s}
-.inv .cv-silangkata .silangkata-desk,.inv .pg-silangkata .silangkata-desk{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 45%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 65%,color-mix(in srgb,var(--ground) 80%,#000))}
-.inv .cv-silangkata .silangkata-desk::after,.inv .pg-silangkata .silangkata-desk::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/280px;mix-blend-mode:soft-light;opacity:.5}
-.inv .silangkata-paper{position:absolute;inset:54px 12px 14px;z-index:2;background:var(--sheet);transform:rotate(-.6deg);box-shadow:0 2px 3px rgba(0,0,0,.18),0 24px 40px -16px rgba(0,0,0,.5);padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink);isolation:isolate}
-.inv .silangkata-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.75;z-index:-1;pointer-events:none}
-.inv .silangkata-paper::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(180deg,transparent 47.6%,rgba(0,0,0,.05) 48%,rgba(255,255,255,.35) 48.4%,transparent 49.4%),linear-gradient(90deg,rgba(0,0,0,.04),transparent 8%,transparent 92%,rgba(0,0,0,.05))}
-.inv .silangkata-mast{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:8px;background:var(--accent);color:var(--sheet);padding:8px 8px 6px;box-shadow:0 3px 0 var(--sheet),0 4px 0 var(--ink)}
-.inv .silangkata-mast span{font-family:"Jost",sans-serif;font-size:7px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;padding-bottom:3px}
-.inv .silangkata-mast span:first-child{text-align:left}.inv .silangkata-mast span:last-child{text-align:right}
-.inv .silangkata-mast b{font-family:var(--d);font-weight:700;font-size:clamp(20px,6.6cqi,26px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
-.inv .silangkata-sub{font-family:"Jost",sans-serif;font-size:8px;letter-spacing:.22em;text-transform:uppercase;margin:11px 0 0;opacity:.8}
-.inv .silangkata-q{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin:2px 0 10px}
-.inv .silangkata-tap{display:block;width:min(100%,calc(var(--cols,9) * 31px));border:0;padding:0;margin:0 auto;background:none;cursor:pointer;font:inherit;color:inherit}
-.inv .silangkata-grid{display:block;position:relative;width:min(100%,calc(var(--cols) * 31px));margin:0 auto;aspect-ratio:var(--cols)/var(--rows)}
-.inv .silangkata-tap .silangkata-grid{width:100%}
-.inv .silangkata-c{position:absolute;width:calc(100% / var(--cols));height:calc(100% / var(--rows));background:color-mix(in srgb,var(--sheet) 70%,#fff);outline:1px solid var(--ink);outline-offset:-.5px;display:flex;align-items:center;justify-content:center}
-.inv .silangkata-c i{position:absolute;top:1px;left:2px;font-family:"Jost",sans-serif;font-style:normal;font-size:6.5px;line-height:1;font-weight:500}
-.inv .silangkata-l{font-family:"Caveat",cursive;font-weight:600;font-size:clamp(15px,5cqi,20px);line-height:1;color:var(--pen);transform:rotate(-4deg) translateY(1px)}
-.inv .cv-silangkata .silangkata-l{opacity:0}
-.inv .silangkata-clues{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;padding-top:7px;border-top:1px solid var(--ink);text-align:left}
-.inv .silangkata-clues h4{margin:0 0 4px;font-family:var(--d);font-weight:700;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
-.inv .silangkata-clues ol{list-style:none;margin:0;padding:0}
-.inv .silangkata-clues li{display:grid;grid-template-columns:15px 1fr;gap:2px;font-size:13px;line-height:1.24;margin-bottom:5px}
-.inv .silangkata-clues li b{font-family:"Jost",sans-serif;font-size:9px;font-weight:600;padding-top:2px}
-.inv .silangkata-clues li em{font-style:normal;opacity:.65;font-size:11px}
-.inv .silangkata-clues li.inf span{font-style:italic}
-.inv .silangkata-bot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px}
-.inv .silangkata-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;margin:0}
-.inv .silangkata-to b{display:block;font-family:var(--d);font-style:normal;font-weight:400;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
-.inv .silangkata-hint{font-family:"Jost",sans-serif;font-size:8px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin:0}
-.inv .silangkata-pencil{position:absolute;right:-58px;bottom:178px;width:200px;height:auto;z-index:3;transform:rotate(-16deg);filter:drop-shadow(5px 9px 5px rgba(0,0,0,.35));transition:opacity .4s .9s}
-@keyframes silangkataWrite{from{opacity:0;transform:scale(1.6) rotate(-10deg)}to{opacity:1;transform:rotate(-4deg) translateY(1px)}}
-.inv.opening .cv-silangkata .silangkata-l{animation:silangkataWrite .22s var(--d,0s) ease-out both}
-.inv.opening .silangkata-pencil{opacity:0}
-.inv.opening .silangkata-tap{pointer-events:none}
-.inv.opening .cv-silangkata{opacity:0}
-/* page: the solved puzzle */
-.inv .pg-silangkata{background:var(--ground);padding:20px 12px 30px}
-.inv .pg-silangkata .silangkata-paper{position:relative;inset:auto;width:100%;max-width:368px;transform:rotate(.4deg);padding:14px 16px 16px}
-.inv .pg-silangkata .silangkata-sub{margin-top:12px}
-.inv .silangkata-names{font-size:clamp(34px,10.4cqi,44px);line-height:1.15;color:var(--accent);margin:2px 0 8px}
-.inv .silangkata-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--ink)}
-.inv .silangkata-wrap{width:100%;display:flex;justify-content:center}
-.inv .pg-silangkata .silangkata-c.nm{background:color-mix(in srgb,var(--accent) 13%,var(--sheet))}
-.inv .pg-silangkata .silangkata-l{font-family:"Jost",sans-serif;font-weight:500;font-size:clamp(11px,3.6cqi,14px);color:var(--ink);transform:translateY(1.5px)}
-.inv .pg-silangkata .silangkata-c.nm .silangkata-l{color:var(--accent);font-weight:600}
-.inv .silangkata-foot{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;opacity:.75;margin:10px 0 0}
-/* skin: newsprint panels, headings set in answer boxes, box-strip dividers */
-.fam-silangkata .scroller{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 60%)}
-.fam-silangkata.cardsecs .sec{background:var(--sheet);border-top:3px solid var(--ink)!important;box-shadow:0 2px 3px rgba(0,0,0,.14),0 16px 26px -14px rgba(0,0,0,.45);isolation:isolate}
-.fam-silangkata .silangkata-sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.7;z-index:-1;pointer-events:none}
-.fam-silangkata .silangkata-sec::before{content:"";position:absolute;left:0;right:0;top:3px;height:1px;background:var(--ink)}
-.fam-silangkata .sec h2.silangkata-h{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;letter-spacing:0;color:var(--ink)}
-.fam-silangkata .silangkata-w{display:inline-flex}
-.fam-silangkata .silangkata-bx{position:relative;width:21px;height:24px;display:flex;align-items:center;justify-content:center;outline:1px solid var(--ink);outline-offset:-.5px;background:color-mix(in srgb,var(--sheet) 70%,#fff);font-family:"Jost",sans-serif;font-weight:500;font-size:12px;padding-top:3px}
-.fam-silangkata .silangkata-bx i{position:absolute;top:1px;left:2px;font-style:normal;font-size:6px;font-weight:500}
-.fam-silangkata .silangkata-w:first-child .silangkata-bx:first-child{background:color-mix(in srgb,var(--accent) 14%,var(--sheet))}
-.fam-silangkata .sec .rule{width:116px;height:12px;background:repeating-linear-gradient(90deg,var(--ink) 0 12px,transparent 12px 13px,color-mix(in srgb,var(--sheet) 70%,#fff) 13px 25px,var(--ink) 25px 26px);outline:1px solid var(--ink);margin:2px auto}
-.fam-silangkata .sec .rule::before,.fam-silangkata .sec .rule::after,.fam-silangkata .sec .rule i{display:none}
-.fam-silangkata .info,.fam-silangkata .info > div{border-color:var(--ink)}
-.fam-silangkata .info span,.fam-silangkata .count span,.fam-silangkata label{font-family:"Jost",sans-serif;letter-spacing:.2em}
-.fam-silangkata .count{gap:0}
-.fam-silangkata .count div{outline:1px solid var(--ink);outline-offset:-.5px;background:color-mix(in srgb,var(--sheet) 70%,#fff)}
-.fam-silangkata .count div + div{border-left:0}
-.fam-silangkata .count b{font-family:"Caveat",cursive;font-weight:600;color:var(--pen);font-size:32px}
-.fam-silangkata .timeline b{font-family:"Jost",sans-serif;font-weight:500;font-size:13px}
-.fam-silangkata .submit{background:var(--ink);font-family:"Jost",sans-serif;letter-spacing:.3em}
-.fam-silangkata .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+/* ===== silangkata (weekend crossword page, fountain pen, desk) ===== */
+.inv .sk-desk{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 40% 35%,rgba(255,255,255,.22),transparent 70%),var(--ground);overflow:hidden}
+.inv .sk-desk::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/200px;mix-blend-mode:multiply;opacity:.3}
+.inv .sk-dark .sk-desk{background:radial-gradient(ellipse 80% 60% at 40% 35%,rgba(255,255,255,.08),transparent 70%),var(--ground)}
+.inv .sk-dark .sk-desk::after{mix-blend-mode:soft-light;opacity:.5}
+
+/* newsprint */
+.inv .sk-paper{background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;color:var(--ink);font-family:"Old Standard TT",serif;text-align:center;
+  box-shadow:0 22px 34px -14px rgba(20,14,8,.5),0 2px 6px rgba(20,14,8,.18)}
+.inv .sk-dark .sk-paper{box-shadow:0 24px 40px -12px rgba(0,0,0,.85),0 2px 6px rgba(0,0,0,.4)}
+/* the fold across the page: a soft valley of shade and light */
+.inv .sk-crease{position:absolute;left:0;right:0;top:58%;height:26px;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.05) 45%,rgba(0,0,0,.1) 50%,rgba(255,255,255,.35) 52%,transparent)}
+.inv .sk-dl{display:flex;justify-content:space-between;border-top:2px solid var(--ink);border-bottom:.6px solid var(--ink);padding:4px 1px 3px;margin-top:1px;
+  font-size:7.5px;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 -3px 0 var(--sheet),0 -3.6px 0 var(--ink)}
+.inv .sk-title{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;font-size:clamp(28px,9cqi,36px);line-height:1;margin:12px 0 4px;letter-spacing:-.01em}
+.inv .sk-deck{font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.8;padding-bottom:10px;border-bottom:.6px solid var(--ink)}
+
+/* the grid: fine hairline squares, answers in fountain-pen ink */
+.inv .sk-grid{--cw:min(calc(60cqi / var(--cols)),calc(52cqi / var(--rows)));position:relative;width:calc(var(--cw) * var(--cols));height:calc(var(--cw) * var(--rows));margin:14px auto 12px}
+.inv .sk-grid.pg{--cw:min(calc(60cqi / var(--cols)),calc(44cqi / var(--rows)));margin:12px auto 4px}
+.inv .sk-c{position:absolute;width:var(--cw);height:var(--cw);background:color-mix(in srgb,var(--sheet) 70%,#fff);box-shadow:0 0 0 .7px var(--ink);display:flex;align-items:center;justify-content:center}
+.inv .sk-c i{position:absolute;left:1.5px;top:0;font-style:normal;font-size:calc(var(--cw) * .24);line-height:1.15;opacity:.8}
+.inv .sk-l{font-family:"Caveat",cursive;font-weight:600;font-size:calc(var(--cw) * .74);line-height:1;color:var(--pen);transform:translate(6%,8%) rotate(-4deg)}
+.inv .sk-c:nth-child(3n) .sk-l{transform:translate(0,6%) rotate(3deg)}
+.inv .sk-c:nth-child(4n+1) .sk-l{transform:translate(4%,10%) rotate(-1deg)}
+.inv .sk-grid.cv .sk-l.x{opacity:0;transition:opacity .3s ease var(--d)}
+.inv.opening .sk-grid.cv .sk-l.x{opacity:.95}
+
+/* clues in two columns */
+.inv .sk-clues{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;border-top:.6px solid var(--ink);padding-top:8px}
+.inv .sk-clues h4{font-family:"Old Standard TT",serif;font-weight:700;font-size:8px;letter-spacing:.28em;text-transform:uppercase;margin:0 0 4px}
+.inv .sk-clues ol{list-style:none;margin:0;padding:0}
+.inv .sk-clues li{font-size:9.5px;line-height:1.3;margin-bottom:3px;text-indent:-9px;padding-left:9px}
+.inv .sk-clues li b{font-weight:700;margin-right:2px}
+.inv .sk-clues em{opacity:.7}
+
+/* cover */
+.inv .cv-silangkata2{background:var(--ground);overflow:hidden;transition:opacity .45s 1.2s}
+.inv .sk-cp{position:absolute;left:7%;right:7%;top:5.5%;padding:14px 18px 16px;transform:rotate(-1deg);z-index:2}
+.inv .sk-penw{position:absolute;width:74%;right:-15%;top:67%;z-index:3;transform:rotate(-27deg);filter:drop-shadow(0 14px 10px rgba(20,14,8,.4)) drop-shadow(0 3px 3px rgba(20,14,8,.3));
+  transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .7s .5s}
+.inv .sk-pen{display:block;width:100%;height:auto}
+.inv .sk-foot{position:absolute;left:0;right:0;bottom:6%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .sk-to{text-align:center}
+.inv .sk-to small{display:block;font-family:"Old Standard TT",serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .sk-to b{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;font-size:21px}
+.inv .sk-open{border:1px solid color-mix(in srgb,var(--pagefg) 42%,transparent);background:transparent;color:var(--pagefg);cursor:pointer;padding:13px 34px;border-radius:999px;
+  font-family:"Old Standard TT",serif;font-size:10.5px;letter-spacing:.32em;text-transform:uppercase}
+/* opening: the pen lifts away and the remaining answers ink in */
+.inv.opening .sk-foot{opacity:0}
+.inv.opening .sk-penw{transform:translate(40%,-30%) rotate(-40deg);opacity:0}
+.inv.opening .cv-silangkata2{opacity:0}
+
+/* page: the solved puzzle as a newspaper column */
+.inv .pg-silangkata2{background:var(--ground);color:var(--pagefg);justify-content:flex-start;padding:30px 0 92px}
+.inv .pg-silangkata2 > :not(.sk-desk){position:relative;z-index:2}
+.inv .sk-pp{width:88%;max-width:350px;padding:14px 20px 18px;transform:rotate(.6deg);display:flex;flex-direction:column;align-items:center}
+.inv .sk-pp .sk-dl{align-self:stretch;margin-bottom:12px}
+.inv .sk-pp .sk-crease{display:none}
+.inv .sk-pp .couple-ph.front{width:30%;margin-bottom:10px;filter:grayscale(.15) contrast(1.02)}
+.inv .sk-k{font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.32em;color:var(--accent)}
+.inv .sk-names{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;font-size:clamp(32px,10cqi,42px);line-height:1.04;margin:6px 0 6px;color:var(--ink)}
+.inv .sk-names span{font-size:.62em;opacity:.75}
+.inv .sk-date{font-size:10px;letter-spacing:.26em;text-transform:uppercase}
+.inv .sk-ven{font-style:italic;font-size:15px;margin-top:3px}
+.inv .sk-tt{display:block;align-self:stretch;height:4px;border-top:2px solid var(--ink);border-bottom:.6px solid var(--ink);margin:12px 0 0}
+.inv .sk-pills{display:flex;gap:8px;margin-top:12px}
+.inv .sk-pill{padding:9px 20px;border-radius:999px;border:1px solid color-mix(in srgb,var(--ink) 40%,transparent);color:var(--ink);text-decoration:none;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase}
+
+/* skin: newsprint columns with a thick-thin rule under each heading */
+.fam-silangkata .scroller{background:var(--ground)}
+.fam-silangkata .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/200px;mix-blend-mode:multiply;opacity:.28}
+.fam-silangkata.sk-dark .scroller::before{mix-blend-mode:soft-light;opacity:.45}
+.fam-silangkata .sheet{background:transparent}
+.fam-silangkata .sec{font-family:"Old Standard TT",serif}
+.fam-silangkata.cardsecs .sec{background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:0;box-shadow:0 14px 24px -12px rgba(20,14,8,.4)}
+.fam-silangkata.sk-dark.cardsecs .sec{box-shadow:0 16px 28px -10px rgba(0,0,0,.75)}
+.fam-silangkata .sec h2{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;font-size:26px;color:var(--ink);align-self:stretch;padding-bottom:10px;
+  border-bottom:.6px solid var(--ink);box-shadow:0 3px 0 var(--sheet),0 5px 0 var(--ink)}
+.fam-silangkata .sec > .rule{display:none}
+.fam-silangkata .sec p,.fam-silangkata .info b{color:var(--ink)}
+.fam-silangkata .info,.fam-silangkata .info > div{border:0!important;background:none!important}
+.fam-silangkata .info > div{border-bottom:.6px solid var(--rule)!important;padding:12px 4px!important}
+.fam-silangkata .info > div:last-child{border-bottom:0!important}
+.fam-silangkata .info span{color:var(--accent);letter-spacing:.24em;font-size:9px}
+.fam-silangkata .count div{background:none!important;border:0!important;border-left:.6px solid var(--rule)!important}
+.fam-silangkata .count div:first-child{border-left:0!important}
+.fam-silangkata .count b{font-family:"Old Standard TT",serif;font-weight:400;font-size:30px;color:var(--ink)}
+.fam-silangkata .count span{letter-spacing:.22em;font-size:8.5px}
+.fam-silangkata .timeline b{color:var(--accent)}
+.fam-silangkata .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--ink) 40%,transparent);color:var(--ink);background:transparent}
+.fam-silangkata .seg button[aria-pressed="true"],.fam-silangkata button.submit{background:var(--ink)!important;color:var(--sheet)!important;border-color:var(--ink)!important}
+.fam-silangkata input,.fam-silangkata select,.fam-silangkata textarea{background:transparent;color:var(--ink)}
+.fam-silangkata .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
 .fam-silangkata .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv.opening .cv-silangkata .silangkata-l{animation:none;opacity:1}.inv .cv-silangkata{transition:none}}
-.inv .silangkata-coupon{position:relative;width:min(100%,280px);border:1.2px dashed var(--ink);padding:9px 12px 8px;text-align:left;display:flex;flex-direction:column;gap:5px}
-.inv .silangkata-coupon::before{content:"";position:absolute;left:-9px;top:-9px;width:16px;height:12px;background:radial-gradient(circle at 4px 6px,transparent 2.4px,var(--ink) 2.6px 3.4px,transparent 3.6px),radial-gradient(circle at 12px 6px,transparent 2.4px,var(--ink) 2.6px 3.4px,transparent 3.6px);opacity:.75;background-color:var(--sheet)}
-.inv .silangkata-ch{margin:0;font-family:var(--d);font-weight:700;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
-.inv .silangkata-cl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:end}
-.inv .silangkata-cl span{font-family:"Jost",sans-serif;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;padding-bottom:3px}
-.inv .silangkata-cl b{font-family:"Caveat",cursive;font-weight:600;font-size:19px;line-height:1;color:var(--pen);border-bottom:1px dotted var(--ink);padding:0 4px 1px;min-height:20px}
-.inv .silangkata-bot{position:relative;width:100%;padding-top:16px}
-.inv .silangkata-bot::before{content:"";position:absolute;left:-16px;right:-16px;top:0;border-top:1px dashed color-mix(in srgb,var(--ink) 60%,transparent)}
+@media (prefers-reduced-motion: reduce){.inv .sk-penw,.inv .sk-grid.cv .sk-l.x{transition:none}}

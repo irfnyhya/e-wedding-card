@@ -1,54 +1,96 @@
-/* ===== rama: butterfly specimen box under glass ===== */
-.inv .cv-rama{background:var(--ground);overflow:hidden;transition:opacity .6s .9s}
-.inv .cv-rama::before,.inv .pg-rama::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
-.inv .rm-box{position:absolute;left:10px;right:10px;top:10px;bottom:42px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px,rgba(255,255,255,.05) 3px 4px,transparent 4px 9px),repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--woodL),var(--wood) 60%);box-shadow:0 18px 30px rgba(0,0,0,.42),0 2px 4px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,255,255,.14),inset 0 2px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.25)}
-.inv .rm-in{position:absolute;inset:16px;background:var(--sheet);overflow:hidden;box-shadow:inset 0 5px 12px rgba(0,0,0,.32),inset 0 0 0 1px rgba(0,0,0,.3),inset 0 0 26px rgba(0,0,0,.1)}
-.inv .rm-lin{position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:multiply;opacity:.22;pointer-events:none}
-.inv .rm-mitre{position:absolute;inset:0;pointer-events:none;background:linear-gradient(45deg,transparent calc(50% - .6px),rgba(0,0,0,.4) 50%,transparent calc(50% + .6px)) 0 0/16px 16px no-repeat,linear-gradient(45deg,transparent calc(50% - .6px),rgba(0,0,0,.4) 50%,transparent calc(50% + .6px)) 100% 100%/16px 16px no-repeat,linear-gradient(135deg,transparent calc(50% - .6px),rgba(0,0,0,.4) 50%,transparent calc(50% + .6px)) 100% 0/16px 16px no-repeat,linear-gradient(135deg,transparent calc(50% - .6px),rgba(0,0,0,.4) 50%,transparent calc(50% + .6px)) 0 100%/16px 16px no-repeat}
-.inv .rm-title{position:absolute;left:9%;right:9%;top:3.4%;padding:14px 10px 12px;background:var(--label);box-shadow:inset 0 0 0 4px var(--label),inset 0 0 0 4.6px var(--ink),inset 0 0 0 6.5px var(--label),inset 0 0 0 7px color-mix(in srgb,var(--ink) 60%,transparent),0 3px 6px rgba(0,0,0,.18);text-align:center;color:var(--ink);transform:rotate(-.6deg)}
-.inv .rm-k{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
-.inv .rm-n{font-family:var(--s);font-size:clamp(46px,14cqi,56px);line-height:.92;color:var(--accent);margin:6px 0 4px}
-.inv .rm-n i{display:inline-block;font-family:"IM Fell English",serif;font-size:.42em;color:var(--gold);margin:0 .3em}
-.inv .rm-d{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase}
-.inv .rm-tp{position:absolute;top:7px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--gold) 35%,#000 110%);box-shadow:1px 2px 2px rgba(0,0,0,.3)}
-.inv .rm-tp.l{left:9px}.inv .rm-tp.r{right:9px}
-.inv .rm-tray{position:absolute;left:0;width:100%;top:30.5%;height:auto;overflow:visible}
-.inv .rm-guest{position:absolute;left:50%;bottom:3.2%;transform:translateX(-50%) rotate(.8deg);min-width:58%;padding:8px 16px 7px;background:var(--label);border:.6px solid color-mix(in srgb,var(--ink) 70%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.15);text-align:center;color:var(--ink);display:flex;flex-direction:column;gap:2px}
-.inv .rm-guest span{font-family:"IM Fell English",serif;font-style:italic;font-size:11px;opacity:.85}
-.inv .rm-guest b{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
-.inv .rm-guest .rm-tp{top:-3px;left:50%;margin-left:-3.5px}
-.inv .rm-glass{position:absolute;inset:16px;z-index:5;pointer-events:none;background:linear-gradient(118deg,transparent 18%,rgba(255,255,255,.2) 22%,rgba(255,255,255,.05) 30%,transparent 38%,transparent 56%,rgba(255,255,255,.12) 59%,transparent 62%),linear-gradient(180deg,rgba(220,240,240,.07),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35),inset 0 0 0 3px rgba(255,255,255,.08),inset 0 0 30px rgba(255,255,255,.08);transition:transform 1.25s cubic-bezier(.5,0,.25,1)}
-.inv .rm-glass i{position:absolute;right:8%;top:6%;width:28%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(-28deg)}
-.inv .rm-plate{position:absolute;left:50%;bottom:-4px;width:118px;height:24px;margin-left:-59px;border:0;padding:0;cursor:pointer;z-index:6;background:url(assets/foil.jpg) 0 0/180px,var(--gold);background-blend-mode:overlay;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),inset 0 0 0 3px transparent,inset 0 0 0 3.5px rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;transition:opacity .4s}
-.inv .rm-plate::before,.inv .rm-plate::after{content:"";position:absolute;top:50%;width:4px;height:4px;margin-top:-2px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,rgba(0,0,0,.5))}
-.inv .rm-plate::before{left:6px}.inv .rm-plate::after{right:6px}
-.inv .rm-plate span{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(0,0,0,.6);text-shadow:0 1px 0 rgba(255,255,255,.35)}
-.inv .rm-hint{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12.5px;color:var(--pagefg);opacity:.8;transition:opacity .3s}
-.inv.opening .rm-glass{transform:translateX(106%)}
-.inv.opening .rm-plate,.inv.opening .rm-hint{opacity:0}
+/* ===== rama: natural-history plate in a glazed shadow box ===== */
+.inv .lp-wall{position:absolute;inset:0;background:radial-gradient(ellipse 85% 55% at 50% 30%,rgba(255,250,235,.16),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.22)),var(--ground)}
+.inv .lp-wall::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/340px;mix-blend-mode:soft-light;opacity:.5}
+.inv .lp-svg{display:block;width:100%;height:auto;overflow:visible}
+.inv .lp-fig{display:block;font-family:"IM Fell English",serif;font-size:2.7cqi;line-height:1.2;text-align:center;color:var(--ink);margin-top:-.6cqi;white-space:nowrap}
+.inv .lp-fig i{font-style:normal;font-family:"IM Fell English SC",serif}
+.inv .lp-ptex{position:absolute;inset:0;pointer-events:none;z-index:4;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.6}
+.inv .lp-rule{position:absolute;inset:4cqi;border:.7px solid color-mix(in srgb,var(--ink) 55%,transparent);box-shadow:inset 0 0 0 2.4px var(--sheet),inset 0 0 0 3px color-mix(in srgb,var(--ink) 35%,transparent);pointer-events:none}
+.inv .lp-ph{position:absolute;left:8cqi;right:8cqi;top:6.6cqi;display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);font-family:"IM Fell English SC",serif;font-size:3.3cqi;letter-spacing:.1em}
+.inv .lp-ph span:last-child{font-family:"IM Fell English",serif;font-style:italic;letter-spacing:.02em}
+
+/* cover */
+.inv .cv-rama{background:transparent;overflow:hidden;transition:opacity .5s 1s}
+.inv .lp-to{position:absolute;top:7.5%;left:0;right:0;text-align:center;z-index:2;color:var(--pagefg);transition:opacity .4s}
+.inv .lp-to small{display:block;font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.24em;opacity:.75}
+.inv .lp-to b{display:block;font-family:"Pinyon Script",cursive;font-weight:400;font-size:28px;line-height:1.2;margin-top:2px}
+.inv .lp-stage{position:absolute;left:9%;right:9%;top:18.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:28px;background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:var(--pagefg)}
+.inv .lp-box{position:relative;display:block;width:100%;aspect-ratio:3/4;perspective:1400px}
+.inv .lp-depth{position:absolute;inset:0;display:block;border-radius:2px;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 1px,transparent 1px 5px,rgba(255,255,255,.03) 5px 6px,transparent 6px 11px,rgba(0,0,0,.025) 11px 13px,transparent 13px 17px),linear-gradient(135deg,var(--woodL),var(--wood) 45%,var(--woodL) 70%,var(--wood));
+  box-shadow:0 30px 36px -16px rgba(0,0,0,.55),0 6px 10px rgba(0,0,0,.22)}
+/* the box interior: linen backing, inner walls throwing shadow onto the plate */
+.inv .lp-depth::before{content:"";position:absolute;inset:17px;background:url(assets/linen.jpg) 0 0/200px,color-mix(in srgb,var(--sheet) 90%,var(--wood));background-blend-mode:multiply}
+.inv .lp-depth::after{content:"";position:absolute;inset:17px;z-index:5;pointer-events:none;box-shadow:inset 0 14px 16px -6px rgba(0,0,0,.42),inset 10px 0 14px -8px rgba(0,0,0,.28),inset -6px 0 10px -8px rgba(0,0,0,.22),inset 0 0 0 1px rgba(0,0,0,.35)}
+.inv .lp-plate{position:absolute;inset:28px;display:block;overflow:hidden;container-type:inline-size;background:var(--sheet);box-shadow:0 5px 10px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.2)}
+.inv .lp-hero{position:absolute;left:19cqi;width:62cqi;top:11cqi;display:block;z-index:2}
+.inv .lp-s1{position:absolute;left:6cqi;width:36cqi;top:97cqi;display:block;z-index:2}
+.inv .lp-s2{position:absolute;right:6cqi;width:36cqi;top:99cqi;display:block;z-index:2}
+.inv .lp-s1 .lp-svg{transform:rotate(-8deg)}.inv .lp-s2 .lp-svg{transform:rotate(7deg)}
+.inv .lp-s1 .lp-fig,.inv .lp-s2 .lp-fig{font-size:2.4cqi}
+.inv .lp-spray{left:41cqi!important;width:18cqi;bottom:6cqi;background:var(--ink)!important;opacity:.7;transform:rotate(-6deg);z-index:1}
+/* the handwritten label */
+.inv .lp-label{position:absolute;left:17cqi;right:17cqi;top:63cqi;z-index:3;display:flex;flex-direction:column;align-items:center;padding:3cqi 3cqi 3.4cqi;color:var(--ink);
+  background:color-mix(in srgb,var(--sheet) 70%,#fff);border:.7px solid color-mix(in srgb,var(--ink) 70%,transparent);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--sheet) 70%,#fff),inset 0 0 0 2.6px color-mix(in srgb,var(--ink) 40%,transparent),0 1px 2px rgba(0,0,0,.12);transform:rotate(-1deg)}
+.inv .lp-lk{font-family:"IM Fell English SC",serif;font-size:2.7cqi;letter-spacing:.16em;color:var(--accent)}
+.inv .lp-ln{font-family:"Pinyon Script",cursive;font-size:8.6cqi;line-height:1.05;margin-top:1cqi;text-align:center}
+.inv .lp-ln i{font-style:normal;font-family:"IM Fell English",serif;font-style:italic;font-size:.5em;margin:0 .35em;color:var(--gold)}
+.inv .lp-ld{font-family:"IM Fell English SC",serif;font-size:3cqi;letter-spacing:.2em;margin-top:1cqi}
+/* the glazed door */
+.inv .lp-door{position:absolute;inset:0;display:block;z-index:6;transform-origin:0 50%;transition:transform 1.2s cubic-bezier(.5,.05,.2,1)}
+.inv .lp-door::before{content:"";position:absolute;inset:0;padding:17px;border-radius:2px;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.04) 0 1px,transparent 1px 5px,rgba(255,255,255,.035) 5px 6px,transparent 6px 11px,rgba(0,0,0,.03) 11px 13px,transparent 13px 17px),linear-gradient(140deg,var(--woodL),var(--wood) 40%,var(--woodL) 62%,var(--wood));
+  
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 2px 2px 0 rgba(255,255,255,.12),inset -2px -2px 0 rgba(0,0,0,.25)}
+.inv .lp-glass{position:absolute;inset:17px;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 0 2.5px rgba(255,255,255,.14);
+  background:linear-gradient(118deg,transparent 18%,rgba(255,255,255,.16) 26%,transparent 34%,transparent 60%,rgba(255,255,255,.08) 66%,transparent 71%)}
+.inv .lp-btn{display:inline-block;padding:13px 34px;border-radius:999px;border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);color:var(--pagefg);
+  font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.24em;transition:opacity .35s}
+/* opening: the glazed door swings open on its left hinge */
+.inv.opening .lp-door{transform:rotateY(-112deg)}
+.inv.opening .lp-btn,.inv.opening .lp-to{opacity:0}
 .inv.opening .cv-rama{opacity:0}
-/* page */
-.inv .pg-rama{background:var(--ground);padding:10px}
-.inv .pg-rama .rm-box{position:relative;inset:auto;flex:1;width:100%}
-.inv .pg-rama .rm-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:0 12%;color:var(--ink)}
-.inv .pg-rama .rm-in > :not(.rm-lin){position:relative}
-.inv .rm-big{width:76%;height:auto;overflow:visible;margin-bottom:-4px}
-.inv .rm-sp{font-family:"IM Fell English",serif;font-style:italic;font-size:11px;background:var(--label);border:.6px solid color-mix(in srgb,var(--ink) 70%,transparent);padding:3px 10px;margin-bottom:12px;box-shadow:0 2px 3px rgba(0,0,0,.12)}
-.inv .pg-rama .kicker{font-family:"IBM Plex Mono",monospace;color:var(--ink);font-size:9px;letter-spacing:.3em}
-.inv .pg-rama .names{font-size:clamp(54px,17cqi,68px);line-height:.88}
-.inv .pg-rama .names .amp{display:block;font-family:"IM Fell English",serif;font-size:.36em;color:var(--gold);line-height:1.4}
-.inv .rm-rule{display:flex;align-items:center;gap:6px;width:120px;color:var(--ink);opacity:.6}
-.inv .rm-rule i{flex:1;height:.6px;background:currentColor}
-.inv .rm-rule b{width:5px;height:5px;border-radius:50%;background:currentColor}
-.inv .pg-rama .caps{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em}
-/* skin: shallow framed cards, typed specimen labels for headings, a pinned butterfly in a corner */
+
+/* page: the plate out of its box */
+.inv .pg-rama{background:transparent;color:var(--ink);justify-content:center;padding:52px 0 92px;gap:16px;overflow:hidden}
+.inv .pg-rama > :not(.lp-wall){position:relative;z-index:2}
+.inv .lp-sheet{width:88%;max-width:350px;padding:13cqi 7cqi 9cqi;background:var(--sheet);box-shadow:0 18px 26px -12px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.15);
+  display:flex;flex-direction:column;align-items:center;text-align:center;container-type:inline-size;position:relative}
+.inv .lp-sheet > *:not(.lp-ptex):not(.lp-rule){position:relative;z-index:2}
+.inv .lp-sheet .lp-ph{position:absolute!important;margin:0}
+.inv .lp-pa,.inv .lp-pb{position:absolute!important;top:15cqi;width:27cqi;display:block}
+.inv .lp-pa{left:3cqi;transform:rotate(-10deg)}.inv .lp-pb{right:3cqi;transform:rotate(9deg)}
+.inv .lp-k{font-family:"IM Fell English SC",serif;font-size:11.5px;letter-spacing:.2em;color:var(--accent);margin:0 0 4px}
+.inv .pg-rama .couple-ph.front{width:38%;aspect-ratio:4/5;border-radius:50%;margin:0 auto 12px;box-shadow:0 0 0 .7px var(--ink),0 0 0 4px var(--sheet),0 0 0 4.7px color-mix(in srgb,var(--ink) 45%,transparent)}
+.inv .pg-rama .couple-ph.front img{filter:sepia(.25) saturate(.85)}
+.inv .lp-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(38px,13cqi,50px);line-height:1;margin:2px 0 6px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .lp-names span{font-family:"IM Fell English",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:2px 0}
+.inv .lp-date{font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.14em;margin:4px 0 0}
+.inv .lp-hj,.inv .lp-ven{font-family:"IM Fell English",serif;font-style:italic;font-size:14px;margin:2px 0 0;opacity:.85}
+.inv .lp-pspray{right:2cqi;bottom:1cqi;width:22cqi;background:color-mix(in srgb,var(--ink) 65%,transparent)!important;opacity:.6;transform:rotate(20deg);z-index:1!important;position:absolute!important}
+.inv .lp-tags{display:flex;gap:10px;justify-content:center}
+.inv .lp-tags a{font-family:"IM Fell English SC",serif;font-size:12.5px;letter-spacing:.14em;color:var(--ink);text-decoration:none;padding:8px 14px;background:var(--sheet);
+  border:.7px solid color-mix(in srgb,var(--ink) 60%,transparent);box-shadow:inset 0 0 0 2px var(--sheet),inset 0 0 0 2.6px color-mix(in srgb,var(--ink) 30%,transparent),0 6px 10px -4px rgba(0,0,0,.35)}
+.inv .lp-tags a:nth-child(2){transform:rotate(-2deg)}
+
+/* skin: plate-paper cards with a printed double rule */
 .fam-rama .scroller{background:var(--ground)}
-.fam-rama.cardsecs .sec{background:radial-gradient(ellipse 100% 70% at 50% 20%,color-mix(in srgb,var(--sheet) 70%,#fff),var(--sheet));box-shadow:inset 0 4px 10px rgba(0,0,0,.18),inset 0 0 0 1px rgba(0,0,0,.2),0 0 0 7px var(--wood),0 0 0 8px rgba(0,0,0,.35),0 14px 22px rgba(0,0,0,.3);padding-top:58px}
-.fam-rama .rm-sk{position:absolute;top:6px;width:70px;height:auto;overflow:visible;pointer-events:none}
-.fam-rama .rm-sk.l{left:6px}.fam-rama .rm-sk.r{right:6px}
-.fam-rama .sec h2.rm-lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;color:var(--ink);background:var(--label);padding:9px 16px 7px;box-shadow:inset 0 0 0 .6px var(--ink),inset 0 0 0 3px var(--label),inset 0 0 0 3.5px color-mix(in srgb,var(--ink) 50%,transparent),0 2px 4px rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;gap:3px;transform:rotate(-.8deg);position:relative;z-index:2}
-.fam-rama .sec h2.rm-lab small{font-family:"IM Fell English",serif;font-style:italic;font-size:10px;letter-spacing:0;text-transform:none;opacity:.7}
-.fam-rama .sec > .rule{display:none}
-.fam-rama .count b{font-family:"IBM Plex Mono",monospace;font-size:26px}
+.fam-rama .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/340px;mix-blend-mode:soft-light;opacity:.45}
+.fam-rama.cardsecs .sec{background:var(--sheet);color:var(--ink);border-radius:0;position:relative;font-family:"IM Fell English",serif;
+  box-shadow:inset 0 0 0 10px var(--sheet),inset 0 0 0 10.7px color-mix(in srgb,var(--ink) 50%,transparent),inset 0 0 0 13px var(--sheet),inset 0 0 0 13.6px color-mix(in srgb,var(--ink) 30%,transparent),0 16px 24px -12px rgba(0,0,0,.4)}
+.fam-rama.cardsecs .sec::after{content:"";position:absolute;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.5}
+.fam-rama .sec h2{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;font-size:29px;color:var(--ink)}
+.fam-rama .sec h2::before{content:attr(data-pl);display:block;font-family:"IM Fell English SC",serif;font-style:normal;font-size:11px;letter-spacing:.24em;color:var(--accent);margin-bottom:4px}
+.fam-rama .sec p,.fam-rama .info b{color:var(--ink)}
+.fam-rama .info,.fam-rama .info > div{border:0!important;background:none!important;border-radius:0!important}
+.fam-rama .info > div{border-bottom:.7px solid color-mix(in srgb,var(--ink) 30%,transparent)!important;padding:13px 6px!important}
+.fam-rama .info > div:last-child{border-bottom:0!important}
+.fam-rama .info span{font-family:"IM Fell English SC",serif;color:var(--accent);letter-spacing:.16em}
+.fam-rama .ibtn{border:.7px solid color-mix(in srgb,var(--ink) 60%,transparent);border-radius:999px;color:var(--ink);background:transparent;font-family:"IM Fell English",serif}
+.fam-rama input,.fam-rama select,.fam-rama textarea{background:transparent;color:var(--ink);border:0!important;border-bottom:.7px solid color-mix(in srgb,var(--ink) 60%,transparent)!important;border-radius:0!important;font-family:"IM Fell English",serif}
+.fam-rama .seg button{border-radius:999px}
+.fam-rama .seg button[aria-pressed="true"],.fam-rama button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-rama .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--ink);backdrop-filter:blur(6px)}
 .fam-rama .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .rm-glass,.inv .cv-rama{transition:none}}
+@media (prefers-reduced-motion: reduce){.inv .lp-door{transition:none}}

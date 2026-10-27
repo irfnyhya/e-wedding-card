@@ -135,12 +135,13 @@ function renderInvite(host,o,opts={}){
   const scroller=$('.scroller',el);
   el.__order=o;try{typeof FEATURES!=='undefined'&&FEATURES(el,o,th,L,mode,opts)}catch(e){console.warn('features',e)}
   el.classList.add('skin');try{typeof SKINS!=='undefined'&&SKINS[th.fam]&&SKINS[th.fam](el,o,th,L,mode)}catch(e){console.warn('skin',th.fam,e)}
+  try{typeof IMMERSIVE!=='undefined'&&IMMERSIVE(el,o,th,mode)}catch(e){console.warn('immersive',e)}
   const musicBtn=$('[data-music]',el);
   const yt=o.x_music&&mode!=='thumb'?Tube.attach(el,ytIdOf(o.ytMusic),ytStartOf(o.ytStart)):null;
   const playSong=()=>yt?Tube.play(yt):Music.play(o.music),stopSong=()=>yt?Tube.pause(yt):Music.stop(),songOn=()=>yt?yt.playing:Music.playing();
   const setMusicIcon=()=>{if(!musicBtn)return;const on=songOn();musicBtn.classList.toggle('playing',on);musicBtn.innerHTML=on?ICON.music:ICON.mute};
   const timers=[];
-  const open=(instant)=>{if(el.classList.contains('opening'))return;el.classList.add('opening');
+  const open=(instant)=>{if(el.classList.contains('opening'))return;el.classList.add('opening');if(!instant)try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}
     if(musicBtn){musicBtn.hidden=false;if(!instant&&opts.autoplay!==false)playSong();setMusicIcon()}
     if(instant||REDUCED){el.classList.add('card-out','opened');return}
     if(th.fam==='sampul'){timers.push(setTimeout(()=>el.classList.add('card-out'),950),setTimeout(()=>el.classList.add('opened'),2100))}

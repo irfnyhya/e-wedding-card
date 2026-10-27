@@ -1,0 +1,83 @@
+/* ===== jahit (round 7) ===== */
+.inv .jh-table{position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 50% 42%,rgba(255,255,255,.14),transparent 70%),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.25)),var(--ground)}
+.inv .jh-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.6}
+.inv .jh-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.4em;text-transform:uppercase}
+.inv .cv-jahit2,.inv .pg-jahit2,.fam-jahit{--ecru:color-mix(in srgb,color-mix(in srgb,var(--sheet) 88%,#c8b089) 95%,var(--ground))}
+.inv .jh-emb{display:block;width:100%;height:auto;overflow:visible}
+
+/* the hoop: outer ring of bent beech with a brass clamp, inner ring just showing, linen pulled taut between */
+.inv .jh-hoop{position:absolute;inset:4%;border-radius:50%;filter:drop-shadow(0 10px 12px rgba(0,0,0,.35)) drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.inv .jh-taut{position:absolute;inset:4.5%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.3),transparent 60%),var(--ecru);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),inset 0 5px 12px rgba(0,0,0,.2),inset 0 -2px 6px rgba(255,255,255,.4)}
+.inv .jh-taut .jh-emb{z-index:1;position:absolute;inset:-4%;width:108%}
+.inv .jh-taut::before,.inv .jh-cloth::before,.inv .jh-panel::before,.fam-jahit.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .05' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .24 0 0 0 0 .15 .7 0 0 0 -.25'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/240px,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.05 .9' numOctaves='2' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .24 0 0 0 0 .15 .7 0 0 0 -.25'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/240px;mix-blend-mode:multiply;opacity:.26;pointer-events:none;border-radius:inherit}
+/* undyed linen: warm ecru from the sheet, a fine irregular weave sensed rather than seen (slub noise + the linen photo at full size, low contrast) */
+.inv .jh-taut::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/512px;mix-blend-mode:soft-light;opacity:.22;pointer-events:none;z-index:0;border-radius:inherit}
+.inv .jh-ring,.inv .jh-inner{position:absolute;inset:0;border-radius:50%;pointer-events:none}
+.inv .jh-ring{background:linear-gradient(150deg,rgba(255,255,255,.45),transparent 40%,transparent 60%,rgba(0,0,0,.3)),repeating-radial-gradient(circle,rgba(90,50,20,.14) 0 1px,transparent 1px 2.7px),
+  conic-gradient(from 10deg,#dcb47e,#c4935a,#e5c391,#b98450,#d6a86e,#c9965e,#e2bd8a,#dcb47e);
+  -webkit-mask:radial-gradient(circle closest-side,transparent 91.6%,#000 92.2%,#000 99.3%,transparent 100%);mask:radial-gradient(circle closest-side,transparent 91.6%,#000 92.2%,#000 99.3%,transparent 100%)}
+.inv .jh-inner{inset:1.2%;background:linear-gradient(330deg,rgba(255,255,255,.3),transparent 50%,rgba(0,0,0,.35)),conic-gradient(from 80deg,#b98a56,#a87642,#c99a64,#a06c3a,#b98a56);
+  -webkit-mask:radial-gradient(circle closest-side,transparent 92.6%,#000 93.2%,#000 96%,transparent 96.6%);mask:radial-gradient(circle closest-side,transparent 92.6%,#000 93.2%,#000 96%,transparent 96.6%)}
+.inv .jh-screw{position:absolute;left:50%;top:-3.6%;width:9%;height:6.2%;transform:translateX(-50%);border-radius:3px 3px 1px 1px;
+  background:linear-gradient(90deg,#7a5a20,#e9cb82 35%,#b88a3a 65%,#6e5018);box-shadow:0 2px 3px rgba(0,0,0,.4)}
+.inv .jh-screw::after{content:"";position:absolute;left:-34%;right:-34%;top:30%;height:30%;border-radius:2px;background:linear-gradient(180deg,#f4dc9a,#b88a3a 55%,#6e5018)}
+.inv .jh-screw::before{content:"";position:absolute;right:-62%;top:6%;width:30%;height:88%;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.25) 0 1px,transparent 1px 2.5px),linear-gradient(180deg,#f4dc9a,#c99a44 50%,#7a5a20);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.inv .jh-needle{position:absolute;inset:4%;width:92%;height:92%;overflow:visible;z-index:4;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));transition:opacity .4s}
+
+/* cover */
+.inv .cv-jahit2{background:var(--ground);overflow:hidden;transition:opacity .45s .95s}
+.inv .jh-top{position:absolute;top:8.5%;left:0;right:0;text-align:center;color:var(--pagefg);z-index:2;transition:opacity .35s}
+.inv .jh-stage{position:absolute;left:10%;right:10%;top:16%;aspect-ratio:1;z-index:3;transition:transform .85s cubic-bezier(.5,0,.25,1) .4s,opacity .5s .7s}
+.inv .jh-cloth{position:absolute;inset:-5%;transform:rotate(5deg);clip-path:polygon(0 1%,18% 0,40% .8%,63% 0,82% .6%,100% 0,99.4% 22%,100% 46%,99.2% 70%,100% 100%,78% 99.2%,55% 100%,30% 99.3%,0 100%,.6% 74%,0 50%,.8% 26%);
+  background:linear-gradient(135deg,rgba(0,0,0,.1),transparent 12%,transparent 88%,rgba(0,0,0,.12)),linear-gradient(45deg,rgba(0,0,0,.08),transparent 14%,transparent 86%,rgba(255,255,255,.18)),radial-gradient(ellipse at 20% 15%,rgba(255,255,255,.25),transparent 50%),radial-gradient(ellipse at 85% 90%,rgba(0,0,0,.14),transparent 45%),var(--ecru);border-radius:2px;transition:opacity .4s .5s}
+.inv .jh-drape{position:absolute;inset:0;filter:drop-shadow(0 16px 18px rgba(0,0,0,.4)) drop-shadow(0 2px 2px rgba(0,0,0,.18));transition:opacity .4s .5s}
+.inv .jh-ring,.inv .jh-inner,.inv .jh-screw{transition:transform .65s cubic-bezier(.4,0,.2,1),opacity .5s .1s}
+.inv .jh-cdate{position:absolute;left:0;right:0;top:65%;text-align:center;z-index:2;color:var(--pagefg);font-family:"Cormorant Garamond",serif;font-size:11px;letter-spacing:.38em;transition:opacity .35s}
+.inv .jh-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .35s}
+.inv .jh-to{text-align:center}
+.inv .jh-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.8}
+.inv .jh-to b{font-family:"Parisienne",cursive;font-weight:400;font-size:28px}
+.inv .jh-open{border:1px solid color-mix(in srgb,var(--pagefg) 50%,transparent);background:color-mix(in srgb,var(--sheet) 16%,transparent);color:var(--pagefg);cursor:pointer;padding:13px 38px;border-radius:999px;
+  font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.32em;text-transform:uppercase}
+/* opening: the outer hoop lifts away, then the embroidered linen comes forward */
+.inv.opening .jh-hoop > .jh-ring,.inv.opening .jh-hoop > .jh-screw,.inv.opening .jh-hoop > .jh-inner{transform:translateY(-6%) scale(1.14);opacity:0}
+.inv.opening .jh-hoop > .jh-screw{transform:translate(-50%,-140%) scale(1.14)}
+.inv.opening .jh-needle,.inv.opening .jh-drape{opacity:0}
+.inv.opening .jh-stage{transform:scale(1.7);opacity:0}
+.inv.opening .jh-top,.inv.opening .jh-foot,.inv.opening .jh-cdate{opacity:0}
+.inv.opening .cv-jahit2{opacity:0}
+
+/* page: the finished piece on the table, the empty hoop beside it */
+.inv .pg-jahit2{background:var(--ground);color:var(--ink);padding:30px 20px 96px;overflow:hidden}
+.inv .jh-spare{inset:auto;left:-30%;bottom:-6%;width:74%;aspect-ratio:1;transform:rotate(-20deg);opacity:.95}
+.inv .jh-panel{position:relative;z-index:2;width:90%;max-width:350px;transform:rotate(-1deg);background:linear-gradient(172deg,transparent 30%,rgba(90,70,40,.07) 33%,rgba(255,255,255,.18) 35.5%,transparent 40%),linear-gradient(97deg,transparent 58%,rgba(90,70,40,.06) 61%,rgba(255,255,255,.14) 63%,transparent 67%),radial-gradient(ellipse at 15% 10%,rgba(255,255,255,.28),transparent 50%),radial-gradient(ellipse at 90% 95%,rgba(60,40,20,.12),transparent 50%),var(--ecru);
+  box-shadow:0 18px 28px -10px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.15);padding:12px}
+.inv .jh-pin{position:relative;z-index:1;padding:20px 12px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+/* running-stitch hem */
+.inv .jh-pin::before{content:"";position:absolute;inset:0;border:1.5px dashed color-mix(in srgb,var(--accent) 75%,transparent);pointer-events:none}
+.inv .jh-pin .jh-k{color:var(--accent);margin-top:2px}
+.inv .jh-pin .jh-nm{width:84%;margin:-2px 0 -6px}
+.inv .jh-date{font-family:"Cormorant Garamond",serif;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+.inv .jh-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.7;margin-top:3px}
+.inv .jh-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin-top:6px}
+.inv .jh-pill{margin-top:16px;padding:11px 28px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);text-decoration:none;
+  font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+
+/* skin: linen cards with a running-stitch border */
+.fam-jahit .scroller{background:var(--ground)}
+.fam-jahit .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.55}
+.fam-jahit .sheet{background:transparent!important;background-image:none!important}
+.fam-jahit.cardsecs .sec{position:relative;font-family:"Cormorant Garamond",serif;color:var(--ink);background:var(--ecru);box-shadow:0 14px 24px -12px rgba(0,0,0,.45)}
+.fam-jahit.cardsecs .sec::before{content:"";position:absolute;inset:9px;border:1.5px dashed color-mix(in srgb,var(--accent) 60%,transparent);pointer-events:none}
+.fam-jahit .sec h2{font-family:"Parisienne",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent)}
+.fam-jahit .info,.fam-jahit .info > div{border:0!important;background:none!important}
+.fam-jahit .info > div{border-bottom:1.5px dashed color-mix(in srgb,var(--accent) 35%,transparent)!important;padding:13px 6px!important}
+.fam-jahit .info > div:last-child{border-bottom:0!important}
+.fam-jahit .info span{color:var(--accent)}
+.fam-jahit .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:transparent;font-family:"Cormorant Garamond",serif}
+.fam-jahit .seg button[aria-pressed="true"],.fam-jahit button.submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-jahit .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-jahit .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .jh-stage,.inv .jh-ring,.inv .jh-inner,.inv .jh-screw,.inv .jh-cloth{transition:none}}

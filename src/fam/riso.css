@@ -1,63 +1,73 @@
-/* ===== riso ===== */
-.inv .cv-riso{background:transparent;overflow:hidden}
-.inv .rs-table{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 40%,color-mix(in srgb,var(--ground) 90%,#fff),var(--ground));transition:opacity .5s .8s}
-.inv .rs-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.45}
-.inv .rs-paper{position:absolute;left:50%;top:50%;height:min(95%,calc(92cqi * 2));aspect-ratio:300/600;transform:translate(-50%,-50%) rotate(-.6deg);border:0;padding:0;margin:0;background:var(--sheet);cursor:pointer;display:block;isolation:isolate;
-  box-shadow:0 1px 1px rgba(0,0,0,.2),0 16px 30px -10px rgba(0,0,0,.45);transition:transform .9s .55s cubic-bezier(.55,0,.3,1)}
-.inv .rs-paper::before,.inv .pg-riso::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.5;pointer-events:none;z-index:3}
-.inv .rs-l{position:absolute;inset:0;width:100%;height:100%;display:block;mix-blend-mode:var(--blend,multiply);z-index:1}
-.inv .rs-l text{font-family:"Bricolage Grotesque",sans-serif}
-.inv .rs-name,.inv .rs-big{font-weight:800;letter-spacing:-.03em;font-variation-settings:"opsz" 96}
-.inv .rs-amp{font-weight:400}
-.inv .rs-l .rs-mono{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.1em}
-.inv .rs-val{font-weight:600;letter-spacing:-.005em}
-.inv .rs-b{transform:translate(2.6px,-1.8px) rotate(.4deg);transform-origin:50% 50%;transition:transform .55s cubic-bezier(.5,0,.3,1)}
-.inv .rs-grain{position:absolute;inset:0;z-index:4;pointer-events:none;mix-blend-mode:multiply;opacity:.4;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .15  0 0 0 0 .12  0 0 0 0 .1  3.2 0 0 0 -2'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>")}
-.inv .rs-tab{position:absolute;left:7%;bottom:1.7%;z-index:5;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:clamp(7px,2.2cqi,9px);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);border-bottom:1px dashed currentColor;padding-bottom:1px}
-.inv.opening .rs-b{transform:none}
-.inv.opening .rs-paper{transform:translate(-50%,-50%) translateX(-122%) rotate(-5deg)}
-.inv.opening .rs-table{opacity:0}
+/* ===== riso (redesign) ===== */
+.inv .rs2-wall{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(255,255,255,.08),transparent 70%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,soft-light,normal}
+/* the print */
+.inv .rs2-poster{position:relative;background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply;color:var(--ink);overflow:hidden;
+  box-shadow:0 1px 1px rgba(0,0,0,.12),0 24px 40px -16px rgba(0,0,0,.5);display:flex;flex-direction:column;text-align:left}
+.inv .rs2-dark .rs2-poster{background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply}
+.inv .rs2-grain{position:absolute;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/160px;mix-blend-mode:multiply;opacity:.5}
+.inv .rs2-dark .rs2-grain{mix-blend-mode:multiply;opacity:.35}
+.inv .rs2-head{display:flex;justify-content:space-between;padding:14px 18px 10px;margin:0 0 4px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+  border-bottom:1px solid color-mix(in srgb,var(--gold) 70%,transparent);margin:0 18px;padding:14px 0 9px}
+.inv .rs2-art{display:block;width:calc(100% - 20px);margin:6px 10px 0;height:auto;aspect-ratio:690/600}
+.inv .rs2-ink{mix-blend-mode:multiply}
+.inv .rs2-dark .rs2-ink{mix-blend-mode:screen}
+/* the key ink sits a hair out of register */
+.inv .rs2-ink.b{transform:translate(4px,-3px) rotate(.35deg);transform-origin:345px 784px}
+.inv .rs2-body{padding:0 18px 18px;position:relative;z-index:1}
+.inv .rs2-k{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.inv .rs2-names{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(46px,15cqi,62px);line-height:.9;letter-spacing:-.01em;color:var(--ink);margin-top:8px;
+  text-shadow:2px 1.5px 0 color-mix(in srgb,var(--accent) 55%,transparent);display:flex;flex-direction:column}
+.inv .rs2-names span{padding-left:.9em}
+.inv .rs2-names i{font-style:italic;color:var(--accent);text-shadow:none;margin-right:.08em}
+.inv .rs2-date{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.24em;color:var(--gold);margin-top:14px}
+.inv .rs2-to{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;margin-top:8px;color:var(--ink)}
+.inv .rs2-to small{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+/* cover */
+.inv .cv-riso2{background:var(--ground);overflow:hidden;transition:opacity .4s 1s}
+.inv .cv-riso2 .rs2-poster{position:absolute;left:8%;right:8%;top:9%;transform:rotate(-.8deg);transition:transform 1.15s cubic-bezier(.6,0,.3,1) .1s}
+.inv .cv-riso2 .rs2-poster::before{content:"";position:absolute;left:50%;top:7px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;z-index:3;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.7),transparent 45%),var(--gold);box-shadow:0 2px 2px rgba(0,0,0,.4)}
+.inv .rs2-foot{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:center;z-index:3;transition:opacity .35s}
+.inv .rs2-open{border:0;cursor:pointer;padding:14px 38px;border-radius:999px;background:var(--gold);color:var(--sheet);font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  box-shadow:3px 2px 0 color-mix(in srgb,var(--accent) 80%,transparent),0 10px 20px -8px rgba(0,0,0,.4)}
+.inv .rs2-dark .rs2-open{color:var(--ground)}
+/* opening: the print is lifted off the wall */
+.inv.opening .rs2-foot{opacity:0}
+.inv.opening .cv-riso2 .rs2-poster{transform:translateY(-118cqh) rotate(-5deg)}
+.inv.opening .cv-riso2{opacity:0}
+
 /* page */
-.inv .pg-riso{background:var(--sheet);padding:0;justify-content:flex-start;isolation:isolate}
-.inv .rs-sheet{position:relative;width:100%;aspect-ratio:300/560;isolation:isolate}
-.inv .pg-riso .rs-b{transform:translate(2px,-1.4px) rotate(.3deg)}
-/* skin: riso cards, overprinted grainy headings */
-.fam-riso .scroller{background:var(--ground)}
-.fam-riso.cardsecs .sec{background:var(--sheet);color:var(--ink);border-radius:0;overflow:hidden;isolation:isolate;padding:40px 22px 34px;box-shadow:0 1px 1px rgba(0,0,0,.2),0 12px 24px -12px rgba(0,0,0,.45);font-family:"Bricolage Grotesque",sans-serif}
-.fam-riso.cardsecs .sec::before{content:"";position:absolute;top:0;right:0;width:150px;height:150px;z-index:0;pointer-events:none;mix-blend-mode:var(--blend,multiply);background:radial-gradient(circle,var(--accent) 0 1.7px,transparent 2.1px) 0 0/6px 6px;-webkit-mask:radial-gradient(circle at 100% 0,#000,transparent 72%);mask:radial-gradient(circle at 100% 0,#000,transparent 72%)}
-.fam-riso.cardsecs .sec.rs-odd::before{right:auto;left:0;top:auto;bottom:0;background:radial-gradient(circle,var(--gold) 0 1.5px,transparent 1.9px) 0 0/5.5px 5.5px;-webkit-mask:radial-gradient(circle at 0 100%,#000,transparent 72%);mask:radial-gradient(circle at 0 100%,#000,transparent 72%)}
-.fam-riso.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.45;pointer-events:none}
-.fam-riso .sec > *{position:relative;z-index:1}
-.fam-riso .sec h2{position:relative;isolation:isolate;font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:"opsz" 96;font-weight:800;font-size:30px;line-height:1;letter-spacing:-.025em;text-transform:uppercase;color:var(--gold);
-  -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.9'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.9'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>")}
-.fam-riso .sec h2::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;color:var(--accent);mix-blend-mode:var(--blend,multiply);transform:translate(3px,2.2px)}
-.fam-riso .sec .orn,.fam-riso .sec .rule{display:none}
-.fam-riso .info{border-top:1.5px solid var(--gold);border-left:0;max-width:340px}
-.fam-riso .info > div{border-right:0;border-bottom:1.5px dashed color-mix(in srgb,var(--gold) 70%,transparent);text-align:left;padding:10px 4px}
-.fam-riso .info > div:nth-child(2){border-right:1.5px dashed color-mix(in srgb,var(--gold) 70%,transparent)}
-.fam-riso .info span{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.14em;opacity:.9;color:var(--gold)}
-.fam-riso .info b{font-weight:600}
-.fam-riso .ibtn{border:1.5px solid var(--gold);color:var(--ink);border-radius:0;font-family:"IBM Plex Mono",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
-.fam-riso .ibtn:hover{background:var(--accent);color:var(--sheet)}
-.fam-riso .count div + div{border-left:1.5px dashed color-mix(in srgb,var(--gold) 70%,transparent)}
-.fam-riso .count b{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:38px;color:var(--gold);text-shadow:2.5px 2px 0 color-mix(in srgb,var(--accent) 85%,transparent)}
-.fam-riso .count span{font-family:"IBM Plex Mono",monospace}
-.fam-riso .timeline li{border-bottom:1.5px dashed color-mix(in srgb,var(--gold) 60%,transparent)}
-.fam-riso .timeline b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--gold)}
-.fam-riso form label{font-family:"IBM Plex Mono",monospace;color:var(--gold);opacity:1}
-.fam-riso form input,.fam-riso form select{border-bottom:1.5px solid var(--gold);font-family:"Bricolage Grotesque",sans-serif}
-.fam-riso form textarea{border:1.5px solid var(--gold);font-family:"Bricolage Grotesque",sans-serif}
-.fam-riso .seg button{border:1.5px solid var(--gold);font-family:"Bricolage Grotesque",sans-serif;font-weight:600}
-.fam-riso .seg button[aria-pressed="true"]{background:var(--gold);color:var(--sheet);border-color:var(--gold);box-shadow:3px 3px 0 var(--accent)}
-.fam-riso .submit{background:var(--gold);color:var(--sheet);font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.2em;box-shadow:4px 3px 0 var(--accent)}
-.fam-riso .wish{border-bottom:1.5px dashed color-mix(in srgb,var(--gold) 60%,transparent)}
-.fam-riso .wish b{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;color:var(--gold)}
-.fam-riso .giftcard{border:1.5px solid var(--gold);outline:1.5px solid var(--accent);outline-offset:-6px}
-.fam-riso .giftcard .acc{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--gold)}
-.fam-riso .contact{border-bottom:1.5px dashed color-mix(in srgb,var(--gold) 60%,transparent)}
-.fam-riso .person{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;letter-spacing:-.01em;color:var(--gold)}
-.fam-riso .dock{background:var(--sheet);border-top:2px solid var(--gold);box-shadow:0 -2px 0 var(--accent)}
-.fam-riso .dock button{font-family:"IBM Plex Mono",monospace;color:var(--ink)}
-.fam-riso .dock svg{color:var(--gold)}
-.fam-riso .foot{color:var(--pagefg);font-family:"IBM Plex Mono",monospace}
-@media (prefers-reduced-motion: reduce){.inv .rs-b,.inv .rs-paper,.inv .rs-table{transition:none}}
+.inv .pg-riso2{background:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(255,255,255,.08),transparent 70%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,soft-light,normal;padding:26px 18px 112px;justify-content:flex-start}
+.inv .pg-riso2 .rs2-poster{width:100%;max-width:370px;transform:rotate(.5deg)}
+.inv .pg-riso2 .rs2-art{aspect-ratio:690/430}
+.inv .pg-riso2 .rs2-poster:has(.couple-ph) .rs2-art{aspect-ratio:690/340}
+.inv .pg-riso2 .couple-ph.front{float:right;width:34%;margin:-30px 0 8px 12px;border-radius:2px;box-shadow:0 6px 12px -4px rgba(0,0,0,.35)}
+.inv .pg-riso2 .rs2-rows{clear:both}
+.inv .pg-riso2 .rs2-names{font-size:clamp(40px,12.5cqi,52px)}
+.inv .rs2-rows{margin:16px 0 0;border-top:1px solid color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .rs2-rows div{display:grid;grid-template-columns:70px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--gold) 40%,transparent);align-items:baseline}
+.inv .rs2-rows dt{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.inv .rs2-rows dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.35;color:var(--ink)}
+.inv .rs2-hj{font-family:"Instrument Serif",serif;font-style:italic;font-size:16px;margin-top:10px;color:var(--ink)}
+
+/* skin: riso cards */
+.fam-riso .scroller{background:url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:soft-light,normal}
+.fam-riso.cardsecs .sec{background:url(assets/paper.jpg) 0 0/220px,var(--sheet)!important;background-blend-mode:multiply!important;color:var(--ink);border:0!important;border-radius:0;box-shadow:0 18px 30px -14px rgba(0,0,0,.45)!important}
+
+.fam-riso .sec h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:36px;letter-spacing:-.01em;text-transform:none;color:var(--ink);text-shadow:2px 1.5px 0 color-mix(in srgb,var(--accent) 55%,transparent)}
+.fam-riso .sec h2 + *{margin-top:0}
+.fam-riso .sec p{color:var(--ink)}
+.fam-riso .info,.fam-riso .info > div{border:0!important;background:none!important}
+.fam-riso .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:13px 6px!important}
+.fam-riso .info > div:last-child{border-bottom:0!important}
+.fam-riso .info span{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.fam-riso .info b{font-family:"IBM Plex Mono",monospace;font-weight:400;color:var(--ink)}
+.fam-riso .count b{font-family:"Instrument Serif",serif;font-weight:400;color:var(--ink)}
+.fam-riso .timeline b{font-family:"IBM Plex Mono",monospace;font-weight:400;color:var(--gold)}
+.fam-riso .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--gold) 60%,transparent);color:var(--ink);background:transparent;font-family:"IBM Plex Mono",monospace}
+.fam-riso input,.fam-riso select,.fam-riso textarea{font-family:"IBM Plex Mono",monospace;background:transparent;color:var(--ink);border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+.fam-riso .seg button[aria-pressed="true"],.fam-riso button.submit{background:var(--gold)!important;color:var(--sheet)!important;border-radius:999px;font-weight:600}
+.fam-riso.rs2-dark .seg button[aria-pressed="true"],.fam-riso.rs2-dark button.submit{color:var(--ground)!important}
+.fam-riso .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-riso .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .cv-riso2 .rs2-poster{transition:none}}

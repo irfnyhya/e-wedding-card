@@ -1,0 +1,83 @@
+/* ===== batik (round 7) ===== */
+/* the cloth: the photographed batik, re-dyed by blending one colour over it (transparent dye keeps its own colours) */
+.inv .bk-svg{position:absolute;width:0;height:0}
+.inv .bk-cloth{position:absolute;inset:0;background:url(assets/pd-textile-3.jpg) 100% 28%/150% auto;filter:var(--duo)}
+.inv .bk-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.4em;text-transform:uppercase}
+
+/* cover: a quiet table, one folded bundle */
+.inv .cv-batik2{background:var(--ground);overflow:hidden;transition:opacity .45s 1s}
+.inv .bk-table{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 45%,rgba(255,255,255,.07),transparent 70%),radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.35));transition:opacity .6s .4s}
+.inv .bk-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5}
+.inv .bk-top{position:absolute;top:9%;left:0;right:0;text-align:center;z-index:2;color:var(--pagefg);opacity:.85;transition:opacity .35s}
+.inv .bk-stage{position:absolute;left:16%;right:16%;top:17%;aspect-ratio:.8;z-index:3;transform-origin:50% 45%;transition:transform 1.05s cubic-bezier(.55,0,.25,1) .3s}
+.inv .bk-fold,.inv .bk-under{position:absolute;inset:0;border-radius:4px 10px 9px 6px / 6px 8px 12px 6px;overflow:hidden}
+.inv .bk-fold{transform:rotate(-2deg);box-shadow:0 26px 34px -12px rgba(0,0,0,.6),0 5px 9px rgba(0,0,0,.3)}
+/* the folded layer underneath: a different part of the cloth peeking out, slightly askew */
+.inv .bk-under{transform:translate(5px,9px) rotate(1.2deg);box-shadow:0 22px 30px -10px rgba(0,0,0,.6)}
+.inv .bk-under .bk-cloth{background-position:0 60%;background-size:200% auto}
+.inv .bk-under::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15))}
+/* light falling from the top left, the soft roll of the folded left edge, and the cotton weave */
+.inv .bk-fold::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.18) 3%,transparent 9%),linear-gradient(150deg,rgba(255,255,255,.16),transparent 38%,transparent 62%,rgba(0,0,0,.28));z-index:2;border-radius:inherit;box-shadow:inset -10px 0 12px -8px rgba(0,0,0,.55),inset 0 -8px 12px -8px rgba(0,0,0,.5),inset 0 2px 2px -1px rgba(255,255,255,.25)}
+.inv .bk-fold::before{content:"";position:absolute;inset:0;z-index:1;background:url(assets/linen.jpg) 0 0/120px;mix-blend-mode:soft-light;opacity:.7;pointer-events:none}
+.inv .bk-crease{position:absolute;left:0;right:0;top:24%;height:16px;z-index:1;background:linear-gradient(180deg,transparent,rgba(0,0,0,.22) 45%,rgba(255,255,255,.14) 60%,transparent)}
+/* the paper band, wrapped round the bundle: ends shaded where it turns under */
+.inv .bk-band{position:absolute;left:-2.5%;right:-2.5%;top:49%;height:30%;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;color:var(--ink);transform:rotate(-2deg);
+  background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 4%,transparent 96%,rgba(0,0,0,.28)),url(assets/paper.jpg) 0 0/220px,var(--band);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 5px 8px -2px rgba(0,0,0,.4),0 1px 1px rgba(0,0,0,.2);transition:transform .7s cubic-bezier(.5,0,.6,1),opacity .5s .15s}
+.inv .bk-band::before{content:"";position:absolute;inset:7px 12px;border-top:1px solid color-mix(in srgb,var(--gold) 75%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 75%,transparent);pointer-events:none}
+.inv .bk-bn{font-family:"Pinyon Script",cursive;font-size:clamp(25px,8cqi,32px);line-height:1.1;color:var(--accent);padding:0 8px}
+.inv .bk-bn span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.55em;color:var(--gold)}
+.inv .bk-bd{font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.34em;color:var(--ink);opacity:.8}
+.inv .bk-foot{position:absolute;left:0;right:0;bottom:7%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:16px;color:var(--pagefg);transition:opacity .35s}
+.inv .bk-to{text-align:center}
+.inv .bk-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.8}
+.inv .bk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:28px}
+.inv .bk-open{border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);background:transparent;color:var(--pagefg);cursor:pointer;padding:13px 38px;border-radius:999px;
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.32em;text-transform:uppercase}
+/* opening: the band slips off, the cloth opens out over the screen */
+.inv.opening .bk-band{transform:translateY(140%) rotate(-2deg);opacity:0}
+.inv.opening .bk-stage{transform:scale(3.6)}
+.inv.opening .bk-top,.inv.opening .bk-foot{opacity:0}
+.inv.opening .cv-batik2{opacity:0}
+
+/* page: the cloth laid flat, one deckled card on it */
+.inv .pg-batik2{background:var(--ground);color:var(--ink);padding:40px 22px 86px;overflow:hidden}
+.inv .pg-batik2 .bk-flat{background-position:100% 30%;background-size:auto 112%}
+.inv .bk-dim{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 50%,rgba(0,0,0,.12),rgba(0,0,0,.45));pointer-events:none}
+.inv .bk-dim::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/140px;mix-blend-mode:soft-light;opacity:.6}
+.inv .bk-card{position:relative;z-index:2;width:88%;max-width:350px;padding:10px;background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))}
+.inv .bk-cin{border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-5px;padding:26px 14px 22px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .bk-card .bk-k{color:var(--accent)}
+.inv .bk-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(40px,12.5cqi,52px);line-height:1;margin:10px 0 6px;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .bk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:3px 0}
+.inv .bk-rule{display:block;width:96px;height:12px;margin:6px 0 8px;background:linear-gradient(var(--gold),var(--gold)) 0 50%/38px 1px no-repeat,linear-gradient(var(--gold),var(--gold)) 100% 50%/38px 1px no-repeat;position:relative}
+.inv .bk-rule::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;border:1px solid var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+.inv .bk-date{font-family:"Cormorant Garamond",serif;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+.inv .bk-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.7;margin-top:3px}
+.inv .bk-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin-top:8px;color:var(--ink)}
+.inv .bk-pill{margin-top:20px;padding:11px 28px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);text-decoration:none;
+  font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+
+/* skin: paper cards on the ground, a strip of the cloth's border down the left edge */
+.fam-batik .scroller{background:var(--ground)}
+.fam-batik .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.4}
+.fam-batik .sheet{background:transparent!important}
+.fam-batik.cardsecs .sec{position:relative;color:var(--ink);padding-left:44px!important;background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;border-radius:2px;box-shadow:0 14px 24px -10px rgba(0,0,0,.5);overflow:hidden}
+.fam-batik.cardsecs .sec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:22px;-webkit-mask:none;mask:none;
+  background:url(assets/pd-textile-3.jpg) -296px 0/900px auto repeat-y;filter:var(--duo);box-shadow:inset -3px 0 4px -2px rgba(0,0,0,.4)}
+.fam-batik.cardsecs .sec::after{content:"";position:absolute;left:30px;top:14px;bottom:14px;width:1px;background:color-mix(in srgb,var(--gold) 55%,transparent)}
+.fam-batik .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent)}
+.fam-batik .sec,.fam-batik .sec p{color:var(--ink)}
+.fam-batik .info,.fam-batik .info > div{border:0!important;background:none!important}
+.fam-batik .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important;padding:13px 6px!important}
+.fam-batik .info > div:last-child{border-bottom:0!important}
+.fam-batik .info span{color:var(--accent)}
+.fam-batik .info b,.fam-batik .count b{color:var(--ink)}
+.fam-batik .ibtn,.fam-batik .seg button,.fam-batik form input,.fam-batik form select,.fam-batik form textarea{color:var(--ink);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.fam-batik .ibtn{border-radius:999px;background:transparent}
+.fam-batik .seg button[aria-pressed="true"],.fam-batik button.submit,.fam-batik .submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-batik .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-batik .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .bk-stage,.inv .bk-band,.inv .bk-table{transition:none}}

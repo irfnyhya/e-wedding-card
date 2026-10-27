@@ -1,60 +1,82 @@
 /* ===== teh ===== */
-.inv .cv-teh{background:transparent;overflow:hidden;transition:opacity .5s .8s}
-.inv .th-table,.inv .pg-teh,.fam-teh .scroller{background:var(--tick) 0 0/14px,radial-gradient(ellipse 90% 70% at 50% 55%,color-mix(in srgb,var(--ground) 88%,#fff),var(--ground) 75%)}
-.inv .th-table{position:absolute;inset:0}
-.inv .th-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.45}
-.inv .th-buntw{position:absolute;left:0;right:0;top:0;z-index:2;transition:opacity .4s}
-.inv .th-bunt{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
-.inv .th-top{position:absolute;left:0;right:0;top:10.5%;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;color:var(--pagefg);transition:opacity .4s}
-.inv .th-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.85}
-.inv .th-guest{font-family:var(--s);font-size:clamp(30px,9.4cqi,38px);line-height:1.1}
-.inv .th-tin{position:absolute;left:50%;top:21%;width:min(60%,250px);aspect-ratio:240/350;transform:translateX(-50%);border:0;padding:0;background:none;cursor:pointer;z-index:2}
-.inv .th-tin:focus-visible{outline:none}
-.inv .th-body{position:absolute;left:0;right:0;top:9%;bottom:0;border-radius:9px 9px 6px 6px/7px 7px 6px 6px;background:linear-gradient(90deg,rgba(0,0,0,.42),rgba(255,255,255,.2) 16%,rgba(255,255,255,.05) 30%,rgba(0,0,0,0) 58%,rgba(255,255,255,.14) 80%,rgba(0,0,0,.45)),var(--lat) 0 0/18px,var(--accent);box-shadow:0 20px 26px rgba(0,0,0,.3),0 3px 4px rgba(0,0,0,.25)}
-.inv .th-band{position:absolute;left:0;right:0;height:3.6%;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.35) 18%,rgba(255,255,255,0) 40%,rgba(0,0,0,.4)),var(--gold)}
-.inv .th-band::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px dotted color-mix(in srgb,var(--accent) 70%,#000);opacity:.6}
-.inv .th-band.t{top:3.5%}.inv .th-band.b{bottom:3%}
-.inv .th-label{position:absolute;left:10%;right:10%;top:13%;bottom:10.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14% 7% 7%;text-align:center;color:var(--ink);background-color:var(--sheet);background-image:url(assets/paper.jpg);background-size:200px;background-blend-mode:multiply;border-radius:50% 50% 5px 5px/20% 20% 5px 5px;box-shadow:inset 0 0 0 1.6px var(--gold),inset 0 0 0 4.5px var(--sheet),inset 0 0 0 5.3px var(--gold),0 1px 2px rgba(0,0,0,.35)}
-.inv .th-label::before{content:"";position:absolute;inset:9px;border-radius:50% 50% 3px 3px/18% 18% 3px 3px;border:.7px dashed color-mix(in srgb,var(--accent) 50%,transparent);pointer-events:none}
-.inv .th-lk{font-family:var(--d);font-size:clamp(7.5px,2.3cqi,9px);letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
-.inv .th-label .th-sprig{height:auto;margin:-2px 0 -4px}
-.inv .th-ln{font-family:var(--s);font-size:clamp(26px,8.2cqi,34px);line-height:1;color:var(--accent);display:flex;flex-direction:column;align-items:center}
-.inv .th-ln i{font-family:var(--d);font-style:italic;font-size:.4em;color:var(--gold);margin:1px 0}
-.inv .th-lr{width:56%;height:5px;border-top:1px solid var(--gold);border-bottom:.5px solid var(--gold);margin-top:3px}
-.inv .th-ld{font-family:var(--d);font-size:clamp(9.5px,2.9cqi,11px);letter-spacing:.18em}
-.inv .th-le{font-family:var(--d);font-style:italic;font-size:9px;letter-spacing:.12em;opacity:.7}
-.inv .th-lid{position:absolute;left:-4%;right:-4%;top:0;height:12.5%;border-radius:6px 6px 3px 3px;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.55) 15%,rgba(255,255,255,.12) 30%,rgba(0,0,0,.08) 58%,rgba(255,255,255,.3) 80%,rgba(0,0,0,.5)),repeating-linear-gradient(180deg,transparent 0 5px,rgba(0,0,0,.08) 5px 6px),linear-gradient(180deg,rgba(255,255,255,.18),rgba(0,0,0,.12)),var(--gold);box-shadow:0 3px 4px rgba(0,0,0,.32),inset 0 -2px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .95s cubic-bezier(.45,0,.2,1),opacity .45s .45s;z-index:2}
-.inv .th-lid::before{content:"";position:absolute;left:3%;right:3%;top:34%;height:1px;background:rgba(0,0,0,.22);box-shadow:0 1px 0 rgba(255,255,255,.35)}
-.inv .th-knob{position:absolute;left:50%;top:-24%;width:16%;height:30%;transform:translateX(-50%);border-radius:50% 50% 3px 3px/80% 80% 3px 3px;background:linear-gradient(90deg,rgba(0,0,0,.4),rgba(255,255,255,.5) 30%,rgba(0,0,0,.35)),var(--gold)}
-.inv .th-cupc{position:absolute;left:2%;top:59.5%;width:54%;max-width:230px;z-index:3;transition:opacity .4s}
-.inv .th-cup{display:block;width:100%;height:auto}
-.inv .th-spc{position:absolute;right:1%;top:75%;width:42%;z-index:2;transform:rotate(-6deg);transition:opacity .4s}
-.inv .th-sprig{display:block;height:auto}
-.inv .th-hint{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-family:var(--d);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--pagefg);opacity:.6;transition:opacity .4s}
-.inv.opening .cv-teh .th-lid{transform:translateY(-150%) rotate(-9deg);opacity:0}
-.inv.opening .th-hint,.inv.opening .th-top{opacity:0}
-.inv.opening .cv-teh{opacity:0}
-/* page: a tea card */
-.inv .pg-teh{padding:22px 18px 80px;align-items:stretch}
-.inv .th-card{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:9% 11%;text-align:center;color:var(--ink);background-color:var(--sheet);background-image:linear-gradient(color-mix(in srgb,var(--sheet) 50%,transparent),color-mix(in srgb,var(--sheet) 50%,transparent)),url(assets/paper.jpg);background-size:auto,260px;background-blend-mode:normal,multiply;box-shadow:inset 0 0 0 10px var(--sheet),inset 0 0 0 11px var(--gold),inset 0 0 0 14px var(--sheet),inset 0 0 0 14.6px color-mix(in srgb,var(--gold) 60%,transparent),0 14px 26px rgba(0,0,0,.2)}
-.inv .th-cupw{width:50%;max-width:200px;margin-bottom:2px}
-.inv .th-k{font-family:var(--d);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
-.inv .pg-teh .names{font-size:clamp(50px,15cqi,62px);line-height:.95;color:var(--accent)}
-.inv .pg-teh .names .amp{font-family:var(--d);font-style:italic;font-size:.32em;color:var(--gold);margin:.2em 0}
-.inv .th-orn{display:flex;align-items:center;gap:8px;width:60%}
-.inv .th-orn i{flex:1;height:4px;border-top:1px solid var(--gold);border-bottom:.5px solid var(--gold)}
-.inv .th-orn b{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--sheet),0 0 0 3px var(--gold)}
-.inv .th-menu{list-style:none;margin:6px 0 0;padding:0;width:100%;max-width:300px;display:flex;flex-direction:column;gap:9px;text-align:left}
-.inv .th-menu li{display:flex;align-items:baseline;gap:6px}
-.inv .th-menu span{font-family:var(--d);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);flex:none}
-.inv .th-menu i{flex:1;min-width:16px;border-bottom:1.5px dotted color-mix(in srgb,var(--gold) 85%,transparent);transform:translateY(-3px)}
-.inv .th-menu b{font-weight:500;font-size:15px;text-align:right;max-width:66%;line-height:1.25}
-.inv .th-sp{width:44%;margin-top:6px}
-/* skin: porcelain saucer badges */
-.fam-teh .sheet.tex::after{display:none}
-.fam-teh.cardsecs .sec{background-color:var(--sheet);background-image:linear-gradient(color-mix(in srgb,var(--sheet) 50%,transparent),color-mix(in srgb,var(--sheet) 50%,transparent)),url(assets/paper.jpg);background-size:auto,260px;background-blend-mode:normal,multiply;margin-top:44px;padding-top:50px;box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px var(--gold),inset 0 0 0 10.5px var(--sheet),inset 0 0 0 11px color-mix(in srgb,var(--gold) 60%,transparent),0 12px 22px rgba(0,0,0,.16)}
-.fam-teh .sec h2{display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--d);letter-spacing:.26em;color:var(--accent)}
-.fam-teh .sec h2::before{content:"";width:62px;height:62px;margin-top:-84px;background:var(--saucer) center/contain no-repeat}
-.fam-teh .timeline li{border-bottom:1.5px dotted color-mix(in srgb,var(--gold) 70%,transparent)}
+/* linen cloth lit from a window at the top left */
+.inv .th-cloth{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .th-cloth::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.75}
+.inv .th-cloth::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 70% at 12% 0,rgba(255,250,240,.35),transparent 60%),radial-gradient(140% 90% at 80% 110%,rgba(30,20,10,.16),transparent 60%)}
+.inv .th-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.38em;text-transform:uppercase}
+.inv .th-dish{position:relative;aspect-ratio:1}
+.inv .th-ming{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 1px 1px rgba(30,25,20,.35)) drop-shadow(6px 12px 14px rgba(30,25,20,.32))}
+.inv .th-cup{position:absolute;left:24%;top:27%;width:60%;overflow:visible;filter:drop-shadow(2px 3px 2px rgba(30,25,20,.28)) drop-shadow(8px 14px 12px rgba(30,25,20,.3))}
+.inv .th-fl{position:absolute;height:auto;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(40,30,20,.22))}
+
+/* cover */
+.inv .cv-teh2{background:transparent;overflow:hidden;transition:opacity .5s .9s}
+.inv .th-top{position:absolute;top:7.5%;left:0;right:0;text-align:center;z-index:3;color:var(--pagefg);transition:opacity .4s}
+.inv .th-top .th-k{color:var(--pagefg);opacity:.8}
+.inv .th-n{font-family:"Great Vibes",cursive;font-size:clamp(36px,11.5cqi,48px);line-height:1.15;margin-top:8px;color:var(--nm)}
+.inv .th-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .th-d{font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.34em;margin-top:6px;opacity:.85}
+.inv .th-set{position:absolute;left:9%;width:82%;top:29%;aspect-ratio:1;z-index:2;transition:transform 1.25s cubic-bezier(.5,0,.25,1)}
+.inv .th-set .th-dish{position:absolute;inset:0}
+.inv .th-nap{position:absolute;left:-30%;top:40%;width:72%;aspect-ratio:1;transform:rotate(-12deg);border-radius:2px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 40%,rgba(0,0,0,.12)),url(assets/linen.jpg) 0 0/150px,var(--nap);background-blend-mode:normal,soft-light,normal;
+  box-shadow:0 1px 1px rgba(0,0,0,.18),3px 8px 10px -2px rgba(30,20,10,.25)}
+.inv .th-nap::before{content:"";position:absolute;inset:7%;border:1px dashed rgba(255,255,255,.45)}
+.inv .th-nap::after{content:"";position:absolute;left:0;right:0;top:50%;height:10px;transform:translateY(-50%);background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(255,255,255,.12) 50%,rgba(0,0,0,.06))}
+.inv .th-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .th-to{text-align:center}
+.inv .th-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .th-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:28px}
+.inv .th-open{border:1px solid color-mix(in srgb,var(--pagefg) 45%,transparent);background:var(--btn);color:var(--pagefg);cursor:pointer;backdrop-filter:blur(3px);
+  padding:12px 34px;border-radius:999px;font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+/* opening: the dish and napkin slide away across the cloth */
+.inv.opening .th-set{transform:translate(70%,48%) rotate(14deg)}
+.inv.opening .th-top,.inv.opening .th-foot{opacity:0}
+.inv.opening .cv-teh2{opacity:0}
+
+/* page: the menu card with the cup at its corner */
+.inv .pg-teh2{background:var(--ground);color:var(--pagefg);padding:56px 20px 118px;justify-content:center;overflow:hidden}
+.inv .pg-teh2 > :not(.th-cloth){position:relative;z-index:2}
+.inv .pg-teh2 .th-pgdish{position:absolute!important;z-index:1!important;width:72%;right:-34%;top:9%}
+.inv .th-menu{width:84%;max-width:330px;transform:rotate(-1.2deg);margin-top:6px;background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;padding:9px;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;filter:drop-shadow(0 10px 12px rgba(30,20,10,.28))}
+.inv .th-mi{text-align:center;color:var(--ink);padding:22px 14px 20px;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);outline:3px solid color-mix(in srgb,var(--accent) 12%,transparent);outline-offset:-7px}
+.inv .th-mi .th-k{color:var(--accent)}
+.inv .th-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(38px,11.5cqi,48px);line-height:1;margin:8px 0 8px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .th-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:2px 0}
+.inv .th-date{font-family:"Cormorant Garamond",serif;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.inv .th-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:3px;opacity:.75}
+.inv .th-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;margin-top:10px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--ink);text-decoration:none}
+.inv .th-ven::after{content:" \2192";font-style:normal;color:var(--accent)}
+.inv .th-pieces{display:flex;align-items:flex-start;justify-content:center;gap:14px;width:90%;max-width:350px;margin-top:-10px}
+.inv .th-place,.inv .th-tag{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:var(--ink);font-family:"Cormorant Garamond",serif;cursor:pointer}
+.inv .th-place small,.inv .th-tag small{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;opacity:.75}
+.inv .th-place b{font-family:"Great Vibes",cursive;font-weight:400;font-size:25px;line-height:1.1;color:var(--accent)}
+/* a folded place card seen from above: the fold catches light */
+.inv .th-place{flex:0 0 58%;aspect-ratio:1.7;transform:rotate(3deg);background:linear-gradient(180deg,rgba(0,0,0,.07),transparent 46%,rgba(255,255,255,.5) 50%,rgba(0,0,0,.04) 54%,transparent),var(--sheet) url(assets/paper.jpg) 0 0/220px;background-blend-mode:normal,multiply;
+  box-shadow:0 1px 1px rgba(0,0,0,.15),4px 10px 12px -4px rgba(30,20,10,.3);border-radius:1px}
+.inv .th-place::before{content:"";position:absolute;inset:6px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);pointer-events:none}
+/* a tea-bag tag on its string */
+.inv .th-tag{flex:0 0 26%;aspect-ratio:.78;margin-top:18px;transform:rotate(-6deg);background:var(--sheet) url(assets/paper.jpg) 0 0/200px;background-blend-mode:multiply;
+  box-shadow:0 1px 1px rgba(0,0,0,.15),3px 8px 10px -3px rgba(30,20,10,.3);border-top:4px solid color-mix(in srgb,var(--accent) 85%,#000)}
+.inv .th-tag i{position:absolute;left:50%;top:-56px;width:1px;height:56px;background:color-mix(in srgb,var(--pagefg) 40%,transparent);transform:rotate(-8deg);transform-origin:bottom}
+.inv .th-tag b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:19px;letter-spacing:.14em;color:var(--accent);margin-top:2px}
+.inv .th-tag small{font-size:8px;letter-spacing:.16em}
+
+/* skin: paper cards on the linen, ruled like the band on a china plate */
+.fam-teh .scroller{background:var(--ground)}
+.fam-teh .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+.fam-teh.cardsecs .sec{background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;color:var(--ink);border-radius:2px;
+  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 0 10px var(--sheet),inset 0 0 0 11px color-mix(in srgb,var(--gold) 60%,transparent),0 10px 18px -6px rgba(30,20,10,.3)}
+.fam-teh .sec h2{font-family:"Great Vibes",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:36px;color:var(--accent)}
+.fam-teh .sec,.fam-teh .sec p,.fam-teh .info b{color:var(--ink)}
+.fam-teh .info,.fam-teh .info > div{border:0!important;background:none!important}
+.fam-teh .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
+.fam-teh .info > div:last-child{border-bottom:0!important}
+.fam-teh .info span{color:var(--accent)}
+.fam-teh .ibtn{border-color:color-mix(in srgb,var(--accent) 45%,transparent);border-radius:999px;color:var(--accent);background:transparent}
+.fam-teh .seg button[aria-pressed="true"],.fam-teh button.submit{color:var(--sheet)!important;background:var(--accent)!important}
+.fam-teh .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(6px)}
 .fam-teh .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .th-lid,.inv .cv-teh{transition:none}}
+@media (prefers-reduced-motion: reduce){.inv .th-set{transition:none}}
+.inv .pg-teh2 .couple-ph.front{width:30%;margin-bottom:8px}

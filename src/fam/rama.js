@@ -1,84 +1,97 @@
-/* rama: Rama-rama, a butterfly specimen box. Malaysian butterflies pinned in rows on linen, each with a tiny typed
-   label, behind a glass lid in a mitred wooden frame. Cover: touch the brass plate and the glass slides away.
-   Page: one large specimen above the names. Skin: cards headed by typed specimen labels, a small pinned butterfly. */
-needFont('Italianno');
-const f1=n=>n.toFixed(1);
-/* simplified real species of the peninsula: wing colours, border, spots and bands */
-const SP={
-  troides:{n:'Troides amphrysus',fw:'#1c1a17',fw2:'#3a3630',hw:'#e8b928',hw2:'#c98c12',edge:'#15130f',streak:'#9a958a',shape:'long',hwEdge:1},
-  graphium:{n:'Graphium sarpedon',fw:'#16191a',fw2:'#22282a',hw:'#16191a',hw2:'#22282a',band:'#4fb8b0',tail:1},
-  delias:{n:'Delias hyparete',fw:'#f4f1e8',fw2:'#e9e3d2',hw:'#f6eecf',hw2:'#efd98a',edge:'#2a2622',vein:'#2a2622',dots:'#e05a3a'},
-  danaus:{n:'Danaus chrysippus',fw:'#d9822b',fw2:'#c0621a',hw:'#de8d33',hw2:'#c7691e',edge:'#1d1612',apex:1,dots:'#f6f2ea'},
-  idea:{n:'Idea stolli',fw:'#f1eee4',fw2:'#e0dbc9',hw:'#f1eee4',hw2:'#e0dbc9',vein:'#3a3530',spots:'#262220',shape:'round'},
-  hypolimnas:{n:'Hypolimnas bolina',fw:'#1e1a1e',fw2:'#2c252c',hw:'#1e1a1e',hw2:'#2c252c',patch:'#e8e4f2',patch2:'#6a5ab0',dots:'#efe9f2'},
-  papilio:{n:'Papilio memnon',fw:'#1f2433',fw2:'#2f3a52',hw:'#1f2433',hw2:'#34405c',streak:'#7f8fae',shape:'long',eye:'#c8432c'},
-  catopsilia:{n:'Catopsilia pomona',fw:'#f2dd6e',fw2:'#e6c33c',hw:'#f4e48a',hw2:'#e9cc52',edge:'#8a6a1c',shape:'round'},
-  appias:{n:'Appias libythea',fw:'#f8f6f0',fw2:'#e8e4da',hw:'#f8f6f0',hw2:'#ece6d6',edge:'#3b3632',vein:'#7a746c'},
+/* rama: a natural-history plate of Malayan butterflies, engraved and lightly hand-tinted, set in a glazed wooden
+   shadow box on a quiet wall. A handwritten label in the middle of the plate carries the names. No pins: the
+   butterflies are drawings on the plate, as in a 19th-century natural-history book.
+   Cover: tap the box (or "Buka Jemputan") and its glazed door swings open on the left hinge.
+   Page: the plate taken out of the box, the couple photo as an oval vignette among the figures.
+   Skin: plate-paper cards with a printed double rule, italic headings numbered like plates. */
+let lpN=0;
+/* wing outlines for the right half (x > 0), in a box of about 100 x 140 units centred on the body */
+const LP_SHAPE={
+  bird:{fw:'M3 -6C20 -40 58 -66 100 -70C96 -52 84 -28 70 -8C50 -2 22 0 3 0Z',hw:'M3 1C30 0 62 6 70 22C72 40 54 56 34 58C20 58 8 40 3 10Z',
+    fv:[[100,-70],[96,-52],[88,-36],[78,-20],[66,-8],[40,-2]],hv:[[66,14],[70,30],[60,48],[44,58],[26,56],[12,40]]},
+  kite:{fw:'M3 -5C14 -46 48 -72 84 -70C98 -56 96 -28 82 -6C56 -1 26 0 3 0Z',hw:'M3 1C34 0 74 10 80 32C82 56 58 72 34 70C16 66 6 44 3 10Z',
+    fv:[[84,-70],[96,-52],[94,-34],[86,-16],[70,-4],[40,-1]],hv:[[76,20],[82,40],[72,60],[52,70],[30,68],[12,48]]},
+  tail:{fw:'M3 -6C18 -42 56 -64 92 -66C92 -46 82 -24 70 -6C48 -1 22 0 3 0Z',hw:'M3 1C30 0 58 6 64 20C66 34 56 46 46 52L52 84L40 56C26 58 10 44 3 10Z',
+    fv:[[92,-66],[92,-48],[86,-32],[78,-18],[66,-6],[40,-1]],hv:[[62,14],[64,30],[52,48],[46,70],[30,56],[12,42]]},
+  pierid:{fw:'M3 -5C14 -42 44 -62 76 -62C82 -44 78 -22 68 -5C46 -1 24 0 3 0Z',hw:'M3 1C30 1 62 8 66 26C66 46 46 58 28 56C14 52 6 38 3 10Z',
+    fv:[[76,-62],[82,-46],[80,-30],[74,-16],[64,-5],[40,-1]],hv:[[62,16],[66,32],[56,48],[40,56],[24,54],[10,40]]},
 };
-let gid=0;
-function wings(s){const L=s.shape==='long',R=s.shape==='round';
-  const fw=L?'M2 -3C12 -22 32 -38 54 -38C54 -26 48 -12 38 -3C26 -1 12 1 3 2Z':R?'M2 -3C8 -24 26 -38 42 -38C52 -30 52 -14 42 -2C28 0 14 1 3 2Z':'M2 -3C12 -20 30 -34 47 -36C50 -26 46 -12 38 -2C26 0 12 1 3 2Z';
-  const hw=s.tail?'M3 1C16 2 32 4 37 12C40 22 32 30 26 33L28 48 22 34C14 36 6 28 2 10Z':R?'M3 1C18 2 36 6 39 16C41 28 30 38 18 38C8 38 4 26 2 10Z':L?'M3 1C14 2 32 6 36 14C38 24 30 32 20 34C10 34 4 24 2 10Z':'M3 1C16 2 34 4 38 12C40 24 30 34 18 36C10 36 4 26 2 10Z';
-  return [fw,hw]}
-/* a butterfly centred on 0,0 with a ~100 unit wingspan; pin=true adds the pin head */
-function bfly(key,pin){const s=SP[key],id='rb'+(++gid),[fw,hw]=wings(s);let half='';
-  const veins=(pts,o)=>pts.map(([x,y])=>`M${o[0]} ${o[1]}L${x} ${y}`).join('');
-  const fv=veins([[46,-34],[48,-26],[46,-18],[42,-10],[36,-4],[28,-1]],[4,-1]),hv=veins([[36,10],[38,18],[34,26],[26,32],[16,35],[8,30]],[4,2]);
-  let extra='';
-  if(s.streak)extra+=`<path d="${veins([[44,-33],[46,-27],[44,-20],[40,-13]],[10,-4])}" stroke="${s.streak}" stroke-width="2.2" opacity=".55" stroke-linecap="round"/>`;
-  if(s.band)extra+=[[14,-14,4],[20,-18,3.4],[26,-22,3],[31,-26,2.4],[10,-6,4.4],[12,8,4.6],[18,12,4.2],[24,17,3.6],[29,22,3]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.75}" fill="${s.band}" opacity=".9"/>`).join('');
-  if(s.apex)extra+=`<path d="M30 -32C40 -37 50 -38 47 -36C50 -26 47 -18 42 -12C38 -18 33 -24 30 -32Z" fill="#1d1612"/>${[[38,-30],[42,-25],[40,-20],[44,-31]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.5" fill="#f6f2ea"/>`).join('')}`;
-  if(s.patch)extra+=`<ellipse cx="22" cy="-14" rx="7" ry="5" fill="${s.patch}" opacity=".95"/><ellipse cx="22" cy="-14" rx="9.5" ry="7" fill="none" stroke="${s.patch2}" stroke-width="2" opacity=".7"/><ellipse cx="20" cy="16" rx="8" ry="6.5" fill="${s.patch}"/><ellipse cx="20" cy="16" rx="10.5" ry="8.5" fill="none" stroke="${s.patch2}" stroke-width="2.2" opacity=".7"/>`;
-  if(s.spots)extra+=[[20,-20],[30,-24],[36,-14],[26,-10],[16,12],[26,18],[30,26],[14,24]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.3" fill="${s.spots}"/>`).join('');
-  if(s.eye)extra+=`<ellipse cx="12" cy="8" rx="6" ry="4" fill="${s.eye}" opacity=".85"/>`;
-  const edge=s.edge?`<path d="${fw}" fill="none" stroke="${s.edge}" stroke-width="${s.hwEdge?2.4:4}"/>${s.hwEdge||s.shape!=='round'?`<path d="${hw}" fill="none" stroke="${s.edge}" stroke-width="${s.hwEdge?5:3.6}"/>`:''}`:'';
-  const dots=s.dots?[[47,-30],[46,-22],[43,-14],[38,-7],[36,13],[36,21],[31,28],[24,33],[15,35]].map(([x,y])=>`<circle cx="${x-2}" cy="${y}" r="1.1" fill="${s.dots}"/>`).join(''):'';
-  half=`<g clip-path="url(#${id}h)"><path d="${hw}" fill="url(#${id}b)"/>${extra}<path d="${hv}" stroke="${s.vein||'#000'}" stroke-width=".5" opacity="${s.vein?.8:.35}"/>${edge}${dots}</g>
-   <g clip-path="url(#${id}f)"><path d="${fw}" fill="url(#${id}a)"/>${extra}<path d="${fv}" stroke="${s.vein||'#000'}" stroke-width=".5" opacity="${s.vein?.8:.35}"/>${edge}${dots}</g>
-   <path d="${hw}" fill="none" stroke="#000" stroke-width=".4" opacity=".35"/><path d="${fw}" fill="none" stroke="#000" stroke-width=".4" opacity=".35"/>`;
-  return `<g><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="-.6"><stop offset="0" stop-color="${s.fw2}"/><stop offset="1" stop-color="${s.fw}"/></linearGradient>
-    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2=".7"><stop offset="0" stop-color="${s.hw2}"/><stop offset="1" stop-color="${s.hw}"/></linearGradient>
-    <clipPath id="${id}f"><path d="${fw}"/></clipPath><clipPath id="${id}h"><path d="${hw}"/></clipPath></defs>
-   <g opacity=".22" transform="translate(3 5)" filter="url(#rmBlur)"><path d="${fw}${hw}" fill="#000"/><path d="${fw}${hw}" transform="scale(-1 1)" fill="#000"/></g>
-   ${half}<g transform="scale(-1 1)">${half}</g>
-   <path d="M-.6 -10Q-6 -24 -9 -30M.6 -10Q6 -24 9 -30" stroke="#1b1612" stroke-width=".55" fill="none"/><circle cx="-9" cy="-30" r=".9" fill="#1b1612"/><circle cx="9" cy="-30" r=".9" fill="#1b1612"/>
-   <ellipse cx="0" cy="-6" rx="2.3" ry="5" fill="#2a221c"/><ellipse cx="0" cy="8" rx="1.7" ry="10" fill="#2f2620"/><circle cx="0" cy="-11.5" r="2" fill="#241d18"/>
-   ${pin?`<circle cx="2" cy="-3" r="2.6" fill="#000" opacity=".25"/><circle cx="0" cy="-6" r="2.6" fill="url(#rmPin)"/>`:''}</g>`}
-const DEFS=c=>`<defs><filter id="rmBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter><radialGradient id="rmPin" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="${c.pin}"/><stop offset="1" stop-color="#000"/></radialGradient></defs>`;
-const ROWS=[['troides','graphium','danaus'],['delias','hypolimnas','catopsilia'],['papilio','idea','appias']];
-let uid=0;
-function tray(c,o){let s='';const no=(r,k)=>String(r*3+k+1).padStart(2,'0');const d=new Date((o.date||'2026-01-01')+'T00:00:00'),ds=isNaN(d)?'':`${d.getDate()}.${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][d.getMonth()]}.${d.getFullYear()}`;
-  ROWS.forEach((row,r)=>row.forEach((k,j)=>{const x=60+j*120,y=52+r*124;
-    s+=`<g transform="translate(${x} ${y}) scale(.86) rotate(${(j-1)*3+(r-1)*2})">${bfly(k,true)}</g>
-     <g transform="translate(${x} ${y+56})"><rect x="-34" y="-8" width="68" height="17" fill="${c.label}" stroke="${c.ink}" stroke-width=".35"/><text y="-.6" text-anchor="middle" font-family="IM Fell English, serif" font-style="italic" font-size="6.4" fill="${c.ink}">${SP[k].n}</text>
-     <text y="6.4" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="4.4" letter-spacing=".3" fill="${c.ink}" opacity=".75">No.${no(r,j)} · ${ds}</text></g>`}));
-  return `<svg class="rm-tray" viewBox="0 0 360 380">${DEFS(c)}${s}</svg>`}
-FAMILY({key:'rama',name:'Rama-rama',meaning:'Butterfly specimen box',
-  blurb:'Malaysian butterflies pinned in rows with tiny typed labels, under a glass lid that slides away.',
-  fonts:{d:"'IBM Plex Mono', monospace",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';return `<section class="page pg-rama" style="--wood:${c.wood};--woodL:${c.woodL};--label:${c.label}"><div class="rm-box reveal"><div class="rm-in"><i class="rm-lin"></i>
-    <svg class="rm-big" viewBox="-60 -50 120 100">${DEFS(c)}${bfly(c.hero,true)}</svg>
-    <p class="rm-sp reveal d1">${SP[c.hero].n} &middot; ${en?'specimen no.':'spesimen no.'} 1</p>
-    <p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-    <div class="rm-rule reveal d2"><i></i><b></b><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(fmtTime(o.start,o.lang))} &middot; ${esc(o.venue)}</p></div><i class="rm-mitre"></i></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',[a,b]=K.initials(o);++uid;
-    return `<div class="cover cv-rama" style="--wood:${c.wood};--woodL:${c.woodL};--label:${c.label}"><div class="rm-box"><div class="rm-in"><i class="rm-lin"></i>
-      <div class="rm-title"><p class="rm-k">${ev(o,L)}</p><p class="rm-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><p class="rm-d">${esc(fmtDate(o.date,o.lang))}</p><i class="rm-tp l"></i><i class="rm-tp r"></i></div>
-      ${tray(c,o)}
-      <div class="rm-guest">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}<i class="rm-tp l"></i></div></div>
-      <div class="rm-glass"><i></i></div><i class="rm-mitre"></i>
-      <${tag} class="rm-plate" ${attr} aria-label="${L.open}"><span>${esc(a)} &amp; ${esc(b)}</span></${tag}></div>
-     <p class="rm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
-  skin(el,o,th){const c=th.c;K.cards(el);const keys=Object.keys(SP);el.style.setProperty("--wood",c.wood);el.style.setProperty("--woodL",c.woodL);el.style.setProperty("--label",c.label);
-    K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<svg class="rm-sk ${i%2?'r':'l'}" viewBox="-60 -50 120 100">${DEFS(c)}<g transform="rotate(${i%2?14:-14})">${bfly(keys[(i*4+1)%keys.length],true)}</g></svg>`);
-      const h=s.querySelector('h2');if(h){h.classList.add('rm-lab');h.insertAdjacentHTML('beforeend',`<small>No. ${String(i+1).padStart(2,'0')} &middot; ${esc(SP[keys[(i*4+1)%keys.length]].n)}</small>`)}})},
+/* species of the peninsula, drawn in the plate's palette: tint, border, hatching and markings */
+const LP_SP={
+  brookiana:{n:'Trogonoptera brookiana',shape:'bird',tint:'#2a2a26',hatch:'light',border:0,
+    mark:(u)=>{let d='';for(let i=0;i<7;i++){const t=i/6,x=16+t*66,y=-12-t*44,w=7-t*2.2;d+=`M${x-w*.4} ${y+8-t*2}L${x+w} ${y-2}L${x+w*.4} ${y+10-t*2}Z`}
+      return `<path d="${d}" fill="#6aa287" opacity=".9"/><path d="M8 6C24 6 46 12 56 22C52 34 40 44 28 46C18 40 10 26 8 6Z" fill="#6aa287" opacity=".85"/>${[[64,40],[56,50],[46,56],[34,58]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.6" fill="#f3efe4"/>`).join('')}`}},
+  idea:{n:'Idea stolli',shape:'kite',tint:'#f3efe3',hatch:'ink',border:2.2,
+    mark:()=>[[30,-30],[46,-44],[60,-30],[74,-50],[42,-14],[70,-14],[30,24],[48,30],[62,44],[40,50],[24,46]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="${3.6-(i%3)*.6}" ry="${2.8-(i%3)*.4}" fill="#2b2824"/>`).join('')},
+  delias:{n:'Delias hyparete',shape:'pierid',tint:'#f6f1e1',hatch:'ink',border:4.4,
+    mark:()=>`<path d="M8 6C26 8 50 14 58 26C56 40 42 50 28 50C16 44 9 28 8 6Z" fill="#e3c463" opacity=".7"/>${[[58,30],[52,42],[40,50],[28,50],[18,44]].map(([x,y])=>`<path d="M${x-3} ${y}l3 -4l3 4l-3 4Z" fill="#c8492e"/>`).join('')}`},
+  graphium:{n:'Graphium agamemnon',shape:'tail',tint:'#3a3227',hatch:'light',border:0,
+    mark:()=>[[24,-14],[34,-24],[44,-34],[56,-42],[70,-48],[30,-6],[42,-14],[56,-22],[16,10],[28,16],[40,24],[48,36],[36,40]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="${3.4-i%2*.6}" ry="${2.4}" transform="rotate(-30 ${x} ${y})" fill="#9cc48a" opacity=".9"/>`).join('')},
+  catopsilia:{n:'Catopsilia pomona',shape:'pierid',tint:'#f1df86',hatch:'ink',border:2.4,
+    mark:()=>`<circle cx="40" cy="-30" r="2.4" fill="#8a6a1c" opacity=".7"/><path d="M30 -42C44 -50 60 -54 70 -54" stroke="#e2b93c" stroke-width="6" fill="none" opacity=".55"/>`},
+};
+/* engraver's hatching: parallel strokes at 38 degrees, kept near the body by a circular clip */
+const LP_HATCH=(()=>{let d='';const t=Math.tan(38*Math.PI/180);for(let x=-220;x<=112;x+=2.3)d+=`M${x.toFixed(1)} -80L${(x+170/t).toFixed(1)} 90`;return d})();
+function lpFly(key,ink){const s=LP_SP[key],sh=LP_SHAPE[s.shape],u='lp'+(++lpN);
+  const veins=(pts,o)=>pts.map(([x,y])=>`M${o[0]} ${o[1]}Q${(o[0]+x)/2+4} ${(o[1]+y)/2+(y<0?6:-6)} ${x*1.08} ${y*1.08}`).join('');
+  const hatchCol=s.hatch==='light'?'rgba(243,239,228,.32)':ink;
+  const half=`<g clip-path="url(#${u}f)"><path d="${sh.fw}" fill="${s.tint}"/><g clip-path="url(#${u}c)"><path d="${LP_HATCH}" fill="none" stroke="${hatchCol}" stroke-width=".4" opacity="${s.hatch==='light'?1:.5}"/></g>${s.mark(u)}
+      ${s.border?`<path d="${sh.fw}" fill="none" stroke="${ink}" stroke-width="${s.border*2}" opacity=".85"/>`:''}<path d="${veins(sh.fv,[4,-2])}" fill="none" stroke="${s.hatch==='light'?'rgba(243,239,228,.4)':ink}" stroke-width=".55"/></g>
+    <g clip-path="url(#${u}h2)"><path d="${sh.hw}" fill="${s.tint}"/><g clip-path="url(#${u}c)"><path d="${LP_HATCH}" fill="none" stroke="${hatchCol}" stroke-width=".4" opacity="${s.hatch==='light'?1:.45}"/></g>${s.mark(u)}
+      ${s.border?`<path d="${sh.hw}" fill="none" stroke="${ink}" stroke-width="${s.border*1.8}" opacity=".85"/>`:''}<path d="${veins(sh.hv,[4,2])}" fill="none" stroke="${s.hatch==='light'?'rgba(243,239,228,.4)':ink}" stroke-width=".5"/></g>
+    <path d="${sh.fw}${sh.hw}" fill="none" stroke="${ink}" stroke-width=".6"/>`;
+  return `<g class="lp-fly"><defs><clipPath id="${u}c"><ellipse cx="0" cy="0" rx="44" ry="40"/></clipPath><clipPath id="${u}f"><path d="${sh.fw}"/></clipPath><clipPath id="${u}h2"><path d="${sh.hw}"/></clipPath></defs>
+    ${half}<g transform="scale(-1 1)">${half}</g>
+    <path d="M-1 -12Q-10 -34 -16 -46M1 -12Q10 -34 16 -46" stroke="${ink}" stroke-width=".6" fill="none"/><ellipse cx="-16.4" cy="-46.6" rx="1.3" ry="2" fill="${ink}"/><ellipse cx="16.4" cy="-46.6" rx="1.3" ry="2" fill="${ink}"/>
+    <ellipse cx="0" cy="-12" rx="2.6" ry="2.4" fill="${ink}"/><ellipse cx="0" cy="-3" rx="3" ry="7.5" fill="${ink}"/><path d="M0 4C3 10 2.4 26 0 34C-2.4 26 -3 10 0 4Z" fill="${ink}"/>
+    <path d="M-1.6 -6h3.2M-1.8 -2h3.6M-1.6 8h3.2M-1.4 13h2.8M-1.2 18h2.4M-1 23h2" stroke="rgba(243,239,228,.45)" stroke-width=".35"/></g>`}
+const lpSvg=(key,ink,cls,fig)=>`<svg class="${cls}" viewBox="-104 -74 208 162" aria-hidden="true">${lpFly(key,ink)}</svg>${fig?`<span class="lp-fig"><i>Fig. ${fig}.</i> ${LP_SP[key].n}</span>`:''}`;
+const LP_ORDER=['brookiana','idea','delias','graphium','catopsilia'];
+const lpSide=hero=>LP_ORDER.filter(k=>k!==hero).slice(0,2);
+const lpPl=o=>['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][(new Date((o.date||'2026-01-01')+'T00:00:00').getMonth())||0]||'XII';
+function lpPlate(o,th,L,inner){const c=th.c,[s1,s2]=lpSide(c.hero),en=o.lang==='en';
+  return `<span class="lp-plate"><i class="lp-ptex"></i><span class="lp-rule"></span>
+    <span class="lp-ph"><span>${en?'Plate':'Plat'} ${lpPl(o)}.</span><span>Lepidoptera Malayana</span></span>
+    <span class="lp-hero">${lpSvg(c.hero,c.ink,'lp-svg',1)}</span>
+    <span class="lp-s1">${lpSvg(s1,c.ink,'lp-svg',2)}</span><span class="lp-s2">${lpSvg(s2,c.ink,'lp-svg',3)}</span>
+    ${ENG(c.eng,'','lp-spray')}${inner}</span>`}
+FAMILY({key:'rama',name:'Rama-rama',meaning:'Natural-history plate',
+  blurb:'An engraved, hand-tinted plate of Malayan butterflies in a glazed wooden shadow box, the names written on a small label in the middle. The glass door swings open.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Pinyon Script', cursive",b:"'IM Fell English', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',[s1,s2]=lpSide(c.hero);
+    return `<section class="page pg-rama" style="--wood:${c.wood};--woodL:${c.woodL}"><i class="lp-wall"></i>
+      <div class="lp-sheet reveal"><i class="lp-ptex"></i><span class="lp-rule"></span>
+        <p class="lp-ph"><span>${en?'Plate':'Plat'} ${lpPl(o)}.</span><span>Lepidoptera Malayana</span></p>
+        <span class="lp-pa">${lpSvg(s1,c.ink,'lp-svg')}</span><span class="lp-pb">${lpSvg(c.hero,c.ink,'lp-svg')}</span>
+        <p class="lp-k kicker">${ev(o,L)}</p>
+        <h1 class="names lp-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="lp-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="lp-hj">${esc(o.hijri)}</p>`:''}
+        <p class="lp-ven">${esc(o.venue)}</p>
+        ${ENG(c.eng,'','lp-pspray')}
+      </div>
+      <nav class="lp-tags reveal d2"><a data-go="when" href="#">${en?'Details':'Butiran'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}<a data-go="loc" href="#">${en?'Location':'Lokasi'}</a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    const label=`<span class="lp-label"><span class="lp-lk">${ev(o,L)}</span><span class="lp-ln">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="lp-ld">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</span></span>`;
+    return `<div class="cover cv-rama" style="--wood:${c.wood};--woodL:${c.woodL}"><i class="lp-wall"></i>
+      ${guest?`<p class="lp-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <${tag} class="lp-stage" ${attr} aria-label="${L.open}">
+        <span class="lp-box"><span class="lp-depth">${lpPlate(o,th,L,label)}</span>
+          <span class="lp-door"><i class="lp-glass"></i></span></span>
+        <span class="lp-btn">${en?'Open invitation':'Buka Jemputan'}</span>
+      </${tag}></div>`},
+  skin(el,o,th){K.cards(el);el.style.setProperty('--wood',th.c.wood);el.style.setProperty('--woodL',th.c.woodL);const sc=$('.scroller',el);
+    const R=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV'];
+    $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.dataset.pl=(o.lang==='en'?'Plate ':'Plat ')+R[i%R.length]});
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'walnut',n:'Kayu Walnut',desc:'Walnut frame, cream linen',c:{ground:'#d8cfc2',sheet:'#f4efe4',ink:'#2f2a24',accent:'#5a3a2a',gold:'#b8924e',pagefg:'#2f2a24',wood:'#5a3a24',woodL:'#7a5234',label:'#fbf8f0',pin:'#2a2a2a',hero:'troides'}},
-    {k:'hitam',n:'Hitam',desc:'Ebony frame, ivory linen',c:{ground:'#1a1817',sheet:'#ece6da',ink:'#26221e',accent:'#2c2620',gold:'#c4a15a',pagefg:'#ece4d6',wood:'#1c1916',woodL:'#3a332c',label:'#fbf8f0',pin:'#b8924e',hero:'graphium'}},
-    {k:'oak',n:'Kayu Oak',desc:'Pale oak, white linen',c:{ground:'#ece6dc',sheet:'#faf8f3',ink:'#33302a',accent:'#4a5a3a',gold:'#b49a5a',pagefg:'#33302a',wood:'#b08a5c',woodL:'#cfae80',label:'#ffffff',pin:'#2a2a2a',hero:'danaus'}},
-    {k:'mahogani',n:'Mahogani',desc:'Mahogany frame, blush linen',c:{ground:'#3a1f1a',sheet:'#f5ebe4',ink:'#3a2622',accent:'#7a2f2c',gold:'#c39a5e',pagefg:'#f3e3d8',wood:'#5e2a1e',woodL:'#86402c',label:'#fdf7f2',pin:'#2a2a2a',hero:'hypolimnas'}},
-    {k:'sage',n:'Sage',desc:'Painted sage frame, ivory',c:{ground:'#d9ddd0',sheet:'#f8f6ee',ink:'#2e342a',accent:'#4a5c3e',gold:'#a8955a',pagefg:'#2e342a',wood:'#7c8a6c',woodL:'#9aa888',label:'#fffdf6',pin:'#b8924e',hero:'catopsilia'}},
-    {k:'nila',n:'Nila',desc:'Indigo frame, pale linen',c:{ground:'#1c2438',sheet:'#f2efe8',ink:'#252a38',accent:'#2c3a62',gold:'#c4a868',pagefg:'#e8e8ee',wood:'#22304e',woodL:'#3a4a6e',label:'#fbfaf6',pin:'#b8924e',hero:'papilio'}},
-    {k:'gading',n:'Gading',desc:'Ivory painted frame, gilt',c:{ground:'#e6dfd2',sheet:'#fbf9f4',ink:'#38322a',accent:'#7a5a3a',gold:'#b8944e',pagefg:'#38322a',wood:'#e4dccb',woodL:'#f6f0e2',label:'#ffffff',pin:'#2a2a2a',hero:'delias'}},
-    {k:'zamrud',n:'Zamrud',desc:'Deep green frame, cream',c:{ground:'#132a22',sheet:'#f3efe4',ink:'#24302a',accent:'#1f4a3a',gold:'#c4a45e',pagefg:'#e6eee8',wood:'#1c3a2e',woodL:'#2e5444',label:'#fbf8f0',pin:'#b8924e',hero:'idea'}},
+    {k:'walnut',n:'Kayu Walnut',desc:'Walnut box on a warm stone wall',c:{ground:'#d9d0c2',sheet:'#f5efe2',ink:'#2c2620',accent:'#5a3a24',gold:'#a8844a',pagefg:'#2f2a24',wood:'#5a3a24',woodL:'#7e5636',hero:'brookiana',eng:'jasmine'}},
+    {k:'hitam',n:'Hitam',desc:'Ebony box on a charcoal wall',c:{ground:'#1d1b19',sheet:'#efe8da',ink:'#26221e',accent:'#2c2620',gold:'#c4a15a',pagefg:'#ece4d6',wood:'#1e1b18',woodL:'#3a342d',hero:'brookiana',eng:'white-roses'}},
+    {k:'oak',n:'Kayu Oak',desc:'Pale oak box on a chalk-white wall',c:{ground:'#ebe6dc',sheet:'#faf7f0',ink:'#33302a',accent:'#4a5a3a',gold:'#a8955a',pagefg:'#33302a',wood:'#b48d5e',woodL:'#d2b07f',hero:'idea',eng:'forget-me-not'}},
+    {k:'mahogani',n:'Mahogani',desc:'Mahogany box on an oxblood wall',c:{ground:'#3b1f1b',sheet:'#f5ece2',ink:'#3a2622',accent:'#7a2f2c',gold:'#c39a5e',pagefg:'#f3e3d8',wood:'#5a2619',woodL:'#86402c',hero:'delias',eng:'wild-rose'}},
+    {k:'sage',n:'Sage',desc:'Painted sage box on a pale green wall',c:{ground:'#d5dacb',sheet:'#f8f6ee',ink:'#2e342a',accent:'#4a5c3e',gold:'#a8955a',pagefg:'#2e342a',wood:'#7c8a6c',woodL:'#a0ad8e',hero:'catopsilia',eng:'jasmine'}},
+    {k:'nila',n:'Nila',desc:'Indigo box on a midnight wall',c:{ground:'#1b2336',sheet:'#f2eee5',ink:'#252a38',accent:'#2c3a62',gold:'#c4a868',pagefg:'#e8e8ee',wood:'#22304e',woodL:'#3d4f78',hero:'graphium',eng:'iris'}},
+    {k:'gading',n:'Gading',desc:'Ivory painted box with a gilt edge',c:{ground:'#e5dece',sheet:'#fbf8f1',ink:'#38322a',accent:'#7a5a3a',gold:'#b8944e',pagefg:'#38322a',wood:'#dcd2bd',woodL:'#f4ecda',hero:'idea',eng:'blush-rose'}},
+    {k:'zamrud',n:'Zamrud',desc:'Deep green box on a forest wall',c:{ground:'#142a22',sheet:'#f3eee2',ink:'#24302a',accent:'#1f4a3a',gold:'#c4a45e',pagefg:'#e6eee8',wood:'#1c3a2e',woodL:'#335a48',hero:'brookiana',eng:'hibiscus'}},
   ]});

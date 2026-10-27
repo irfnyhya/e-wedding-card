@@ -1,76 +1,67 @@
-/* piksel: an 8-bit game title screen inside a CRT bezel. Dithered sky, pixel castle, hills, trees, floating pixel hearts, scanlines.
-   Cover: PRESS START; the screen is wiped away tile by tile in a stepped diagonal. Page: the title screen with a menu of the details.
-   Skin: RPG dialogue boxes with name tags. */
-needFont('Press+Start+2P');
-needFont('VT323');
-const PS="'Press Start 2P', monospace",VT="'VT323', monospace";
-let uid=0;
-const R=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
-function bmp(rows,x,y,map){let s='';rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const ch=r[i];if(map[ch])s+=R(x+i,y+j,1,1,map[ch])}});return s}
-const HEART=['.XX.XX.','XWXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'];
-const TREE=['..GGG..','.GGgGG.','GGGGGgG','GgGGGGG','GGGGgGG','.GGGGG.','..GgG..','...T...','...T...'];
-const CLOUD=['...WWWW.....','..WWWWWWW.WW','WWWWWWWWWWWW','.SSSSSSSSSS.'];
-const heart=(x,y,c,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${bmp(['.XX.XX.','XWXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'],0,0,{X:c.accent,W:'#fff'})}${bmp(['.......','.......','......S','.....S.','....S..','...S...'],0,0,{S:c.accentS})}</g>`;
-function scene(c,H=180){const r=K.rnd(11);let s='';const sky=[c.sky1,c.sky2,c.sky3,c.sky4];const bands=[0,30,58,82,H];
-  // sky bands with checker dithering at each seam
-  for(let i=0;i<4;i++)s+=R(0,bands[i],96,bands[i+1]-bands[i],sky[i]);
-  for(let i=1;i<4;i++){for(let x=0;x<96;x+=2)s+=R(x,bands[i]-2,1,1,sky[i])+R(x+1,bands[i]-1,1,1,sky[i])+R(x+1,bands[i],1,1,sky[i-1]);for(let x=0;x<96;x+=4)s+=R(x,bands[i]-4,1,1,sky[i])}
-  for(let i=0;i<46;i++){const x=Math.floor(r()*96),y=Math.floor(r()*70);s+=R(x,y,1,1,i%5?c.star:'#fff');if(i%11==0)s+=R(x-1,y,3,1,c.star)+R(x,y-1,1,3,c.star)}
-  // moon or sun
-  s+=bmp(['..MMM..','.MMMMm.','MMMMMmm','MMMMMMm','MMMMMMm','.MMMMm.','..MMM..'],76,60,{M:c.moon,m:c.moonS});
-  s+=`<g opacity=".9">${bmp(CLOUD,6,64,{W:c.cloud,S:c.cloudS})}${bmp(CLOUD,58,44,{W:c.cloud,S:c.cloudS})}</g>`;
-  // far mountains (staircase), near hills
-  let m=`M0 ${H}`;for(let x=0;x<=96;x+=2){const h=Math.round(86+10*Math.sin(x/9)+6*Math.sin(x/4.3+1));m+=`V${h}H${x+2}`}s+=`<path d="${m}V${H}Z" fill="${c.mtn}"/>`;
-  for(let x=0;x<96;x+=2){const h=Math.round(86+10*Math.sin(x/9)+6*Math.sin(x/4.3+1));if(h<88)s+=R(x,h,2,1,c.snow)}
-  let hl=`M0 ${H}`;for(let x=0;x<=96;x+=2){const h=Math.round(108+5*Math.sin(x/7+2)+3*Math.cos(x/3));hl+=`V${h}H${x+2}`}s+=`<path d="${hl}V${H}Z" fill="${c.hill}"/>`;
-  // castle
-  const st=c.stone,sd=c.stoneS,ol=c.outline;let k='';
-  k+=R(28,98,40,24,ol)+R(29,99,38,23,st);
-  for(let x=29;x<67;x+=4)k+=R(x,96,2,2,st)+R(x,95,2,1,ol);
-  [[22,84],[66,84]].forEach(([x,y])=>{k+=R(x,y,9,38,ol)+R(x+1,y+1,7,37,st)+R(x,y-3,9,3,ol);for(let i=0;i<9;i+=3)k+=R(x+i,y-4,2,2,st);k+=R(x+3,y+8,3,4,c.gold)+R(x+3,y+20,3,4,c.gold)+R(x+4,y-14,1,10,ol)+R(x+5,y-14,5,3,c.accent)+R(x+5,y-12,3,1,c.accentS)});
-  k+=R(40,80,16,20,ol)+R(41,81,14,19,st);for(let i=0;i<7;i++)k+=R(40+i,80-i,16-2*i,1,i%2?c.accent:c.accentS);k+=R(47,66,2,8,ol)+R(48,66,6,3,c.gold);
-  k+=R(45,86,6,6,c.gold)+R(47,86,2,6,ol);
-  k+=R(43,110,10,12,ol)+R(44,108,8,2,ol)+R(45,107,6,1,ol)+R(44,111,8,11,c.door);
-  for(let y=102;y<120;y+=4)for(let x=30+(y%8?2:0);x<66;x+=6)if(x<43||x>53)k+=R(x,y,3,1,sd);
-  [[33,104],[58,104],[33,112],[58,112]].forEach(([x,y])=>k+=R(x,y,3,4,c.gold)+R(x,y,3,1,ol));
-  s+=k;
-  // ground, path, grass tufts, trees, flowers
-  s+=R(0,121,96,H-121,c.grass)+R(0,121,96,1,c.grass2);
-  for(let y=124;y<H;y+=3)for(let x=(y%2)*3;x<96;x+=7)s+=R(x,y,2,1,c.grass2);
-  for(let i=0;i<H-121;i++){const w=10+Math.round(i*.9);s+=R(48-w/2,121+i,w,1,i%4==0?c.pathS:c.path)}
-  [[4,108],[14,112],[78,110],[87,106]].forEach(([x,y])=>s+=bmp(TREE,x,y,{G:c.tree,g:c.treeS,T:c.trunk}));
-  for(let i=0;i<18;i++){const x=Math.floor(r()*92)+2,y=126+Math.floor(r()*(H-130));if(Math.abs(x-48)>12+(y-121)*.45)s+=R(x,y,1,1,i%2?c.accent:c.gold)}
-  return s}
-function screenSvg(c,H,cls){const u=++uid;return `<svg class="${cls}" viewBox="0 0 96 ${H}" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges" aria-hidden="true">${scene(c,H)}
-   ${heart(9,48,c)}${heart(82,78,c,.8)}${heart(14,92,c,.6)}</svg>`}
-const scan='<i class="px-scan"></i><i class="px-glass"></i>';
-FAMILY({key:'piksel',name:'Piksel',meaning:'8-bit title screen',
-  blurb:'An 8-bit game title screen in a CRT bezel: a dithered sky, pixel castle and hearts, the names as the game title and PRESS START; the screen wipes away tile by tile.',
-  fonts:{d:PS,s:PS,b:VT},ms:1550,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-piksel" style="--tx:${c.tx||'#fff'};--ol:${c.outline};--tsh:${c.tsh||c.outline};--accentS:${c.accentS};--n:${Math.max(6,(n1||'').length,(n2||'').length)}"><div class="px-bezel reveal"><div class="px-screen">${screenSvg(c,150,'px-scene')}${scan}
-     <div class="px-ptitle"><p class="px-k">${ev(o,L)}</p></div></div></div>
-     <h1 class="names px-nm reveal d1"><span>${esc(n1)}</span><i class="px-h"></i><span>${esc(n2)}</span></h1>
-     <div class="px-menu reveal d1"><p><b>&#9654;</b><span>${en?'DATE':'TARIKH'}</span><em>${esc(fmtDate(o.date,o.lang))}</em></p><p><b></b><span>${en?'TIME':'MASA'}</span><em>${esc(fmtTime(o.start,o.lang))}${o.end?' - '+esc(fmtTime(o.end,o.lang)):''}</em></p><p><b></b><span>${en?'MAP':'LOKASI'}</span><em>${esc(o.venue)}</em></p></div>
-     <p class="px-copy reveal d2">&#169; ${esc(String(new Date((o.date||'2026')+'T00:00:00').getFullYear()))} ${esc(n1)} &amp; ${esc(n2)}</p></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';const d=new Date((o.date||'2026-01-01')+'T00:00:00');
-    const hi=String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')+String(d.getFullYear()).slice(2);
-    let tiles='';for(let y=0;y<16;y++)for(let x=0;x<8;x++)tiles+=`<i style="--d:${(x+y)*38}ms"></i>`;
-    return `<div class="cover cv-piksel" style="--tx:${c.tx||'#fff'};--ol:${c.outline};--tsh:${c.tsh||c.outline};--accentS:${c.accentS};--n:${Math.max(6,(n1||'').length,(n2||'').length)}"><div class="px-case"><div class="px-screen">${screenSvg(c,180,'px-scene')}
-     <div class="px-hud"><span>1UP <b>00${hi.slice(0,4)}</b></span><span>HI <b>${hi}</b></span></div>
-     <div class="px-title"><p class="px-k">${ev(o,L)}</p><p class="px-nm"><span>${esc(n1)}</span><i class="px-h"></i><span>${esc(n2)}</span></p></div>
-     <div class="px-low">${guest?`<p class="px-p1">${en?'PLAYER 1':'PEMAIN 1'}: <b>${esc(guest)}</b></p>`:''}
-      <${tag} class="px-start" ${attr} aria-label="${L.open}">&#9654; PRESS START</${tag}>
-      <p class="px-info">${esc(fmtShort(o.date))} &#183; ${esc(o.venue)}</p><p class="px-c">&#169; ${d.getFullYear()} ${esc(n1)} &amp; ${esc(n2)}</p></div>
-     ${scan}</div><i class="px-led"></i></div><div class="px-wipe">${tiles}</div></div>`},
-  skin(el,o,th){K.cards(el);el.style.setProperty('--frame',th.c.frame);el.style.setProperty('--box',th.c.sheet)},
+/* piksel (round 7): a handheld game console photographed on linen like a product shot. Its little screen shows a
+   public-domain painting re-drawn as pixel art (Hokusai, Monet, Hassam, a Chinese album leaf), with the names in a game dialogue box.
+   Cover: tap "Buka Jemputan" and the view moves into the screen until it fills the phone.
+   Page: the pixel painting as a framed screen, the names, and a game menu that leads to the sections.
+   Skin: matte cards with stepped pixel corners and pixel-type labels. */
+needFont('Silkscreen');
+// The paintings are re-drawn once in the browser: shrunk to an 80 x 72 grid, posterised with an ordered dither,
+// and shown with crisp pixels. The Game Boy colourway maps the same picture to four greens.
+const PX_ART={fuji:{src:'pd-paint-hokusai-fuji.jpg',box:[0,.12,1,.92]},poppies:{src:'pd-paint-monet-poppies.jpg',box:[0,.22,1,.92]},loquat:{src:'pd-asia-4.jpg',box:[.1,.02,1,.84]},
+  roses:{src:'pd-still-4.jpg',box:[.12,.15,.92,.723]},bouquet:{src:'pd-bouquet.jpg',box:[.1,.12,.9,.664]},birds:{src:'pd-asia-3.jpg',box:[.1,.42,.75,.953]},
+  tail:{src:'pd-asia-2.jpg',box:[.1,.12,.7,.367]},plate:{src:'pd-asia-1.webp',fit:'#e4ebf1'}};
+const PX_GB=[[15,56,15],[48,98,48],[139,172,15],[155,188,15]];
+let pxCss=null;   // created on first render in the browser; the engine is also imported on the server
+const pxDone=new Set();
+function pxMake(art,pal){const id=art+'-'+pal;if(pxDone.has(id)||!PX_ART[art]||typeof document==='undefined'||typeof Image==='undefined')return;if(!pxCss){pxCss=document.createElement('style');document.head.appendChild(pxCss)}pxDone.add(id);const a=PX_ART[art],img=new Image();
+  img.onload=()=>{try{const W=80,H=72,iw=img.naturalWidth,ih=img.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
+    g.imageSmoothingQuality='high';if(a.fit){g.fillStyle=a.fit;g.fillRect(0,0,W,H);const dh=H*.9,dw=dh*iw/ih;g.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh)}else g.drawImage(img,a.box[0]*iw,a.box[1]*ih,(a.box[2]-a.box[0])*iw,(a.box[3]-a.box[1])*ih,0,0,W,H);
+    const d=g.getImageData(0,0,W,H),p=d.data,B=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const k=(y*W+x)*4,t=(B[(y%4)*4+x%4]/16-.5);
+      if(pal==='gb'){const R=p[k]/255,G=p[k+1]/255,Bl=p[k+2]/255,l=(G+Bl)/2*1.1-R*.25+.1,q=Math.max(0,Math.min(3,Math.round(l*3.8-.55+t*.3))),c=PX_GB[q];p[k]=c[0];p[k+1]=c[1];p[k+2]=c[2]}
+      else for(let i=0;i<3;i++){const v=p[k+i]/255,lv=6;p[k+i]=Math.round(Math.max(0,Math.min(lv,Math.round(v*lv+t*.4)))*255/lv)}}
+    g.putImageData(d,0,0);const u=cv.toDataURL('image/png');pxCss.textContent+=`.inv i.px-art-${id}{background-image:url(${u})}`}catch(e){}};img.src=A+a.src}
+const pxArt=(c,cls='')=>{pxMake(c.art,c.pal);return `<i class="px-art px-art-${c.art}-${c.pal} ${cls}"></i>`};
+const pxVars=c=>`--shell:${c.shell};--bezel:${c.bezel};--btn:${c.btn};--surface:${c.surface}`;
+const pxScreen=(o,c,L,dialog)=>`<div class="px-screen">${pxArt(c)}${dialog?`<div class="px-dlg"><b>${dialog}</b></div>`:''}<i class="px-glass"></i></div>`;
+FAMILY({key:'piksel',name:'Piksel',meaning:'Pixel console',
+  blurb:'A handheld game console resting on linen, its screen showing a famous painting re-drawn in pixels with your names in a dialogue box. The view moves into the screen to open the card.',
+  fonts:{d:"'Silkscreen', monospace",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-piksel2${c.light?' px-light':''}" style="${pxVars(c)}"><div class="px-linen"></div>
+      <div class="px-frame reveal">${pxScreen(o,c,L,'')}<p class="px-cap">${esc(c.credit)}</p></div>
+      <p class="px-k kicker reveal d1">${ev(o,L)}</p>
+      <h1 class="px-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+      <p class="px-date reveal d2">${esc(fmtDate(o.date,o.lang))}${o.venue?`<br><i>${esc(o.venue)}</i>`:''}</p>
+      <nav class="px-menu reveal d3">
+        <a data-go="when" href="#">${en?'Event details':'Butiran majlis'}</a>
+        ${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}
+        <a data-go="loc" href="#">${en?'Location':'Lokasi'}</a></nav></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    const dpad=`<i class="px-dpad"><i></i></i>`;
+    return `<div class="cover cv-piksel2${c.light?' px-light':''}" style="${pxVars(c)}"><div class="px-linen"></div>
+      <p class="px-k px-top">${ev(o,L)}</p>
+      <div class="px-con">
+        <div class="px-rim"><span>OFF</span><span>ON</span></div>
+        <div class="px-bezel"><span class="px-led"></span><small class="px-bat">${en?'POWER':'KUASA'}</small>
+          ${pxScreen(o,c,L,`${esc(n1)} ${en?'and':'dan'} ${esc(n2)}`)}<p class="px-model">${esc(fmtShort(o.date))}</p></div>
+        <p class="px-brand"><b>Sanding</b> <span>KAD KAHWIN</span></p>
+        ${dpad}<i class="px-ab b"><small>B</small></i><i class="px-ab a"><small>A</small></i>
+        <i class="px-ss s1"><small>SELECT</small></i><i class="px-ss s2"><small>START</small></i>
+        <i class="px-grille"></i>
+      </div>
+      <div class="px-foot">${guest?`<p class="px-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="px-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;pxMake(c.art,c.pal);['shell','bezel','btn','surface'].forEach(k=>el.style.setProperty('--'+k,c[k]));el.classList.toggle('px-light',!!c.light);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'malam',n:'Malam',desc:'Night sky, violet horizon, pink hearts',c:{ground:'#06070f',sheet:'#101a4a',ink:'#ffffff',accent:'#ff4f79',accentS:'#b8244a',gold:'#ffd447',sky1:'#0b1030',sky2:'#1c2463',sky3:'#3d348b',sky4:'#7a4fa8',star:'#c9c4ff',moon:'#fff3c4',moonS:'#e0c87a',cloud:'#8e86c9',cloudS:'#5d55a0',mtn:'#2a2558',snow:'#c9c4ff',hill:'#1d3b4a',stone:'#9aa3b5',stoneS:'#6b7488',outline:'#1b1a2e',door:'#2b1c12',grass:'#2e8b57',grass2:'#1f6b43',path:'#c9a86a',pathS:'#a8874f',tree:'#1f6b43',treeS:'#2e8b57',trunk:'#5b3a22',frame:'#ffffff',pagefg:'#ffffff',line:'rgba(255,255,255,.3)'}},
-    {k:'senja',n:'Senja',desc:'Sunset over the castle',c:{ground:'#140b1c',sheet:'#3a1838',ink:'#fff4e8',accent:'#ff3d6e',accentS:'#a8173f',gold:'#ffd166',sky1:'#2b1c4f',sky2:'#6b2a6a',sky3:'#c4486a',sky4:'#ffa060',star:'#ffd1e0',moon:'#fff0a8',moonS:'#ffc35a',cloud:'#ff9a8a',cloudS:'#c45a6a',mtn:'#5a2a5a',snow:'#ffb3a0',hill:'#3a2a4a',stone:'#e3c9a8',stoneS:'#b39470',outline:'#2a1424',door:'#2a1424',grass:'#3c7a3c',grass2:'#2c5e2c',path:'#e0b070',pathS:'#b88a50',tree:'#2c5e2c',treeS:'#3c7a3c',trunk:'#5a3a24',frame:'#ffd166',pagefg:'#fff4e8',line:'rgba(255,244,232,.3)'}},
-    {k:'siang',n:'Siang',desc:'Bright blue day, white dialogue boxes',c:{ground:'#cfe8ff',sheet:'#ffffff',ink:'#1a1a2e',accent:'#e83c5a',accentS:'#a3203a',gold:'#ffc83d',sky1:'#3d8bff',sky2:'#5fa8ff',sky3:'#8fd0ff',sky4:'#c8ecff',star:'#cfe6ff',moon:'#fff6b0',moonS:'#ffd84a',cloud:'#ffffff',cloudS:'#b8d8f0',mtn:'#6f8fb5',snow:'#ffffff',hill:'#4caf50',stone:'#d8d8d8',stoneS:'#a8a8a8',outline:'#2a2a3a',door:'#5a3a22',grass:'#5ccf5c',grass2:'#3d9e3d',path:'#e8c88a',pathS:'#c8a46a',tree:'#2e8b3e',treeS:'#4caf50',trunk:'#7a4a2a',frame:'#1a1a2e',pagefg:'#1a1a2e',line:'rgba(26,26,46,.3)'}},
-    {k:'gameboy',n:'Game Boy',desc:'Four shades of pea green',c:{ground:'#8bac0f',sheet:'#9bbc0f',ink:'#0f380f',accent:'#0f380f',accentS:'#306230',gold:'#306230',sky1:'#9bbc0f',sky2:'#9bbc0f',sky3:'#8bac0f',sky4:'#8bac0f',star:'#8bac0f',moon:'#306230',moonS:'#0f380f',cloud:'#9bbc0f',cloudS:'#306230',mtn:'#306230',snow:'#8bac0f',hill:'#306230',stone:'#8bac0f',stoneS:'#306230',outline:'#0f380f',door:'#0f380f',grass:'#8bac0f',grass2:'#306230',path:'#9bbc0f',pathS:'#8bac0f',tree:'#0f380f',treeS:'#306230',trunk:'#0f380f',frame:'#0f380f',tx:'#0f380f',tsh:'#c4d86a',pagefg:'#0f380f',line:'rgba(15,56,15,.35)'}},
-    {k:'pastel',n:'Pastel',desc:'Candy sky and a pearl castle',c:{ground:'#f6e6f2',sheet:'#fff5fb',ink:'#4a2f63',accent:'#ff6fa5',accentS:'#d0407a',gold:'#ffd27a',sky1:'#c8b6ff',sky2:'#e0c3fc',sky3:'#ffd6e8',sky4:'#fff0f5',star:'#ffffff',moon:'#ffffff',moonS:'#ffd6e8',cloud:'#ffffff',cloudS:'#f2c6de',mtn:'#b8a4e3',snow:'#ffffff',hill:'#9ad8b8',stone:'#ffffff',stoneS:'#e6d6f0',outline:'#6b4a8a',door:'#8a5aa8',grass:'#a8e6c4',grass2:'#7cc9a0',path:'#ffe4b8',pathS:'#f2c890',tree:'#7cc9a0',treeS:'#a8e6c4',trunk:'#a8806a',frame:'#6b4a8a',pagefg:'#4a2f63',line:'rgba(74,47,99,.3)'}},
-    {k:'hutan',n:'Hutan',desc:'Forest night with firefly hearts',c:{ground:'#05110d',sheet:'#0f2a22',ink:'#e8fff4',accent:'#ff6b6b',accentS:'#b83a3a',gold:'#ffd166',sky1:'#071712',sky2:'#0d2a20',sky3:'#1f4d3a',sky4:'#4a7f52',star:'#d8ffd0',moon:'#f4ffd8',moonS:'#c8e09a',cloud:'#3a6a50',cloudS:'#244a38',mtn:'#163a2c',snow:'#8ac49a',hill:'#123024',stone:'#a8b8a0',stoneS:'#788870',outline:'#0a1a12',door:'#2a1a10',grass:'#2a6a3a',grass2:'#1a4a28',path:'#b89a5a',pathS:'#8a7040',tree:'#0f3a1f',treeS:'#1f5a30',trunk:'#4a2e1a',frame:'#ffd166',pagefg:'#e8fff4',line:'rgba(232,255,244,.3)'}},
-    {k:'salji',n:'Salji',desc:'Blue winter dusk and snowfields',c:{ground:'#0a1426',sheet:'#142640',ink:'#eef4ff',accent:'#ff5577',accentS:'#b8304c',gold:'#ffe08a',sky1:'#1b2a4a',sky2:'#2c4a7a',sky3:'#4a6fa5',sky4:'#9cc0e8',star:'#ffffff',moon:'#ffffff',moonS:'#c8dcf0',cloud:'#d8e8ff',cloudS:'#8aa8d0',mtn:'#3a5a8a',snow:'#ffffff',hill:'#c8dcf0',stone:'#b8c8dc',stoneS:'#8898b0',outline:'#1a2238',door:'#3a2a24',grass:'#eef4ff',grass2:'#c8dcf0',path:'#a8b8d0',pathS:'#8898b0',tree:'#1f4a3a',treeS:'#ffffff',trunk:'#4a3a2a',frame:'#ffffff',pagefg:'#eef4ff',line:'rgba(238,244,255,.3)'}},
-    {k:'emas',n:'Emas',desc:'Golden desert evening',c:{ground:'#140c08',sheet:'#2a1a10',ink:'#fff2d8',accent:'#ff5a5a',accentS:'#b0302a',gold:'#ffd27a',sky1:'#2a1a3a',sky2:'#6a2a4a',sky3:'#d9822b',sky4:'#ffd27a',star:'#ffe8c0',moon:'#fff4d0',moonS:'#ffcc66',cloud:'#ffb870',cloudS:'#c87a3a',mtn:'#8a4a3a',snow:'#ffb870',hill:'#b86a3a',stone:'#f0d8a8',stoneS:'#c0a070',outline:'#3a2010',door:'#3a2010',grass:'#e0b060',grass2:'#c09040',path:'#f4d49a',pathS:'#d8b070',tree:'#4a7a3a',treeS:'#6a9a4a',trunk:'#6a4a2a',frame:'#ffd27a',pagefg:'#fff2d8',line:'rgba(255,242,216,.3)'}},
+    {k:'malam',n:'Malam',desc:'Midnight console, a Dutch flower painting in pixels',c:{ground:'#10131d',surface:'#1b2030',sheet:'#1b2132',ink:'#e9ecf4',accent:'#e8eefc',gold:'#e46d8c',pagefg:'#e9ecf4',shell:'#2c3553',bezel:'#161a28',btn:'#d9637f',art:'roses',pal:'full',credit:'After a Dutch flower still life',cover:'#2c3553'}},
+    {k:'senja',n:'Senja',desc:'Dusty-rose console, Hokusai’s red Fuji',c:{ground:'#2d1c24',surface:'#3a2630',sheet:'#33222b',ink:'#f6ebe6',accent:'#f7e6de',gold:'#e8a07f',pagefg:'#f6ebe6',shell:'#cf9f98',bezel:'#3b2a30',btn:'#9c3b45',art:'fuji',pal:'full',credit:'After Hokusai, Fine Wind, Clear Morning',cover:'#cf9f98'}},
+    {k:'siang',n:'Siang',desc:'Cream console on pale blue linen, Monet’s poppy field',c:{ground:'#dbe3ea',surface:'#dfe6ec',sheet:'#f7f7f3',ink:'#2a2f38',accent:'#2a3550',gold:'#c4523f',pagefg:'#2a2f38',shell:'#e4dfd3',bezel:'#5d6272',btn:'#b8455a',art:'poppies',pal:'full',credit:'After Claude Monet, a poppy field',light:'1',cover:'#e4dfd3'}},
+    {k:'gameboy',n:'Game Boy',desc:'Classic grey console, Hokusai’s Fuji in four greens',c:{ground:'#d7d6cf',surface:'#dcdbd3',sheet:'#f3f2ec',ink:'#28301f',accent:'#0f380f',gold:'#7a2a5a',pagefg:'#28301f',shell:'#c9c6bc',bezel:'#5a5d6e',btn:'#8a2f5c',art:'fuji',pal:'gb',credit:'After Hokusai, in four shades of green',light:'1',cover:'#9bbc0f'}},
+    {k:'pastel',n:'Pastel',desc:'Lilac console, two bullfinches from a Japanese print',c:{ground:'#f1e6ec',surface:'#f2e8ee',sheet:'#fdf8fa',ink:'#3d2f45',accent:'#4a3560',gold:'#c9718f',pagefg:'#3d2f45',shell:'#cfc4e2',bezel:'#5b5470',btn:'#e08aa6',art:'birds',pal:'full',credit:'After a Japanese print, two bullfinches',light:'1',cover:'#cfc4e2'}},
+    {k:'hutan',n:'Hutan',desc:'Forest-green console, a Dutch bouquet',c:{ground:'#121a15',surface:'#1c2720',sheet:'#1b261f',ink:'#e8f0ea',accent:'#eef5ef',gold:'#c9a35a',pagefg:'#e8f0ea',shell:'#405c4a',bezel:'#18211b',btn:'#c9a35a',art:'bouquet',pal:'full',credit:'After Jan van Huysum, flowers in a vase',cover:'#405c4a'}},
+    {k:'salji',n:'Salji',desc:'White console on cool linen, a blue-and-white dish',c:{ground:'#d5dde6',surface:'#dae1e9',sheet:'#f8fafc',ink:'#253041',accent:'#2b3a55',gold:'#5b8bc0',pagefg:'#253041',shell:'#eef0f1',bezel:'#4a5266',btn:'#5b8bc0',art:'plate',pal:'full',credit:'After a blue-and-white porcelain dish',light:'1',cover:'#eef0f1'}},
+    {k:'emas',n:'Emas',desc:'Mustard console, a Chinese album leaf of loquats',c:{ground:'#22190f',surface:'#2c2116',sheet:'#2a2017',ink:'#f5ecdc',accent:'#f7ead2',gold:'#d9b25a',pagefg:'#f5ecdc',shell:'#d3a94f',bezel:'#2e2418',btn:'#7a3b2a',art:'loquat',pal:'full',credit:'After a Chinese album leaf, loquats and a bird',cover:'#d3a94f'}},
   ]});

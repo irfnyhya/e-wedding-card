@@ -1,9 +1,9 @@
-/* silangkata: a criss-cross puzzle on newsprint where the couple's names cross.
-   Cover: the puzzle page with its clues and a pencil; touching the grid writes the names into the squares (about 1.2 s).
-   Page: the solved grid with clues that give the day, date and venue. Skin: headings set in answer boxes. */
-needFont('Caveat:wght@400;600');
-needFont('Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900');
-needFont('Jost:wght@300;400;500;600');
+/* silangkata: the weekend puzzle page of a broadsheet, folded on a desk beside a fountain pen.
+   The couple's names cross in the grid, printed by hand in ink; the other answers (the day, the venue, the month) wait to be filled.
+   Cover: tap "Buka Jemputan"; the pen lifts away and the rest of the answers ink in, then the page clears.
+   Page: the solved puzzle set as a newspaper column with the names as the headline. Skin: newsprint columns with a thick-thin rule under each heading. */
+needFont('Old+Standard+TT:ital,wght@0,400;0,700;1,400');
+needFont('Caveat:wght@600');
 let skN=0;
 const SK_CLEAN=s=>String(s||'').normalize('NFD').replace(/[^A-Za-z]/g,'').toUpperCase();
 const SK_EXTRA={
@@ -49,51 +49,61 @@ function skBuild(o){const en=o.lang==='en',[a,b]=coverNames(o),n1=SK_CLEAN(a).sl
   words.forEach(w=>w.num=starts.indexOf(w.y*100+w.x)+1);
   out.forEach(c=>{const i=starts.indexOf(c.y*100+c.x);c.num=i<0?0:i+1});
   return {cols,rows,cells:out,words}}
-function skGrid(P,mode){const nameCells=P.cells.filter(c=>c.nm).sort((p,q)=>p.y-q.y||p.x-q.x);const step=1.05/Math.max(1,nameCells.length);
-  return `<span class="silangkata-grid" style="--cols:${P.cols};--rows:${P.rows}">${P.cells.map(c=>{const fill=mode==='page'||c.nm;
-    const dl=c.nm?(nameCells.indexOf(c)*step).toFixed(2):0;
-    return `<span class="silangkata-c${c.nm?' nm':''}" style="left:${(c.x*100/P.cols).toFixed(3)}%;top:${(c.y*100/P.rows).toFixed(3)}%">${c.num?`<i>${c.num}</i>`:''}${fill?`<b class="silangkata-l" style="--d:${dl}s">${c.ch}</b>`:''}</span>`}).join('')}</span>`}
-function skClues(P,en,full){const li=w=>`<li class="${w.info?'inf':''}${w.nm?' nm':''}"><b>${w.num}</b><span>${esc(w.clue)}${full&&!w.nm?'':` <em>(${w.w.length})</em>`}</span></li>`;
+const skNo=o=>{const d=new Date((o.date||'')+'T00:00:00');return isNaN(d)?'1':String(d.getDate())+String(d.getMonth()+1).padStart(2,'0')};
+const skVars=c=>`--pen:${c.pen};--rule:${c.line}`;
+function skGrid(P,mode){const rest=P.cells.filter(c=>!c.nm).sort((p,q)=>p.y-q.y||p.x-q.x),step=.9/Math.max(1,rest.length);
+  return `<div class="sk-grid ${mode}" style="--cols:${P.cols};--rows:${P.rows}">${P.cells.map(c=>{
+    const dl=c.nm?0:(.15+rest.indexOf(c)*step).toFixed(2);
+    return `<span class="sk-c" style="left:${(c.x*100/P.cols).toFixed(3)}%;top:${(c.y*100/P.rows).toFixed(3)}%">${c.num?`<i>${c.num}</i>`:''}<b class="sk-l${c.nm?' nm':' x'}" style="--d:${dl}s">${c.ch}</b></span>`}).join('')}</div>`}
+function skClues(P,en){const li=w=>`<li><b>${w.num}</b> ${esc(w.clue)} <em>(${w.w.length})</em></li>`;
   const ac=P.words.filter(w=>!w.dir).sort((p,q)=>p.num-q.num),dn=P.words.filter(w=>w.dir).sort((p,q)=>p.num-q.num);
-  return `<div class="silangkata-clues"><div><h4>${en?'Across':'Mendatar'}</h4><ol>${ac.map(li).join('')}</ol></div><div><h4>${en?'Down':'Menurun'}</h4><ol>${dn.map(li).join('')}</ol></div></div>`}
-const SK_PENCIL=(c,u)=>`<svg class="silangkata-pencil" viewBox="0 0 320 26" aria-hidden="true"><defs><linearGradient id="skp${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a3a"/><stop offset=".35" stop-color="#1b1b1b"/><stop offset=".36" stop-color="#2a2a2a"/><stop offset=".65" stop-color="#141414"/><stop offset=".66" stop-color="#232323"/><stop offset="1" stop-color="#0c0c0c"/></linearGradient>
-  <linearGradient id="skf${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e7b8"/><stop offset=".45" stop-color="${c.gold}"/><stop offset="1" stop-color="#6b5226"/></linearGradient></defs>
-  <path d="M40 3H262V23H40z" fill="url(#skp${u})"/><path d="M40 3L8 13 40 23z" fill="#e8cfa4"/><path d="M8 13l9-2.8v5.6z" fill="#2a2a2a"/><path d="M40 3l-6 3 6 2-6 3 6 2-6 3 6 2-6 3 6 3" fill="none" stroke="#c9ad80" stroke-width=".6"/>
-  <path d="M262 2.4h26v21.2h-26z" fill="url(#skf${u})"/><path d="M266 2.4v21.2M270 2.4v21.2M280 2.4v21.2M284 2.4v21.2" stroke="#6b5226" stroke-width=".7"/>
-  <path d="M288 3.4h22a6 6 0 0 1 6 6v7.2a6 6 0 0 1-6 6h-22z" fill="${c.accent}"/><path d="M288 6h22" stroke="#fff" stroke-opacity=".25" stroke-width="1.4"/>
-  <path d="M60 9.4h110" stroke="${c.gold}" stroke-width=".6" opacity=".8"/></svg>`;
+  return `<div class="sk-clues"><div><h4>${en?'Across':'Mendatar'}</h4><ol>${ac.map(li).join('')}</ol></div><div><h4>${en?'Down':'Menurun'}</h4><ol>${dn.map(li).join('')}</ol></div></div>`}
+// a fountain pen: black resin barrel and cap, gold clip and bands, a two-tone nib
+const skPen=u=>`<svg class="sk-pen" viewBox="0 0 400 40" aria-hidden="true"><defs>
+  <linearGradient id="skr${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4743"/><stop offset=".18" stop-color="#d9d4cb" stop-opacity=".9"/><stop offset=".3" stop-color="#2a2826"/><stop offset=".7" stop-color="#121110"/><stop offset="1" stop-color="#050505"/></linearGradient>
+  <linearGradient id="skg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3cf"/><stop offset=".35" stop-color="#d6b066"/><stop offset=".7" stop-color="#8a6a2c"/><stop offset="1" stop-color="#5a4318"/></linearGradient></defs>
+  <path d="M2 20L40 12.6 40 27.4Z" fill="url(#skg${u})"/><path d="M2 20L24 17.6 24 22.4Z" fill="#cfd2d6" opacity=".55"/><path d="M4 20H30" stroke="#3a2c10" stroke-width=".6"/><circle cx="28" cy="20" r="1.3" fill="#3a2c10"/>
+  <path d="M40 12.2H72L76 11V29L72 27.8H40Z" fill="url(#skr${u})"/><path d="M44 13.6v12.8M48 13.6v12.8" stroke="#000" stroke-opacity=".35" stroke-width=".5"/>
+  <path d="M76 9.8H210V30.2H76Z" fill="url(#skr${u})"/>
+  <path d="M206 8.6H222V31.4H206Z" fill="url(#skg${u})"/><path d="M210 8.6v22.8M218 8.6v22.8" stroke="#5a4318" stroke-width=".6"/>
+  <path d="M222 8.6H382Q396 8.6 396 20Q396 31.4 382 31.4H222Z" fill="url(#skr${u})"/>
+  <path d="M370 8.6h5v22.8h-5z" fill="url(#skg${u})"/>
+  <path d="M236 5.6H354Q362 5.6 362 9.4V11.2H244Q238 11.2 236 9Z" fill="url(#skg${u})"/><circle cx="244" cy="8.4" r="2.6" fill="url(#skg${u})" stroke="#5a4318" stroke-width=".4"/></svg>`;
 
-FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Crossword puzzle',
-  blurb:'A criss-cross puzzle on newsprint where the couple’s names cross; touch the grid and the names are written in, the clues giving the date and venue.',
-  fonts:{d:"'Bodoni Moda', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1650,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',P=skBuild(o);
-    return `<section class="page pg-silangkata" style="--pen:${c.pen}"><div class="silangkata-desk"></div>
-     <div class="silangkata-paper reveal"><div class="silangkata-mast"><span>${en?'Solution':'Jawapan'}</span><b>${en?'Crossword':'Silang Kata'}</b><span>No. ${esc((fmtShort(o.date)||'').replace(/\./g,''))}</span></div>
-      <p class="silangkata-sub">${ev(o,L)}</p><h1 class="names silangkata-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
-      <div class="silangkata-wrap">${skGrid(P,'page')}</div>${skClues(P,en,true)}
-      <p class="silangkata-foot">${esc(o.address||'')}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',P=skBuild(o);
-    return `<div class="cover cv-silangkata" style="--pen:${c.pen}"><div class="silangkata-desk"></div>
-     <div class="silangkata-paper"><div class="silangkata-mast"><span>${en?'Special edition':'Edisi istimewa'}</span><b>${en?'Crossword':'Silang Kata'}</b><span>No. ${esc((fmtShort(o.date)||'').replace(/\./g,''))}</span></div>
-      <p class="silangkata-sub">${ev(o,L)} · ${esc(fmtDate(o.date,o.lang))}</p>
-      <p class="silangkata-q">${en?'Who are the happy couple?':'Siapakah mempelai kita?'}</p>
-      <${tag} class="silangkata-tap" ${attr} aria-label="${L.open}">${skGrid(P,'cover')}</${tag}>
-      ${skClues(P,en,false)}
-      <div class="silangkata-bot"><div class="silangkata-coupon"><p class="silangkata-ch">${en?'Entry coupon':'Kupon penyertaan'}</p>
-        <p class="silangkata-cl"><span>${en?'Name':'Nama'}</span><b>${guest?esc(guest):'&nbsp;'}</b></p>
-        <p class="silangkata-cl"><span>${en?'Reply by':'Jawab sebelum'}</span><b>${esc(o.deadline?fmtDate(o.deadline,o.lang,false):fmtDate(o.date,o.lang,false))}</b></p></div>
-       <p class="silangkata-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>
-     ${SK_PENCIL(c,++skN)}</div>`},
-  skin(el,o,th,L){K.cards(el);el.style.setProperty('--pen',th.c.pen);
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('silangkata-sec');const h=$('h2',s);if(!h)return;const t=h.textContent.trim();
-      let first=true;h.innerHTML=t.split(/\s+/).map(w=>`<span class="silangkata-w">${[...w].map(ch=>{const out=`<span class="silangkata-bx">${first?`<i>${i+1}</i>`:''}${esc(ch)}</span>`;first=false;return out}).join('')}</span>`).join('');h.classList.add('silangkata-h')})},
+FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Weekend crossword',
+  blurb:'The weekend crossword page of a newspaper, folded on a desk beside a fountain pen, with the couple’s names crossing in the grid in ink.',
+  fonts:{d:"'Old Standard TT', serif",s:"'Old Standard TT', serif",b:"'Old Standard TT', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',P=skBuild(o);
+    return `<section class="page pg-silangkata2${th.c.dark?' sk-dark':''}" style="${skVars(th.c)}"><div class="sk-desk"></div>
+    <div class="sk-paper sk-pp reveal"><i class="sk-crease"></i>
+      <p class="sk-dl"><span>${en?'Weekend edition':'Edisi Hujung Minggu'}</span><span>${en?'Puzzle':'Teka-teki'} No. ${skNo(o)}</span></p>
+      <p class="sk-k kicker">${ev(o,L)}</p>
+      <h1 class="names sk-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+      <p class="sk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="sk-ven">${esc(o.venue)}</p>`:''}
+      <i class="sk-tt"></i>
+      ${skGrid(P,'pg')}
+      <div class="sk-pills"><a class="sk-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="sk-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+    </div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',P=skBuild(o),u=++skN;
+    return `<div class="cover cv-silangkata2${th.c.dark?' sk-dark':''}" style="${skVars(th.c)}"><div class="sk-desk"></div>
+    <div class="sk-paper sk-cp"><i class="sk-crease"></i>
+      <p class="sk-dl"><span>${en?'Weekend edition':'Edisi Hujung Minggu'}</span><span>${esc(fmtShort(o.date))}</span></p>
+      <h2 class="sk-title">${en?'The Crossword':'Silang Kata'}</h2>
+      <p class="sk-deck">${ev(o,L)} · No. ${skNo(o)}</p>
+      ${skGrid(P,'cv')}${skClues(P,en)}
+    </div>
+    <div class="sk-penw">${skPen(u)}</div>
+    <div class="sk-foot">${guest?`<p class="sk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="sk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.setAttribute('style',(el.getAttribute('style')||'')+';'+skVars(th.c));el.classList.toggle('sk-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'kertas',n:'Kertas',desc:'Newsprint on a walnut desk, blue pen',c:{ground:'#3a322a',sheet:'#f2ecdf',ink:'#1c1a17',accent:'#a3222b',gold:'#b08a4a',pagefg:'#efe7d6',pen:'#1f3a8a',line:'rgba(28,26,23,.28)'}},
-    {k:'biru',n:'Biru',desc:'Cool white paper, blue ink',c:{ground:'#d7dde5',sheet:'#f7f5ef',ink:'#1a2233',accent:'#2350a0',gold:'#9c7a3c',pagefg:'#1a2233',pen:'#2350a0',line:'rgba(26,34,51,.28)'}},
-    {k:'merah',n:'Merah',desc:'Red pen on cream, maroon desk',c:{ground:'#5b1c1f',sheet:'#f6efe4',ink:'#221a18',accent:'#b0242c',gold:'#b8914c',pagefg:'#f6efe4',pen:'#b0242c',line:'rgba(34,26,24,.28)'}},
-    {k:'hitam',n:'Hitam',desc:'Black ink, gold pencil, night desk',c:{ground:'#151515',sheet:'#efebe2',ink:'#161616',accent:'#161616',gold:'#c8a25a',pagefg:'#ece5d6',pen:'#161616',line:'rgba(22,22,22,.3)'}},
-    {k:'hijau',n:'Hijau',desc:'Green ink on pale paper',c:{ground:'#d4dbcd',sheet:'#f6f4ea',ink:'#1e2a22',accent:'#2f6b4f',gold:'#a48748',pagefg:'#24302a',pen:'#2f6b4f',line:'rgba(30,42,34,.28)'}},
-    {k:'jambu',n:'Jambu',desc:'Rose ink on blush paper',c:{ground:'#eed9d6',sheet:'#fdf8f3',ink:'#2f2226',accent:'#b65466',pen:'#8a2f4a',gold:'#b08a55',pagefg:'#4a3036',line:'rgba(47,34,38,.26)'}},
-    {k:'sepia',n:'Sepia',desc:'Aged newsprint, brown ink',c:{ground:'#e3d7bf',sheet:'#efe3c9',ink:'#2e2214',accent:'#7a4a22',gold:'#8c6a34',pagefg:'#3a2a1a',pen:'#4a2c16',line:'rgba(46,34,20,.3)'}},
-    {k:'nila',n:'Nila',desc:'Indigo pen on a midnight desk',c:{ground:'#16213a',sheet:'#f3efe6',ink:'#181d2a',accent:'#3b4f8f',gold:'#c4a25e',pagefg:'#e8e4da',pen:'#22336b',line:'rgba(24,29,42,.28)'}},
+    {k:'kertas',n:'Kertas',desc:'Newsprint on a walnut desk, blue-black ink',c:{ground:'#3a3029',sheet:'#f1ebdd',ink:'#1c1a17',accent:'#1c1a17',gold:'#a8884a',pagefg:'#efe7d6',pen:'#1f2f6b',line:'rgba(28,26,23,.5)',dark:'1'}},
+    {k:'biru',n:'Biru',desc:'Cool white paper on a pale blue desk, blue ink',c:{ground:'#d5dce5',sheet:'#f8f6f0',ink:'#1a2233',accent:'#23417e',gold:'#9c7a3c',pagefg:'#1a2233',pen:'#23417e',line:'rgba(26,34,51,.5)',dark:''}},
+    {k:'merah',n:'Merah',desc:'Cream paper on a maroon desk, red ink',c:{ground:'#561a1e',sheet:'#f6efe3',ink:'#221a18',accent:'#8e1f29',gold:'#b8914c',pagefg:'#f6efe4',pen:'#8e1f29',line:'rgba(34,26,24,.5)',dark:'1'}},
+    {k:'hitam',n:'Hitam',desc:'Newsprint on a black desk, black ink',c:{ground:'#151515',sheet:'#eeeae0',ink:'#161616',accent:'#161616',gold:'#c8a25a',pagefg:'#ece5d6',pen:'#161616',line:'rgba(22,22,22,.5)',dark:'1'}},
+    {k:'hijau',n:'Hijau',desc:'Pale paper on a sage desk, green ink',c:{ground:'#d2d9cb',sheet:'#f6f4ea',ink:'#1e2a22',accent:'#2c5a43',gold:'#a48748',pagefg:'#24302a',pen:'#2c5a43',line:'rgba(30,42,34,.5)',dark:''}},
+    {k:'jambu',n:'Jambu',desc:'Blush paper on a rose desk, plum ink',c:{ground:'#ead6d3',sheet:'#fdf8f3',ink:'#2f2226',accent:'#7a2f45',gold:'#b08a55',pagefg:'#3a262c',pen:'#7a2f45',line:'rgba(47,34,38,.48)',dark:''}},
+    {k:'sepia',n:'Sepia',desc:'Aged newsprint on oak, brown ink',c:{ground:'#d9ccb2',sheet:'#efe4cb',ink:'#2e2214',accent:'#6a3f1c',gold:'#8c6a34',pagefg:'#3a2a1a',pen:'#4a2c16',line:'rgba(46,34,20,.5)',dark:''}},
+    {k:'nila',n:'Nila',desc:'Newsprint on a midnight desk, indigo ink',c:{ground:'#151f36',sheet:'#f2eee5',ink:'#181d2a',accent:'#2c3d74',gold:'#c4a25e',pagefg:'#e8e4da',pen:'#22336b',line:'rgba(24,29,42,.5)',dark:'1'}},
   ]});

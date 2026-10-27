@@ -1,64 +1,80 @@
-/* ===== garis ===== */
-.inv .cv-garis{background:transparent;overflow:hidden;transition:opacity .65s 1s}
-.inv .gr-table{position:absolute;inset:0;background:var(--ground)}
-.inv .gr-table::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.6}
-.inv .gr-card{position:absolute;inset:16px;background:var(--sheet);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:40px 30px 26px;text-align:center;
-  box-shadow:0 1px 1px rgba(0,0,0,.12),0 3px 6px rgba(0,0,0,.08),0 22px 40px -18px rgba(0,0,0,.45)}
-.inv .gr-card::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.45;pointer-events:none}
-.inv .gr-card::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/180px;mix-blend-mode:soft-light;opacity:.35;pointer-events:none}
-.inv .gr-card > *{position:relative;z-index:1}
-.inv .gr-deb{position:absolute!important;inset:13px;z-index:0;pointer-events:none;box-shadow:inset 1.5px 1.5px 2px rgba(0,0,0,.2),inset -1px -1px 0 var(--press),1px 1px 0 var(--press),-.5px -.5px 0 rgba(0,0,0,.14)}
-.inv .gr-deb::after{content:"";position:absolute;inset:6px;box-shadow:inset .5px .5px 0 rgba(0,0,0,.1),.5px .5px 0 var(--press)}
-.inv .gr-top{display:flex;flex-direction:column;align-items:center;gap:10px}
-.inv .gr-mono{display:flex;align-items:center;gap:7px;font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(17px,5.6cqi,23px);letter-spacing:.06em;color:var(--gold);background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.inv .gr-mono i{width:4px;height:4px;transform:rotate(45deg);background:var(--gold)}
-.inv .gr-k{margin:0;font-family:"Jost",sans-serif;font-weight:300;font-size:clamp(8px,2.5cqi,10px);letter-spacing:.44em;text-transform:uppercase;color:var(--accent);text-shadow:0 1px 0 var(--press)}
-.inv .gr-draw{display:block;border:0;padding:0;background:none;cursor:pointer;width:min(64%,260px);aspect-ratio:148/240;margin:4px 0 2px}
-.inv .gr-art{display:block;width:100%;height:100%;overflow:visible}
-.inv .gr-line{filter:drop-shadow(0 .6px 0 var(--press))}
-.inv .cv-garis .gr-line{stroke-dasharray:1 1;stroke-dashoffset:.15;transition:stroke-dashoffset 1.05s cubic-bezier(.45,0,.35,1)}
-.inv.opening .cv-garis .gr-line{stroke-dashoffset:0}
+/* ===== garis: brush-pen drawing, letterpress on heavy cotton card ===== */
+.inv .gs-table{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .gs-table::before{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/380px;mix-blend-mode:multiply;opacity:.35}
+.inv .gs-table::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 25% 15%,rgba(255,255,255,.4),transparent 60%),linear-gradient(180deg,transparent 55%,rgba(40,30,20,.1))}
+.inv .gs-dk .gs-table::before{mix-blend-mode:soft-light;opacity:.4}
+.inv .gs-dk .gs-table::after{background:radial-gradient(ellipse 90% 70% at 25% 15%,rgba(255,255,255,.07),transparent 60%),radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.4))}
+
+/* the card: double-thick cotton stock, painted edge, type pressed into it */
+.inv .gs-card{position:relative;background:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),url(assets/paper.jpg) 0 0/460px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);border-radius:2px;
+  box-shadow:0 1px 0 color-mix(in srgb,var(--sheet) 88%,#000),0 2px 0 color-mix(in srgb,var(--sheet) 80%,#000),0 3px 1px rgba(40,30,20,.12),0 22px 30px -14px rgba(30,20,12,.45)}
+.inv .gs-dk .gs-card{background:linear-gradient(color-mix(in srgb,var(--sheet) 70%,transparent),color-mix(in srgb,var(--sheet) 70%,transparent)),url(assets/paper.jpg) 0 0/460px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 1px 0 color-mix(in srgb,var(--gold) 80%,#000),0 2px 0 color-mix(in srgb,var(--gold) 55%,#000),0 3px 2px rgba(0,0,0,.4),0 22px 30px -12px rgba(0,0,0,.7)}
+.inv .gs-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:7% 8% 0}
+.inv .gs-art{width:56%;flex:0 0 auto;fill:var(--ink);overflow:visible;filter:drop-shadow(0 .7px 0 rgba(255,255,255,.75))}
+.inv .gs-dk .gs-art{fill:var(--ink);filter:drop-shadow(0 -.7px 0 rgba(0,0,0,.6))}
+.inv .gs-in > p{text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.inv .gs-dk .gs-in > p{text-shadow:0 -1px 0 rgba(0,0,0,.55)}
+.inv .gs-k{font-family:"Marcellus",serif;font-size:9.5px;letter-spacing:.38em;text-transform:uppercase;color:var(--accent);margin-top:5%}
+.inv .gs-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(30px,9.4cqi,38px);line-height:1.05;margin-top:6px;color:var(--ink)}
+.inv .gs-names span{display:inline-block;font-size:.62em;margin:0 .28em;color:var(--accent)}
+.inv .gs-date{font-family:"Marcellus",serif;font-size:10.5px;letter-spacing:.32em;margin-top:10px;color:var(--ink)}
+.inv .gs-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:5px;opacity:.85}
+.inv .gs-dk .gs-names,.inv .gs-dk .gs-names span{color:transparent;text-shadow:none;background:linear-gradient(100deg,color-mix(in srgb,var(--gold) 70%,#fff),#fbefcc 30%,color-mix(in srgb,var(--gold) 75%,#fff) 55%,#f6e4b0 80%,color-mix(in srgb,var(--gold) 70%,#fff));-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))}
+
+/* cover */
+.inv .cv-garis{overflow:hidden;transition:opacity .45s ease .95s}
+.inv .gs-cv{position:absolute;left:10%;right:10%;top:8.5%;aspect-ratio:.7;transform:rotate(-.8deg);transition:transform 1s cubic-bezier(.4,0,.2,1) .3s}
+.inv .gs-to{position:absolute;left:0;right:0;bottom:7%;text-align:center;color:var(--pagefg);transition:opacity .4s}
+.inv .gs-to small{display:block;font-family:"Marcellus",serif;font-size:9px;letter-spacing:.32em;text-transform:uppercase;opacity:.7}
+.inv .gs-to b{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:24px;margin-top:4px}
+/* the belly band: a strip of coloured handmade paper wrapped round the card; it is the button */
+.inv .gs-band{position:absolute;left:-1px;right:-1px;top:79%;height:9.5%;border:0;padding:0;cursor:pointer;border-radius:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 3%,transparent 97%,rgba(0,0,0,.18)),linear-gradient(180deg,rgba(255,255,255,.14),transparent 40%,rgba(0,0,0,.08)),url(assets/paper.jpg) 0 0/300px,var(--band);
+  background-blend-mode:normal,normal,multiply,normal;box-shadow:0 1px 1px rgba(0,0,0,.22),0 -1px 0 rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;transition:transform 1.05s cubic-bezier(.5,0,.3,1),opacity .35s ease .75s}
+.inv .gs-band span{font-family:"Marcellus",serif;font-size:11px;letter-spacing:.36em;text-transform:uppercase;color:var(--bandfg);display:flex;align-items:center;gap:12px;text-shadow:0 1px 0 rgba(255,255,255,.25)}
+.inv .gs-band span::before,.inv .gs-band span::after{content:"";width:18px;height:1px;background:currentColor;opacity:.5}
+.inv.opening .gs-band{transform:translateY(330%);opacity:0}
+.inv.opening .gs-cv{transform:rotate(0) translateY(-4px)}
+.inv.opening .gs-to{opacity:0}
 .inv.opening .cv-garis{opacity:0}
-.inv .cv-garis .gr-nm{margin:0;font-family:"Mrs Saint Delafield",cursive;font-size:clamp(34px,12.5cqi,52px);line-height:1.05;color:var(--ink);text-shadow:0 1px 0 var(--press)}
-.inv .cv-garis .gr-nm span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--accent);margin:0 .15em}
-.inv .gr-d{margin:2px 0 0;font-family:"Jost",sans-serif;font-weight:400;font-size:clamp(8.5px,2.7cqi,10.5px);letter-spacing:.3em;text-transform:uppercase;text-shadow:0 1px 0 var(--press)}
-.inv .gr-v{margin:0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(13px,4cqi,16px);opacity:.85}
-.inv .gr-h{margin:0;font-family:"Cormorant Garamond",serif;font-size:13px;opacity:.7}
-.inv .gr-to{margin:8px 0 0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(12px,3.6cqi,14px);opacity:.9}
-.inv .gr-to b{display:block;font-style:normal;font-family:"Jost",sans-serif;font-weight:400;font-size:clamp(10px,3cqi,12px);letter-spacing:.22em;text-transform:uppercase;margin-top:3px}
-.inv .gr-hint{margin:12px 0 0;font-family:"Jost",sans-serif;font-weight:300;font-size:clamp(7px,2.2cqi,8.5px);letter-spacing:.3em;text-transform:uppercase;opacity:.6}
-/* page */
-.inv .pg-garis{background:var(--ground);padding:56px 16px 76px;align-items:stretch}
-.inv .pg-garis::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.6}
-.inv .pg-garis .gr-card{position:relative;inset:auto;flex:1;gap:8px;padding:30px 28px}
-.inv .gr-pa{width:min(40%,170px);aspect-ratio:148/240}
-.inv .pg-garis .gr-nm{font-family:"Mrs Saint Delafield",cursive;color:var(--ink);font-size:clamp(42px,15cqi,62px);line-height:1;text-shadow:0 1px 0 var(--press);margin:2px 0}
-.inv .pg-garis .gr-nm .amp{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.36em;color:var(--accent);margin:.1em 0}
-.inv .gr-fl{display:block;width:150px;height:15px;overflow:visible}
-/* skin: debossed cotton cards, one-line flourish under each heading */
+
+/* page: the main card with two reply cards tucked under it */
+.inv .pg-garis{background:var(--ground);color:var(--pagefg);padding:30px 0 90px;overflow:hidden}
+.inv .gs-suite{position:relative;z-index:2;width:88%;max-width:350px;aspect-ratio:.66}
+.inv .gs-main{position:absolute;left:4%;top:0;width:86%;aspect-ratio:.7;transform:rotate(-1.4deg);z-index:2}
+.inv .gs-main .gs-in{padding:8% 8% 12%;justify-content:center}
+.inv .gs-small{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;aspect-ratio:1.45;z-index:3}
+.inv .gs-small small{font-family:"Marcellus",serif;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .gs-small b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:21px;line-height:1.1;margin-top:2px}
+.inv .pg-garis .gs-card.gs-a{right:0;bottom:2%;width:44%;transform:rotate(4deg);background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),url(assets/paper.jpg) 0 0/300px,var(--band);background-blend-mode:normal,multiply,normal;color:var(--bandfg)}
+.inv .gs-b{left:0;bottom:-1%;width:38%;transform:rotate(-3deg);color:var(--ink)}
+.inv .gs-small::before{content:"";position:absolute;inset:6px;border:1px solid currentColor;opacity:.25}
+/* with a couple photo the drawing steps into the corner */
+.inv .gs-in:has(.couple-ph) .gs-art{position:absolute;width:30%;left:-2%;top:2%;transform:rotate(-14deg)}
+.inv .gs-in .couple-ph{width:46%;margin:0 auto;flex:none;box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 25%,transparent),0 6px 12px -6px rgba(0,0,0,.4)}
+
+/* skin: cotton cards, letterpressed spaced caps with the sprig above, a pressed hairline between rows */
 .fam-garis .scroller{background:var(--ground)}
-.fam-garis.cardsecs .sec{background:var(--sheet);color:var(--ink);padding:42px 24px 36px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 16px 28px -16px rgba(0,0,0,.4),inset 0 0 0 12px var(--sheet),inset 1px 1px 1px 12px rgba(0,0,0,.08),inset -1px -1px 0 12px var(--press)}
-.fam-garis.cardsecs .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4;pointer-events:none}
-.fam-garis .sec > *{position:relative;z-index:1}
-.fam-garis .sec h2{font-family:"Jost",sans-serif;font-weight:300;font-size:12.5px;letter-spacing:.42em;color:var(--ink);text-shadow:0 1px 0 var(--press)}
-.fam-garis .sec .gr-fl{width:150px;margin-top:-6px;opacity:.85}
-.fam-garis .sec .orn,.fam-garis .sec .rule{display:none}
-.fam-garis .person{font-family:"Mrs Saint Delafield",cursive;text-transform:none;letter-spacing:0;font-size:34px;line-height:1.1}
-.fam-garis .info span{font-family:"Jost",sans-serif;font-weight:300;letter-spacing:.3em}
-.fam-garis .ibtn{border-color:var(--line);font-family:"Cormorant Garamond",serif;font-size:15px;border-radius:99px}
-.fam-garis .count b{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:40px;color:var(--ink)}
-.fam-garis .count span{font-family:"Jost",sans-serif;font-weight:300}
-.fam-garis .timeline b{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;color:var(--accent)}
-.fam-garis form label{font-family:"Jost",sans-serif;font-weight:300;letter-spacing:.26em}
-.fam-garis form input,.fam-garis form select,.fam-garis form textarea{font-family:"Cormorant Garamond",serif;font-size:17px;color:var(--ink)}
-.fam-garis form select option{background:var(--sheet);color:var(--ink)}
-.fam-garis .seg button{font-family:"Cormorant Garamond",serif;font-size:16px;color:var(--ink);border-radius:99px}
-.fam-garis .seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
-.fam-garis .submit{background:var(--ink);color:var(--sheet);font-family:"Jost",sans-serif;font-weight:400;letter-spacing:.36em;border-radius:99px}
-.fam-garis .wish b{font-family:"Jost",sans-serif;font-weight:400;color:var(--accent)}
-.fam-garis .giftcard{border-color:var(--line);outline-color:var(--line)}
-.fam-garis .giftcard .acc{font-family:"Cormorant Garamond",serif}
-.fam-garis .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent)}
-.fam-garis .dock button{font-family:"Jost",sans-serif;font-weight:300;color:var(--ink)}
-.fam-garis .foot{color:var(--pagefg);font-family:"Jost",sans-serif;font-weight:300}
-@media (prefers-reduced-motion: reduce){.inv .cv-garis,.inv .cv-garis .gr-line{transition:none}}
+.fam-garis .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/380px;mix-blend-mode:multiply;opacity:.3}
+.fam-garis.gs-dark .scroller::before{mix-blend-mode:soft-light;opacity:.35}
+.fam-garis.cardsecs .sec{background:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),url(assets/paper.jpg) 0 0/460px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);border-radius:2px;
+  box-shadow:0 1px 0 color-mix(in srgb,var(--sheet) 88%,#000),0 2px 0 color-mix(in srgb,var(--sheet) 80%,#000),0 18px 26px -14px rgba(30,20,12,.4)}
+.fam-garis.gs-dark.cardsecs .sec{background:var(--sheet);box-shadow:0 1px 0 color-mix(in srgb,var(--gold) 80%,#000),0 2px 0 color-mix(in srgb,var(--gold) 50%,#000),0 18px 26px -12px rgba(0,0,0,.7)}
+.fam-garis .sec,.fam-garis .sec p,.fam-garis .info b{color:var(--ink)}
+.fam-garis .sec h2{font-family:"Marcellus",serif;font-weight:400;text-transform:uppercase;letter-spacing:.3em;font-size:15px;color:var(--ink);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.fam-garis.gs-dark .sec h2{text-shadow:0 -1px 0 rgba(0,0,0,.5)}
+.fam-garis .gs-sprig{display:block;width:30px;height:44px;margin:0 auto 12px;fill:var(--accent);transform:rotate(8deg)}
+.fam-garis .info,.fam-garis .info > div{border:0!important;background:none!important}
+.fam-garis .info > div{border-bottom:1px solid color-mix(in srgb,var(--ink) 13%,transparent)!important;box-shadow:0 1px 0 rgba(255,255,255,.5);padding:13px 6px!important}
+.fam-garis.gs-dark .info > div{box-shadow:none}
+.fam-garis .info > div:last-child{border-bottom:0!important;box-shadow:none}
+.fam-garis .info span{color:var(--accent)}
+.fam-garis .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--ink) 30%,transparent);color:var(--ink);background:transparent}
+.fam-garis input,.fam-garis select,.fam-garis textarea{background:color-mix(in srgb,var(--sheet) 92%,var(--ink));color:var(--ink);border-color:color-mix(in srgb,var(--ink) 25%,transparent)}
+.fam-garis .seg button{color:var(--ink)}
+.fam-garis .sec .seg button[aria-pressed="true"],.fam-garis .sec button.submit{font-weight:600;background:var(--ink)!important;color:var(--sheet)!important;border-color:var(--ink)!important}
+.fam-garis .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--ink);backdrop-filter:blur(6px)}
+.fam-garis .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .gs-band,.inv .gs-cv{transition:none}.inv .cv-garis{transition:opacity .3s}}

@@ -1,0 +1,113 @@
+/* ===== tingkap (round 7) ===== */
+.inv .tgk-wall{position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 30% 18%,rgba(255,250,235,.32),transparent 65%),radial-gradient(ellipse at 50% 50%,transparent 50%,rgba(40,28,18,.2)),
+  var(--lime) 0 0/420px,var(--plas) 0 0/160px,url(assets/paper.jpg) 0 0/340px,var(--ground);background-blend-mode:normal,normal,normal,soft-light,multiply,normal}
+.inv .tgk-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:500;letter-spacing:.36em;text-transform:uppercase}
+/* timber: paint over bare wood, worn through in chips, darker in the corners */
+.inv .tgk-win,.inv .tgk-tran,.inv .tgk-sill,.inv .tgk-shut,.inv .tgk-raise,.inv .tgk-fan,.inv .tgk-pc,.inv .tgk-field{
+  background:var(--gv) 0 0/240px 600px,var(--mot) 0 0/320px,var(--chip) 0 0/260px,linear-gradient(90deg,rgba(255,255,255,.06),rgba(0,0,0,.08)),var(--wood)}
+.inv .tgk-tran,.inv .tgk-sill,.inv .tgk-fan{background:var(--gh) 0 0/600px 240px,var(--mot) 40px 0/320px,var(--chip) 90px 30px/260px,linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),var(--wood)}
+.inv .tgk-shut.r{background-position:120px 0,160px 90px,130px 70px,0 0,0 0}
+.inv .tgk-raise{background-position:30px 200px,60px 60px,50px 150px,0 0,0 0}
+/* worn edges: a ring of dense chips round each piece */
+.inv .tgk-wear{position:absolute;inset:0;display:block;pointer-events:none;padding:2.5px;background:var(--edge) 0 0/200px;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);opacity:.9}
+.inv .tgk-win > .tgk-wear{padding:4px;background-position:70px 30px}
+.inv .tgk-win{position:relative;display:block;width:100%;padding:4.6%;border-radius:1.5px 2px 1px 2px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35),inset 2px 2px 1px rgba(255,248,230,.12),inset -2px -3px 2px rgba(0,0,0,.3),inset 0 0 18px rgba(30,20,10,.3),
+    0 26px 28px -16px rgba(30,20,12,.55),6px 10px 18px -6px rgba(30,20,12,.3),0 2px 3px rgba(30,20,12,.3)}
+/* the dark interior gap between frame and shutters */
+.inv .tgk-arch{position:relative;display:block;background:#140e09;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 3px 4px 6px rgba(0,0,0,.8)}
+.inv .tgk-fanw{position:relative;display:block;aspect-ratio:300/84;overflow:hidden}
+/* daylight seen through the piercings: the view outside, blurred and overexposed, with a soft bloom */
+.inv .tgk-sky{position:absolute;inset:-8px;display:block;background:var(--view) var(--vpos)/cover;filter:var(--skyf)}
+.inv .tgk-sky::after{content:"";position:absolute;inset:0;opacity:var(--bloom);background:radial-gradient(ellipse 60% 80% at 50% 30%,rgba(255,250,232,.75),rgba(255,244,214,.25) 60%,transparent)}
+.inv .tgk-fan{position:absolute;inset:0;-webkit-mask:var(--fan) center/100% 100% no-repeat;mask:var(--fan) center/100% 100% no-repeat}
+.inv .tgk-fanw > .tgk-fan,.inv .tgk-pw > .tgk-pc{filter:drop-shadow(1.2px 1.8px .6px rgba(0,0,0,.7)) drop-shadow(-.5px -.5px 0 rgba(255,240,205,.35))}
+.inv .tgk-fanw::after,.inv .tgk-pw::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.45),inset 3px 4px 6px rgba(0,0,0,.5)}
+.inv .tgk-tran{position:relative;display:block;height:12px;box-shadow:0 4px 5px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,248,230,.18),inset 0 -1px 0 rgba(0,0,0,.3)}
+.inv .tgk-open{position:relative;display:block;aspect-ratio:.84;perspective:900px;overflow:hidden}
+.inv .tgk-view{position:absolute;inset:0;background:var(--view) var(--vpos)/cover;transition:transform 1.4s cubic-bezier(.3,.1,.2,1)}
+.inv .tgk-view::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 22px rgba(0,0,0,.55);background:linear-gradient(180deg,rgba(255,240,210,.12),transparent 50%)}
+/* two leaves, not quite even: one hangs a hair low and its paint is a touch more faded */
+.inv .tgk-shut{position:absolute;top:0;bottom:0;width:50%;display:block;transition:transform 1.25s cubic-bezier(.45,.05,.2,1);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),inset 2px 2px 1px rgba(255,248,230,.13),inset -2px -2px 2px rgba(0,0,0,.28),inset 0 -30px 30px -20px rgba(25,15,8,.35)}
+.inv .tgk-shut.l{left:0;width:calc(50% - .5px);transform-origin:0 50%}
+.inv .tgk-shut.r{right:0;width:calc(50% - 1px);transform-origin:100% 50%;filter:brightness(1.04) saturate(.9)}
+.inv .cv-tingkap2 .tgk-shut.r{top:1.5px;bottom:-1px}
+/* pierced vent panel at the top of each leaf, light coming through */
+.inv .tgk-pw{position:absolute;left:15%;right:15%;top:6%;height:27%;display:block;overflow:hidden;background:#140e09}
+.inv .tgk-pc{position:absolute;inset:0;display:block;-webkit-mask:var(--pan) center/100% 100% no-repeat;mask:var(--pan) center/100% 100% no-repeat}
+/* recessed panel: a deep shadowed groove, then a raised field with a bevel catching the light from top-left */
+.inv .tgk-raise{position:absolute;left:14%;right:14%;top:39%;bottom:7%;display:block;padding:7%;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.55),inset 4px 5px 6px rgba(0,0,0,.6),inset -1px -1px 0 rgba(255,248,230,.16)}
+.inv .tgk-field{position:relative;display:block;width:100%;height:100%;box-sizing:border-box;
+  border:5px solid;border-color:rgba(255,248,230,.16) rgba(0,0,0,.22) rgba(0,0,0,.32) rgba(255,248,230,.1);background-clip:border-box;
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),2px 3px 5px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.18)}
+.inv .tgk-field::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 100%,rgba(30,18,8,.25),transparent 70%)}
+.inv .tgk-knob{position:absolute;top:53%;width:9px;height:9px;border-radius:50%;display:block;background:radial-gradient(circle at 35% 30%,#f4e3b0,#a88445 42%,#4e3414 88%);
+  box-shadow:1px 2px 2px rgba(0,0,0,.55),0 0 0 3px rgba(40,26,12,.16)}
+.inv .tgk-shut.l .tgk-knob{right:6px}.inv .tgk-shut.r .tgk-knob{left:6px;top:53.4%}
+.inv .tgk-shut.l::after{content:"";position:absolute;right:-1px;top:0;bottom:0;width:1.5px;background:linear-gradient(rgba(255,240,200,.0),rgba(255,240,200,.45) 30%,rgba(255,240,200,.5) 70%,rgba(255,240,200,0))}
+.inv .tgk-sill{position:absolute;left:-6%;right:-6%;bottom:-11px;height:14px;display:block;border-radius:1px 1px 2px 2px;
+  box-shadow:inset 0 2px 0 rgba(255,248,230,.22),inset 0 -3px 2px rgba(0,0,0,.3),0 3px 2px rgba(0,0,0,.35),0 18px 16px -8px rgba(30,20,12,.5)}
+/* rain has washed a soft stain down the wall under the sill */
+.inv .tgk-sill::after{content:"";position:absolute;left:8%;right:8%;top:100%;height:70px;pointer-events:none;
+  background:linear-gradient(rgba(60,40,20,.16),transparent),var(--lime) 0 0/200px;-webkit-mask:linear-gradient(#000,transparent);mask:linear-gradient(#000,transparent);opacity:.75}
+.inv .pg-tingkap2 .tgk-sill::after{display:none}
+
+/* cover */
+.inv .cv-tingkap2{background:var(--ground);overflow:hidden;transition:opacity .5s 1.1s}
+.inv .tgk-head{position:absolute;top:6.5%;left:0;right:0;text-align:center;color:var(--pagefg);transition:opacity .35s}
+.inv .tgk-head .tgk-k{opacity:.8}
+.inv .tgk-n{font-family:"Pinyon Script",cursive;font-size:clamp(32px,10cqi,42px);line-height:1.15;margin-top:6px}
+.inv .tgk-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .tgk-stage{position:absolute;left:14%;right:14%;top:19.5%;transition:transform 1.4s cubic-bezier(.5,0,.3,1)}
+.inv .tgk-foot{position:absolute;left:0;right:0;bottom:5.5%;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);text-align:center;transition:opacity .35s}
+.inv .tgk-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .tgk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:25px;line-height:1.3}
+.inv .tgk-btn{border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);background:var(--sheet);color:var(--accent);cursor:pointer;padding:12px 36px;border-radius:999px;
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;box-shadow:0 6px 16px -6px rgba(30,20,12,.4)}
+/* opening: shutters swing open, the view comes forward */
+.inv.opening .tgk-shut.l{transform:rotateY(-108deg)}
+.inv.opening .tgk-shut.r{transform:rotateY(108deg)}
+.inv.opening .tgk-head,.inv.opening .tgk-foot{opacity:0}
+.inv.opening .cv-tingkap2 .tgk-stage{transform:translateY(4%) scale(1.06)}
+.inv.opening .cv-tingkap2{opacity:0}
+
+/* page: the open window, a card resting on the sill */
+.inv .pg-tingkap2{background:var(--ground);color:var(--pagefg);padding:34px 24px 92px;gap:0;justify-content:flex-start;overflow:hidden}
+.inv .pg-tingkap2 > :not(.tgk-wall){position:relative;z-index:2}
+.inv .tgk-pw2{width:74%;max-width:290px}
+.inv .tgk-win.open .tgk-shut.l{transform:rotateY(-100deg)}
+.inv .tgk-win.open .tgk-shut.r{transform:rotateY(100deg)}
+.inv .tgk-win.open .tgk-open{aspect-ratio:.95}
+.inv .tgk-card{width:84%;max-width:330px;margin-top:-6px;padding:22px 16px 20px;text-align:center;color:var(--ink);transform:rotate(-1deg);
+  background:var(--sheet) url(assets/paper.jpg) 0 0/240px;background-blend-mode:multiply;border-radius:1px;
+  box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px color-mix(in srgb,var(--gold) 60%,transparent),0 14px 20px -8px rgba(30,20,12,.45),0 1px 3px rgba(30,20,12,.2)}
+.inv .tgk-card .tgk-k{color:var(--accent)}
+.inv .tgk-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(34px,10.5cqi,44px);line-height:1.05;margin:8px 0 8px;color:var(--ink)}
+.inv .tgk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--gold);margin:0 6px}
+.inv .tgk-date{font-family:"Cormorant Garamond",serif;font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.inv .tgk-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:6px}
+.inv .tgk-pill{align-self:center;flex:0 0 auto;width:auto!important;margin-top:20px;padding:12px 32px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);text-decoration:none;
+  background:var(--sheet);font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.26em;text-transform:uppercase}
+
+/* skin: plaster cards in a thin timber moulding, a carved crest on top; overrides the old tingkap skin */
+.fam-tingkap .scroller{background:radial-gradient(ellipse at 50% 0,rgba(255,255,255,.2),transparent 60%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,soft-light,normal}
+.fam-tingkap.cardsecs .sec{position:relative;border:7px solid transparent!important;padding-top:64px!important;color:var(--ink);border-radius:1px;
+  background:linear-gradient(var(--sheet),var(--sheet)) padding-box,url(assets/paper.jpg) 0 0/260px padding-box,var(--gh) 0 0/600px 240px border-box,var(--wood) border-box;background-blend-mode:normal,multiply,normal,normal;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.2),0 0 0 1px rgba(0,0,0,.3),0 14px 22px -10px rgba(30,20,12,.45)}
+.fam-tingkap.cardsecs .sec::before{content:"";position:absolute;left:50%;top:6px;width:150px;height:42px;transform:translateX(-50%);opacity:1;
+  background:var(--gh) 0 0/600px 240px,var(--wood);-webkit-mask:var(--fan) center/100% 100% no-repeat;mask:var(--fan) center/100% 100% no-repeat;filter:drop-shadow(1px 1px 0 rgba(0,0,0,.3))}
+.fam-tingkap .sec h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:15px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
+.fam-tingkap .sec,.fam-tingkap .sec p,.fam-tingkap .info b{color:var(--ink)}
+.fam-tingkap .info,.fam-tingkap .info > div{border:0!important;background:none!important}
+.fam-tingkap .info > div{border-bottom:1px solid color-mix(in srgb,var(--wood) 25%,transparent)!important;padding:13px 6px!important}
+.fam-tingkap .info > div:last-child{border-bottom:0!important}
+.fam-tingkap .info span{color:var(--accent)}
+.fam-tingkap .ibtn{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);border-radius:999px;background:transparent}
+.fam-tingkap form input,.fam-tingkap form select,.fam-tingkap form textarea{color:var(--ink);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.fam-tingkap .seg button[aria-pressed="true"],.fam-tingkap button.submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-tingkap .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-tingkap .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .tgk-shut,.inv .tgk-view,.inv .tgk-stage{transition:none}}

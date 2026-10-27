@@ -1,64 +1,78 @@
-/* popup: a pop-up paper card of a domed pavilion (onion dome, chhatri, pointed arches, jali cutwork), minarets and a
-   garden, cut from layered coloured card with gold-foil linework.
-   Cover: the card lies open flat on the table. Opening: the back folds up and the layers rise one behind the other
-   (rotateX), the view coming down to eye level. Page: the pavilion standing. Skin: layered paper-cut arch frames. */
-let uid=0;
-const arch=(x0,x1,yt,yb)=>{const xm=(x0+x1)/2,ys=yt+(x1-x0)*.55;return `M${x0} ${yb}V${ys}Q${x0} ${yt+(x1-x0)*.12} ${xm} ${yt}Q${x1} ${yt+(x1-x0)*.12} ${x1} ${ys}V${yb}Z`};
-const dome=(cx,w,yb,h)=>`M${cx-w/2} ${yb}C${cx-w*.85} ${yb-h*.45} ${cx-w*.3} ${yb-h*.72} ${cx} ${yb-h}C${cx+w*.3} ${yb-h*.72} ${cx+w*.85} ${yb-h*.45} ${cx+w/2} ${yb}Z`;
-// the pavilion layer, 300x300, base at the bottom
-function pavilion(c,id){const g=c.gold;let jali='';for(let r=0;r<4;r++)for(let i=-r;i<=r;i++){const x=150+i*11-(r%2?0:0),y=68+r*13;if(Math.abs(i)*11<14+r*12)jali+=`<path d="M${x} ${y-4}l3 4-3 4-3-4z"/>`}
-  let scal='';for(let x=56;x<=244;x+=8)scal+=`<circle cx="${x}" cy="176" r="4"/>`;
-  const holes=`<g fill="#000">${arch(122,178,192,281)}${arch(74,112,206,281)}${arch(188,226,206,281)}${jali}${[105,125,175,195].map(x=>`<circle cx="${x}" cy="146" r="3.2"/>`).join('')}<path d="${arch(144,156,118,138)}"/>${Array.from({length:11},(_,i)=>`<path d="M${72+i*15.6} 181l2.4 3-2.4 3-2.4-3z"/>`).join('')}${[86,214].map(x=>`<path d="${arch(x-5,x+5,226,250)}" transform="translate(0 0)"/>`).join('')}</g>`;
-  const solid=`<rect x="36" y="281" width="228" height="19"/><rect x="58" y="172" width="184" height="110"/><rect x="48" y="160" width="204" height="14" rx="2"/>${scal}
-   <rect x="92" y="128" width="116" height="33"/><path d="${dome(150,124,132,98)}"/><rect x="148.6" y="10" width="2.8" height="26"/><circle cx="150" cy="30" r="4"/><circle cx="150" cy="19" r="2.6"/>
-   ${[62,238].map(x=>`<path d="${dome(x,28,162,30)}"/><rect x="${x-1}" y="122" width="2" height="12"/><rect x="${x-12}" y="160" width="24" height="4"/>`).join('')}`;
-  const lines=`<g fill="none" stroke="${g}" stroke-width=".9"><path d="${arch(118,182,186,281)}"/><path d="${arch(70,116,200,281)}"/><path d="${arch(184,230,200,281)}"/>
-   <path d="M58 172H242M48 160H252M92 128H208M36 281H264M40 290H260"/><path d="${dome(150,112,130,88)}" stroke-dasharray="1 2.5"/>
-   ${[66,118,182,234].map(x=>`<path d="M${x} 176V281"/>`).join('')}<path d="M100 140H200" stroke-dasharray="2 3"/></g>`;
-  return `<svg viewBox="0 0 300 300"><defs><mask id="pm${id}"><rect width="300" height="300" fill="#fff"/>${holes}</mask></defs><g fill="${c.p2}" mask="url(#pm${id})">${solid}</g>${lines}
-   <g mask="url(#pm${id})"><rect x="58" y="172" width="184" height="110" fill="url(#ps${id})"/></g><linearGradient id="ps${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient></svg>`}
-// minarets and a balustrade, 300x200
-function minarets(c,id){const g=c.gold;const tower=x=>`<rect x="${x-9}" y="64" width="18" height="136"/><rect x="${x-14}" y="92" width="28" height="7" rx="1.5"/><rect x="${x-12}" y="60" width="24" height="6"/><path d="${dome(x,22,62,26)}"/><rect x="${x-.9}" y="20" width="1.8" height="18"/><circle cx="${x}" cy="24" r="2.4"/>`;
-  let bal='';for(let x=86;x<214;x+=13)bal+=`<path d="${arch(x,x+8,170,194)}"/>`;
-  return `<svg viewBox="0 0 300 200"><defs><mask id="mm${id}"><rect width="300" height="200" fill="#fff"/><g fill="#000">${bal}${[40,260].map(x=>`<path d="${arch(x-4,x+4,110,128)}"/><path d="${arch(x-4,x+4,140,158)}"/>`).join('')}</g></mask></defs>
-   <g fill="${c.p3}" mask="url(#mm${id})">${tower(40)}${tower(260)}<rect x="74" y="160" width="152" height="40"/><rect x="70" y="156" width="160" height="6" rx="2"/>${[74,226].map(x=>`<rect x="${x-5}" y="148" width="10" height="52"/><circle cx="${x}" cy="146" r="5"/>`).join('')}</g>
-   <g fill="none" stroke="${g}" stroke-width=".8"><path d="M31 99H49M251 99H269M31 64V200M49 64V200M251 64V200M269 64V200M70 162H230M74 196H226"/></g></svg>`}
-// garden: leaves and five-petal flowers, 300x90
-function garden(c,id){const r=rng(31+id);let s='';
-  for(let i=0;i<34;i++){const x=r()*300,y=50+r()*36,a=-70+r()*140,L=14+r()*16;s+=`<path d="M0 0C${L*.35} ${-L*.3} ${L*.65} ${-L*.3} ${L} 0C${L*.65} ${L*.3} ${L*.35} ${L*.3} 0 0Z" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(a-90).toFixed(0)})" fill="${c.p4}"/>`}
-  let fl='';for(let i=0;i<9;i++){const x=16+i*34+r()*8,y=44+r()*22;for(let k=0;k<5;k++)fl+=`<ellipse cx="${x}" cy="${y-4.5}" rx="2.6" ry="4.4" transform="rotate(${k*72} ${x} ${y})" fill="${c.p5}"/>`;fl+=`<circle cx="${x}" cy="${y}" r="1.8" fill="${c.gold}"/>`}
-  return `<svg viewBox="0 0 300 90"><rect x="0" y="80" width="300" height="10" fill="${c.p4}"/>${s}${fl}<path d="M0 89H300" stroke="${c.gold}" stroke-width=".8"/></svg>`}
-// printed back panel: stars and a lattice band in gold
-function backArt(c,id){let st='';const r=rng(9+id);for(let i=0;i<30;i++){const x=r()*300,y=r()*180,s=.5+r()*1.4;st+=`<path d="M${x.toFixed(1)} ${(y-s*2.4).toFixed(1)}l${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)} ${(s*1.8).toFixed(2)} ${(s*.6).toFixed(2)}-${(s*1.8).toFixed(2)} ${(s*.6).toFixed(2)}-${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)}-${(s*1.8).toFixed(2)}-${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)} ${(s*1.8).toFixed(2)}-${(s*.6).toFixed(2)}z"/>`}
-  return `<svg viewBox="0 0 300 330" preserveAspectRatio="none"><g fill="${c.gold}" opacity=".85">${st}</g>
-   <path d="${arch(30,270,30,330)}" fill="none" stroke="${c.gold}" stroke-width="1.1"/><path d="${arch(38,262,40,330)}" fill="none" stroke="${c.gold}" stroke-width=".5"/>
-   <circle cx="236" cy="62" r="13" fill="${c.p2}" opacity=".9"/><circle cx="242" cy="58" r="12" fill="${c.p1}"/></svg>`}
-const ARCHF=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 40V22Q0 4 50 0Q100 4 100 22V40Z"/></svg>`);
+/* popup: a real pop-up card. Cut paper layers (far trees, the mosque, frangipani in front) stand up from the fold
+   in front of a starry back panel, with a gold crescent hung on a thread.
+   Cover: the card closed, a die-cut arch in its front showing the night sky. Tap "Buka Jemputan" and the front
+   folds down to become the floor while the paper layers stand up. Page: the open card above the names.
+   Skin: cards of coloured stock with a scored fold line and a small cut-paper dome. */
+const puSvg=(vb,body)=>K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><path fill-rule="evenodd" d="${body}"/></svg>`);
+// an arched window or door, as a hole: x,y = bottom left
+const puArch=(x,y,w,h)=>{const r=w/2;return `M${x} ${y}V${y-h+r}C${x} ${y-h+r*.3} ${x+r*.6} ${y-h+r*.15} ${x+r} ${y-h}C${x+w-r*.6} ${y-h+r*.15} ${x+w} ${y-h+r*.3} ${x+w} ${y-h+r}V${y}Z`};
+// onion dome: base from x0 to x1 at y, tip at y-h
+const puDome=(x0,x1,y,h)=>{const w=x1-x0,c=(x0+x1)/2;return `M${x0} ${y}C${x0-w*.08} ${y-h*.42} ${c-w*.28} ${y-h*.62} ${c} ${y-h}C${c+w*.28} ${y-h*.62} ${x1+w*.08} ${y-h*.42} ${x1} ${y}Z`};
+const puMinaret=(x,w,top)=>{const c=x+w/2;return `M${x} 232V${top+70}H${x-3}V${top+64}H${x+w+3}V${top+70}H${x+w}V232Z`+
+  `M${x+1} ${top+64}V${top+34}H${x-3}V${top+28}H${x+w+3}V${top+34}H${x+w-1}V${top+64}Z`+puDome(x,x+w,top+28,20)+`M${c-.7} ${top+9}V${top-2}H${c+.7}V${top+9}Z`};
+const PU_MOSQUE=(()=>{let d='';
+  d+='M66 232V150H234V232Z';                                     // prayer hall
+  for(let x=66;x<234;x+=8)d+=`M${x} 151V146H${x+5}V151Z`;          // parapet teeth
+  d+='M108 152V112H192V152Z';                                    // drum
+  d+=puDome(102,198,113,74)+'M149.2 40V22H150.8V40Z'+'M150 26a3 3 0 1 0 .01 0Z';
+  d+=puDome(72,112,151,30)+puDome(188,228,151,30)+'M91.4 122V112H92.6V122ZM207.4 122V112H208.6V122Z';
+  d+=puMinaret(32,18,72)+puMinaret(250,18,72);
+  // holes: door, hall windows, drum windows, minaret slits
+  d+=puArch(134,232,32,42);[82,104,180,202].forEach(x=>{d+=puArch(x,214,14,30)});
+  [118,134,150,166,182].forEach(x=>{d+=puArch(x-5,146,10,18)});
+  [41,259].forEach(x=>{d+=puArch(x-3,196,6,16)+puArch(x-3,160,6,12)});
+  return puSvg('0 0 300 232',d)})();
+const PU_FAR=(()=>{let d='M0 150V108';const r=rng(7);let x=0;
+  while(x<300){const w=14+r()*16,h=8+r()*12;d+=`Q${x+w/2} ${108-h*1.6} ${x+w} 108`;x+=w}
+  d+='V150Z';
+  d+=puDome(18,44,96,22)+'M18 110V96H44V110Z'+puDome(258,282,98,20)+'M258 110V98H282V110Z';
+  return puSvg('0 0 300 150',d)})();
+// frangipani and palm fronds in front, open in the middle so the door shows
+const PU_FRONT=(()=>{let d='';const leaf=(x,y,a,l,w)=>{const c=Math.cos(a),s=Math.sin(a),px=-s,py=c;
+    return `M${x} ${y}Q${x+c*l*.5+px*w} ${y+s*l*.5+py*w} ${x+c*l} ${y+s*l}Q${x+c*l*.5-px*w} ${y+s*l*.5-py*w} ${x} ${y}Z`};
+  [[-.2,-2.2,70,13],[-.2,-1.7,78,14],[-.2,-1.2,64,12],[-.2,-2.7,56,11],[-.2,-.8,50,10]].forEach(([dx,a,l,w])=>{d+=leaf(30,124,a,l,w);d+=leaf(270,124,Math.PI-a,l,w)});
+  d+='M0 124V112Q20 92 44 108Q60 96 76 112Q86 104 98 116V124ZM300 124V112Q280 92 256 108Q240 96 224 112Q214 104 202 116V124Z';
+  return puSvg('0 0 300 124',d)})();
+const PU_FLOWERS=(()=>{let d='';const fl=(x,y,r,rot)=>{for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5,c=Math.cos(a),s=Math.sin(a);
+    d+=`M${x} ${y}Q${x+c*r*1.1-s*r*.55} ${y+s*r*1.1+c*r*.55} ${x+c*r} ${y+s*r}Q${x+c*r*.4+s*r*.35} ${y+s*r*.4-c*r*.35} ${x} ${y}Z`}};
+  fl(22,96,9,.3);fl(52,104,7.5,1);fl(10,116,7,2);fl(278,96,9,.6);fl(248,104,7.5,1.4);fl(290,116,7,2.2);
+  return puSvg('0 0 300 124',d)})();
+const PU_DOME_ICON=K.uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50"><path d="${puDome(14,46,40,30)}M12 40H48V50H12ZM29.4 10V2H30.6V10Z"/></svg>`);
+const puCard=(o,L,open)=>{const [n1,n2]=coverNames(o);
+  return `<div class="pu-card${open?' is-open':''}">
+    <div class="pu-back"><i class="pu-arc"></i><i class="pu-moon"><b></b></i></div>
+    <div class="pu-cover"><div class="pu-out"><i class="pu-rim"></i>
+        <div class="pu-ctxt"><p class="pu-k">${ev(o,L)}</p><p class="pu-cn">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pu-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div>
+      <div class="pu-inside"></div></div>
+    <div class="pu-lay pu-far"><i style="-webkit-mask-image:${PU_FAR};mask-image:${PU_FAR}"></i></div>
+    <div class="pu-lay pu-mosque"><i style="-webkit-mask-image:${PU_MOSQUE};mask-image:${PU_MOSQUE}"></i></div>
+    <div class="pu-lay pu-front"><i style="-webkit-mask-image:${PU_FRONT};mask-image:${PU_FRONT}"></i></div>
+    <div class="pu-lay pu-flowers"><i style="-webkit-mask-image:${PU_FLOWERS};mask-image:${PU_FLOWERS}"></i></div>
+  </div>`};
+const puVars=c=>`--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--p4:${c.p4};--p5:${c.p5}`;
 FAMILY({key:'popup',name:'Pop-up',meaning:'Pop-up card',
-  blurb:'A paper pop-up of a domed pavilion lying open on the table; touch it and the layers rise.',
-  fonts:{d:"'Marcellus', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1600,
-  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<section class="page pg-popup" style="${pv(c)}"><div class="pp-bg"></div>
-     <div class="pp-pcard reveal"><span class="pp-pback">${backArt(c,'p'+id)}</span>
-      <span class="pp-pl l3">${pavilion(c,'p'+id)}</span><span class="pp-pl l2">${minarets(c,'p'+id)}</span><span class="pp-pl l1">${garden(c,id)}</span></div>
-     <div class="pp-ptxt"><p class="pp-k reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1>
-      <p class="pp-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="pp-ven reveal d3">${esc(o.venue)} <i>·</i> ${esc(fmtTime(o.start,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',id=++uid;
-    return `<div class="cover cv-popup" style="${pv(c)}"><div class="pp-bg"></div>
-     <div class="pp-head pp-fade"><p class="pp-k">${ev(o,L)}</p><p class="pp-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pp-date">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <${tag} class="pp-scene" ${attr} aria-label="${L.open}"><span class="pp-card">
-      <span class="pp-floor"></span><span class="pp-back">${backArt(c,id)}</span>
-      <span class="pp-l l3">${pavilion(c,id)}</span><span class="pp-l l2">${minarets(c,id)}</span><span class="pp-l l1">${garden(c,id)}</span></span></${tag}>
-     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th){K.cards(el);el.style.cssText+=';'+pv(th.c)+`;--pp-arch:${ARCHF}`},
+  blurb:'A cut-paper pop-up card: open it and the mosque, the far trees and the frangipani stand up from the fold under a hanging gold crescent.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-popup${th.c.dark?' pu-dk':''}" style="${puVars(th.c)}"><div class="pu-table"></div>
+      <div class="pu-stage reveal">${puCard(o,L,true)}</div>
+      <div class="pu-txt"><p class="pu-k kicker reveal d1">${ev(o,L)}</p><h1 class="pu-names reveal d1">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>
+        <p class="pu-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="pu-ven reveal d2">${esc(o.venue)}</p>`:''}
+        <a class="pu-pill reveal d3" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
+    return `<div class="cover cv-popup${th.c.dark?' pu-dk':''}" style="${puVars(th.c)}"><div class="pu-table"></div>
+      <div class="pu-stage">${puCard(o,L,false)}</div>
+      <div class="pu-foot">${guest?`<p class="pu-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="pu-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p4',c.p4);el.style.setProperty('--pudome',PU_DOME_ICON);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'nila',n:'Nila',desc:'Ivory pavilion on an indigo night',c:{ground:'#e8e1d3',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#2b3266',p2:'#fbf4e4',p3:'#c8a978',p4:'#3f6b55',p5:'#f4dfb0'}},
-    {k:'zamrud',n:'Zamrud',desc:'Emerald and cream with gold',c:{ground:'#e6e3d6',sheet:'#fbf9f1',ink:'#1f2b25',accent:'#1d5a44',gold:'#b8954a',pagefg:'#1f2b25',p1:'#1d5a44',p2:'#fbf5e6',p3:'#e2c88f',p4:'#7a9a62',p5:'#fff7e0',line:'rgba(29,90,68,.2)'}},
-    {k:'marun',n:'Marun',desc:'Maroon sky, blush pavilion',c:{ground:'#efe2da',sheet:'#fdf8f3',ink:'#2e1c20',accent:'#7a1f33',gold:'#bf9157',pagefg:'#2e1c20',p1:'#7a1f33',p2:'#fbefe6',p3:'#e3b5a5',p4:'#5e7a52',p5:'#fde2d6',line:'rgba(122,31,51,.2)'}},
-    {k:'senja',n:'Senja',desc:'Dusk coral and lilac',c:{ground:'#f0e2dc',sheet:'#fffaf6',ink:'#33262e',accent:'#c0504a',gold:'#c3955a',pagefg:'#33262e',p1:'#e08a6a',p2:'#fff6ec',p3:'#b9a2c9',p4:'#6f8a6a',p5:'#ffe7cf',line:'rgba(192,80,74,.2)'}},
-    {k:'laut',n:'Laut',desc:'Sea blue and white',c:{ground:'#e3ebee',sheet:'#fbfdfd',ink:'#1d2f3a',accent:'#2a5f80',gold:'#b7974f',pagefg:'#1d2f3a',p1:'#3b7ea1',p2:'#ffffff',p3:'#a9cfd9',p4:'#4f8a76',p5:'#f2f0dc',line:'rgba(42,95,128,.2)'}},
-    {k:'kunyit',n:'Kunyit',desc:'Turmeric and deep teal',c:{ground:'#efe6cf',sheet:'#fffaee',ink:'#2a2a22',accent:'#1f5560',gold:'#b5862c',pagefg:'#2a2a22',p1:'#1f5560',p2:'#fbf0d0',p3:'#e2ab3a',p4:'#5a7a3a',p5:'#fff3cf',line:'rgba(31,85,96,.2)'}},
-    {k:'malam',n:'Malam',desc:'Midnight with a gold pavilion',c:{ground:'#141a2c',sheet:'#f7f3ea',ink:'#1d2232',accent:'#26305a',gold:'#d6b25c',pagefg:'#efe9da',pageAccent:'#e9cf8a',p1:'#0d1224',p2:'#e9cf8a',p3:'#3a4a7a',p4:'#24463a',p5:'#f3e2b4',line:'rgba(38,48,90,.2)'}},
-    {k:'jambu',n:'Jambu',desc:'Blush pink and sage',c:{ground:'#f3e6e6',sheet:'#fffafa',ink:'#3a2729',accent:'#a54b5f',gold:'#bf946a',pagefg:'#3a2729',p1:'#d88c98',p2:'#fff8f4',p3:'#c7d3bd',p4:'#6f8c6c',p5:'#ffe0e4',line:'rgba(165,75,95,.2)'}},
+    {k:'nila',n:'Nila',desc:'Ivory mosque under an indigo sky',c:{ground:'#e6e0d4',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#273063',p2:'#f8f2e4',p3:'#8f93b8',p4:'#3f6b55',p5:'#fbf4e2'}},
+    {k:'zamrud',n:'Zamrud',desc:'Cream mosque under an emerald sky',c:{ground:'#e4e2d6',sheet:'#fbf9f1',ink:'#1f2b25',accent:'#1d5a44',gold:'#b8954a',pagefg:'#1f2b25',p1:'#1b5541',p2:'#fbf5e6',p3:'#86a893',p4:'#6f8f55',p5:'#fff6dc'}},
+    {k:'marun',n:'Marun',desc:'Blush mosque under a maroon sky',c:{ground:'#ece1d9',sheet:'#fdf8f3',ink:'#2e1c20',accent:'#7a1f33',gold:'#bf9157',pagefg:'#2e1c20',p1:'#6e1c2e',p2:'#fbefe6',p3:'#b88a8f',p4:'#5e7a52',p5:'#fde6da'}},
+    {k:'senja',n:'Senja',desc:'Dusk coral sky, lilac trees',c:{ground:'#efe3dc',sheet:'#fffaf6',ink:'#33262e',accent:'#b0463f',gold:'#c3955a',pagefg:'#33262e',p1:'#d9806a',p2:'#fff6ec',p3:'#b9a2c9',p4:'#6f8a6a',p5:'#ffe9d2'}},
+    {k:'laut',n:'Laut',desc:'White mosque on a sea-blue sky',c:{ground:'#e2e9ec',sheet:'#fbfdfd',ink:'#1d2f3a',accent:'#2a5f80',gold:'#b7974f',pagefg:'#1d2f3a',p1:'#3a7a9c',p2:'#ffffff',p3:'#a3c8d3',p4:'#4f8a76',p5:'#f6f2dc'}},
+    {k:'kunyit',n:'Kunyit',desc:'Turmeric mosque on deep teal',c:{ground:'#ece4cf',sheet:'#fffaee',ink:'#2a2a22',accent:'#1f5560',gold:'#b5862c',pagefg:'#2a2a22',p1:'#1f5560',p2:'#f6e3b0',p3:'#6f9a9a',p4:'#5a7a3a',p5:'#fff6dc'}},
+    {k:'malam',n:'Malam',desc:'Gold mosque on a midnight card',c:{ground:'#151a2b',sheet:'#f7f3ea',ink:'#1d2232',accent:'#26305a',gold:'#d6b25c',pagefg:'#efe9da',p1:'#0f1630',p2:'#ead28e',p3:'#34416e',p4:'#2a4c3e',p5:'#f3e6c0',dark:1}},
+    {k:'jambu',n:'Jambu',desc:'Blush sky, white mosque, sage leaves',c:{ground:'#f2e6e5',sheet:'#fffafa',ink:'#3a2729',accent:'#a54b5f',gold:'#bf946a',pagefg:'#3a2729',p1:'#d4909a',p2:'#fffaf6',p3:'#c7d3bd',p4:'#6f8c6c',p5:'#ffe6ea'}},
   ]});
-function pv(c){return `--p1:${c.p1};--p2:${c.p2};--p3:${c.p3};--p4:${c.p4}`}

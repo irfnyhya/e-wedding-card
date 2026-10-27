@@ -1,56 +1,65 @@
-/* resit: a thermal receipt coming out of a small receipt printer. "PESANAN: 1x Majlis Perkahwinan", a barcode.
-   Opening: press FEED and the receipt feeds down out of the slot. Page: the whole receipt, torn with zig-zag edges.
-   Skin: monospace receipt sections with zig-zag edges and dashed rules. */
+/* resit: a letterpress receipt slip from an old receipt book, on cotton paper. Printed in one ink with a red serial number,
+   filled in by hand (the guest's name, the date) and finished with a round rubber stamp "Dijemput".
+   Cover: the slip still in the book with its stub; tap "Buka Jemputan" and it is torn off along the perforation.
+   Page: the torn slip with the full details, the programme written in as the items. Skin: ruled cotton slips with a perforated top. */
 let rsN=0;
-const rsLum=h=>{h=h.replace('#','');const [r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255);return .2126*r+.7152*g+.0722*b};
-function rsBars(seed,h=40){const r=rng(seed);let x=0,s='';const W=200;while(x<W-2){const w=[1,1,1,2,2,3][Math.floor(r()*6)];if(r()>.45)s+=`<rect x="${x}" y="0" width="${w}" height="${h}"/>`;x+=w+(r()<.3?1:0)}
-  return `<svg class="resit-bc" viewBox="0 0 200 ${h}" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="2" height="${h}"/><rect x="3" y="0" width="1" height="${h}"/>${s}<rect x="196" y="0" width="1" height="${h}"/><rect x="198" y="0" width="2" height="${h}"/></svg>`}
-const rsRow=(a,b,cls='')=>`<p class="resit-r ${cls}"><span>${a}</span><b>${b}</b></p>`;
-function rsReceipt(o,th,L,guest,full){const [n1,n2]=coverNames(o),en=o.lang==='en',[i1,i2]=K.initials(o),d=new Date((o.date||'')+'T00:00:00'),ok=!isNaN(d);
-  const no=ok?`${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getFullYear()).slice(2)}`:'000000';
-  const dd=ok?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`:'';
-  const sc=(o.schedule||[]).filter(s=>s.label);
-  const free=en?'FREE':'PERCUMA',pl=en?'PRICELESS':'TAK TERNILAI';
-  return `<div class="resit-head"><span class="resit-logo"><b>${esc(i1)}</b><i>&amp;</i><b>${esc(i2)}</b></span>
-     <p class="resit-ev">${ev(o,L)}</p><p class="resit-nm">${esc(n1)} &amp; ${esc(n2)}</p>
-     <p class="resit-c">${esc(o.venue)}</p>${o.address?`<p class="resit-c sm">${esc(o.address)}</p>`:''}</div>
-    <p class="resit-hr"></p>
-    ${rsRow(en?'RECEIPT NO':'NO. RESIT',`${no}-0001`)}${rsRow(en?'DATE':'TARIKH',esc(dd))}${rsRow(en?'TIME':'MASA',`${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}`)}
-    ${guest?rsRow(en?'GUEST':'TETAMU',esc(guest)):rsRow(en?'COUNTER':'KAUNTER',en?'Honoured guest':'Tetamu istimewa')}
-    <p class="resit-hr"></p>
-    <p class="resit-sub">${en?'ORDER':'PESANAN'}:</p>
-    ${rsRow(`1x ${en?'Wedding reception':'Majlis Perkahwinan'}`,free,'od')}<p class="resit-note">${esc(n1)} &amp; ${esc(n2)}</p>
-    ${rsRow(`1x ${en?'Prayers & blessings':'Doa restu'}`,free,'od')}
-    ${rsRow(`1x ${en?'Your presence':'Kehadiran anda'}`,free,'od')}
-    ${full&&sc.length?`<p class="resit-hr thin"></p><p class="resit-sub">${en?'PROGRAMME':'ATURCARA'}:</p>${sc.map(s=>rsRow(esc(s.label),esc(fmtTime(s.time,o.lang)),'sch')).join('')}`:''}
-    <p class="resit-hr dbl"></p>
-    ${rsRow(en?'TOTAL':'JUMLAH',pl,'tot')}${rsRow(en?'PAID BY':'BAYARAN',en?'Your prayers':'Doa anda')}
-    ${full&&o.deadline?rsRow(en?'REPLY BY':'SAHKAN SEBELUM',esc(fmtDate(o.deadline,o.lang,false)).toUpperCase()):''}
-    <p class="resit-hr"></p>
-    <div class="resit-foot">${rsBars(no.split('').reduce((a,c)=>a*7+ +c,3)%997+11)}<p class="resit-c sm">${no} 0001 ${ok?d.getFullYear():''}</p>
-     <p class="resit-ty">${en?'Thank you · see you there':'Terima kasih · jumpa di sana'}</p><p class="resit-c sm">*** ${en?'KEEP THIS RECEIPT':'SIMPAN RESIT INI'} ***</p></div>`}
+const rsVars=c=>`--stamp:${c.stamp};--num:${c.num};--pen:${c.pen};--slip:${c.slip||c.sheet}`;
+const rsNo=o=>{const d=new Date((o.date||'')+'T00:00:00');return isNaN(d)?'0001':String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')};
+const rsHand=o=>{const d=new Date((o.date||'')+'T00:00:00');if(isNaN(d))return esc(fmtShort(o.date));const m=(o.lang==='en'?['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']:['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'])[d.getMonth()];return `${d.getDate()} ${m} ${d.getFullYear()}`};
+// the rubber stamp: two rings, the couple's names around, the word in the middle; worn a little by a noise mask
+function rsStamp(o,L,uid){const [n1,n2]=coverNames(o),en=o.lang==='en',ring=`${n1} & ${n2} · ${rsHand(o)} · `.toUpperCase();
+  return `<svg class="rs-stamp" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="rsp${uid}" d="M60 60m-41 0a41 41 0 1 1 82 0a41 41 0 1 1 -82 0"/>
+    <filter id="rsf${uid}" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.6"/><feComposite in="SourceGraphic" operator="in"/></filter></defs>
+   <g filter="url(#rsf${uid})" fill="currentColor" stroke="currentColor">
+    <circle cx="60" cy="60" r="56" fill="none" stroke-width="2.6"/><circle cx="60" cy="60" r="51.5" fill="none" stroke-width=".9"/><circle cx="60" cy="60" r="31" fill="none" stroke-width=".9"/>
+    <text font-family="'IM Fell English SC',serif" font-size="9.6" letter-spacing="1.6" stroke="none"><textPath href="#rsp${uid}" textLength="252">${esc(ring)}</textPath></text>
+    <path d="M27 52h66M27 68h66" stroke-width=".9"/>
+    <text x="60" y="64.2" text-anchor="middle" font-family="'IM Fell English SC',serif" font-size="12.5" letter-spacing="1.4" stroke="none">${en?'INVITED':'DIJEMPUT'}</text></g></svg>`};
+const rsHead=(o,L,pg)=>{const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="rs-head">
+    <p class="rs-no">N<sup>o</sup> ${rsNo(o)}</p><svg class="rs-orn" viewBox="0 0 60 12" aria-hidden="true"><path d="M2 6.5C10 6.5 12 2 19 3.4S25 9 22 9.4 18.6 6 22 5.4M58 6.5C50 6.5 48 2 41 3.4S35 9 38 9.4 41.4 6 38 5.4" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/><path d="M30 2.2L33.6 6 30 9.8 26.4 6Z" fill="currentColor"/><circle cx="30" cy="6" r="1" fill="var(--sheet)"/></svg>
+    <p class="rs-title">${en?'Receipt':'Resit'}</p><i class="rs-dbl"></i>
+    <p class="rs-k${pg?' kicker':''}">${ev(o,L)}</p>
+    ${pg?`<h1 class="names rs-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</h1>`:`<p class="rs-names">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>`}
+    ${o.venue?`<p class="rs-ven">${esc(o.venue)}</p>`:''}</div>`};
+const rsLine=(lab,val,cls='')=>`<p class="rs-line ${cls}"><span>${lab}</span><b>${val}</b></p>`;
 
-FAMILY({key:'resit',name:'Resit',meaning:'Thermal receipt',
-  blurb:'A receipt printer on a counter; press FEED and a thermal receipt rolls out: 1x Majlis Perkahwinan, total priceless, with a barcode.',
-  fonts:{d:"'IBM Plex Mono', monospace",s:"'IBM Plex Mono', monospace",b:"'IBM Plex Mono', monospace"},ms:1500,
-  page(o,th,L){return `<section class="page pg-resit"><div class="resit-counter"></div><div class="resit-shad reveal"><div class="resit-paper resit-zz">${rsReceipt(o,th,L,'',true)}</div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c;
-    return `<div class="cover cv-resit" style="--pr:${c.pr};--prfg:${rsLum(c.pr)>.5?'#2a2723':'#e9e5dc'}"><div class="resit-counter"></div>
-    <div class="resit-feed"><div class="resit-paper">${rsReceipt(o,th,L,guest,false)}</div><i class="resit-curl"></i></div>
-    <div class="resit-pr"><i class="resit-seam"></i><i class="resit-lip"></i><i class="resit-slot"></i><i class="resit-tear"></i><i class="resit-led"></i>
-     <span class="resit-plate">${en?'Thermal · 80 mm':'Terma · 80 mm'}</span><i class="resit-grille"></i>
-     <span class="resit-hint">${en?'Open invitation':'Buka Jemputan'}</span>
-     <${tag} class="resit-btn" ${attr} aria-label="${L.open}"><span>FEED</span></${tag}></div>
-    </div>`},
-  skin(el,o){K.cards(el);const d=new Date((o.date||'')+'T00:00:00'),dd=isNaN(d)?'':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-    $$('.sec',el).forEach((s,i)=>{s.classList.add('resit-sec');s.insertAdjacentHTML('afterbegin',`<span class="resit-meta"><span>#${String(i+2).padStart(4,'0')}</span><span>${dd}</span></span>`);const h=$('h2',s);if(h)h.innerHTML=`<span>${h.innerHTML}</span>`})},
+FAMILY({key:'resit',name:'Resit',meaning:'Letterpress receipt',
+  blurb:'A letterpress receipt slip on cotton paper, filled in by hand with the guest’s name and stamped “Dijemput”. Guests tear it off the book to open the card.',
+  fonts:{d:"'IM Fell English SC', serif",s:"'Homemade Apple', cursive",b:"'IM Fell English', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en',u=++rsN,tr=(o.schedule||[]).filter(s=>s.label).slice(0,4);
+    return `<section class="page pg-resit2${th.c.dark?' rs-dark':''}" style="${rsVars(th.c)}"><div class="rs-counter"></div>
+    <div class="rs-slip rs-torn reveal">${rsHead(o,L,true)}
+      ${rsLine(en?'Date':'Tarikh',esc(fmtDate(o.date,o.lang)))}
+      ${tr.length?`<div class="rs-tab"><p class="rs-th"><span>${en?'Particulars':'Butiran'}</span><span>${en?'Time':'Masa'}</span></p>
+        ${tr.map(s=>`<p class="rs-tr"><span>${esc(s.label)}</span><b>${esc(fmtTime(s.time,o.lang))}</b></p>`).join('')}</div>`:''}
+      <div class="rs-foot"><p class="rs-ty">${en?'Thank you. See you there.':'Terima kasih. Jumpa di majlis nanti.'}</p><div class="rs-st rs-st-pg">${rsStamp(o,L,'p'+u)}</div></div>
+      <div class="rs-pills"><a class="rs-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="rs-pill" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+    </div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',u=++rsN;
+    return `<div class="cover cv-resit2${th.c.dark?' rs-dark':''}" style="${rsVars(th.c)}"><div class="rs-counter"></div>
+    <div class="rs-book">
+      <div class="rs-stub"><p class="rs-sno">N<sup>o</sup> ${rsNo(o)}</p><p class="rs-sv">${en?'Counterfoil':'Salinan'}</p><p class="rs-sh">${guest?esc(guest):(en?'Guest':'Tetamu')}</p></div>
+      <div class="rs-slip rs-main">${rsHead(o,L,false)}
+        ${rsLine(en?'To':'Kepada',guest?esc(guest):(en?'Our honoured guest':'Tetamu yang dihormati'),'hand')}
+        ${rsLine(en?'Date':'Tarikh',esc(rsHand(o)),'hand')}
+        <div class="rs-tab"><p class="rs-th"><span>${en?'Particulars':'Perkara'}</span><span>${en?'Amount':'Jumlah'}</span></p>
+          <p class="rs-tr"><span>${en?'Invitation to the wedding':'Jemputan ke majlis perkahwinan'}</span><b>${en?'With love':'Ikhlas'}</b></p>
+          <p class="rs-tr"><span>${en?'Your prayers and blessings':'Doa restu tuan/puan'}</span><b>${en?'Much loved':'Dihargai'}</b></p>
+          <p class="rs-tr rs-tot"><span>${en?'Total':'Jumlah'}</span><b>${en?'Priceless':'Tak ternilai'}</b></p></div>
+        <div class="rs-st">${rsStamp(o,L,'c'+u)}</div>
+      </div>
+    </div>
+    <${tag} class="rs-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.setAttribute('style',(el.getAttribute('style')||'')+';'+rsVars(th.c));el.classList.toggle('rs-dark',!!th.c.dark);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'putih',n:'Putih',desc:'White printer on a stone counter',c:{ground:'#d8d3cb',sheet:'#fbfaf6',ink:'#24211d',accent:'#24211d',gold:'#b89458',pagefg:'#2b2824',pr:'#f1efea'}},
-    {k:'hitam',n:'Hitam',desc:'Black printer on a dark counter',c:{ground:'#1b1b1b',sheet:'#f8f6f0',ink:'#1f1d1a',accent:'#1f1d1a',gold:'#c8a45e',pagefg:'#ece6da',pr:'#2b2b2b'}},
-    {k:'merah',n:'Merah',desc:'Red counter, red total',c:{ground:'#7a1f24',sheet:'#fbf8f3',ink:'#2a1c1c',accent:'#a3222b',gold:'#c9a35a',pagefg:'#f6ede2',pr:'#f4efe8'}},
-    {k:'biru',n:'Biru',desc:'Navy printer, pale blue counter',c:{ground:'#dde5ee',sheet:'#fbfbf8',ink:'#1d2433',accent:'#2c4a7c',gold:'#b8975a',pagefg:'#1d2433',pr:'#26324a'}},
-    {k:'pic',n:'Pic',desc:'Peach counter, coral print',c:{ground:'#f2d8c5',sheet:'#fffbf6',ink:'#3a2620',accent:'#c4573a',gold:'#b8894a',pagefg:'#3a2620',pr:'#fffaf5'}},
-    {k:'hijau',n:'Hijau',desc:'Forest counter, sage printer',c:{ground:'#22362c',sheet:'#fafaf5',ink:'#1e2822',accent:'#2f5c46',gold:'#c4a45e',pagefg:'#e6ece4',pr:'#e7ebe4'}},
-    {k:'ungu',n:'Ungu',desc:'Plum printer on lilac',c:{ground:'#e5dfee',sheet:'#fcfbfd',ink:'#251f33',accent:'#5d4686',gold:'#b8975a',pagefg:'#251f33',pr:'#3b2f52'}},
-    {k:'kuning',n:'Kuning',desc:'Sunny counter, black printer',c:{ground:'#efd998',sheet:'#fffdf6',ink:'#26231f',accent:'#9a5f0c',gold:'#9a5f0c',pagefg:'#2b2418',pr:'#26231f'}},
+    {k:'putih',n:'Putih',desc:'White cotton slip, black letterpress, red stamp, on pale marble',c:{ground:'#dcd8d1',sheet:'#fbf9f4',ink:'#24211d',accent:'#24211d',gold:'#9c8458',pagefg:'#2b2824',stamp:'#b0303a',num:'#b0303a',pen:'#1f2f63',dark:''}},
+    {k:'hitam',n:'Hitam',desc:'Ivory slip, black ink, red stamp, on black marble',c:{ground:'#1a1918',sheet:'#f6f2e8',ink:'#1f1d1a',accent:'#1f1d1a',gold:'#9c8458',pagefg:'#ece6da',stamp:'#a8323a',num:'#a8323a',pen:'#1f2f63',dark:'1'}},
+    {k:'merah',n:'Merah',desc:'Cream slip, maroon ink and stamp, on a red counter',c:{ground:'#6a1d22',sheet:'#fbf6ee',ink:'#2a1c1c',accent:'#7a1d26',gold:'#a8844a',pagefg:'#f6ede2',stamp:'#9a1f2b',num:'#9a1f2b',pen:'#1f2f63',dark:'1'}},
+    {k:'biru',n:'Biru',desc:'White slip, navy letterpress, blue stamp',c:{ground:'#d9e0e8',sheet:'#fbfbf8',ink:'#1d2433',accent:'#22385e',gold:'#9c8a62',pagefg:'#1d2433',stamp:'#2a4f8e',num:'#b0303a',pen:'#22385e',dark:''}},
+    {k:'pic',n:'Pic',desc:'Warm slip, brown ink, coral stamp, peach counter',c:{ground:'#efd9c8',sheet:'#fffaf4',ink:'#3a2620',accent:'#5a3326',gold:'#a88358',pagefg:'#3a2620',stamp:'#c4573a',num:'#c4573a',pen:'#3a2a5a',dark:''}},
+    {k:'hijau',n:'Hijau',desc:'Cream slip, green ink and stamp, forest counter',c:{ground:'#1f3229',sheet:'#f9f8f1',ink:'#1e2822',accent:'#24503c',gold:'#9c8a5a',pagefg:'#e6ece4',stamp:'#2f6b4f',num:'#a8323a',pen:'#1f2f63',dark:'1'}},
+    {k:'ungu',n:'Ungu',desc:'White slip, plum ink, violet stamp, lilac counter',c:{ground:'#e3dde9',sheet:'#fcfbfd',ink:'#251f33',accent:'#45325f',gold:'#9a8a6a',pagefg:'#251f33',stamp:'#6a4a9a',num:'#6a4a9a',pen:'#45325f',dark:''}},
+    {k:'kuning',n:'Kuning',desc:'Buttery slip, brown ink, red stamp, turmeric counter',c:{ground:'#e8d398',sheet:'#fffcf2',ink:'#2e2418',accent:'#5a3c12',gold:'#9a7034',pagefg:'#2b2418',stamp:'#b0303a',num:'#b0303a',pen:'#1f2f63',dark:''}},
   ]});

@@ -1,0 +1,81 @@
+/* ===== anyaman (round 7) ===== */
+.inv .ay-mat{position:absolute;inset:0;width:100%;height:100%;display:block}
+.inv .ay-k{font-family:"Marcellus",serif;font-size:10.5px;letter-spacing:.36em;text-transform:uppercase}
+
+/* cover */
+.inv .cv-anyaman2{background:var(--ground);overflow:hidden;transition:opacity .45s 1.25s}
+.inv .ay-floor{position:absolute;inset:0;background:radial-gradient(ellipse 85% 55% at 50% 40%,rgba(255,255,255,.12),transparent 70%),radial-gradient(ellipse at 50% 50%,transparent 50%,rgba(0,0,0,.28)),var(--ground)}
+.inv .ay-floor::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.45}
+.inv .ay-top{position:absolute;top:9%;left:0;right:0;text-align:center;color:var(--pagefg);z-index:2;opacity:.9;transition:opacity .35s}
+/* the rolled mat: weave, cylinder shading, a spiral end, two cord ties */
+.inv .ay-roll{position:absolute;left:5%;right:13%;top:24%;height:21cqi;z-index:4;filter:drop-shadow(0 16px 12px rgba(0,0,0,.38)) drop-shadow(0 3px 3px rgba(0,0,0,.3));
+  transition:top 1.25s cubic-bezier(.45,.05,.3,1) .2s,transform 1.25s cubic-bezier(.45,.05,.3,1) .2s}
+.inv .ay-roll > .ay-mat{border-radius:4px 2px 2px 4px}
+.inv .ay-cyl{position:absolute;inset:0;border-radius:4px 2px 2px 4px;background:linear-gradient(180deg,rgba(0,0,0,.62),rgba(0,0,0,.18) 18%,rgba(255,255,255,.22) 36%,rgba(255,255,255,.06) 50%,rgba(0,0,0,.12) 66%,rgba(0,0,0,.66))}
+.inv .ay-end{position:absolute;right:-8cqi;top:0;bottom:0;width:10cqi;border-radius:50%;
+  background:radial-gradient(ellipse at 52% 50%,#1e1408 0 20%,#5a4020 23%,transparent 25%),repeating-radial-gradient(ellipse at 52% 50%,#e6cb92 0 .9px,#6a4e26 .9px 1.5px,#d4b170 1.5px 2.6px),#cdaa68;
+  box-shadow:inset -3px -4px 6px rgba(0,0,0,.4),inset 2px 2px 3px rgba(255,255,255,.3)}
+.inv .ay-cord{position:absolute;top:-2px;bottom:-2px;width:3.2cqi;transform:translateX(-50%);border-radius:3px;
+  background:linear-gradient(180deg,rgba(0,0,0,.55),transparent 28%,rgba(255,255,255,.18) 42%,transparent 60%,rgba(0,0,0,.6)),repeating-linear-gradient(-58deg,var(--cord) 0 2.4px,color-mix(in srgb,var(--cord) 55%,#000) 2.4px 3.2px,color-mix(in srgb,var(--cord) 70%,#fff) 3.2px 4px);
+  box-shadow:-1px 0 2px rgba(0,0,0,.35),1px 0 2px rgba(0,0,0,.35)}
+/* the flat mat, revealed as the roll travels down */
+.inv .ay-flat{position:absolute;left:5%;right:13%;top:calc(24% + 10.5cqi);bottom:-3%;z-index:3;clip-path:inset(0 0 100% 0);transition:clip-path 1.25s cubic-bezier(.45,.05,.3,1) .2s;
+  box-shadow:0 0 30px rgba(0,0,0,.4)}
+.inv .ay-flatshade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 8%,transparent 92%,rgba(0,0,0,.2))}
+/* the paper tag on its string */
+.inv .ay-tag{position:absolute;left:46%;top:calc(24% + 21cqi + 30px);width:60%;z-index:5;transform:translateX(-50%) rotate(-2.5deg);transform-origin:50% -30px;
+  padding:30px 12px 18px;text-align:center;color:var(--ink);filter:drop-shadow(0 10px 10px rgba(0,0,0,.3)) drop-shadow(0 1px 1px rgba(0,0,0,.2));transition:opacity .4s,transform .5s}
+.inv .ay-tag::before,.inv .ay-card::before{content:"";position:absolute;inset:0;z-index:-1;background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply;
+  clip-path:polygon(14% 0,86% 0,100% 9%,100% 100%,0 100%,0 9%)}
+.inv .ay-eye{position:absolute;left:50%;top:11px;width:13px;height:13px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle,var(--ground) 0 38%,#7a5a2a 40%,#f0d48a 55%,#b88a3a 75%,#6e5018 92%);box-shadow:0 1px 1px rgba(0,0,0,.3)}
+.inv .ay-string{position:absolute;left:50%;bottom:calc(100% - 17px);width:1.6px;height:52px;transform:translateX(-50%);background:linear-gradient(90deg,color-mix(in srgb,var(--cord) 60%,#000),var(--cord),color-mix(in srgb,var(--cord) 60%,#000))}
+.inv .ay-tn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(26px,8.5cqi,34px);line-height:1.05;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .ay-tn span{font-family:"Marcellus",serif;font-style:normal;font-size:.4em;color:var(--gold);margin:4px 0}
+.inv .ay-td{font-family:"Marcellus",serif;font-size:10px;letter-spacing:.3em;margin-top:10px;opacity:.8}
+.inv .ay-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .35s}
+.inv .ay-to{text-align:center}
+.inv .ay-to small{display:block;font-family:"Marcellus",serif;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+.inv .ay-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:24px}
+.inv .ay-open{border:1px solid color-mix(in srgb,var(--pagefg) 50%,transparent);background:transparent;color:var(--pagefg);cursor:pointer;padding:13px 36px;border-radius:999px;
+  font-family:"Marcellus",serif;font-size:11.5px;letter-spacing:.3em;text-transform:uppercase}
+/* opening: the tag drops away, the mat unrolls down the screen */
+.inv.opening .ay-tag{opacity:0;transform:translateX(-50%) translateY(24px) rotate(-6deg)}
+.inv.opening .ay-roll{top:104%;transform:scale(.92,.7)}
+.inv.opening .ay-flat{clip-path:inset(0)}
+.inv.opening .ay-top,.inv.opening .ay-foot{opacity:0}
+.inv.opening .cv-anyaman2{opacity:0}
+
+/* page: the unrolled mat, the card laid on it */
+.inv .pg-anyaman2{background:var(--ground);color:var(--ink);padding:40px 24px 90px;overflow:hidden}
+.inv .ay-bg{z-index:0}
+.inv .ay-light{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 45%,rgba(255,255,255,.08),rgba(0,0,0,.35));pointer-events:none}
+.inv .ay-card{position:relative;z-index:2;width:88%;max-width:340px;padding:36px 16px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;transform:rotate(-1deg);
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.45)) drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.inv .ay-card .ay-eye{top:12px}
+.inv .ay-card .ay-k{color:var(--accent)}
+.inv .ay-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(40px,12cqi,50px);line-height:1;margin:10px 0 4px;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .ay-names span{font-family:"Marcellus",serif;font-style:normal;font-size:.36em;color:var(--gold);margin:6px 0}
+.inv .ay-rule{display:block;width:120px;height:7px;margin:10px 0 10px;background:repeating-linear-gradient(45deg,var(--dye) 0 2px,transparent 2px 4px),repeating-linear-gradient(-45deg,color-mix(in srgb,var(--gold) 70%,transparent) 0 2px,transparent 2px 4px);opacity:.8}
+.inv .ay-date{font-family:"Marcellus",serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.inv .ay-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.7;margin-top:3px}
+.inv .ay-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin-top:8px}
+.inv .ay-pill{margin-top:18px;padding:11px 26px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);text-decoration:none;
+  font-family:"Marcellus",serif;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase}
+
+/* skin: paper cards on the mat, a woven band along the top of each */
+.fam-anyaman.cardsecs .scroller{background:var(--weave) 0 0/var(--wt) repeat,#d9c08a}
+.fam-anyaman.cardsecs .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.08),rgba(0,0,0,.35))}
+.fam-anyaman.cardsecs .sec{position:relative;border-radius:2px!important;overflow:hidden;color:var(--ink);padding-top:34px!important;
+  background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;box-shadow:0 14px 24px -10px rgba(0,0,0,.5),0 2px 3px rgba(0,0,0,.2)!important}
+.fam-anyaman.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:12px;background:var(--weave) 0 0/var(--wt);box-shadow:inset 0 -2px 3px rgba(0,0,0,.3)}
+.fam-anyaman .sec h2{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;text-transform:none;letter-spacing:0;font-size:32px;color:var(--accent)}
+.fam-anyaman .info,.fam-anyaman .info > div{border:0!important;background:none!important}
+.fam-anyaman .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important;padding:13px 6px!important}
+.fam-anyaman .info > div:last-child{border-bottom:0!important}
+.fam-anyaman .info span{color:var(--accent);font-family:"Marcellus",serif}
+.fam-anyaman .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:transparent}
+.fam-anyaman .seg button[aria-pressed="true"],.fam-anyaman button.submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-anyaman .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
+.fam-anyaman .foot{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+@media (prefers-reduced-motion: reduce){.inv .ay-roll,.inv .ay-flat,.inv .ay-tag{transition:none}}

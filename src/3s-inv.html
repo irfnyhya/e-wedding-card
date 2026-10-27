@@ -135,13 +135,14 @@
 .inv .sec p{font-size:16px;line-height:1.7;max-width:32ch;margin:0}
 .inv .person{font-family:var(--d);font-size:17px;letter-spacing:.06em;line-height:1.4;text-transform:uppercase}
 .inv .orn{color:var(--gold);font-size:22px;line-height:1}
-.inv .info{width:100%;max-width:330px;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.inv .info > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 8px}
+.inv .info{width:100%;max-width:330px;display:grid;grid-template-columns:1fr 1fr}
+.inv .info > div{border-bottom:1px solid var(--line);padding:14px 8px}
+.inv .info > div:last-child,.inv .info > div:nth-last-child(2):not(.full){border-bottom:0}
 .inv .info .full{grid-column:1/-1}
 .inv .info span{display:block;font-family:var(--d);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;opacity:.7;margin-bottom:3px}
 .inv .info b{font-weight:400;font-size:17px}
 .inv .ibtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.inv .ibtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);color:var(--ink);background:transparent;padding:9px 14px;font-size:13px;text-decoration:none;cursor:pointer;font-family:var(--b)}
+.inv .ibtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;color:var(--ink);background:transparent;padding:9px 16px;font-size:13px;text-decoration:none;cursor:pointer;font-family:var(--b)}
 .inv .ibtn:hover{border-color:var(--accent);color:var(--accent)}
 .inv .ibtn.solid{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
 .inv .ibtn svg{width:15px;height:15px}

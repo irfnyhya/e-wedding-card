@@ -1,58 +1,95 @@
 /* ===== kunci ===== */
-.inv .kc-door{position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.05),transparent 40%,rgba(0,0,0,.12)),var(--ground);isolation:isolate}
-.inv .kc-door::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.45;z-index:2;pointer-events:none}
-.inv .kc-pan{position:absolute;inset:16px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset 2px 2px 0 1px rgba(255,255,255,.12),inset -2px -2px 0 1px rgba(0,0,0,.25),inset 0 0 0 9px color-mix(in srgb,var(--ground) 94%,#fff),inset 0 0 0 10px rgba(0,0,0,.18)}
-.inv .kc-pan::before{content:"";position:absolute;inset:18px;box-shadow:inset -2px -2px 0 rgba(255,255,255,.1),inset 2px 2px 0 rgba(0,0,0,.28),inset 0 0 26px rgba(0,0,0,.12);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent)}
-.inv .kc-pan::after{content:"";position:absolute;inset:24px;border:.6px solid color-mix(in srgb,var(--gold) 30%,transparent)}
+/* the surface: marble on the light colourways, velvet on the dark ones; window light from the top left */
+.inv .kn-surf{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .kn-surf::before{content:"";position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/820px;mix-blend-mode:multiply;opacity:.2}
+.inv .kn-dark .kn-surf::before{background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+.inv .kn-surf::after{content:"";position:absolute;inset:0;background:radial-gradient(110% 70% at 15% 0,rgba(255,252,245,.45),transparent 60%),radial-gradient(130% 90% at 90% 105%,rgba(20,15,10,.14),transparent 60%)}
+.inv .kn-dark .kn-surf::after{background:radial-gradient(90% 55% at 30% 18%,rgba(255,240,220,.1),transparent 60%),radial-gradient(120% 80% at 50% 50%,transparent 45%,rgba(0,0,0,.45))}
+.inv .kn-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.38em;text-transform:uppercase}
+
+/* the key and its thread */
+.inv .kn-key{display:block;height:auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.45)) drop-shadow(5px 9px 7px rgba(20,12,4,.38))}
+.inv .kn-dark .kn-key{filter:brightness(1.35) contrast(1.05) drop-shadow(0 1px 1px rgba(0,0,0,.7)) drop-shadow(5px 10px 9px rgba(0,0,0,.65))}
+.inv .kn-thread{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:3;pointer-events:none;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.3))}
+.inv .kn-t1{fill:none;stroke:#efe6d0;stroke-width:1.7;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.inv .kn-t2{fill:none;stroke:#b6a582;stroke-width:1.7;stroke-dasharray:1.2 2.2;vector-effect:non-scaling-stroke}
+
+/* the paper tag: chamfered end, a brass eyelet */
+.inv .kn-tag{position:relative}
+.inv .kn-paper{position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.25),transparent 40%,rgba(0,0,0,.06)),var(--tag) url(assets/paper.jpg) 0 0/240px;background-blend-mode:normal,multiply}
+.inv .kn-tag{filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)) drop-shadow(4px 12px 12px rgba(20,12,4,.32))}
+.inv .kn-dark .kn-tag{filter:drop-shadow(0 1px 1px rgba(0,0,0,.5)) drop-shadow(4px 14px 14px rgba(0,0,0,.6))}
+.inv .kn-eye{position:absolute;width:24px;height:24px;border-radius:50%;z-index:2;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,var(--ground) 0 4.6px,var(--b4) 5px,var(--b2) 6.5px,var(--b1) 8px,var(--b3) 10.5px,rgba(0,0,0,.18) 11.4px,transparent 12px)}
+.inv .kn-eye{box-shadow:0 0 0 7px color-mix(in srgb,var(--tag) 92%,#000),0 0 0 7.6px rgba(0,0,0,.06)}
+.inv .kn-ti{text-align:center;color:var(--ink)}
+
 /* cover */
-.inv .cv-kunci{overflow:hidden;color:var(--pagefg);transition:opacity .5s 1s}
-.inv .kc-head{position:absolute;top:58px;left:10%;right:10%;text-align:center;display:flex;flex-direction:column;gap:5px;z-index:3}
-.inv .kc-k{margin:0;font-family:var(--d);font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:color-mix(in srgb,var(--gold) 70%,var(--pagefg))}
-.inv .kc-n{margin:0;font-family:var(--s);font-size:clamp(30px,9.6cqi,38px);line-height:1.12;color:var(--pagefg)}
-.inv .kc-n span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.5em;color:var(--gold)}
-.inv .kc-lock{position:absolute;left:50%;top:16.5%;width:29.5%;aspect-ratio:100/220;transform:translateX(-50%);border:0;padding:0;background:none;cursor:pointer;z-index:3;transition:opacity .5s .95s;-webkit-tap-highlight-color:transparent}
-.inv .kc-lock > span{position:absolute;display:block}
-.inv .kc-lock svg{display:block;width:100%;height:auto;overflow:visible}
-.inv .kc-pw{inset:0;z-index:1}
-.inv .kc-kw{left:0;width:100%;top:53.6%;z-index:3;transform-origin:50% 0;transform:perspective(600px) rotateY(0deg);transition:transform 1s cubic-bezier(.45,0,.25,1);filter:drop-shadow(2px 4px 3px rgba(0,0,0,.45))}
-.inv .kc-fw{left:14%;width:72%;top:144%;z-index:2;transform-origin:50% 0;transform:rotate(-5deg)}
-.inv .kc-fw .kc-ring{position:absolute;width:30%;left:35%;top:-9%;z-index:2}
-.inv .kc-fob{filter:drop-shadow(1px 3px 3px rgba(0,0,0,.35))}
-.inv .kc-lock:focus-visible{outline:1px solid var(--gold);outline-offset:8px}
-.inv .kc-foot{position:absolute;left:10%;right:10%;bottom:50px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;z-index:3}
-.inv .kc-to{margin:0;display:flex;flex-direction:column;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px}
-.inv .kc-to b{font-family:var(--s);font-style:normal;font-weight:400;font-size:25px;line-height:1.2}
-.inv .kc-hint{margin:0;font-family:var(--d);font-size:9px;letter-spacing:.28em;text-transform:uppercase;opacity:.62}
-.inv .cv-kunci .kc-fade{transition:opacity .4s}
-.inv.opening .cv-kunci .kc-fade{opacity:0}
-.inv.opening .kc-kw{transform:perspective(600px) rotateY(-80deg)}
-.inv.opening .kc-lock{opacity:0}
-.inv.opening .cv-kunci{opacity:0}
-/* page */
-.inv .pg-kunci{color:var(--pagefg);padding:50px 34px 48px;gap:8px}
-.inv .pg-kunci > :not(.kc-door){position:relative;z-index:3}
-.inv .kc-pplate{width:min(24%,96px);margin-bottom:6px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
-.inv .kc-pplate svg{display:block;width:100%;height:auto}
-.inv .pg-kunci .kc-k{margin-top:4px}
-.inv .pg-kunci .names{font-size:clamp(42px,13cqi,54px);color:var(--pagefg)}
-.inv .pg-kunci .names .amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.42em;color:var(--gold)}
-.inv .kc-rule{display:flex;align-items:center;gap:10px;width:160px;margin:4px 0}
-.inv .kc-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
-.inv .kc-rule i:last-child{background:linear-gradient(-90deg,transparent,var(--gold))}
-.inv .kc-rule b{width:9px;height:12px;background:var(--gold);clip-path:polygon(50% 0,100% 30%,100% 45%,70% 50%,85% 100%,15% 100%,30% 50%,0 45%,0 30%);border-radius:50% 50% 0 0}
-.inv .kc-date{margin:0;font-family:var(--d);font-size:12px;letter-spacing:.22em;text-transform:uppercase}
-.inv .kc-hj{margin:-2px 0 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--gold)}
-.inv .kc-ven{margin:4px 0 0;font-family:'Cormorant Garamond',serif;font-size:18px}
-.inv .kc-ven i{font-style:normal;color:var(--gold)}
-/* skin: raised door-panel cards, headings on brass key tags with a string */
-.fam-kunci .scroller{background:linear-gradient(100deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.1)) local,var(--ground)}
-.fam-kunci.cardsecs .sec{margin:0 14px 18px;background:var(--sheet);box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 55%,transparent),inset 2px 2px 0 10px rgba(255,255,255,.5),inset -2px -2px 0 10px rgba(0,0,0,.05),0 1px 0 1px rgba(0,0,0,.08),0 14px 24px rgba(0,0,0,.28);isolation:isolate;padding-top:52px}
-.fam-kunci.cardsecs .sec:first-child{margin-top:18px}
-.fam-kunci .sec::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4;pointer-events:none;z-index:-1}
-.fam-kunci .sec h2{display:flex;justify-content:center}
-.fam-kunci .kc-tag{position:relative;display:inline-flex;align-items:center;gap:10px;padding:9px 20px 9px 30px;background:linear-gradient(160deg,var(--gold),color-mix(in srgb,var(--gold) 70%,#000) 55%,var(--gold));color:var(--sheet);clip-path:polygon(16px 0,100% 0,100% 100%,16px 100%,0 50%);font-family:var(--d);font-size:12px;letter-spacing:.24em;text-shadow:0 1px 0 rgba(0,0,0,.25);filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
-.fam-kunci .kc-tag::after{content:"";position:absolute;inset:3px 3px 3px 5px;border:.6px solid rgba(255,255,255,.45);clip-path:polygon(13px 0,100% 0,100% 100%,13px 100%,0 50%);pointer-events:none}
-.fam-kunci .kc-tag i{position:absolute;left:12px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--sheet);box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
-.fam-kunci .info,.fam-kunci .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.inv .cv-kunci2{background:transparent;overflow:hidden;transition:opacity .45s 1.05s}
+.inv .kn-top{position:absolute;top:9%;left:0;right:0;text-align:center;z-index:3;color:var(--pagefg);opacity:.85;transition:opacity .4s}
+.inv .kn-set{position:absolute;left:5%;width:90%;top:20%;aspect-ratio:1;z-index:2;perspective:1100px}
+.inv .kn-ctag{position:absolute!important;left:3%;top:0;width:94%;height:57%;transform:rotate(-3deg);transform-origin:50% 50%;transition:transform 1.25s cubic-bezier(.5,0,.25,1)}
+.inv .kn-ctag .kn-paper{clip-path:polygon(9% 0,100% 0,100% 100%,9% 100%,0 84%,0 16%)}
+.inv .kn-ctag .kn-eye{left:8.4%;top:50%}
+.inv .kn-ctag .kn-ti{position:absolute;inset:9% 6% 9% 17%;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.inv .kn-cn{font-family:"Pinyon Script",cursive;font-size:clamp(30px,9.6cqi,40px);line-height:1.02;color:var(--nm);display:flex;flex-direction:column;align-items:center}
+.inv .kn-cn span,.inv .kn-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--gold);margin:1px 0}
+.inv .kn-cd{font-family:"Cormorant Garamond",serif;font-size:11.5px;letter-spacing:.34em;margin-top:8px;color:var(--accent)}
+.inv .kn-ckey{position:absolute;left:4%;top:66%;width:84%;transform:rotate(-7deg);transition:transform 1s cubic-bezier(.5,0,.3,1),opacity .5s .2s}
+.inv .kn-set .kn-thread{transition:opacity .3s}
+.inv .kn-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .kn-to{text-align:center}
+.inv .kn-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+.inv .kn-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:27px}
+.inv .kn-open{border:1px solid color-mix(in srgb,var(--pagefg) 45%,transparent);background:var(--btn);color:var(--pagefg);cursor:pointer;backdrop-filter:blur(3px);
+  padding:13px 36px;border-radius:999px;font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+/* opening: the key slips away and the tag turns over toward you */
+.inv.opening .kn-ckey{transform:translate(60%,30%) rotate(4deg);opacity:0}
+.inv.opening .kn-set .kn-thread{opacity:0}
+.inv.opening .kn-ctag{transform:translateY(10%) rotateY(180deg) scale(1.5)}
+.inv.opening .kn-top,.inv.opening .kn-foot{opacity:0}
+.inv.opening .cv-kunci2{opacity:0}
+
+/* page: the tag stood upright, the key across its corner */
+.inv .pg-kunci2{background:var(--ground);color:var(--pagefg);padding:50px 22px 128px;justify-content:center;overflow:hidden}
+.inv .pg-kunci2 > :not(.kn-surf){position:relative;z-index:2}
+.inv .kn-pwrap{position:relative;width:84%;max-width:320px}
+.inv .kn-ptag{padding:58px 12px 16px;transform:rotate(1.2deg)}
+.inv .kn-ptag .kn-paper{clip-path:polygon(0 7%,15% 0,85% 0,100% 7%,100% 100%,0 100%)}
+.inv .kn-ptag .kn-ti{position:relative}
+.inv .kn-ptag .kn-eye{left:50%;top:26px}
+.inv .kn-ptag .kn-ti{border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);padding:18px 12px 16px}
+.inv .kn-ptag .kn-k{color:var(--accent)}
+.inv .kn-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(38px,11.5cqi,48px);line-height:1;margin:8px 0 8px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .kn-date{font-family:"Cormorant Garamond",serif;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.inv .kn-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:3px;opacity:.75}
+.inv .kn-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;margin-top:10px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--ink);text-decoration:none}
+.inv .kn-ven::after{content:" \2192";font-style:normal;color:var(--accent)}
+.inv .kn-pkey{position:absolute;right:-16%;bottom:-13%;width:58%;transform:rotate(-22deg);z-index:3}
+.inv .kn-links{display:flex;gap:12px;justify-content:center;margin-top:40px;margin-right:22%}
+.inv .kn-links a{position:relative;display:flex;align-items:center;gap:10px;padding:9px 18px 9px 14px;color:var(--ink);text-decoration:none;font-family:"Cormorant Garamond",serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--tag) url(assets/paper.jpg) 0 0/200px;background-blend-mode:multiply;clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);filter:drop-shadow(2px 5px 5px rgba(0,0,0,.3))}
+.inv .kn-links a:nth-child(1){transform:rotate(-2deg)}.inv .kn-links a:nth-child(2){transform:rotate(2.5deg)}
+.inv .kn-links a i{width:7px;height:7px;border-radius:50%;background:var(--ground);box-shadow:0 0 0 2px var(--b2)}
+.inv .pg-kunci2 .couple-ph.front{width:30%;margin-bottom:8px}
+
+/* skin: paper cards with an eyelet at the top */
+.fam-kunci .scroller{background:var(--ground)}
+.fam-kunci .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/marble.jpg) 0 0/820px;mix-blend-mode:multiply;opacity:.18}
+.fam-kunci.kn-dark .scroller::before{background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5}
+.fam-kunci.cardsecs .sec{position:relative;background:var(--tag) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;color:var(--ink);border-radius:2px;box-shadow:0 1px 1px rgba(0,0,0,.2),0 14px 24px -8px rgba(0,0,0,.4)}
+.fam-kunci.cardsecs .sec::before{content:"";position:absolute;left:50%;top:14px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:radial-gradient(circle,var(--ground) 0 3.5px,#7a5418 4px,#d9b065 5.4px,#f3dc9c 6.4px,#8f6420 8.2px,transparent 9px)}
+.fam-kunci .sec h2{font-family:"Cormorant Garamond",serif;font-weight:500;letter-spacing:.3em;text-transform:uppercase;font-size:16px;color:var(--accent);padding-top:22px;padding-bottom:12px;background:linear-gradient(color-mix(in srgb,var(--gold) 70%,transparent),color-mix(in srgb,var(--gold) 70%,transparent)) 50% 100%/40px 1px no-repeat}
+.fam-kunci .sec,.fam-kunci .sec p,.fam-kunci .info b{color:var(--ink)}
+.fam-kunci .info,.fam-kunci .info > div{border:0!important;background:none!important}
+.fam-kunci .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
+.fam-kunci .info > div:last-child{border-bottom:0!important}
+.fam-kunci .info span{color:var(--accent)}
+.fam-kunci .ibtn{border-color:color-mix(in srgb,var(--accent) 40%,transparent);border-radius:999px;color:var(--accent);background:transparent}
+.fam-kunci .seg button[aria-pressed="true"],.fam-kunci button.submit{color:var(--sheet)!important;background:var(--accent)!important}
+.fam-kunci .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
 .fam-kunci .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .kc-kw,.inv .kc-lock,.inv .cv-kunci{transition:none}}
+@media (prefers-reduced-motion: reduce){.inv .kn-ctag,.inv .kn-ckey{transition:none}}
+/* the tag turns edge-on at about .6s: from there you see its plain back */
+.inv .kn-ctag .kn-ti,.inv .kn-ctag .kn-eye{transition:opacity .05s .6s}
+.inv.opening .kn-ctag .kn-ti,.inv.opening .kn-ctag .kn-eye{opacity:0}

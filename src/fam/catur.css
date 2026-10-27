@@ -1,92 +1,99 @@
-/* ===== catur ===== */
-.inv .cv-catur{background:var(--ground);overflow:hidden;transition:opacity .5s .85s}
-.inv .cv-catur .catur-floor,.inv .pg-catur .catur-floor{position:absolute;inset:0;background:radial-gradient(ellipse 85% 55% at 50% 62%,color-mix(in srgb,var(--ground) 82%,#fff),var(--ground) 62%,color-mix(in srgb,var(--ground) 78%,#000))}
-.inv .cv-catur .catur-floor::after,.inv .pg-catur .catur-floor::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/280px;mix-blend-mode:soft-light;opacity:.45}
-.inv .catur-head{position:absolute;top:8.5%;left:6%;right:6%;z-index:3;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .45s}
-.inv .catur-k{font-family:var(--d);font-size:9.5px;letter-spacing:.4em;text-transform:uppercase;opacity:.8}
-.inv .catur-n{font-family:var(--s);font-size:clamp(36px,11cqi,46px);line-height:1.1;margin:2px 0}
-.inv .catur-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
-.inv .catur-line{display:flex;align-items:center;gap:12px;margin:2px 0 0}
-.inv .catur-line i{width:36px;height:6px;background:linear-gradient(90deg,var(--gold) 0 50%,transparent 50%) 0 0/6px 3px repeat-x,linear-gradient(90deg,transparent 0 50%,var(--gold) 50%) 0 3px/6px 3px repeat-x;opacity:.9}
-.inv .catur-line b{font-family:var(--d);font-weight:400;font-size:12px;letter-spacing:.5em;padding-left:.5em;color:var(--gold);text-transform:uppercase}
-.inv .catur-sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;opacity:.85}
-.inv .catur-scene{position:absolute;left:0;right:0;top:35%;height:58%;perspective:1000px;perspective-origin:50% -10%;z-index:2}
-.inv .catur-board{position:absolute;left:50%;top:0;width:84cqi;aspect-ratio:1;transform:translateX(-50%) rotateX(55deg);transform-origin:50% 55%;transform-style:preserve-3d;border-radius:5px;background:var(--frame);box-shadow:0 9px 0 color-mix(in srgb,var(--frame) 62%,#000),0 9px 0 1px rgba(0,0,0,.2),0 50px 60px -10px rgba(0,0,0,.45),inset 0 0 0 1px color-mix(in srgb,var(--gold) 60%,transparent);transition:transform 1.35s cubic-bezier(.5,0,.25,1),opacity .8s .45s}
-.inv .catur-vein{position:absolute;inset:0;border-radius:5px;background:color-mix(in srgb,var(--frame) 55%,#000);opacity:.55;-webkit-mask:url(assets/veins.png) 0 0/240px;mask:url(assets/veins.png) 0 0/240px}
-.inv .catur-board.wood .catur-vein{-webkit-mask-size:160% 14%;mask-size:160% 14%;opacity:.7}
-.inv .catur-sqs{position:absolute;inset:6.5%;background:url(assets/marble.jpg) 0 0/48%,var(--chk) 0 0/25% 25%;background-blend-mode:multiply,normal;box-shadow:0 0 0 1px var(--gold),0 0 0 4px var(--frame),0 0 0 4.6px color-mix(in srgb,var(--gold) 70%,transparent)}
-.inv .catur-board.wood .catur-sqs{background:url(assets/veins.png) 0 0/140% 9%,var(--chk) 0 0/25% 25%}
-.inv .catur-sqs::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--gold) 55%,transparent) 0 .7px,transparent .7px 12.5%),repeating-linear-gradient(180deg,color-mix(in srgb,var(--gold) 55%,transparent) 0 .7px,transparent .7px 12.5%)}
-.inv .catur-files{position:absolute;left:6.5%;right:6.5%;bottom:0;height:6.5%;display:grid;grid-template-columns:repeat(8,1fr)}
-.inv .catur-ranks{position:absolute;top:6.5%;bottom:6.5%;left:0;width:6.5%;display:grid;grid-template-rows:repeat(8,1fr)}
-.inv .catur-files i,.inv .catur-ranks i{display:flex;align-items:center;justify-content:center;font-family:var(--d);font-style:normal;font-size:8px;color:var(--gold);opacity:.9}
-.inv .catur-at{position:absolute;transform-origin:50% 100%;transition:transform 1.2s cubic-bezier(.5,0,.25,1),opacity .6s .15s;z-index:2}
-.inv .catur-at.q{left:calc(50% - 84cqi*.055 - 84cqi*.085);width:calc(84cqi*.17);top:calc(84cqi*.54);transform:translateY(-100%)}
-.inv .catur-at.k{left:calc(50% + 84cqi*.046 - 84cqi*.09);width:calc(84cqi*.18);top:calc(84cqi*.458);transform:translateY(-100%)}
-.inv .catur-pc{display:block;width:100%;height:auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
-.inv .catur-sh{position:absolute;width:24%;height:10%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.45),transparent);transform:translate(-30%,-62%)}
-.inv .catur-sh.q{left:44.56%;top:55.4%}.inv .catur-sh.k{left:55.44%;top:44.56%}
-.inv .catur-tap{position:absolute;left:8%;right:8%;top:38%;bottom:16%;z-index:5;border:0;padding:0;margin:0;background:none;cursor:pointer}
-.inv .catur-foot{position:absolute;left:0;right:0;bottom:5%;z-index:3;text-align:center;color:var(--pagefg);display:flex;flex-direction:column;gap:10px;align-items:center;transition:opacity .45s}
-.inv .catur-to{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;display:flex;flex-direction:column;gap:2px}
-.inv .catur-to b{font-family:var(--d);font-style:normal;font-weight:400;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase}
-.inv .catur-hint{font-family:var(--d);font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.6}
-.inv.opening .catur-at{transform:translateY(-100%) translateY(-30px) scale(.7);opacity:0}
-.inv.opening .catur-board{transform:translateX(-50%) rotateX(78deg) translateY(-18%) scale(.82);opacity:0}
-.inv.opening .catur-head,.inv.opening .catur-foot{opacity:0}
-.inv.opening .catur-tap{pointer-events:none}
-.inv.opening .cv-catur{opacity:0}
-/* page: a scoresheet card */
-.inv .pg-catur{background:var(--ground);padding:26px 16px 34px}
-.inv .pg-catur > :not(.catur-floor){position:relative;z-index:2}
-.inv .catur-sheet{width:100%;max-width:352px;background:linear-gradient(color-mix(in srgb,var(--sheet) 72%,transparent),color-mix(in srgb,var(--sheet) 72%,transparent)),url(assets/marble.jpg) 0 0/420px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);padding:38px 30px 40px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 22px 40px -14px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.15)}
-.inv .catur-sheet::before{content:"";position:absolute;inset:16px 9px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);pointer-events:none}
-.inv .catur-sheet::after{content:"";position:absolute;inset:20px 13px;border:.6px solid color-mix(in srgb,var(--gold) 45%,transparent);pointer-events:none}
-.inv .catur-band{position:absolute;left:0;right:0;top:0;height:9px;background:var(--chk) 0 0/12px 12px;box-shadow:0 1px 0 var(--gold)}
-.inv .catur-band.b{top:auto;bottom:0;box-shadow:0 -1px 0 var(--gold)}
-.inv .catur-icons{display:flex;gap:2px;align-items:flex-end;margin-bottom:2px}
-.inv .catur-ic{width:15px;height:auto;display:block}
-.inv .catur-icons .catur-ic:last-child{width:16px}
-.inv .catur-sheet .kicker{color:var(--ink);opacity:.75;font-size:9.5px}
-.inv .catur-pl{display:flex;flex-direction:column;align-items:center;gap:0}
-.inv .catur-sq{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;color:color-mix(in srgb,var(--gold) 80%,var(--ink));letter-spacing:.04em}
-.inv .catur-sheet .names{font-size:clamp(42px,13cqi,54px);line-height:1.05;color:var(--accent)}
-.inv .catur-vs{display:flex;align-items:center;gap:10px;margin:0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8}
-.inv .catur-vs i{width:36px;height:1px;background:var(--gold)}
-.inv .catur-moves{list-style:none;margin:12px 0 4px;padding:0;width:100%;max-width:270px;border-top:1px solid color-mix(in srgb,var(--ink) 30%,transparent)}
-.inv .catur-moves li{display:grid;grid-template-columns:22px 84px 1fr;align-items:baseline;gap:4px;padding:7px 0 6px;border-bottom:1px dotted color-mix(in srgb,var(--ink) 30%,transparent);text-align:left}
-.inv .catur-moves b{font-family:var(--d);font-weight:400;font-size:12px;color:var(--accent)}
-.inv .catur-moves span{font-family:var(--d);font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.65}
-.inv .catur-moves em{font-style:normal;font-size:15px;line-height:1.2}
-.inv .catur-mate{display:flex;align-items:baseline;gap:14px;margin:8px 0 0}
-.inv .catur-mate b{font-family:var(--d);font-weight:400;font-size:12px;letter-spacing:.42em;text-transform:uppercase;color:var(--accent)}
-.inv .catur-mate span{font-family:"Cormorant Garamond",serif;font-size:18px;color:color-mix(in srgb,var(--gold) 80%,var(--ink))}
-.inv .catur-note{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.72;margin:0}
-/* skin: chequered strips and dividers, square-coordinate headings, a chequered countdown */
-.fam-catur .scroller{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 60%)}
-.fam-catur.cardsecs .sec{background:var(--sheet);padding-top:50px;padding-bottom:50px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 40%,transparent),0 14px 26px -12px rgba(0,0,0,.45)}
-.fam-catur .catur-sec::before,.fam-catur .catur-sec::after{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--chk) 0 0/12px 12px}
-.fam-catur .catur-sec::after{top:auto;bottom:0}
-.fam-catur .sec h2{font-family:var(--d);letter-spacing:.3em;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:2px}
-.fam-catur .catur-co{font-family:"Cormorant Garamond",serif;font-size:17px;letter-spacing:.04em;text-transform:none;color:color-mix(in srgb,var(--gold) 80%,var(--ink))}
-.fam-catur .sec .rule{width:200px;color:var(--gold)}
-.fam-catur .sec .rule i{width:64px;height:8px;transform:none;background:var(--chk) 0 0/8px 8px;box-shadow:0 0 0 1px var(--gold)}
-.fam-catur .info,.fam-catur .info > div{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
-.fam-catur .count{gap:0;border:1px solid var(--accent)}
-.fam-catur .count div{background:var(--sheet)}
-.fam-catur .count div:nth-child(odd){background:var(--accent);color:var(--sheet)}
-.fam-catur .count div:nth-child(odd) b{color:var(--sheet)}
-.fam-catur .count div + div{border-left:0}
-.fam-catur .count b{font-family:var(--d)}
-.fam-catur .timeline b{font-family:var(--d)}
-.fam-catur .submit{font-family:var(--d);background:var(--accent)}
-.fam-catur .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+/* ===== catur (redesign) ===== */
+.inv .ct-scene{position:absolute;inset:0;overflow:hidden;background:var(--ground)}
+.inv .ct-light{position:absolute;inset:0;background:radial-gradient(ellipse 70% 42% at 46% 62%,rgba(255,236,205,.16),transparent 70%),radial-gradient(ellipse 120% 80% at 50% 40%,transparent 50%,rgba(0,0,0,.45))}
+.inv .ct-lite .ct-light{background:radial-gradient(ellipse 80% 50% at 40% 40%,rgba(255,255,255,.5),transparent 70%),radial-gradient(ellipse 120% 80% at 50% 45%,transparent 55%,rgba(60,50,40,.18))}
+/* the board, laid flat in perspective and fading into the dark beyond */
+.inv .ct-persp{position:absolute;inset:0;perspective:430px;perspective-origin:50% 0%;-webkit-mask:linear-gradient(180deg,transparent 44%,#000 66%);mask:linear-gradient(180deg,transparent 44%,#000 66%)}
+.inv .ct-board{position:absolute;left:-55%;width:210%;aspect-ratio:1;bottom:-12%;transform-origin:50% 100%;transform:rotateX(74deg);
+  background:linear-gradient(180deg,rgba(255,255,255,.0) 30%,rgba(255,240,220,.10) 70%,rgba(0,0,0,.25)),conic-gradient(var(--sqD) 25%,var(--sqL) 0 50%,var(--sqD) 0 75%,var(--sqL) 0) 0 0/25% 25%}
+.inv .ct-grain{position:absolute;inset:0;background:url(assets/marble.jpg) 0 0/18%;mix-blend-mode:multiply;opacity:.55}
+.inv .ct-wood .ct-grain{background:url(assets/marble.jpg) 0 0/4% 50%,url(assets/marble.jpg) 0 0/2.5% 30%;mix-blend-mode:multiply;opacity:.85}
+.inv .ct-wood .ct-board::after{display:none}
+.inv .ct-board::after{content:"";position:absolute;inset:0;background:conic-gradient(rgba(0,0,0,.18) 25%,transparent 0 50%,rgba(0,0,0,.18) 0 75%,transparent 0) 0 0/25% 25%;
+  -webkit-mask:url(assets/veins.png) 0 0/14%;mask:url(assets/veins.png) 0 0/14%;opacity:.8}
+/* shallow depth of field: the far board and the very front go soft */
+.inv .ct-dof{position:absolute;inset:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  -webkit-mask:linear-gradient(180deg,#000 0 58%,transparent 70%,transparent 86%,#000 100%);mask:linear-gradient(180deg,#000 0 58%,transparent 70%,transparent 86%,#000 100%)}
+/* the pieces */
+.inv .ct-pair{position:absolute;inset:0}
+.inv .ct-pair > div{position:absolute;aspect-ratio:60/150}
+.inv .ct-pc{display:block;width:100%;height:100%;overflow:visible}
+.inv .ct-st{filter:drop-shadow(-1px 0 1px rgba(255,240,215,.08))}
+.inv .ct-st.k{left:27%;bottom:25%;width:26cqi}
+.inv .ct-st.q{left:46%;bottom:21%;width:25cqi}
+.inv .ct-ref{transform-origin:50% 100%;transform:scaleY(-1);opacity:.2;filter:blur(1.2px);-webkit-mask:linear-gradient(180deg,transparent 62%,#000);mask:linear-gradient(180deg,transparent 62%,#000)}
+.inv .ct-lite .ct-ref{opacity:.26}
+.inv .ct-ref.k{left:27%;bottom:25%;width:26cqi}
+.inv .ct-ref.q{left:46%;bottom:21%;width:25cqi}
+.inv .ct-sh{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.75),rgba(0,0,0,.35) 55%,transparent);filter:blur(2px)}
+.inv .ct-sh.k{left:28%;bottom:23.4%;width:24cqi;height:4.6cqi}
+.inv .ct-sh.q{left:47%;bottom:19.4%;width:23cqi;height:4.4cqi}
+.inv .ct-sh.k::after,.inv .ct-sh.q::after{content:"";position:absolute;left:55%;top:-60%;width:150%;height:150%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.4),transparent);transform:rotate(-14deg);filter:blur(4px)}
+.inv .ct-lite .ct-sh{opacity:.6}
+
+.inv .ct-k{font-family:"Cinzel",serif;font-size:10px;letter-spacing:.42em;text-transform:uppercase}
+/* cover */
+.inv .cv-catur2{background:var(--ground);overflow:hidden;transition:opacity .5s .95s}
+.inv .cv-catur2 .ct-scene{transition:transform 1.35s cubic-bezier(.55,0,.3,1),filter 1.2s}
+.inv .ct-top{position:absolute;top:8.5%;left:0;right:0;text-align:center;z-index:3;color:var(--pagefg);transition:opacity .4s}
+.inv .ct-top .ct-k{opacity:.75}
+.inv .ct-cn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(38px,12cqi,50px);line-height:1.02;margin-top:12px;display:flex;flex-direction:column;align-items:center}
+.inv .ct-cn span{font-size:.5em;color:var(--gold);margin:2px 0}
+.inv .ct-cd{font-family:"Cinzel",serif;font-size:10.5px;letter-spacing:.34em;margin-top:14px;color:var(--gold)}
+.inv .ct-lite .ct-cd{color:var(--accent)}
+.inv .ct-scrim{position:absolute;left:0;right:0;bottom:0;height:27%;z-index:2;pointer-events:none;background:var(--ground);-webkit-mask:linear-gradient(0deg,#000 48%,transparent);mask:linear-gradient(0deg,#000 48%,transparent);transition:opacity .4s}
+.inv.opening .ct-scrim{opacity:0}
+.inv .ct-foot{position:absolute;left:0;right:0;bottom:6%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--pagefg);transition:opacity .4s}
+.inv .ct-to{text-align:center;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.inv .ct-lite .ct-to{text-shadow:0 1px 8px rgba(255,255,255,.7)}
+.inv .ct-to small{display:block;font-family:"Cinzel",serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+.inv .ct-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:24px}
+.inv .ct-open{border:1px solid color-mix(in srgb,var(--gold) 75%,transparent);background:color-mix(in srgb,var(--ground) 55%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--pagefg);cursor:pointer;
+  padding:14px 40px;border-radius:999px;font-family:"Cinzel",serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
+/* opening: the view sinks toward the pieces and dims */
+.inv.opening .ct-top,.inv.opening .ct-foot{opacity:0}
+.inv.opening .cv-catur2 .ct-scene{transform:scale(1.45) translateY(6%);filter:brightness(.35) blur(2px)}
+.inv.opening .cv-catur2{opacity:0}
+
+/* page: the still life above an elegant scoresheet */
+.inv .pg-catur2{background:var(--ground);padding:calc(40% + 90px) 22px 118px;justify-content:flex-start;overflow:hidden}
+.inv .pg-catur2 .ct-scene{bottom:auto;height:350px;-webkit-mask:linear-gradient(180deg,#000 60%,transparent);mask:linear-gradient(180deg,#000 60%,transparent)}
+.inv .pg-catur2 .ct-persp{-webkit-mask:linear-gradient(180deg,transparent 30%,#000 60%);mask:linear-gradient(180deg,transparent 30%,#000 60%)}
+.inv .pg-catur2 .ct-board{bottom:-40%;transform:rotateX(70deg)}
+.inv .pg-catur2 .ct-dof{-webkit-mask:linear-gradient(180deg,#000 0 40%,transparent 56%);mask:linear-gradient(180deg,#000 0 40%,transparent 56%)}
+.inv .pg-catur2 .ct-st.k,.inv .pg-catur2 .ct-ref.k{left:37%;width:13cqi;bottom:39%}
+.inv .pg-catur2 .ct-st.q,.inv .pg-catur2 .ct-ref.q{left:48.5%;width:12.5cqi;bottom:36%}
+.inv .pg-catur2 .ct-sh.k{left:37.5%;bottom:38%;width:12cqi;height:2.6cqi}
+.inv .pg-catur2 .ct-sh.q{left:49%;bottom:35%;width:11.6cqi;height:2.4cqi}
+.inv .ct-card{position:relative;z-index:2;width:100%;max-width:350px;padding:7px;background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;box-shadow:0 22px 40px -12px rgba(0,0,0,.6),0 2px 4px rgba(0,0,0,.18)}
+.inv .ct-in{border:1px solid color-mix(in srgb,var(--gold) 75%,transparent);outline:.5px solid color-mix(in srgb,var(--gold) 55%,transparent);outline-offset:-5px;padding:22px 20px 18px;color:var(--ink);text-align:center;display:flex;flex-direction:column;align-items:center}
+.inv .ct-in .ct-k{color:var(--accent);font-size:9.5px}
+.inv .ct-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(34px,10.5cqi,44px);line-height:1;margin:10px 0 4px;color:var(--ink)}
+.inv .ct-names span{font-size:.5em;color:var(--gold);margin:0 .3em}
+.inv .ct-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.7}
+.inv .ct-moves{list-style:none;margin:14px 0 0;padding:0;width:100%;text-align:left}
+.inv .ct-moves li{display:grid;grid-template-columns:22px 62px 1fr;align-items:baseline;padding:6px 2px;border-top:.5px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.inv .ct-moves li:last-child{border-bottom:.5px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.inv .ct-moves b{font-family:"Cinzel",serif;font-weight:400;font-size:11px;color:var(--gold)}
+.inv .ct-moves span{font-family:"Cinzel",serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.inv .ct-moves em{font-family:"Cormorant Garamond",serif;font-size:16px;line-height:1.25;color:var(--ink)}
+.inv .ct-res{margin-top:14px;display:flex;align-items:baseline;gap:12px;justify-content:center}
+.inv .ct-res b{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:20px;color:var(--accent)}
+.inv .ct-res span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8}
+
+/* skin: scoresheet cards on the dark (or pale) ground */
+.fam-catur .scroller{background:radial-gradient(ellipse 100% 50% at 50% 0,rgba(255,236,205,.07),transparent 70%) fixed,var(--ground)}
+.fam-catur.cardsecs .sec{background:url(assets/paper.jpg) 0 0/260px,var(--sheet)!important;background-blend-mode:multiply!important;color:var(--ink);border:0!important;border-radius:1px;
+  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 11px var(--sheet),inset 0 0 0 11.5px color-mix(in srgb,var(--gold) 45%,transparent),0 18px 30px -10px rgba(0,0,0,.55)!important}
+.fam-catur .sec h2{font-family:"Cinzel",serif;font-weight:400;font-size:16px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:12px}
+.fam-catur .sec h2::before{content:"";flex:0 0 auto;width:10px;height:10px;background:conic-gradient(var(--accent) 25%,transparent 0 50%,var(--accent) 0 75%,transparent 0) 0 0/10px 10px;outline:.5px solid var(--accent);outline-offset:0;opacity:.8}
+.fam-catur .info,.fam-catur .info > div{border:0!important;background:none!important}
+.fam-catur .info > div{border-bottom:.5px solid color-mix(in srgb,var(--gold) 55%,transparent)!important;padding:13px 6px!important}
+.fam-catur .info > div:last-child{border-bottom:0!important}
+.fam-catur .info span{font-family:"Cinzel",serif;letter-spacing:.2em;color:var(--accent)}
+.fam-catur .info b{font-family:"Cormorant Garamond",serif;color:var(--ink)}
+.fam-catur .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--gold) 60%,transparent);color:var(--accent);background:transparent}
+.fam-catur .seg button[aria-pressed="true"],.fam-catur button.submit{background:var(--accent)!important;color:var(--sheet)!important}
+.fam-catur .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(6px)}
 .fam-catur .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .catur-board,.inv .cv-catur{transition:none}}
-.inv .catur-diag{position:relative;width:96px;aspect-ratio:1;padding:3px;background:var(--sheet);box-shadow:0 0 0 1px var(--gold),0 0 0 3px var(--sheet),0 0 0 3.6px color-mix(in srgb,var(--gold) 60%,transparent);margin-bottom:8px}
-.inv .catur-dsq{position:absolute;inset:3px;background:var(--chk) 0 0/25% 25%;opacity:.9}
-.inv .catur-dp{position:absolute;width:12.5%;height:12.5%;display:flex;align-items:flex-end;justify-content:center}
-.inv .catur-dp svg{height:185%;width:auto;flex:none;margin-bottom:6%;filter:drop-shadow(0 0 .5px var(--ink)) drop-shadow(0 0 .5px var(--ink)) drop-shadow(0 1.5px 1px rgba(0,0,0,.35))}
-.inv .catur-dp.q{left:calc(3px + 3*(100% - 6px)/8);top:calc(3px + 4*(100% - 6px)/8);width:calc((100% - 6px)/8);height:calc((100% - 6px)/8)}
-.inv .catur-dp.k{left:calc(3px + 4*(100% - 6px)/8);top:calc(3px + 3*(100% - 6px)/8);width:calc((100% - 6px)/8);height:calc((100% - 6px)/8)}
-.inv .pg-catur .catur-floor::before{content:"";position:absolute;inset:0;background:var(--chk) 50% 0/96px 96px;opacity:.035}
+@media (prefers-reduced-motion: reduce){.inv .cv-catur2 .ct-scene{transition:none}}
