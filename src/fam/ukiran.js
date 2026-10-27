@@ -33,7 +33,7 @@ function ukPanel(uid,H,my,mrx,mry){const med=ukLobed(50,my,mrx,mry,16,.06),rim=u
   </svg>`}
 const ukTxt=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="uk-txt">${big&&o.bismillah?'<p class="uk-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}<p class="uk-k${big?' kicker':''}">${ev(o,L)}</p>
   <p class="uk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="uk-date">${esc(big?fmtDate(o.date,o.lang):fmtShort(o.date).replace(/\./g,' · '))}</p>
-  ${big&&o.hijri?`<p class="uk-hj">${esc(o.hijri)}</p>`:''}${big&&o.venue?`<p class="uk-ven">${esc(o.venue)}</p>`:''}</div>`};
+  ${big&&o.venue?`<p class="uk-ven">${esc(o.venue)}</p>`:''}</div>`};
 const ukT=(k,n,desc,ground,ink,extra={})=>({k,n,desc,c:{ground,sheet:ground,ink,accent:ink,gold:ink,pagefg:ink,plaster:'#f4efe4',...extra}});
 FAMILY({key:'ukiran',name:'Ukiran',meaning:'Carved plaster',
   blurb:'A carved plaster panel in raking morning light, star strapwork in relief washed with one ink colour, your names painted in a smooth medallion at its heart.',
