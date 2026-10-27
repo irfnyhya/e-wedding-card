@@ -1,82 +1,70 @@
-/* pergola: a white painted garden arch of fine timber lattice, dripping with Redouté climbing roses (public domain),
-   framing a misty Impressionist garden (Hassam, Monet; public domain) softened and blurred into the distance.
-   Cover: the names sit in the mist inside the arch; tap "Buka Jemputan" and the arch parts, the garden opening out.
-   Page: the arch again, the details inside it. Skin: arch-topped cards with a rose at the crown and a lattice rule. */
-const PG_W={anemones:617,'blush-rose':622,'cabbage-rose':581,'forget-me-not':528,hibiscus:619,iris:566,jasmine:518,lotus:621,'pink-rose':674,'red-rose':622,'white-roses':636,'wild-rose':663};
-const PG_B={pink:['pink-rose',.5,.1,.27],blush:['blush-rose',.45,.45,.4],blushBud:['blush-rose',.3,.08,.3],cab:['cabbage-rose',.5,.25,.48],wild:['wild-rose',.55,.48,.24],
-  wh:['white-roses',.5,.24,.3],wh2:['white-roses',.77,.21,.22],wh3:['white-roses',.47,.45,.26],red:['red-rose',.54,.08,.2],red2:['red-rose',.81,.23,.18],
-  leafA:['blush-rose',.3,.7,.5],leafB:['pink-rose',.35,.4,.45],leafC:['white-roses',.3,.72,.5],leafD:['wild-rose',.4,.75,.5],jas:['jasmine',.8,.135,.2]};
-const pgBloom=(k,st,cls)=>{const [f,cx,cy,s]=PG_B[k]||PG_B.pink,iw=PG_W[f],z=1/s,r=z*760/iw,px=(cx*z-.5)/(z-1)*100,py=(cy*r-.5)/(r-1)*100;
-  return `<i class="pgl-f ${cls||''}" style="${st};background-image:url(${A}flower-${f}.webp);background-size:${(z*100).toFixed(1)}% auto;background-position:${px.toFixed(1)}% ${py.toFixed(1)}%"></i>`};
-const g1=n=>n.toFixed(1);
-// the arch, viewBox 0 0 300 600: window x 50-250, springing at y 230, posts to y 584
-const PG_CX=150,PG_CY=230;
-const pgRing=(r1,r2)=>`M${PG_CX-r2} ${PG_CY}A${r2} ${r2} 0 0 1 ${PG_CX+r2} ${PG_CY}L${PG_CX+r1} ${PG_CY}A${r1} ${r1} 0 0 0 ${PG_CX-r1} ${PG_CY}Z`;
-const pgArch=uid=>{let lat='',solid='';
-  // lattice in the arch band: spokes and a zig-zag
-  for(let a=180;a>=0;a-=7.5){const t=a*Math.PI/180;lat+=`<path d="M${g1(PG_CX+106*Math.cos(t))} ${g1(PG_CY-106*Math.sin(t))}L${g1(PG_CX+118*Math.cos(t))} ${g1(PG_CY-118*Math.sin(t))}"/>`}
-  let z='';for(let a=180,i=0;a>=0;a-=3.75,i++){const t=a*Math.PI/180,r=i%2?117:107;z+=(i?'L':'M')+g1(PG_CX+r*Math.cos(t))+' '+g1(PG_CY-r*Math.sin(t))}lat+=`<path d="${z}"/>`;
-  // lattice in the posts: diagonal trellis
-  [[32,44],[256,268]].forEach(([a,b])=>{for(let y=236;y<580;y+=12){lat+=`<path d="M${a} ${y}L${b} ${y+12}M${b} ${y}L${a} ${y+12}"/>`}});
-  solid+=`<path d="${pgRing(118,124)}"/><path d="${pgRing(100,106)}"/>`;
-  [[26,32],[44,50],[250,256],[268,274]].forEach(([a,b])=>solid+=`<rect x="${a}" y="${PG_CY}" width="${b-a}" height="${584-PG_CY}"/>`);
-  for(let y=290;y<580;y+=72)solid+=`<rect x="26" y="${y}" width="24" height="3"/><rect x="250" y="${y}" width="24" height="3"/>`;
-  solid+=`<rect x="22" y="582" width="32" height="10" rx="1"/><rect x="246" y="582" width="32" height="10" rx="1"/><rect x="22" y="226" width="32" height="6"/><rect x="246" y="226" width="32" height="6"/>`;
-  solid+=`<path d="M150 106V94M144 100Q150 84 156 100Z"/><circle cx="150" cy="90" r="3"/>`;
-  return `<svg class="pgl-arch" viewBox="0 0 300 600"><defs><linearGradient id="pgw${uid}" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset=".55" class="w2"/><stop offset="1" class="w3"/></linearGradient>
-    <filter id="pgs${uid}" x="-10%" y="-10%" width="130%" height="120%"><feDropShadow dx="2.5" dy="4" stdDeviation="3" flood-opacity=".22"/></filter></defs>
-    <g filter="url(#pgs${uid})"><g class="lat">${lat}</g><g class="solid" fill="url(#pgw${uid})">${solid}</g></g></svg>`};
-// roses along the arch: angle on the band (deg) or a post point; [where, size % of arch width, bloom]
-const pgOnArch=(a,r)=>{const t=a*Math.PI/180;return [(PG_CX+r*Math.cos(t))/3,(PG_CY-r*Math.sin(t))/6]};
-const PG_ROSES=[
-  // foliage first, under the blooms
-  ['a',172,30,'leafA'],['a',140,30,'leafB'],['a',108,26,'leafC'],['a',60,28,'leafD'],['a',30,30,'leafA'],['a',6,28,'leafB'],['p',38,300,26,'leafC'],['p',262,280,24,'leafD'],['p',38,380,22,'leafB'],['p',262,360,22,'leafA'],
-  ['a',178,20,'pink'],['a',160,18,'blush'],['a',146,13,'wh2'],['a',130,20,'cab'],['a',116,12,'red2'],['a',98,16,'wh'],['a',84,11,'blushBud'],['a',70,17,'pink'],['a',52,21,'blush'],['a',36,13,'wild'],['a',20,19,'cab'],['a',4,16,'wh3'],
-  ['p',36,262,16,'wild'],['p',40,302,13,'pink'],['p',34,340,10,'wh2'],['p',40,392,9,'blushBud'],['p',38,446,7,'red'],
-  ['p',264,256,15,'wh'],['p',260,292,12,'pink'],['p',266,334,9,'red2'],['p',262,384,8,'wild'],
-  ['p',30,560,14,'leafD'],['p',44,566,12,'pink'],['p',270,560,14,'leafA'],['p',256,566,11,'wh2']];
-const pgRoses=side=>PG_ROSES.map((r,i)=>{let x,y,s,k;if(r[0]==='a'){[x,y]=pgOnArch(r[1],112);s=r[2];k=r[3]}else{x=r[1]/3;y=r[2]/6;s=r[3];k=r[4]}
-  if(side==='l'&&x>52||side==='r'&&x<48)return'';const leaf=k.startsWith('leaf');
-  return pgBloom(k,`left:${g1(x)}%;top:${g1(y)}%;width:${s}%;--r:${((i*37)%30)-15}deg`,leaf?'leaf':'')}).join('');
-const pgFrame=uid=>['l','r'].map(s=>`<div class="pgl-half ${s}">${pgArch(uid+s)}${pgRoses(s)}</div>`).join('');
-const pgNames=(o,cls)=>{const [n1,n2]=coverNames(o);return `<h1 class="pgl-names ${cls||''}"><span>${esc(n1)}</span><i>&amp;</i><span>${esc(n2)}</span></h1>`};
-const pgWin=c=>`<div class="pgl-win"><i class="pgl-art" style="background-image:url(${A}${c.art});background-position:${c.ap}"></i><i class="pgl-mist"></i></div>`;
-const pgDay=o=>{if(!o.date)return'';const d=new Date(o.date+'T00:00:00');return isNaN(d)?'':DAYS[o.lang][d.getDay()]};
-FAMILY({key:'pergola',name:'Pergola',meaning:'Rose garden arch',
-  blurb:'A white garden arch heavy with climbing roses, framing a soft, misty Impressionist garden, with the names set in the mist inside it. The arch parts to let guests through.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
-  page(o,th,L){const en=o.lang==='en',t=[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ');
-    return `<section class="page pg-pergola"><i class="pgl-paper"></i><div class="pgl-stage">${pgWin(th.c)}${pgFrame('p')}
-      <div class="pgl-body">
-        ${o.bismillah?`<p class="pgl-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
-        <p class="pgl-k kicker reveal">${ev(o,L)}</p>
-        <div class="reveal d1">${pgNames(o)}</div>
-        <p class="pgl-date reveal d2">${esc(pgDay(o))}<b>${esc(fmtDate(o.date,o.lang,false))}</b></p>${o.hijri?`<p class="pgl-hj reveal d2">${esc(o.hijri)}</p>`:''}
-        ${t?`<p class="pgl-time reveal d2">${esc(t)}</p>`:''}${o.venue?`<p class="pgl-ven reveal d2">${esc(o.venue)}</p>`:''}
-        <div class="pgl-pills reveal d3"><a class="pgl-pill" data-go="when" href="#">${en?'Details':'Butiran'}</a><a class="pgl-pill ghost" data-go="${o.x_rsvp?'rsvp':'loc'}" href="#">${o.x_rsvp?'RSVP':(en?'Directions':'Lokasi')}</a></div>
-      </div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-pergola"><i class="pgl-paper"></i><div class="pgl-stage">${pgWin(th.c)}${pgFrame('c')}
-      <div class="pgl-cbody"><p class="pgl-k">${ev(o,L)}</p>${pgNames(o,'sm')}<p class="pgl-date"><b>${esc(fmtShort(o.date)).replace(/\./g,' · ')}</b></p>${o.venue?`<p class="pgl-ven">${esc(o.venue)}</p>`:''}
-        ${guest?`<p class="pgl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="pgl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>
-    </div></div>`},
-  skin(el,o,th,L){K.cards(el);
-    const b=PG_B[th.c.crown||'pink'],iw=PG_W[b[0]],z=1/b[3],r=z*760/iw;
-    el.style.setProperty('--pgl-img',`url(${A}flower-${b[0]}.webp)`);el.style.setProperty('--pgl-size',`${(z*100).toFixed(1)}% auto`);el.style.setProperty('--pgl-pos',`${((b[1]*z-.5)/(z-1)*100).toFixed(1)}% ${((b[2]*r-.5)/(r-1)*100).toFixed(1)}%`);
-    // a couple photo takes the garden's place inside the arch
-    const pg=$('.pg-pergola',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
-    if(img){const w=$('.pgl-win',pg);img.className='pgl-photo';img.removeAttribute('style');w.classList.add('has-photo');w.closest('.pgl-stage').classList.add('pgl-hasph');w.append(img);ph.remove()}
+/* pergola: a gatefold card. The two front panels are heavy cream board, edge-painted, with an arched trellis window
+   laser-cut through both halves; an Impressionist garden (Hassam, Monet; public domain) printed on the inside panel shows
+   through the lattice, and Redouté roses (public domain) climb over the cut-work. A printed paper belly band holds the
+   gates shut, with a foiled monogram roundel; a small tent card in front carries the guest's name.
+   Cover: tap the band; it slides down and the two trellis gates swing open onto the garden.
+   Page: the inside of the fold, the garden with a cream card mounted on it with gilt photo corners.
+   Skin: cream cards with a strip of trellis over the garden at the top and an engraved-caps heading. */
+// the cut-work, as an alpha mask in a 100 x 176 box: solid board everywhere except an arched window; lattice bars in the window
+const PGL_WIN='M13 150V58C13 30 31 14 50 14C69 14 87 30 87 58V150Z';
+const pglLattice=(()=>{let l='';for(let k=-24;k<=24;k++){const x=50+k*8.5;l+=`M${x-90} 176L${x+90} -4M${x+90} 176L${x-90} -4`}
+  return svgUriSq(`<svg ${NS} viewBox="0 0 100 176" preserveAspectRatio="none"><defs><clipPath id="w"><path d="${PGL_WIN}"/></clipPath></defs>
+    <path fill-rule="evenodd" d="M0 0H100V176H0Z${PGL_WIN}"/><g clip-path="url(#w)"><path d="${l}" fill="none" stroke="#000" stroke-width="1.7"/><path d="M50 0V176" stroke="#000" stroke-width="3"/></g>
+    <path d="${PGL_WIN}" fill="none" stroke="#000" stroke-width="2.6"/></svg>`)})();
+// a fine engraved line just inside the window, printed on the board (not cut)
+const PGL_LINE=`<svg class="pgl-eng" viewBox="0 0 100 176" preserveAspectRatio="none" aria-hidden="true"><path d="M9 154V58C9 27 29 10 50 10C71 10 91 27 91 58V154Z"/><path class="t" d="M5 5H95V171H5Z"/></svg>`;
+const pglDP=o=>{const d=new Date((o.date||'')+'T00:00:00');if(isNaN(d))return null;const R=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];return {d:d.getDate(),r:R[d.getMonth()],y:d.getFullYear(),mon:MONTHS[o.lang][d.getMonth()],day:DAYS[o.lang][d.getDay()]}};
+const pglMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<b class="pgl-jw">${esc(j)}</b>`;const [a,b]=K.initials(o);return `<b>${esc(a)}</b><i></i><b>${esc(b)}</b>`};
+const pglRose=(f,st)=>`<img class="pgl-rose" src="${A}flower-${f}.webp" alt="" style="${st}">`;
+const pglVars=c=>`--art:url(${A}${c.art});--ap:${c.ap};--az:${c.az||'cover'};--edge:${c.edge};--lat:${pglLattice}`;
+FAMILY({key:'pergola',name:'Pergola',meaning:'Trellis gatefold',
+  blurb:'A gatefold card with an arched trellis laser-cut through its doors, roses climbing over it and a garden painting behind. The band slides off and the gates swing open.',
+  fonts:{d:"'Cinzel', serif",s:"'Cormorant Garamond', serif",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en',c=th.c,[n1,n2]=coverNames(o),p=pglDP(o),t=[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ');
+    return `<section class="page pg-pergola${c.dark?' pgl-dark':''}" style="${pglVars(c)}"><i class="pgl-ground"></i>
+      <div class="pgl-inside reveal"><i class="pgl-paint"></i>
+        <div class="pgl-side l"><i class="pgl-face"></i></div><div class="pgl-side r"><i class="pgl-face"></i></div>
+        ${pglRose(c.r1,'left:-14%;bottom:-3%;width:46%;transform:rotate(8deg)')}${pglRose(c.r2,'right:-12%;top:-4%;width:40%;transform:rotate(196deg)')}
+        <div class="pgl-mount">
+          <i class="pgl-corner tl"></i><i class="pgl-corner tr"></i><i class="pgl-corner bl"></i><i class="pgl-corner br"></i>
+          ${o.bismillah?`<p class="pgl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
+          <p class="pgl-k kicker">${ev(o,L)}</p>
+          <h1 class="pgl-names names"><span>${esc(n1)}</span><i>&amp;</i><span>${esc(n2)}</span></h1>
+          ${p?`<p class="pgl-date"><b>${p.d}</b><span>·</span><b>${p.r}</b><span>·</span><b>${p.y}</b></p><p class="pgl-day">${esc(p.day)}, ${p.d} ${esc(p.mon)}</p>`:''}
+          ${o.hijri?`<p class="pgl-sm">${esc(o.hijri)}</p>`:''}${t?`<p class="pgl-sm">${esc(t)}</p>`:''}
+          ${o.venue?`<p class="pgl-ven">${esc(o.venue)}</p>`:''}
+          <div class="pgl-links"><a data-go="when" href="#">${en?'Details':'Butiran'}</a>${o.x_rsvp?`<a data-go="rsvp" href="#">RSVP</a>`:''}<a data-go="loc" href="#">${en?'Location':'Lokasi'}</a></div>
+        </div>
+      </div>
+    </section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en',c=th.c,[n1,n2]=coverNames(o),p=pglDP(o);
+    return `<div class="cover cv-pergola${c.dark?' pgl-dark':''}" style="${pglVars(c)}"><i class="pgl-ground"></i>
+      <div class="pgl-fold">
+        <i class="pgl-paint"></i>
+        <div class="pgl-gate l"><i class="pgl-face"></i>${PGL_LINE}${pglRose(c.r1,'left:-30%;bottom:-6%;width:118%;transform:rotate(6deg)')}${pglRose(c.r2,'left:-6%;top:-7%;width:70%;transform:rotate(168deg)')}</div>
+        <div class="pgl-gate r"><i class="pgl-face"></i>${PGL_LINE}${pglRose(c.r2,'right:-34%;bottom:-4%;width:112%;transform:scaleX(-1) rotate(4deg)')}${pglRose(c.r1,'right:-8%;top:-5%;width:66%;transform:rotate(200deg)')}</div>
+        <${tag} class="pgl-band" ${attr}>
+          <span class="pgl-roundel">${pglMono(o)}</span>
+          <span class="pgl-k">${ev(o,L)}</span>
+          <span class="pgl-bn">${esc(n1)} <i>&amp;</i> ${esc(n2)}</span>
+          ${p?`<span class="pgl-bd">${p.d} · ${p.r} · ${p.y}</span>`:''}
+          <span class="pgl-go">${en?'Open invitation':'Buka Jemputan'}</span>
+        </${tag}>
+      </div>
+      ${guest?`<div class="pgl-place"><small>${L.dear}</small><b>${esc(guest)}</b></div>`:''}
+    </div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--art',`url(${A}${c.art})`);el.style.setProperty('--ap',c.ap);el.style.setProperty('--az',c.az||'cover');el.style.setProperty('--edge',c.edge);el.style.setProperty('--lat',pglLattice);
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
       if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
       const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'jambu',n:'Jambu',desc:'Pink roses, a misty water garden',c:{ground:'#f3e6e1',sheet:'#fdf8f5',ink:'#3f2e2e',accent:'#9b5560',gold:'#cfa9a6',pagefg:'#3f2e2e',art:'pd-paint-hassam-water.jpg',ap:'50% 30%',crown:'pink'}},
-    {k:'gading',n:'Gading',desc:'Ivory, Monet’s iris garden',c:{ground:'#efe9dd',sheet:'#fdfbf5',ink:'#37322a',accent:'#6e5c3e',gold:'#c3b28f',pagefg:'#37322a',art:'pd-paint-monet-irises.jpg',ap:'50% 20%',crown:'wh'}},
-    {k:'lavender',n:'Lavender',desc:'Lilac, an iris walk in the mist',c:{ground:'#ebe5f0',sheet:'#fcfafd',ink:'#352f45',accent:'#6c5a8e',gold:'#c0b3d3',pagefg:'#352f45',art:'pd-paint-monet-irises.jpg',ap:'50% 60%',crown:'blush'}},
-    {k:'pic',n:'Pic',desc:'Peach, Hassam’s poppy garden',c:{ground:'#f5e7dc',sheet:'#fefaf6',ink:'#41302a',accent:'#a3603f',gold:'#dab79c',pagefg:'#41302a',art:'pd-paint-hassam-island.jpg',ap:'50% 30%',crown:'wild'}},
-    {k:'sage',n:'Sage',desc:'Sage, a green lily pond',c:{ground:'#e3e9de',sheet:'#fafcf7',ink:'#2d382c',accent:'#55704c',gold:'#b4c3a6',pagefg:'#2d382c',art:'pd-monet.jpg',ap:'50% 70%',crown:'wh'}},
-    {k:'biru',n:'Biru',desc:'Mist blue, a summer meadow',c:{ground:'#e1e8ee',sheet:'#fafcfd',ink:'#28323d',accent:'#4b6886',gold:'#b2c1cf',pagefg:'#28323d',art:'pd-paint-monet-poppies.jpg',ap:'50% 30%',crown:'pink'}},
-    {k:'krim',n:'Krim',desc:'Cream, a poppy field',c:{ground:'#efe6d6',sheet:'#fefbf4',ink:'#3a3226',accent:'#87613a',gold:'#cfb68f',pagefg:'#3a3226',art:'pd-paint-monet-poppies.jpg',ap:'50% 70%',crown:'cab'}},
-    {k:'senja',n:'Senja',desc:'Dusky rose ground, red roses and a water garden',c:{ground:'#d9b9bc',sheet:'#fdf6f4',ink:'#3e2a2f',accent:'#8d4357',gold:'#c99aa3',pagefg:'#3e2a2f',art:'pd-paint-hassam-water.jpg',ap:'50% 60%',crown:'red'}},
+    {k:'jambu',n:'Jambu',desc:'Rose-edged gates over a water garden',c:{ground:'#efe2dd',sheet:'#fdf9f5',ink:'#3f2e2e',accent:'#8f4a56',gold:'#c7a07a',pagefg:'#3f2e2e',edge:'#c48791',art:'pd-paint-hassam-water.jpg',ap:'50% 30%',r1:'pink-rose',r2:'blush-rose'}},
+    {k:'gading',n:'Gading',desc:'Ivory gates, Monet’s iris garden',c:{ground:'#ebe5d8',sheet:'#fdfbf5',ink:'#37322a',accent:'#6a5838',gold:'#c3a46a',pagefg:'#37322a',edge:'#c9b07c',art:'pd-paint-monet-irises.jpg',ap:'50% 30%',r1:'white-roses',r2:'blush-rose'}},
+    {k:'lavender',n:'Lavender',desc:'Lilac-edged gates, an iris walk',c:{ground:'#e8e2ee',sheet:'#fcfafd',ink:'#352f45',accent:'#62528a',gold:'#b9a37a',pagefg:'#352f45',edge:'#a593c4',art:'pd-paint-monet-irises.jpg',ap:'50% 70%',r1:'blush-rose',r2:'wild-rose'}},
+    {k:'pic',n:'Pic',desc:'Apricot edge, Hassam’s poppy garden',c:{ground:'#f3e4d8',sheet:'#fefaf6',ink:'#41302a',accent:'#9a5638',gold:'#cfa275',pagefg:'#41302a',edge:'#de9f7d',art:'pd-paint-hassam-island.jpg',ap:'50% 30%',r1:'wild-rose',r2:'pink-rose'}},
+    {k:'sage',n:'Sage',desc:'Sage-edged gates, a green garden',c:{ground:'#e1e7db',sheet:'#fafcf7',ink:'#2d382c',accent:'#4d6845',gold:'#b9a676',pagefg:'#2d382c',edge:'#8fa682',art:'pd-paint-hassam-water.jpg',ap:'80% 80%',r1:'white-roses',r2:'wild-rose'}},
+    {k:'biru',n:'Biru',desc:'Blue-edged gates, a summer meadow',c:{ground:'#e0e7ed',sheet:'#fafcfd',ink:'#28323d',accent:'#435f80',gold:'#b49e74',pagefg:'#28323d',edge:'#8aa4c0',art:'pd-paint-monet-poppies.jpg',ap:'35% 100%',az:'auto 175%',r1:'pink-rose',r2:'white-roses'}},
+    {k:'krim',n:'Krim',desc:'Cream and gold, a poppy field',c:{ground:'#ece3d2',sheet:'#fefbf4',ink:'#3a3226',accent:'#7f5a34',gold:'#c39a5e',pagefg:'#3a3226',edge:'#c79f6a',art:'pd-paint-monet-poppies.jpg',ap:'65% 100%',az:'auto 175%',r1:'cabbage-rose',r2:'blush-rose'}},
+    {k:'senja',n:'Senja',desc:'Gates at dusk on a deep plum ground, red roses',c:{ground:'#3e2a33',sheet:'#fdf6f2',ink:'#3e2a2f',accent:'#86394f',gold:'#c79d72',pagefg:'#f5e8ea',edge:'#b85c72',art:'pd-paint-hassam-water.jpg',ap:'40% 60%',r1:'red-rose',r2:'pink-rose',dark:1}},
   ]});

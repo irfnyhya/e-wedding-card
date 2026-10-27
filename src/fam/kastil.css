@@ -1,87 +1,102 @@
-/* ===== kastil ===== */
-.inv .cv-kastil,.inv .pg-kastil{background:var(--ground);color:var(--pagefg)}
-.inv .kst-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 85% 60% at 50% 35%,rgba(255,255,255,.3),transparent 70%),url(assets/paper.jpg) 0 0/280px,var(--ground);background-blend-mode:normal,multiply,normal}
-.inv .kst-dark .kst-bg,.inv .kst-dark.pg-kastil .kst-bg{background:radial-gradient(ellipse 85% 60% at 50% 35%,rgba(255,255,255,.07),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 50%,rgba(0,0,0,.4)),var(--ground)}
-.inv .kst-dark .kst-bg::after,.inv .kst-dark.pg-kastil .kst-bg::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.4}
-
-/* the cotton card */
-.inv .kst-card{position:relative;container-type:inline-size;display:flex;flex-direction:column;color:var(--ink);border-radius:2px;
-  background:linear-gradient(155deg,rgba(255,255,255,.55),transparent 38%,rgba(90,70,40,.05)),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 1px 1px rgba(40,30,20,.25),0 18px 28px -12px rgba(40,30,20,.4)}
-.inv .kst-dark .kst-card{box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 1px 1px rgba(0,0,0,.4),0 22px 34px -12px rgba(0,0,0,.6)}
-.inv .kst-rule{position:absolute;inset:3.2cqi;border:.8px solid color-mix(in srgb,var(--accent) 60%,transparent);pointer-events:none}
-.inv .kst-rule::after{content:"";position:absolute;inset:3px;border:.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
-.inv .kst-plate{position:relative;margin:7.5cqi 7.5cqi 0;padding:1.6cqi;
-  box-shadow:inset 1px 1px 0 rgba(60,45,30,.1),inset -1px -1px 0 rgba(255,255,255,.6),1px 1px 0 rgba(255,255,255,.6),-1px -1px 0 rgba(60,45,30,.07)}
-.inv .kst-view{display:block;width:100%;height:auto}
-.inv .kst-i{fill:none;stroke:var(--accent);stroke-width:.7;stroke-linecap:round;stroke-linejoin:round}
-.inv .kst-i.t{stroke-width:.42}.inv .kst-i.s{opacity:.7}
-.inv .kst-pp{fill:var(--sheet);stroke:none}
-.inv .kst-ip{fill:var(--accent)}
-.inv .kst-col{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4cqi 12cqi 10cqi}
-
-/* letterpress type */
-.inv .kst-k{font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin:0}
-.inv .kst-names{font-family:"Old Standard TT",serif;font-weight:400;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);line-height:1.12;display:flex;flex-direction:column;align-items:center;margin:12px 0 2px;
-  font-size:clamp(24px,8.4cqi,32px);text-shadow:0 1px 0 rgba(255,255,255,.95),0 -.6px 0 rgba(0,0,0,.22);overflow-wrap:anywhere}
-.inv .kst-names em{font-style:italic;text-transform:none;letter-spacing:.02em;font-size:.52em;color:var(--gold);margin:2px 0}
-.inv .kst-fl{display:block;width:100px;height:12px;margin:8px auto 10px}
-.inv .kst-date{font-family:"Old Standard TT",serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink);margin:0;text-shadow:0 1px 0 rgba(255,255,255,.9)}
-.inv .kst-cven{font-family:"Old Standard TT",serif;font-style:italic;font-size:14px;color:var(--ink);opacity:.85;margin:6px 0 0}
+/* ===== kastil: engraved card and gilt key on velvet ===== */
+.inv .kst-velvet{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 35% 25%,rgba(255,255,255,.22),transparent 65%),radial-gradient(ellipse 90% 60% at 70% 100%,rgba(0,0,0,.28),transparent 70%),var(--ground)}
+.inv .kst-velvet::after{content:"";position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.75}
+.inv .kst-dark .kst-velvet,.inv .kst-dark.pg-kastil .kst-velvet{background:radial-gradient(ellipse 80% 55% at 35% 25%,rgba(255,255,255,.1),transparent 65%),radial-gradient(ellipse 90% 60% at 70% 100%,rgba(0,0,0,.4),transparent 70%),var(--ground)}
+/* letterpress: ink pressed into cotton */
+.inv .kst-k,.inv .kst-names,.inv .kst-big,.inv .kst-dt,.inv .kst-cv,.inv .kst-ven{text-shadow:0 1px 0 rgba(255,255,255,.75),0 -.5px 0 rgba(0,0,0,.18)}
+.inv .kst-k{font-family:"Cinzel",serif;font-weight:500;font-size:2.5cqi;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);padding-left:.24em;line-height:1.5}
+.inv .kst-names{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;line-height:1;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .kst-names em{font-family:"Cinzel",serif;font-style:normal;font-size:.3em;letter-spacing:.3em;color:var(--gold);margin:.5em 0 .35em;padding-left:.3em}
+.inv .kst-rule{display:block;width:62%;height:auto;color:var(--gold);margin:3cqi auto}
+.inv .kst-plate{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink);
+  box-shadow:inset 1px 1px 1.5px rgba(0,0,0,.2),inset -1px -1px 0 rgba(255,255,255,.85),inset 2px 2px 6px rgba(0,0,0,.06)}
+.inv .kst-plate::before{content:"";position:absolute;inset:2.4cqi;border:1px solid color-mix(in srgb,var(--accent) 80%,transparent);outline:.5px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:-3.5px;pointer-events:none}
+.inv .kst-c{position:absolute;width:6.4cqi;height:6.4cqi;color:var(--accent);z-index:1}
+.inv .kst-c svg{display:block;width:100%;height:100%;background:var(--sheet);border-radius:50%}
+.inv .kst-c.tl{left:-.8cqi;top:-.8cqi}.inv .kst-c.tr{right:-.8cqi;top:-.8cqi}.inv .kst-c.bl{left:-.8cqi;bottom:-.8cqi}.inv .kst-c.br{right:-.8cqi;bottom:-.8cqi}
+.inv .kst-seal{position:absolute;display:flex;align-items:center;justify-content:center;width:14cqi;aspect-ratio:1;background:var(--seal) center/contain no-repeat;filter:drop-shadow(0 3px 3px rgba(20,10,5,.45));z-index:4}
+.inv .kst-seal span{display:flex;align-items:baseline;font-family:"Cinzel",serif;font-size:3.6cqi;color:rgba(0,0,0,.36);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.25)}
+.inv .kst-seal span i{font-family:"Old Standard TT",serif;font-style:italic;font-size:.7em;margin:0 1px}
+.inv .kst-seal .kst-jw{font-family:"Amiri",serif;font-weight:400;font-size:1.3em}
 
 /* cover */
-.inv .cv-kastil{overflow:hidden;transition:opacity .5s 1s}
-.inv .kst-cw{position:absolute;left:7%;right:7%;top:4.5%;z-index:2;transform-origin:50% 26%;transition:transform 1.4s cubic-bezier(.55,0,.3,1),opacity .55s .85s}
-.inv .cv-kastil .kst-card{aspect-ratio:300/450}
-.inv .cv-kastil .kst-plate{margin:6.5cqi 6.5cqi 0}
-.inv .cv-kastil .kst-names{font-size:clamp(28px,9.8cqi,38px)}
-.inv .cv-kastil .kst-k{font-size:10px}
-.inv .kst-foot{position:absolute;left:0;right:0;bottom:5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .4s}
-.inv .kst-to{text-align:center;margin:0}
-.inv .kst-to small{display:block;font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
-.inv .kst-to b{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;font-size:20px}
-.inv .kst-open{cursor:pointer;padding:13px 34px;border-radius:999px;border:0;background:var(--accent);color:var(--sheet);font-family:"Old Standard TT",serif;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;white-space:nowrap;
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--sheet) 30%,transparent) inset,0 10px 20px -10px rgba(30,20,10,.6)}
-.inv .kst-dark .kst-open{background:var(--sheet);color:var(--accent)}
-/* opening: the view draws you in through the palace door */
-.inv.opening .kst-cw{transform:scale(3.6);opacity:0}
-.inv.opening .kst-foot{opacity:0}
+.inv .cv-kastil{background:transparent;overflow:hidden;transition:opacity .5s 1.05s}
+.inv .kst-set{position:absolute;left:0;width:100cqi;height:175cqi;top:calc(50% - 86cqi)}
+.inv .kst-card{position:absolute;left:7cqi;top:4cqi;width:58cqi;height:118cqi;transform:rotate(-2.5deg);z-index:1;
+  background:radial-gradient(ellipse 80% 50% at 30% 20%,rgba(255,255,255,.55),transparent 70%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 0 0 1.2px color-mix(in srgb,var(--accent) 85%,#000),0 22px 26px -10px rgba(10,5,0,.55),0 3px 5px rgba(10,5,0,.3);transition:transform 1.25s cubic-bezier(.45,0,.2,1) .2s,opacity .5s .9s}
+.inv .kst-card .kst-plate{position:absolute;inset:4cqi 3.6cqi;justify-content:center;padding:7cqi 3.6cqi 6cqi}
+.inv .kst-big{display:flex;flex-direction:column;align-items:center;font-family:"Cinzel",serif;color:var(--ink);margin-top:5cqi;line-height:1}
+.inv .kst-big b{font-weight:400;font-size:22cqi;letter-spacing:-.02em;line-height:.82}
+.inv .kst-big small{font-size:2.9cqi;letter-spacing:.42em;padding-left:.42em;margin-top:2.4cqi;color:var(--accent);text-transform:uppercase}
+.inv .kst-big small.y{margin-top:1cqi;font-size:2.4cqi;color:var(--ink)}
+.inv .cv-kastil .kst-names{font-size:clamp(28px,8.8cqi,38px);overflow-wrap:anywhere}
+.inv .kst-cv{font-family:"Old Standard TT",serif;font-style:italic;font-size:3.2cqi;margin-top:3.4cqi;color:var(--ink)}
+.inv .cv-kastil .kst-seal{left:26.5cqi;top:2.4cqi}
+.inv .kst-cord{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;fill:none;stroke:var(--cord);stroke-width:.9;stroke-linecap:round;filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.4));transition:opacity .4s .1s}
+.inv .kst-cord .tw{stroke:rgba(255,255,255,.35);stroke-width:.5;stroke-dasharray:.7 .9}
+.inv .kst-key{position:absolute;left:58cqi;top:30cqi;width:32cqi;height:auto;z-index:3;transform:rotate(18deg);pointer-events:none;
+  filter:drop-shadow(2px 6px 4px rgba(10,5,0,.5)) drop-shadow(0 1px 1px rgba(10,5,0,.4));transition:transform 1.1s cubic-bezier(.5,0,.3,1) .1s,opacity .6s .45s}
+/* the tag is the button */
+.inv .kst-tag{position:absolute;left:47cqi;top:126cqi;width:46cqi;z-index:4;transform:rotate(-4deg);transform-origin:50% 0;cursor:pointer;border:0;padding:8cqi 3cqi 4cqi;
+  display:flex;flex-direction:column;align-items:center;gap:1cqi;text-align:center;color:var(--ink);
+  background:url(assets/paper.jpg) 0 0/180px,color-mix(in srgb,var(--sheet) 90%,#c8b48c);background-blend-mode:multiply;
+  clip-path:polygon(22% 0,78% 0,100% 16%,100% 100%,0 100%,0 16%);filter:drop-shadow(0 5px 5px rgba(10,5,0,.45));transition:transform .5s,opacity .4s}
+.inv .kst-eye{position:absolute;left:50%;top:2.6cqi;width:3.2cqi;height:3.2cqi;margin-left:-1.6cqi;border-radius:50%;background:color-mix(in srgb,var(--ground) 80%,#000);box-shadow:0 0 0 1.1cqi #c9a35e,0 0 0 1.4cqi rgba(0,0,0,.25),inset 0 1px 2px rgba(0,0,0,.6)}
+.inv .kst-tag small{font-family:"Cinzel",serif;font-size:2.2cqi;letter-spacing:.2em;color:var(--accent);line-height:1.4}
+.inv .kst-tag b{font-family:"Old Standard TT",serif;font-style:italic;font-weight:400;font-size:5.2cqi;line-height:1.1}
+.inv .kst-tag em{font-style:normal;font-family:"Cinzel",serif;font-size:2.5cqi;letter-spacing:.3em;padding:1.8cqi 0 0 .3em;margin-top:1.4cqi;color:var(--accent);border-top:1px solid color-mix(in srgb,var(--accent) 45%,transparent);width:86%}
+/* opening: key and cord slide away, the card squares up and lifts to you */
+.inv.opening .kst-key{transform:translate(30cqi,20cqi) rotate(40deg);opacity:0}
+.inv.opening .kst-cord,.inv.opening .cv-kastil .kst-seal{opacity:0;transition:opacity .35s}
+.inv.opening .kst-tag{transform:translateY(8cqi) rotate(-4deg);opacity:0}
+.inv.opening .kst-card{transform:translate(14cqi,0) rotate(0) scale(1.18)}
 .inv.opening .cv-kastil{opacity:0}
 
-/* page */
-.inv .pg-kastil{position:relative;padding:30px 16px 96px;overflow:hidden}
-.inv .kst-pw{position:relative;z-index:1;width:100%;max-width:400px;margin:0 auto}
-.inv .pg-kastil .kst-col{padding:5cqi 11cqi 12cqi}
-.inv .pg-kastil .kst-names{font-size:clamp(26px,9.4cqi,38px)}
-.inv .kst-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
-.inv .pg-kastil .kst-date{font-size:11.5px;letter-spacing:.2em;line-height:1.7}
-.inv .kst-hj{font-family:"Old Standard TT",serif;font-style:italic;font-size:13.5px;opacity:.75;margin:0}
-.inv .kst-ven{font-family:"Old Standard TT",serif;font-style:italic;font-size:16px;margin:10px 0 0}
-.inv .kst-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
-.inv .kst-pill{flex:0 0 auto;width:auto!important;padding:11px 16px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase}
-.inv .kst-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent)}
-.inv .pg-kastil .couple-ph.front{width:30cqi;margin:0 auto 12px;box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 60%,transparent),0 0 0 4px var(--sheet),0 0 0 4.6px color-mix(in srgb,var(--accent) 40%,transparent)}
+/* page: the card squared up on velvet */
+.inv .pg-kastil{background:var(--ground);color:var(--ink);padding:26px 0 76px;justify-content:center}
+.inv .kst-pcard{position:relative;z-index:2;width:84cqi;padding:5cqi 4.4cqi;
+  background:radial-gradient(ellipse 80% 40% at 30% 10%,rgba(255,255,255,.55),transparent 70%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 0 0 1.2px color-mix(in srgb,var(--accent) 85%,#000),0 24px 30px -12px rgba(10,5,0,.55),0 3px 6px rgba(10,5,0,.3)}
+.inv .kst-pcard .kst-seal{left:50%;top:-5cqi;margin-left:-7cqi}
+.inv .kst-pcard .kst-plate{padding:10cqi 6cqi 7cqi}
+.inv .kst-bis{font-family:"Amiri",serif;font-size:4.4cqi;color:var(--accent);margin-bottom:3cqi}
+.inv .pg-kastil .couple-ph.front{width:31cqi;aspect-ratio:4/5;margin:0 auto 3cqi;border-radius:0;box-shadow:0 0 0 1px var(--accent),0 0 0 5px var(--sheet),0 0 0 5.6px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 0 1px rgba(0,0,0,.2)}
+.inv .pg-kastil .kst-k{font-size:2.8cqi}
+.inv .pg-kastil .kst-names{font-size:clamp(32px,10.4cqi,46px);margin-top:2.4cqi;overflow-wrap:anywhere}
+.inv .kst-dt{display:flex;align-items:center;justify-content:center;gap:3cqi;width:100%;font-family:"Cinzel",serif;color:var(--ink)}
+.inv .kst-dt small{flex:1;font-size:2.7cqi;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.inv .kst-dt small:first-child{text-align:right}.inv .kst-dt small:last-child{text-align:left}
+.inv .kst-dt b{font-weight:400;font-size:13cqi;line-height:.9;padding:0 3cqi;border-left:1px solid color-mix(in srgb,var(--gold) 70%,transparent);border-right:1px solid color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .kst-hj{font-family:"Old Standard TT",serif;font-style:italic;font-size:3.6cqi;margin-top:2.4cqi;opacity:.75}
+.inv .kst-ven{font-family:"Old Standard TT",serif;font-style:italic;font-size:4.4cqi;margin-top:2.6cqi}
+.inv .kst-pills{display:flex;gap:2.4cqi;margin-top:4cqi;flex-wrap:wrap;justify-content:center}
+.inv .kst-pill{padding:3cqi 5.4cqi;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;font-family:"Cinzel",serif;font-size:2.7cqi;letter-spacing:.22em;text-transform:uppercase}
+.inv .kst-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 60%,transparent)}
+.inv .kst-key.pg{left:auto;right:-4cqi;top:auto;bottom:26cqi;width:22cqi;transform:rotate(-30deg);z-index:3}
 
-/* skin: cotton cards with a debossed etching plate-mark */
-.fam-kastil .scroller{background:url(assets/paper.jpg) 0 0/280px,var(--ground);background-blend-mode:multiply}
-.fam-kastil.kst-dark .scroller{background:var(--ground)}
-.fam-kastil.kst-dark .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.35}
-.fam-kastil.cardsecs .sec{background:linear-gradient(155deg,rgba(255,255,255,.5),transparent 40%),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);border-radius:2px;
-  box-shadow:inset 0 0 0 12px var(--sheet),inset 1.4px 1.4px 0 12px rgba(255,255,255,.95),inset -1.4px -1.4px 0 12px rgba(60,45,30,.14),0 1px 1px rgba(40,30,20,.2),0 14px 24px -14px rgba(40,30,20,.4)}
-.fam-kastil.kst-dark.cardsecs .sec{box-shadow:inset 0 0 0 12px var(--sheet),inset 1.4px 1.4px 0 12px rgba(255,255,255,.95),inset -1.4px -1.4px 0 12px rgba(60,45,30,.14),0 18px 30px -12px rgba(0,0,0,.6)}
-.fam-kastil .sec h2{font-family:"Old Standard TT",serif;font-weight:400;text-transform:uppercase;letter-spacing:.3em;font-size:15px;color:var(--accent);text-shadow:0 1px 0 rgba(255,255,255,.9)}
-.fam-kastil .sec h2::after{content:"";display:block;width:110px;height:9px;margin:10px auto 0;border:0;
-  background:radial-gradient(circle,var(--accent) 1.4px,transparent 1.9px) center/9px 9px no-repeat,linear-gradient(90deg,transparent,var(--accent) 25%,transparent 44%,transparent 56%,var(--accent) 75%,transparent) center/100% .7px no-repeat}
+/* skin: plate-marked cotton cards with engraved capitals */
+.fam-kastil .scroller{background:var(--ground)}
+.fam-kastil .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.7}
+.fam-kastil.cardsecs .sec{position:relative;color:var(--ink);border-radius:0;
+  background:radial-gradient(ellipse 80% 40% at 30% 0,rgba(255,255,255,.5),transparent 70%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 0 0 1.2px color-mix(in srgb,var(--accent) 85%,#000),inset 0 0 0 12px var(--sheet),inset 1px 1px 1.5px 12px rgba(0,0,0,.08),inset 0 0 0 13px rgba(0,0,0,.08),inset 0 0 0 18px var(--sheet),inset 0 0 0 19px color-mix(in srgb,var(--accent) 70%,transparent),0 20px 26px -12px rgba(10,5,0,.5)}
+.fam-kastil .sec h2{font-family:"Cinzel",serif;font-weight:500;text-transform:uppercase;letter-spacing:.3em;font-size:16px;color:var(--accent);text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.fam-kastil .sec h2::before{content:"";display:block;width:22px;height:22px;margin:0 auto 10px;background:var(--ksros) center/contain no-repeat}
+.fam-kastil .sec h2::after{content:"";display:block;width:110px;height:5px;margin:10px auto 0;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 70%,transparent);border-bottom:.5px solid color-mix(in srgb,var(--accent) 45%,transparent)}
 .fam-kastil .sec,.fam-kastil .sec p,.fam-kastil .info b{color:var(--ink)}
 .fam-kastil .info,.fam-kastil .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-kastil .info > div{border-bottom:.8px solid color-mix(in srgb,var(--accent) 22%,transparent)!important;padding:14px 6px!important}
+.fam-kastil .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
 .fam-kastil .info > div:last-child{border-bottom:0!important}
-.fam-kastil .info span{color:var(--gold);letter-spacing:.24em}
-.fam-kastil .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
-.fam-kastil .count b{color:var(--accent);font-family:"Old Standard TT",serif;font-weight:400}
-.fam-kastil input,.fam-kastil select,.fam-kastil textarea{background:#fff!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 30%,transparent)!important}
+.fam-kastil .info span{color:var(--accent);font-family:"Cinzel",serif;letter-spacing:.22em}
+.fam-kastil .info b{font-family:"Old Standard TT",serif;font-weight:400}
+.fam-kastil .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+.fam-kastil .count b{color:var(--accent);font-family:"Cinzel",serif;font-weight:400}
+.fam-kastil input,.fam-kastil select,.fam-kastil textarea{background:rgba(255,255,255,.8)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 40%,transparent)!important}
 .fam-kastil .seg button{border-radius:999px!important;color:var(--ink)}
 .fam-kastil .seg button[aria-pressed="true"],.fam-kastil button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
-.fam-kastil .dock{background:color-mix(in srgb,var(--sheet) 95%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-kastil .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-kastil .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .kst-cw{transition:opacity .3s}.inv.opening .kst-cw{transform:none}}
+@media (prefers-reduced-motion: reduce){.inv .kst-card,.inv .kst-key,.inv .kst-tag{transition:opacity .3s}}
+.inv .cv-kastil .kst-names span{white-space:nowrap}
+.inv .pg-kastil .kst-names span{white-space:nowrap}

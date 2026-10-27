@@ -1,75 +1,67 @@
-/* qandil: a cluster of pierced brass lanterns hanging at different heights against a night-blue (or deep green) plaster wall.
-   Three lantern shapes (onion-domed hexagon, globe, tall cylinder) in shaded brass, each pierced with eight-point stars over a
-   warm inner glow, on fine link chains; their light throws a field of small stars across the wall. Names in gold below.
-   Cover: tap "Buka Jemputan" and the lanterns are drawn up out of sight as the stars of light spread and fade.
-   Page: a smaller cluster above the names. Skin: dark plaster cards lit warmly from above, star-pierced dividers. */
+/* qandil: a pierced card that behaves like a lantern. An arch-topped card of mirror-gold board slides into a sleeve of
+   deep-coloured 600gsm stock, laser-cut all over with a lattice of eight-point stars, so the gold glints through every hole;
+   a solid cartouche in the middle carries the names in gold foil and a solid band at the foot carries the guest's name.
+   It stands against a plaster wall in a pool of warm light, scattered with the star-shaped light a pierced lantern throws.
+   Cover: tap "Buka Jemputan"; the gold card rises out of the sleeve as the sleeve drops away and the stars of light spread.
+   Page: the gold card on its own, a pierced border round it, the empty sleeve tucked behind. Skin: dark cards with a
+   pierced band showing gold through the stars, Marcellus capitals. */
 let qdN=0;
-const qdF=v=>v.toFixed(1);
-// one lantern at (x,y) (y = where its chain ends), type a|b|c, scale s
-function qdLamp(t,x,y,s,u){const g=`url(#qdb${u})`,h=`url(#qdh${u})`,w=`url(#qdw${u})`,p=`url(#qdp${u})`,sh=`url(#qds${u})`;
-  let body='';
-  if(t==='a')body=`<path d="M0 0V8" stroke="${g}" stroke-width="1.6"/><circle cy="9" r="2" fill="${g}"/>
-    <path d="M-15 32C-15 20 -4 16 0 10C4 16 15 20 15 32Z" fill="${g}"/><path d="M-15 32C-15 20 -4 16 0 10C4 16 15 20 15 32Z" fill="${p}" opacity=".9"/>
-    <path d="M-18 32H18V38H-18Z" fill="${g}"/>
-    <path d="M-17 38L-21 50V88L-15 98H15L21 88V50L17 38Z" fill="${w}"/><path d="M-17 38L-21 50V88L-15 98H15L21 88V50L17 38Z" fill="${p}"/><path d="M-17 38L-21 50V88L-15 98H15L21 88V50L17 38Z" fill="${sh}"/>
-    <path d="M-7 38V98M7 38V98M-21 50H21M-21 88H21" stroke="${g}" stroke-width="1.5"/><path d="M-17 38L-21 50V88L-15 98H15L21 88V50L17 38Z" fill="none" stroke="${g}" stroke-width="1.6"/>
-    <path d="M-15 98L0 114L15 98Z" fill="${g}"/><path d="M0 114V122" stroke="${g}" stroke-width="1.2"/><circle cy="124" r="2.6" fill="${g}"/>`;
-  if(t==='b')body=`<path d="M0 0V10" stroke="${g}" stroke-width="1.5"/><path d="M-9 22Q0 6 9 22Z" fill="${g}"/><path d="M-11 22H11V26H-11Z" fill="${g}"/>
-    <circle cy="50" r="24" fill="${w}"/><circle cy="50" r="24" fill="${p}"/><circle cy="50" r="24" fill="${sh}"/>
-    <g fill="none" stroke="${g}" stroke-width="1.3"><ellipse cy="50" rx="9" ry="24"/><ellipse cy="50" rx="18" ry="24"/><path d="M-24 50H24M-21 38H21M-21 62H21" stroke-width="1"/><circle cy="50" r="24" stroke-width="1.6"/></g>
-    <path d="M-8 73Q0 80 8 73L0 88Z" fill="${g}"/><circle cy="90" r="2.2" fill="${g}"/>`;
-  if(t==='c')body=`<path d="M0 0V6" stroke="${g}" stroke-width="1.5"/><path d="M-4 6H4L13 22H-13Z" fill="${g}"/><path d="M-4 6H4L13 22H-13Z" fill="${p}" opacity=".8"/>
-    <path d="M-14 22H14V27H-14Z" fill="${g}"/>
-    <path d="M-12 27H12V96H-12Z" fill="${w}"/><path d="M-12 27H12V96H-12Z" fill="${p}"/><path d="M-12 27H12V96H-12Z" fill="${sh}"/>
-    <path d="M-12 27H12V96H-12ZM-12 50H12M-12 74H12M0 27V96" fill="none" stroke="${g}" stroke-width="1.4"/>
-    <path d="M-14 96H14V101H-14Z" fill="${g}"/><path d="M-9 101L0 112L9 101Z" fill="${g}"/><circle cy="114" r="2" fill="${g}"/>`;
-  const cy=t==='a'?66:t==='b'?50:60;
-  let ch='';for(let i=0;i<y-2;i+=4.4)ch+=`<ellipse cx="${x}" cy="${qdF(i+2.2)}" rx="${(i/4.4)%2?.7:1.6}" ry="2.2"/>`;
-  return `<g class="qdl-lamp"><g fill="none" stroke="${g}" stroke-width=".8">${ch}</g>
-    <circle class="qdl-halo" cx="${x}" cy="${qdF(y+cy*s)}" r="${qdF(70*s)}" fill="${h}"/>
-    <g transform="translate(${x} ${y}) scale(${s})">${body}</g></g>`}
-function qdCluster(lamps,H){const u=++qdN;
-  return `<svg class="qdl-svg" viewBox="0 0 300 ${H}" preserveAspectRatio="xMidYMin meet"><defs>
-    <linearGradient id="qdb${u}" x1="0" x2="1"><stop offset="0" stop-color="#4a2e0f"/><stop offset=".28" stop-color="#b98a3e"/><stop offset=".42" stop-color="#f3d58e"/><stop offset=".6" stop-color="#a8772f"/><stop offset="1" stop-color="#3a240b"/></linearGradient>
-    <radialGradient id="qdh${u}"><stop offset="0" stop-color="#ffd585" stop-opacity=".8"/><stop offset=".35" stop-color="#ffb04a" stop-opacity=".3"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient>
-    <radialGradient id="qdw${u}" cy=".45" r=".6"><stop offset="0" stop-color="#fff7d8"/><stop offset=".45" stop-color="#ffd27a"/><stop offset="1" stop-color="#e08a2c"/></radialGradient>
-    <linearGradient id="qds${u}" x1="0" x2="1"><stop offset="0" stop-color="#1a0d00" stop-opacity=".6"/><stop offset=".35" stop-color="#1a0d00" stop-opacity="0"/><stop offset=".6" stop-color="#1a0d00" stop-opacity="0"/><stop offset="1" stop-color="#1a0d00" stop-opacity=".65"/></linearGradient>
-    <pattern id="qdp${u}" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M0 0H7V7H0Z${K.star(8,2.7,1.4,3.5,3.5)}M0 0m-.9 0a.9 .9 0 1 0 1.8 0a.9 .9 0 1 0 -1.8 0" fill="#8a5c1e" fill-rule="evenodd"/></pattern></defs>
-    ${lamps.map(l=>qdLamp(l[0],l[1],l[2],l[3],u)).join('')}</svg>`}
-const QD_COVER=[['a',44,150,.62],['b',258,190,.68],['b',92,86,.82],['c',210,108,.92],['a',150,138,1.12]];
-const QD_PAGE=[['b',78,60,.66],['c',222,74,.72],['a',150,92,.9]];
-// the stars of light thrown on the wall
-const QD_STARS=K.uri(`<svg ${NS} width="52" height="52" viewBox="0 0 52 52"><g fill="#ffd590"><path d="${K.star(8,6.5,3.2,13,13)}"/><path d="${K.star(8,4,1.9,39,39)}"/><circle cx="39" cy="13" r="1.2"/><circle cx="13" cy="39" r="1.2"/></g></svg>`);
-const qdText=(o,L,page)=>{const [n1,n2]=coverNames(o);
-  return `<p class="qdl-k${page?' kicker':''}">${ev(o,L)}</p>
-    <${page?'h1':'p'} class="qdl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${page?'h1':'p'}>
-    <svg class="qdl-rule" viewBox="0 0 120 12"><path d="M4 6H48M72 6H116" stroke="currentColor" stroke-width=".6"/><path d="${K.star(8,5,2.4,60,6)}" fill="currentColor"/></svg>
-    <p class="qdl-date">${esc(fmtDate(o.date,o.lang))}</p>${page&&o.hijri?`<p class="qdl-hj">${esc(o.hijri)}</p>`:''}${page&&o.venue?`<p class="qdl-ven">${esc(o.venue)}</p>`:''}`};
-FAMILY({key:'qandil',name:'Qandil',meaning:'Brass lanterns',
-  blurb:'A cluster of pierced brass lanterns glowing at different heights against a night-blue wall, throwing stars of light around the names in gold. The lanterns rise away as the card opens.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
-  page(o,th,L){const en=o.lang==='en';
-    return `<section class="page pg-qandil" style="--qstars:${QD_STARS}"><div class="qdl-wall"></div><div class="qdl-stars"></div>
-      <div class="qdl-lamps reveal">${qdCluster(QD_PAGE,210)}</div>
-      ${o.bismillah?'<p class="qdl-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
-      <div class="qdl-txt reveal d1">${qdText(o,L,true)}</div>
-      <div class="qdl-pills reveal d2"><a class="qdl-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="qdl-pill ghost" data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
-    return `<div class="cover cv-qandil" style="--qstars:${QD_STARS}"><div class="qdl-wall"></div><div class="qdl-stars"></div>
-      <div class="qdl-lamps">${qdCluster(QD_COVER,330)}</div>
-      <div class="qdl-txt">${qdText(o,L,false)}</div>
-      <div class="qdl-foot">${guest?`<p class="qdl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="qdl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
-  skin(el,o,th,L){K.cards(el);
-    el.style.setProperty('--qdiv',K.uri(`<svg ${NS} viewBox="0 0 160 14"><path d="M0 7H62M98 7H160" stroke="#000" stroke-width=".8"/><path d="${K.star(8,6,2.8,80,7)}"/><path d="${K.star(8,3,1.4,68,7)}${K.star(8,3,1.4,92,7)}"/></svg>`));
+const qdF=v=>v.toFixed(2);
+const qdStar=(x,y,r,k=.5)=>{let d='';for(let i=0;i<16;i++){const a=-Math.PI/2+i*Math.PI/8,rr=i%2?r*k:r;d+=(i?'L':'M')+qdF(x+Math.cos(a)*rr)+' '+qdF(y+Math.sin(a)*rr)}return d+'Z'};
+// one tile of the lattice: an eight-point star in the middle, small four-point stars at the corners
+const qdTile=`${qdStar(20,20,11.5,.64)}${qdStar(0,0,6,.55)}${qdStar(40,0,6,.55)}${qdStar(0,40,6,.55)}${qdStar(40,40,6,.55)}M20 1.5L22 5L20 8.5L18 5ZM20 31.5L22 35L20 38.5L18 35ZM1.5 20L5 18L8.5 20L5 22ZM31.5 20L35 18L38.5 20L35 22Z`;
+// the sleeve: W x H in svg units, holes everywhere except a border, a central cartouche and a foot band; a thumb notch at the top
+function qdSleeve(W,H,cartY,cartH,footY){const u=++qdN;
+  const cx=W/2,cw=W*.74,cl=cx-cw/2,cr=cx+cw/2,cy0=cartY,cy1=cartY+cartH,lobe=cw*.16;
+  // cartouche: a rectangle with ogee ends at top and bottom
+  const cart=`M${cl} ${cy0+lobe}C${cl} ${cy0+lobe*.4} ${cx-cw*.2} ${cy0+lobe*.4} ${cx-cw*.12} ${cy0+lobe*.1}C${cx-cw*.05} ${cy0-lobe*.1} ${cx-6} ${cy0-lobe*.3} ${cx} ${cy0-lobe*.7}C${cx+6} ${cy0-lobe*.3} ${cx+cw*.05} ${cy0-lobe*.1} ${cx+cw*.12} ${cy0+lobe*.1}C${cx+cw*.2} ${cy0+lobe*.4} ${cr} ${cy0+lobe*.4} ${cr} ${cy0+lobe}V${cy1-lobe}C${cr} ${cy1-lobe*.4} ${cx+cw*.2} ${cy1-lobe*.4} ${cx+cw*.12} ${cy1-lobe*.1}C${cx+cw*.05} ${cy1+lobe*.1} ${cx+6} ${cy1+lobe*.3} ${cx} ${cy1+lobe*.7}C${cx-6} ${cy1+lobe*.3} ${cx-cw*.05} ${cy1+lobe*.1} ${cx-cw*.12} ${cy1-lobe*.1}C${cx-cw*.2} ${cy1-lobe*.4} ${cl} ${cy1-lobe*.4} ${cl} ${cy1-lobe}Z`;
+  const B=14;
+  return `<svg class="qdl-slv" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
+    <pattern id="qdp${u}" width="26" height="26" patternUnits="userSpaceOnUse" x="${(W/2-13)%26}" y="2"><path d="${qdTile}" fill="#000" transform="scale(.65)"/></pattern>
+    <pattern id="qdt${u}" width="200" height="200" patternUnits="userSpaceOnUse"><image href="assets/paper.jpg" width="200" height="200"/></pattern>
+    <linearGradient id="qdg${u}" x1="0" y1="0" x2="1" y2=".5"><stop offset="0" stop-color="#9a7434"/><stop offset=".3" stop-color="#f2dc98"/><stop offset=".5" stop-color="#b08a44"/><stop offset=".75" stop-color="#ecd28a"/><stop offset="1" stop-color="#8f6a2c"/></linearGradient>
+    <linearGradient id="qdsh${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+    <mask id="qdm${u}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/><rect x="${B}" y="${B}" width="${W-2*B}" height="${footY-B-6}" fill="url(#qdp${u})"/>
+      <path d="${cart}" fill="#fff" transform="translate(0 0)"/><path d="${cart}" fill="none" stroke="#fff" stroke-width="12"/><circle cx="${cx}" cy="0" r="17" fill="#000"/></mask></defs>
+    <g mask="url(#qdm${u})"><rect width="${W}" height="${H}" style="fill:var(--slv)"/><rect width="${W}" height="${H}" fill="url(#qdt${u})" style="mix-blend-mode:soft-light" opacity=".28"/>
+      <rect width="${W}" height="${H}" fill="url(#qdsh${u})"/></g>
+    <path d="${cart}" fill="none" stroke="url(#qdg${u})" stroke-width="1.1"/><path d="${cart}" fill="none" stroke="url(#qdg${u})" stroke-width=".5" transform="translate(${cx} ${(cy0+cy1)/2}) scale(.94 .955) translate(${-cx} ${-(cy0+cy1)/2})"/>
+    <rect x="${B-5}" y="${footY}" width="${W-2*B+10}" height=".8" fill="url(#qdg${u})"/></svg>`}
+const qdNames=(o,tag)=>{const [n1,n2]=coverNames(o);return `<${tag} class="qdl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${tag}>`};
+const qdMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="qdl-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>·</i>${esc(b)}`};
+const qdVars=c=>`--slv:${c.slv};--glow:${c.glow}`;
+const QD_STARS=K.uri(`<svg ${NS} viewBox="0 0 40 40"><path d="${qdTile}" fill="#fff"/></svg>`);
+FAMILY({key:'qandil',name:'Qandil',meaning:'Lantern light',
+  blurb:'A mirror-gold card in a sleeve laser-cut with eight-point stars, standing in warm lantern light. The gold card rises out of the sleeve as it opens.',
+  fonts:{d:"'Marcellus', serif",s:"'Marcellus', serif",b:"'Jost', sans-serif"},ms:1400,
+  page(o,th,L){const c=th.c,en=o.lang==='en';
+    return `<section class="page pg-qandil" style="${qdVars(c)};--qstars:${QD_STARS}"><div class="qdl-wall"></div><div class="qdl-cast"></div>
+      <div class="qdl-pset reveal"><div class="qdl-psleeve">${qdSleeve(240,300,70,120,250)}</div>
+        <div class="qdl-gold qdl-pcard"><div class="qdl-gin">
+          ${o.bismillah?'<p class="qdl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':`<p class="qdl-mono">${qdMono(o)}</p>`}
+          <p class="qdl-k kicker">${ev(o,L)}</p>${qdNames(o,'h1')}
+          <p class="qdl-d">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="qdl-hj">${esc(o.hijri)}</p>`:''}${o.venue?`<p class="qdl-ven">${esc(o.venue)}</p>`:''}</div></div></div>
+      <div class="qdl-tabs reveal d2"><a class="qdl-tab" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="qdl-tab" data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en',p=String(o.date||'').split('-');
+    const dd=p.length===3?`${p[2]} · ${p[1]} · ${p[0]}`:esc(fmtShort(o.date));
+    return `<div class="cover cv-qandil" style="${qdVars(c)};--qstars:${QD_STARS}"><div class="qdl-wall"></div><div class="qdl-cast"></div>
+      <div class="qdl-set">
+        <div class="qdl-gold qdl-card"><div class="qdl-top"><p class="qdl-mono">${qdMono(o)}</p><p class="qdl-k">${ev(o,L)}</p></div></div>
+        <div class="qdl-sleeve">${qdSleeve(260,360,100,142,290)}
+          <div class="qdl-cart">${qdNames(o,'p')}<p class="qdl-d">${dd}</p></div>
+          <div class="qdl-foot">${guest?`<small>${L.dear}</small><b>${esc(guest)}</b>`:`<small>${o.venue?esc(o.venue):''}</small>`}</div></div>
+      </div>
+      <${tag} class="qdl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--slv',c.slv);el.style.setProperty('--glow',c.glow);el.style.setProperty('--qstars',QD_STARS);
     const sc=$('.scroller',el);
     $$('.pg-qandil [data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    {k:'nila',n:'Nila',desc:'Brass lanterns on a night-blue wall',c:{ground:'#121b33',sheet:'#1b2643',ink:'#efe6d2',accent:'#e6c67e',gold:'#c9a356',pagefg:'#efe6d2'}},
-    {k:'zamrud',n:'Zamrud',desc:'Brass lanterns on a deep green wall',c:{ground:'#0f2a22',sheet:'#173a30',ink:'#ece7d4',accent:'#e6c67e',gold:'#c9a356',pagefg:'#ece7d4'}},
-    {k:'malam',n:'Malam',desc:'Brass lanterns on an ink-black wall',c:{ground:'#0d0f16',sheet:'#181b26',ink:'#ebe6da',accent:'#e9c97f',gold:'#c9a356',pagefg:'#ebe6da'}},
-    {k:'laut',n:'Laut',desc:'Brass lanterns on a deep teal wall',c:{ground:'#0e2a30',sheet:'#163b42',ink:'#e8ebe3',accent:'#e8c87e',gold:'#c9a356',pagefg:'#e8ebe3'}},
-    {k:'ungu',n:'Ungu',desc:'Brass lanterns on a plum wall',c:{ground:'#24152e',sheet:'#321f3f',ink:'#efe4e6',accent:'#ebc983',gold:'#c9a356',pagefg:'#efe4e6'}},
-    {k:'marun',n:'Marun',desc:'Brass lanterns on a maroon wall',c:{ground:'#2e0f15',sheet:'#43171f',ink:'#f2e4dc',accent:'#ecca82',gold:'#c9a356',pagefg:'#f2e4dc'}},
-    {k:'kopi',n:'Kopi',desc:'Brass lanterns on a dark coffee wall',c:{ground:'#22170f',sheet:'#312218',ink:'#f0e6d6',accent:'#e9c67c',gold:'#c9a356',pagefg:'#f0e6d6'}},
-    {k:'senja',n:'Senja',desc:'Brass lanterns on a dusk-violet wall',c:{ground:'#2b2a45',sheet:'#383857',ink:'#eeeaf0',accent:'#eccb86',gold:'#c9a356',pagefg:'#eeeaf0'}},
+    {k:'nila',n:'Nila',desc:'Night-blue pierced sleeve, mirror gold, lamplight',c:{ground:'#121b33',sheet:'#1b2643',ink:'#efe6d2',accent:'#e6c67e',gold:'#c9a356',pagefg:'#efe6d2',slv:'#1a2547',glow:'#ffcf7a'}},
+    {k:'zamrud',n:'Zamrud',desc:'Deep green pierced sleeve, mirror gold, lamplight',c:{ground:'#0f2a22',sheet:'#173a30',ink:'#ece7d4',accent:'#e6c67e',gold:'#c9a356',pagefg:'#ece7d4',slv:'#17402f',glow:'#ffd07c'}},
+    {k:'malam',n:'Malam',desc:'Ink-black pierced sleeve, mirror gold, lamplight',c:{ground:'#0d0f16',sheet:'#181b26',ink:'#ebe6da',accent:'#e9c97f',gold:'#c9a356',pagefg:'#ebe6da',slv:'#16181f',glow:'#ffc970'}},
+    {k:'laut',n:'Laut',desc:'Deep teal pierced sleeve, mirror gold, lamplight',c:{ground:'#0e2a30',sheet:'#163b42',ink:'#e8ebe3',accent:'#e8c87e',gold:'#c9a356',pagefg:'#e8ebe3',slv:'#123f47',glow:'#ffd27f'}},
+    {k:'ungu',n:'Ungu',desc:'Plum pierced sleeve, mirror gold, lamplight',c:{ground:'#24152e',sheet:'#321f3f',ink:'#efe4e6',accent:'#ebc983',gold:'#c9a356',pagefg:'#efe4e6',slv:'#3a2148',glow:'#ffcd80'}},
+    {k:'marun',n:'Marun',desc:'Maroon pierced sleeve, mirror gold, lamplight',c:{ground:'#2e0f15',sheet:'#43171f',ink:'#f2e4dc',accent:'#ecca82',gold:'#c9a356',pagefg:'#f2e4dc',slv:'#45131c',glow:'#ffc978'}},
+    {k:'kopi',n:'Kopi',desc:'Coffee-brown pierced sleeve, mirror gold, lamplight',c:{ground:'#22170f',sheet:'#312218',ink:'#f0e6d6',accent:'#e9c67c',gold:'#c9a356',pagefg:'#f0e6d6',slv:'#3d2a1c',glow:'#ffcb78'}},
+    {k:'senja',n:'Senja',desc:'Dusk-violet pierced sleeve, mirror gold, lamplight',c:{ground:'#2b2a45',sheet:'#383857',ink:'#eeeaf0',accent:'#eccb86',gold:'#c9a356',pagefg:'#eeeaf0',slv:'#3c3a63',glow:'#ffd08a'}},
   ]});

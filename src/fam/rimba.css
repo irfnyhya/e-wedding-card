@@ -1,98 +1,121 @@
-/* ===== rimba (Rimba Malam) ===== */
+/* ===== rimba (Rimba Malam): a twine-tied card suite on moss linen ===== */
 .inv .cv-rimba,.inv .pg-rimba{background:var(--ground);color:var(--pagefg)}
-/* the garden painting, darkened to dusk and pulled toward the theme's green */
-.inv .rmb-bg{position:absolute;inset:-4%;background-size:cover;background-position:50% 60%;filter:var(--bgf);pointer-events:none}
-.inv .rmb-tint{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 50% 46%,transparent 20%,color-mix(in srgb,var(--ground) 70%,transparent) 100%),var(--ground);mix-blend-mode:multiply;opacity:.9}
-.inv .rmb-light .rmb-tint{mix-blend-mode:normal;opacity:.8;background:radial-gradient(ellipse 70% 50% at 50% 46%,color-mix(in srgb,var(--ground) 70%,transparent),var(--ground) 100%)}
-/* leaves from the still lifes, washed green; "lighten" sinks the paintings' dark grounds */
-.inv .rmb-lf{position:absolute;z-index:4;pointer-events:none;background-repeat:no-repeat;mix-blend-mode:lighten;filter:var(--lff);
-  -webkit-mask:radial-gradient(ellipse 50% 50% at 50% 50%,#000 38%,rgba(0,0,0,.6) 64%,transparent 96%);mask:radial-gradient(ellipse 50% 50% at 50% 50%,#000 38%,rgba(0,0,0,.6) 64%,transparent 96%)}
-.inv .rmb-lf.tl{left:-30%;top:-8%;width:82%}
-.inv .rmb-lf.tr{right:-34%;top:6%;width:70%}
-.inv .rmb-lf.ml{left:-30%;top:40%;width:52%}
-.inv .rmb-lf.br{right:-30%;bottom:-6%;width:82%}
-.inv .rmb-lf.bl{left:-36%;bottom:-10%;width:76%}
-/* light colourways: engraved stems printed in green ink */
-.inv .rmb-eng{position:absolute;z-index:2;pointer-events:none;aspect-ratio:.75;background:var(--accent);opacity:.45;-webkit-mask-size:100% 100%;mask-size:100% 100%}
-.inv .rmb-eng.tl{left:-16%;top:-6%;width:60%;transform:rotate(150deg)}
-.inv .rmb-eng.br{right:-16%;bottom:-8%;width:62%;transform:rotate(-20deg)}
+.inv .rmb-linen{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 90% 70% at 45% 40%,rgba(255,255,255,.06),transparent 60%,rgba(0,0,0,.45))}
+.inv .rmb-linen::before{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/170px;mix-blend-mode:soft-light;opacity:.8}
+.inv .rmb-light .rmb-linen{background:radial-gradient(ellipse 90% 70% at 45% 40%,rgba(255,255,255,.3),transparent 60%,rgba(40,60,30,.12))}
+.inv .rmb-light .rmb-linen::before{mix-blend-mode:multiply;opacity:.35}
+/* leaves cut from the still lifes; their dark grounds melt into the linen */
+.inv .rmb-lf{position:absolute;pointer-events:none;background-repeat:no-repeat;mix-blend-mode:lighten;filter:grayscale(.4) sepia(.25) hue-rotate(40deg) saturate(1.2) brightness(.7) contrast(1.15);
+  -webkit-mask:radial-gradient(ellipse 50% 50%,#000 40%,transparent 95%);mask:radial-gradient(ellipse 50% 50%,#000 40%,transparent 95%)}
+.inv .rmb-lf.tl{left:-22%;top:-6%;width:70%}
+.inv .rmb-lf.br{right:-26%;bottom:-8%;width:76%;transform:rotate(160deg)}
+.inv .rmb-lf.tr{right:-24%;top:24%;width:50%;transform:rotate(-30deg);opacity:.8}
+.inv .rmb-eng{position:absolute;pointer-events:none;background:color-mix(in srgb,var(--accent) 60%,transparent);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;opacity:.45}
+.inv .rmb-eng.tl{left:-14%;top:-4%;width:56%;aspect-ratio:.8;transform:rotate(150deg)}
+.inv .rmb-eng.br{right:-16%;bottom:-4%;width:60%;aspect-ratio:1;transform:rotate(-20deg)}
 
-/* the card: deckled cotton, green ink */
-.inv .rmb-cardw{position:relative;z-index:3;filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.4))}
-.inv .rmb-light .rmb-cardw{filter:drop-shadow(0 14px 18px rgba(30,40,20,.28)) drop-shadow(0 2px 3px rgba(30,40,20,.2))}
-.inv .rmb-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--accent);padding:14% 12%;
-  background:linear-gradient(150deg,rgba(255,255,255,.35),transparent 40%,rgba(0,0,0,.05)),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
-.inv .rmb-card::before{content:"";position:absolute;inset:13px;border:.6px solid color-mix(in srgb,var(--accent) 45%,transparent);box-shadow:0 0 0 3px transparent,inset 0 0 0 3px transparent,inset 0 0 0 3.6px color-mix(in srgb,var(--accent) 22%,transparent);pointer-events:none}
-.inv .rmb-sprig{display:block;width:58px;aspect-ratio:.7;background:var(--accent);-webkit-mask-size:100% 100%;mask-size:100% 100%;margin:0 auto 6px;flex:none;opacity:.9}
-.inv .rmb-k{font-family:"IM Fell English SC",serif;font-size:10.5px;letter-spacing:.3em;padding-left:.3em;margin:0;color:var(--ink)}
-.inv .rmb-names{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;font-size:clamp(34px,10.4cqi,44px);line-height:1.02;margin:10px 0 4px;display:flex;flex-direction:column;align-items:center;color:var(--accent)}
-.inv .rmb-names em{font-family:"IM Fell English SC",serif;font-style:normal;font-size:.3em;letter-spacing:.3em;margin:6px 0 4px;color:var(--ink);opacity:.8}
-.inv .rmb-fern{display:block;width:96px;height:16px;margin:8px auto 10px;background:var(--gold);-webkit-mask-size:100% 100%;mask-size:100% 100%;flex:none}
-.inv .rmb-date{font-family:"IM Fell English SC",serif;font-size:11.5px;letter-spacing:.22em;padding-left:.22em;margin:0;color:var(--ink)}
-.inv .rmb-hj{font-family:"IM Fell English",serif;font-style:italic;font-size:14px;color:var(--ink);opacity:.8;margin:4px 0 0}
-.inv .rmb-ven{font-family:"IM Fell English",serif;font-style:italic;font-size:16px;color:var(--ink);margin:10px 0 0;max-width:24ch;line-height:1.25}
-.inv .rmb-bis{font-family:"Amiri",serif;font-size:16px;color:var(--ink);margin:0 0 8px}
+/* the main card: thick cotton, a plate-mark pressed into it */
+.inv .rmb-main{position:absolute;color:var(--ink);background:url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:multiply;border-radius:2px;
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,-10px 18px 22px -6px rgba(0,0,0,.55),-2px 3px 4px rgba(0,0,0,.35)}
+.inv .rmb-light .rmb-main{box-shadow:-10px 16px 20px -8px rgba(40,50,30,.35),-1px 2px 3px rgba(40,50,30,.2)}
+.inv .rmb-in{position:absolute;inset:11px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 14px 12px;
+  box-shadow:inset 1.2px 1.2px 1.5px rgba(0,0,0,.2),1px 1px 0 rgba(255,255,255,.85),inset -1px -1px 0 rgba(255,255,255,.7)}
+/* the tipped-in plate with photo corners */
+.inv .rmb-plate{position:relative;width:80%;aspect-ratio:1.28;padding:4px;background:#fbfaf6;box-shadow:0 1px 2px rgba(0,0,0,.25),0 0 0 .5px rgba(0,0,0,.1);flex:none}
+.inv .rmb-art{position:absolute;inset:4px;background-size:cover;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.3)}
+.inv .rmb-pc{position:absolute;width:15px;height:15px;background:linear-gradient(135deg,color-mix(in srgb,var(--ink) 92%,#000) 50%,transparent 50%);filter:drop-shadow(.5px .8px .6px rgba(0,0,0,.4))}
+.inv .rmb-pc::after{content:"";position:absolute;left:2px;top:2px;width:7px;height:7px;background:linear-gradient(135deg,rgba(255,255,255,.18) 50%,transparent 50%)}
+.inv .rmb-pc.tl{left:-2px;top:-2px}.inv .rmb-pc.tr{right:-2px;top:-2px;transform:rotate(90deg)}.inv .rmb-pc.br{right:-2px;bottom:-2px;transform:rotate(180deg)}.inv .rmb-pc.bl{left:-2px;bottom:-2px;transform:rotate(270deg)}
+.inv .rmb-k{font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.3em;padding-left:.3em;margin:14px 0 0;color:var(--accent)}
+/* letterpress: a little bite into the cotton */
+.inv .rmb-names{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;line-height:1;margin:6px 0 4px;color:var(--accent);font-size:clamp(30px,9.4cqi,38px);display:flex;flex-direction:column;align-items:center;
+  text-shadow:0 1px 0 rgba(255,255,255,.8),0 -.6px 0 rgba(0,0,0,.25)}
+.inv .rmb-names em{font-family:"IM Fell English SC",serif;font-style:normal;font-size:.36em;letter-spacing:.2em;color:var(--ink);opacity:.75;margin:3px 0}
+.inv .rmb-fern{display:block;width:110px;height:18px;margin:6px auto 2px;background:color-mix(in srgb,var(--accent) 80%,transparent);-webkit-mask-size:100% 100%;mask-size:100% 100%;flex:none}
 
-/* cover */
-.inv .cv-rimba{overflow:hidden;transition:opacity .5s .95s}
-.inv .cv-rimba .rmb-bg{transition:transform 1.4s cubic-bezier(.4,0,.2,1)}
-.inv .cv-rimba .rmb-lf,.inv .cv-rimba .rmb-eng{transition:transform 1.3s cubic-bezier(.5,0,.25,1),opacity 1s .15s}
-.inv .rmb-cardw.cc{position:absolute;left:16%;right:16%;top:14%;transition:transform 1.3s cubic-bezier(.45,0,.2,1),opacity .6s .7s}
-.inv .rmb-cardw.cc .rmb-card{aspect-ratio:5/7;padding:12% 10%}
-.inv .rmb-cardw.cc .rmb-sprig{width:48px}
-.inv .rmb-cardw.cc .rmb-names{font-size:clamp(32px,9.6cqi,40px)}
-.inv .rmb-foot{position:absolute;left:0;right:0;bottom:5.5%;z-index:6;display:flex;flex-direction:column;align-items:center;gap:13px;transition:opacity .35s}
-.inv .rmb-to{text-align:center;margin:0;text-shadow:0 1px 10px rgba(0,0,0,.9)}
-.inv .rmb-light .rmb-to{text-shadow:0 0 8px var(--sheet),0 0 16px var(--sheet)}
-.inv .rmb-light .rmb-to small{opacity:1}
-.inv .rmb-to small{display:block;font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.24em;opacity:.9}
-.inv .rmb-to b{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;font-size:23px;line-height:1.3}
-.inv .rmb-open{cursor:pointer;white-space:nowrap;padding:14px 40px;border-radius:999px;border:0;background:var(--sheet);color:var(--accent);
-  font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.24em;
-  box-shadow:0 12px 24px -8px rgba(0,0,0,.6),inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent),inset 0 0 0 4px var(--sheet),inset 0 0 0 4.6px color-mix(in srgb,var(--accent) 25%,transparent)}
-/* opening: the leaves in front drift past and out of view, the garden comes a little closer */
-.inv.opening .rmb-foot{opacity:0}
-.inv.opening .cv-rimba .rmb-bg{transform:scale(1.12)}
-.inv.opening .cv-rimba .rmb-lf.tl,.inv.opening .cv-rimba .rmb-lf.ml,.inv.opening .cv-rimba .rmb-lf.bl,.inv.opening .cv-rimba .rmb-eng.tl{transform:translateX(-40%) scale(1.7);opacity:0}
-.inv.opening .cv-rimba .rmb-lf.tr,.inv.opening .cv-rimba .rmb-lf.br,.inv.opening .cv-rimba .rmb-eng.br{transform:translateX(40%) scale(1.7);opacity:0}
-.inv.opening .rmb-cardw.cc{transform:translateY(3%) scale(1.06)}
+/* the green card, with the date in foil */
+.inv .rmb-green{position:absolute;color:var(--pagefg);border-radius:2px;
+  background:linear-gradient(150deg,rgba(255,255,255,.08),transparent 40%,rgba(0,0,0,.2)),url(assets/linen.jpg) 0 0/150px,var(--card2);background-blend-mode:normal,soft-light,normal;
+  box-shadow:inset 0 0 0 6px var(--card2),inset 0 0 0 6.6px color-mix(in srgb,var(--gold) 70%,transparent),-8px 14px 18px -6px rgba(0,0,0,.55)}
+.inv .rmb-num{margin:0;display:flex;flex-direction:column;align-items:center;font-family:"IM Fell English",serif;line-height:.92}
+.inv .rmb-num b,.inv .rmb-num small,.inv .rmb-links a{background:url(assets/foil.jpg) 0 0/140px,linear-gradient(170deg,color-mix(in srgb,var(--gold) 55%,#fff),var(--gold) 45%,color-mix(in srgb,var(--gold) 70%,#2a1a04) 80%,var(--gold));background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
+.inv .rmb-num b{font-weight:400;font-size:34px}
+.inv .rmb-num i{width:22px;height:1px;margin:4px 0 5px;background:var(--gold);opacity:.8}
+.inv .rmb-num small{font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.14em;margin-top:6px}
+
+/* the twine, the knot, the sprig and the label */
+.inv .rmb-tie{position:absolute;pointer-events:none}
+.inv .rmb-cord{position:absolute;left:83%;top:-1.5%;bottom:-12%;width:3px;border-radius:2px;
+  background:repeating-linear-gradient(160deg,color-mix(in srgb,var(--twine) 70%,#000) 0 1.2px,var(--twine) 1.2px 2.6px,color-mix(in srgb,var(--twine) 60%,#fff) 2.6px 3.2px);box-shadow:-1px 2px 2px rgba(0,0,0,.4)}
+.inv .rmb-cord.b{left:-1.5%;right:-9%;top:87%;bottom:auto;width:auto;height:3px;background:repeating-linear-gradient(70deg,color-mix(in srgb,var(--twine) 70%,#000) 0 1.2px,var(--twine) 1.2px 2.6px,color-mix(in srgb,var(--twine) 60%,#fff) 2.6px 3.2px)}
+.inv .rmb-knot{position:absolute;left:83%;top:87%;width:84px;height:63px;transform:translate(-50%,-50%);overflow:visible;filter:drop-shadow(-1px 2px 1.5px rgba(0,0,0,.45));z-index:3}
+.inv .rmb-sprig{position:absolute;pointer-events:none;height:auto;filter:drop-shadow(-2px 4px 3px rgba(0,0,0,.35))}
+.inv .rmb-tie .rmb-sprig{left:58%;top:-7%;width:52%;transform:rotate(14deg);z-index:0}
+.inv .rmb-tie .rmb-cord{z-index:2}
+.inv .rmb-label{position:absolute;left:30%;top:91%;width:76%;padding-right:20%!important;z-index:1;pointer-events:auto;cursor:pointer;border:0;transform:rotate(3deg);color:var(--ink);text-align:left;
+  display:flex;flex-direction:column;gap:2px;padding:12px 14px 11px;background:url(assets/paper.jpg) 0 0/180px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:inset 0 0 0 4px var(--sheet),inset 0 0 0 4.6px color-mix(in srgb,var(--accent) 60%,transparent),inset 0 0 0 6px var(--sheet),inset 0 0 0 6.4px color-mix(in srgb,var(--accent) 35%,transparent),-6px 10px 12px -4px rgba(0,0,0,.5)}
+.inv .rmb-label small{font-family:"IM Fell English SC",serif;font-size:9px;letter-spacing:.14em;color:var(--accent)}
+.inv .rmb-label b{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;font-size:19px;line-height:1.15;padding-bottom:3px;border-bottom:.6px dotted color-mix(in srgb,var(--ink) 50%,transparent);overflow-wrap:anywhere}
+.inv .rmb-label span{font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.16em;color:var(--accent);margin-top:4px;display:flex;align-items:center;gap:6px}
+.inv .rmb-label span::after{content:"";width:16px;height:6px;background:linear-gradient(currentColor,currentColor) left center/12px 1px no-repeat;clip-path:polygon(0 40%,70% 40%,70% 0,100% 50%,70% 100%,70% 60%,0 60%)}
+
+/* cover: the stack lies askew, left of centre */
+.inv .cv-rimba{overflow:hidden;transition:opacity .45s 1s}
+.inv .rmb-stack{position:absolute;inset:0}
+.inv .rmb-main.rcm,.inv .rmb-tie{left:4%;width:75%;top:12%;aspect-ratio:.64;transform:rotate(-4deg)}
+.inv .rmb-green.rcg{left:27%;width:70%;top:16%;aspect-ratio:.68;transform:rotate(7deg);display:flex;align-items:flex-end;justify-content:flex-end;padding:0 3.5% 20% 0}
+.inv .rmb-main.rcm,.inv .rmb-green.rcg,.inv .rmb-tie{transition:transform 1.2s cubic-bezier(.5,0,.2,1),opacity .6s}
+/* opening: the twine slips off, the two cards fan apart */
+.inv.opening .rmb-tie{transform:rotate(-4deg) translate(30%,40%);opacity:0;transition:transform .8s cubic-bezier(.5,0,.6,1),opacity .5s .15s}
+.inv.opening .rmb-main.rcm{transform:translate(-12%,-4%) rotate(-15deg)}
+.inv.opening .rmb-green.rcg{transform:translate(14%,6%) rotate(17deg)}
 .inv.opening .cv-rimba{opacity:0}
 
-/* page */
-.inv .pg-rimba{padding:48px 0 92px;gap:22px;overflow:hidden}
-.inv .pg-rimba > .rmb-cardw,.inv .pg-rimba > .rmb-pills{position:relative;z-index:5}
-.inv .pg-rimba .rmb-lf{opacity:.85}
-.inv .rmb-cardw.big{width:80%;max-width:330px}
-.inv .rmb-cardw.big .rmb-card{min-height:min(118cqi,480px);padding:16% 12% 15%}
-.inv .rmb-cardw.big .rmb-k{font-size:11.5px}
-.inv .pg-rimba .couple-ph.front{margin:2px auto 14px;box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent),0 0 0 4px var(--sheet),0 0 0 4.6px color-mix(in srgb,var(--accent) 30%,transparent)}
-.inv .rmb-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.inv .rmb-pill{flex:0 0 auto;width:auto!important;padding:12px 30px;border-radius:999px;background:var(--sheet);color:var(--accent);text-decoration:none;font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.2em;
-  box-shadow:0 10px 22px -8px rgba(0,0,0,.6),inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent)}
-.inv .rmb-pill.ghost{background:color-mix(in srgb,var(--ground) 45%,transparent);color:var(--pagefg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pagefg) 55%,transparent)}
+/* page: the cards laid out */
+.inv .pg-rimba{padding:14px 0 78px;justify-content:flex-start;overflow:hidden}
+.inv .rmb-main.rpm{position:relative;z-index:2;width:86%;max-width:350px;transform:rotate(-1.5deg)}
+.inv .rmb-main.rpm .rmb-in{position:relative;inset:auto;margin:10px;padding:14px 14px 14px}
+.inv .rmb-main.rpm .rmb-plate{width:58%}
+.inv .rmb-main.rpm .rmb-k{margin-top:10px}
+.inv .rmb-main.rpm .rmb-fern{margin:3px auto 0}
+.inv .rmb-main.rpm .rmb-names{font-size:clamp(34px,10.6cqi,42px);margin:4px 0 2px}
+.inv .rmb-date{font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.14em;margin:6px 0 0;color:var(--ink)}
+.inv .rmb-hj{font-family:"IM Fell English",serif;font-style:italic;font-size:14px;opacity:.75;margin:2px 0 0}
+.inv .rmb-ven{font-family:"IM Fell English",serif;font-style:italic;font-size:16px;margin:4px 0 0;max-width:24ch;line-height:1.25}
+.inv .rmb-bis{font-family:"Amiri",serif;font-size:17px;margin:12px 0 0;color:var(--accent)}
+.inv .pg-rimba .couple-ph.front{width:min(22%,80px);margin:10px auto 0;box-shadow:0 0 0 4px #fbfaf6,0 1px 4px 3px rgba(0,0,0,.2)}
+.inv .pg-rimba .rmb-sprig{right:-14%;top:-3%;width:50%;transform:rotate(200deg);z-index:3}
+.inv .rmb-green.rpg{position:relative;z-index:1;width:76%;max-width:310px;margin:-16px 0 0 14%;transform:rotate(2.5deg);display:flex;align-items:center;gap:14px;padding:24px 20px 12px}
+.inv .rmb-green.rpg .rmb-num{flex:none;padding-right:16px;border-right:.6px solid color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .rmb-links{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.inv .rmb-links a{font-family:"IM Fell English SC",serif;font-size:15px;letter-spacing:.1em;text-decoration:none;padding:3px 0}
 
-/* skin: deckled cream cards on the dark garden, italic headings over a fern frond */
+/* skin: plate-marked cotton cards on the moss linen */
 .fam-rimba .scroller{background:var(--ground)}
-.fam-rimba .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/pd-paint-hassam-water.jpg) 50% 60%/cover;filter:var(--bgf);opacity:.55}
-.fam-rimba .sheet{position:relative;z-index:1}
-.fam-rimba.cardsecs .sec{color:var(--ink);border-radius:0;box-shadow:none;padding-top:38px;padding-bottom:38px;
-  background:linear-gradient(150deg,rgba(255,255,255,.35),transparent 30%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
-.fam-rimba .sec h2{font-family:"IM Fell English",serif;font-style:italic;font-size:28px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.15}
+.fam-rimba .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/170px;mix-blend-mode:soft-light;opacity:.7}
+.fam-rimba.rmb-light .scroller::before{mix-blend-mode:multiply;opacity:.3}
+.fam-rimba.cardsecs .sec{color:var(--ink);border-radius:2px;padding-top:40px;padding-bottom:40px;background:url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:-8px 14px 20px -8px rgba(0,0,0,.55)}
+.fam-rimba.rmb-light.cardsecs .sec{box-shadow:-8px 14px 20px -10px rgba(40,50,30,.3)}
+.fam-rimba.cardsecs .sec::before{content:"";position:absolute;inset:11px;pointer-events:none;box-shadow:inset 1.2px 1.2px 1.5px rgba(0,0,0,.18),1px 1px 0 rgba(255,255,255,.85),inset -1px -1px 0 rgba(255,255,255,.7)}
+.fam-rimba .sec h2{font-family:"IM Fell English SC",serif;font-size:19px;letter-spacing:.18em;padding-left:.18em;text-transform:none;color:var(--accent)}
+.fam-rimba .sec .rmb-fern{margin:-6px auto 2px}
 .fam-rimba .sec .rule{display:none}
-.fam-rimba .sec > .rmb-fern{margin:6px auto 4px}
 .fam-rimba .sec,.fam-rimba .sec p,.fam-rimba .info b{color:var(--ink)}
 .fam-rimba .info,.fam-rimba .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-rimba .info > div{border-bottom:.6px solid color-mix(in srgb,var(--accent) 30%,transparent)!important;padding:13px 6px!important}
+.fam-rimba .info > div{border-bottom:.6px dotted color-mix(in srgb,var(--ink) 40%,transparent)!important;padding:13px 6px!important}
 .fam-rimba .info > div:last-child{border-bottom:0!important}
-.fam-rimba .info span{color:var(--accent);opacity:1;font-family:"IM Fell English SC",serif;letter-spacing:.2em}
-.fam-rimba .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.fam-rimba .info span{color:var(--accent);opacity:1}
 .fam-rimba .count b{font-family:"IM Fell English",serif;color:var(--accent)}
+.fam-rimba .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .fam-rimba .seg button{border-radius:999px!important}
-.fam-rimba .seg button[aria-pressed="true"],.fam-rimba button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
+.fam-rimba .seg button[aria-pressed="true"],.fam-rimba button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
 .fam-rimba .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .cv-rimba .rmb-lf,.inv .cv-rimba .rmb-bg,.inv .rmb-cardw.cc{transition:none}}
-.fam-rimba .dock{background:color-mix(in srgb,var(--sheet) 96%,transparent);border-top:1px solid color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 -8px 20px -10px rgba(0,0,0,.5)}
+.fam-rimba .dock{background:color-mix(in srgb,var(--sheet) 96%,transparent);border-top:1px solid color-mix(in srgb,var(--accent) 30%,transparent);box-shadow:0 -8px 20px -10px rgba(0,0,0,.45)}
 .fam-rimba .dock button{color:var(--ink)}
 .fam-rimba .dock svg{color:var(--accent)}
+@media (prefers-reduced-motion: reduce){.inv .rmb-main.rcm,.inv .rmb-green.rcg,.inv .rmb-tie{transition:none}}
+.fam-rimba .seg button[aria-pressed="true"],.fam-rimba button.submit{font-weight:700}
+
+.inv .rmb-green.rpg .rmb-num b{font-size:28px}

@@ -1,96 +1,120 @@
-/* ===== pergola ===== */
+/* ===== pergola: a trellis gatefold over a garden painting ===== */
 .inv .cv-pergola,.inv .pg-pergola{background:var(--ground)}
-.inv .pgl-paper{position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 22% at 50% 100%,color-mix(in srgb,#9fb58c 22%,transparent),transparent 70%),radial-gradient(70% 30% at 50% 0%,color-mix(in srgb,var(--sheet) 70%,transparent),transparent 70%)}
-.inv .pgl-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.8}
-.inv .pg-pergola .pgl-paper{position:fixed}
+.inv .pgl-ground{position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 60% at 50% 40%,rgba(255,255,255,.3),transparent 70%),var(--ground)}
+.inv .pgl-ground::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/380px;mix-blend-mode:multiply;opacity:.5}
+.inv .pg-pergola .pgl-ground{position:fixed}
+.inv .pgl-paint{position:absolute;inset:0;background:var(--art) var(--ap)/var(--az,cover) no-repeat;box-shadow:inset 0 0 18px rgba(30,25,20,.35)}
+/* cream board: paper grain, a painted edge, an engraved line printed inside */
+.inv .pgl-face{position:absolute;inset:0;background:radial-gradient(80% 50% at 30% 20%,rgba(255,255,255,.55),transparent),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 2.5px var(--edge),inset 0 0 0 3.5px rgba(255,255,255,.6)}
+.inv .pgl-rose{position:absolute;height:auto;mix-blend-mode:multiply;pointer-events:none;filter:saturate(.92)}
+.inv .pgl-eng{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.inv .pgl-eng path{fill:none;stroke:var(--edge);stroke-width:.8;vector-effect:non-scaling-stroke;opacity:.85}
+.inv .pgl-eng path.t{stroke-dasharray:1 3;stroke-linecap:round;stroke-width:1.1;opacity:.7}
 
-/* the stage: the arch's own box, 1:2 */
-.inv .pgl-stage{position:absolute;left:50%;bottom:1.2%;height:min(190cqi,97%);aspect-ratio:1/2;transform:translateX(-50%);container-type:inline-size;z-index:1}
-.inv .cv-pergola{overflow:hidden;container-type:inline-size;transition:opacity .5s 1s}
-/* the garden seen through the arch, blurred into mist */
-.inv .pgl-win{position:absolute;left:16.67%;right:16.67%;top:21.67%;bottom:2.67%;border-radius:999px 999px 0 0;overflow:hidden;z-index:0}
-.inv .pgl-art{position:absolute;inset:-6%;background-size:cover;filter:blur(.7px) saturate(.82) brightness(1.06) contrast(.9)}
-/* a couple photo: an oval portrait in a cream mat, high in the arch; the names stay on clear mist below */
-.inv .pgl-win .pgl-photo{position:absolute;z-index:1;left:50%;top:5%;height:28%;width:auto;aspect-ratio:4/5;transform:translateX(-50%);object-fit:cover;object-position:50% 30%;border-radius:50%;filter:saturate(.92) brightness(1.03);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 90%,transparent),0 0 0 6px var(--sheet),0 0 0 7px color-mix(in srgb,var(--gold) 70%,transparent),0 10px 18px -6px rgba(60,40,40,.35)}
-.inv .pgl-stage.pgl-hasph .pgl-body{top:46%;justify-content:flex-start;padding-top:6px}
-.inv .pgl-stage.pgl-hasph .pgl-mist{background:linear-gradient(180deg,color-mix(in srgb,var(--sheet) 20%,transparent) 0%,transparent 14%,color-mix(in srgb,var(--sheet) 55%,transparent) 30%,var(--sheet) 40%)}
-.inv .pgl-mist{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--sheet) 20%,transparent) 0%,transparent 18%,color-mix(in srgb,var(--sheet) 62%,transparent) 32%,color-mix(in srgb,var(--sheet) 93%,transparent) 44%,var(--sheet) 62%)}
-.inv .pgl-mist::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.5}
-/* the white timber arch */
-.inv .pgl-half{position:absolute;inset:0;z-index:2;pointer-events:none}
-.inv .pgl-arch{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.inv .pgl-half.l .pgl-arch{clip-path:inset(-5% 50% -5% -10%)}
-.inv .pgl-half.r .pgl-arch{clip-path:inset(-5% -10% -5% 50%)}
-.inv .pgl-arch .lat{fill:none;stroke:color-mix(in srgb,var(--sheet) 70%,#fff);stroke-width:1.6;stroke-linecap:round}
-.inv .pgl-arch .lat path{filter:drop-shadow(.6px .8px 0 color-mix(in srgb,var(--ink) 18%,transparent))}
-.inv .pgl-arch .solid{stroke:color-mix(in srgb,var(--ink) 16%,transparent);stroke-width:.4}
-.inv .pgl-arch .w2{stop-color:color-mix(in srgb,var(--sheet) 80%,#fff)}
-.inv .pgl-arch .w3{stop-color:color-mix(in srgb,var(--sheet) 82%,var(--ink) 18%)}
-/* climbing roses */
-.inv .pgl-f{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%) rotate(var(--r,0deg));background-repeat:no-repeat;
-  -webkit-mask-image:radial-gradient(closest-side,#000 48%,transparent 100%);mask-image:radial-gradient(closest-side,#000 48%,transparent 100%)}
-.inv .pgl-f.leaf{opacity:.9;-webkit-mask-image:radial-gradient(closest-side,#000 40%,transparent 100%);mask-image:radial-gradient(closest-side,#000 40%,transparent 100%)}
+/* ---------- cover ---------- */
+.inv .cv-pergola{overflow:hidden;transition:opacity .45s 1.2s}
+.inv .pgl-fold{position:absolute;left:7%;right:7%;top:4.5%;bottom:17%;perspective:1500px;box-shadow:0 28px 40px -18px rgba(40,30,25,.5),0 4px 10px rgba(40,30,25,.16);transition:transform 1.2s cubic-bezier(.4,0,.2,1) .35s}
+.inv .pgl-gate{position:absolute;top:0;bottom:0;width:50%;filter:drop-shadow(0 2px 2px rgba(30,25,20,.45));transition:transform 1.15s cubic-bezier(.5,0,.2,1) .25s}
+.inv .pgl-gate.l{left:0;transform-origin:0 50%}
+.inv .pgl-gate.r{right:0;transform-origin:100% 50%}
+.inv .pgl-gate .pgl-face{mask:var(--lat) 0 0/200% 100% no-repeat}
+.inv .pgl-gate.r .pgl-face{mask-position:100% 0}
+.inv .pgl-gate.l .pgl-eng{width:200%}
+.inv .pgl-gate.r .pgl-eng{width:200%;left:-100%}
+.inv .pgl-gate.l::after,.inv .pgl-gate.r::after{content:"";position:absolute;top:0;bottom:0;width:6px;pointer-events:none}
+.inv .pgl-gate.l::after{right:0;background:linear-gradient(90deg,transparent,rgba(60,40,30,.16))}
+.inv .pgl-gate.r::after{left:0;background:linear-gradient(90deg,rgba(255,255,255,.4),transparent)}
 
-/* type */
-.inv .pgl-k{font-family:"Cormorant Garamond",serif;font-size:10px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);margin:0}
-.inv .pgl-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(34px,12.5cqi,48px);line-height:1.02;color:var(--accent);margin:8px 0 8px;display:flex;flex-direction:column;align-items:center}
-.inv .pgl-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--ink);opacity:.65;line-height:1}
-.inv .pgl-names.sm{font-size:clamp(32px,11.5cqi,44px)}
-.inv .pgl-date{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--ink);margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
-.inv .pgl-date b{font-style:normal;font-size:12px;font-weight:700;letter-spacing:.28em;text-transform:uppercase}
-.inv .pgl-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--ink);margin:5px 0 0;line-height:1.25}
-.inv .pgl-time{font-family:"Cormorant Garamond",serif;font-size:13.5px;color:var(--ink);margin:4px 0 0}
-.inv .pgl-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12.5px;color:var(--ink);opacity:.7;margin:2px 0 0}
-.inv .pgl-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
-
-/* cover */
-.inv .pgl-cbody{position:absolute;left:19%;right:19%;top:47%;bottom:4.5%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .45s}
-.inv .pgl-to{margin:12px 0 0;text-align:center;color:var(--ink)}
-.inv .pgl-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
-.inv .pgl-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:22px;color:var(--accent)}
-.inv .pgl-open{margin-top:auto;border:0;cursor:pointer;padding:12px 26px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
-  box-shadow:0 8px 16px -8px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.2)}
-.inv .cv-pergola .pgl-half{transition:transform 1.4s cubic-bezier(.6,0,.25,1),opacity .9s .4s}
-.inv .cv-pergola .pgl-win{transition:left 1.4s cubic-bezier(.6,0,.25,1),right 1.4s cubic-bezier(.6,0,.25,1),top 1.4s cubic-bezier(.6,0,.25,1),bottom 1.4s cubic-bezier(.6,0,.25,1),border-radius 1.2s}
-.inv .cv-pergola .pgl-art{animation:pgDrift 30s ease-in-out infinite alternate}
-@keyframes pgDrift{from{transform:scale(1.02)}to{transform:scale(1.08) translateY(-1.5%)}}
-/* opening: the arch parts and the garden opens out */
-.inv.opening .cv-pergola .pgl-half.l{transform:translateX(-70%);opacity:0}
-.inv.opening .cv-pergola .pgl-half.r{transform:translateX(70%);opacity:0}
-.inv.opening .cv-pergola .pgl-win{left:-60%;right:-60%;top:-6%;bottom:-6%;border-radius:0}
-.inv.opening .pgl-cbody{opacity:0}
+.inv .pgl-dark .pgl-gate,.inv .pgl-dark .pgl-inside{overflow:hidden}
+/* the band: the button */
+.inv .pgl-band{position:absolute;left:-3%;right:-3%;top:50%;z-index:4;border:0;margin:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 16px 14px;text-align:center;color:var(--ink);
+  background:linear-gradient(180deg,rgba(255,255,255,.5),transparent 30%,transparent 80%,rgba(80,60,40,.06)),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 2px 0 var(--edge),inset 0 -2px 0 var(--edge),inset 0 5px 0 rgba(255,255,255,.7),inset 0 -5px 0 rgba(255,255,255,.7),inset 0 6px 0 color-mix(in srgb,var(--edge) 55%,transparent),inset 0 -6px 0 color-mix(in srgb,var(--edge) 55%,transparent),0 8px 14px -6px rgba(40,30,25,.4),0 2px 3px rgba(40,30,25,.15);
+  transition:transform .6s cubic-bezier(.5,0,.75,0),opacity .45s .1s}
+.inv .pgl-band::before,.inv .pgl-band::after{content:"";position:absolute;top:0;bottom:0;width:3%;background:linear-gradient(90deg,rgba(40,30,25,.28),transparent)}
+.inv .pgl-band::before{left:0}.inv .pgl-band::after{right:0;transform:scaleX(-1)}
+.inv .pgl-roundel{width:66px;height:66px;margin-top:-34px;margin-bottom:4px;border-radius:50%;display:flex;align-items:center;justify-content:center;gap:2px;
+  background:radial-gradient(circle,transparent 0 55%,rgba(0,0,0,.15) 56%,transparent 58%,transparent 64%,rgba(255,255,255,.5) 65%,transparent 67%),radial-gradient(circle,var(--sheet) 0 57%,transparent 58%),url(assets/foil.jpg) 0 0/140px,var(--gold);background-blend-mode:normal,normal,overlay,normal;
+  box-shadow:0 4px 8px -2px rgba(40,30,25,.45),inset 0 0 0 1px rgba(255,255,255,.4);font-family:"Cinzel",serif;color:var(--accent)}
+.inv .pgl-roundel b{font-weight:400;font-size:19px;line-height:1}
+.inv .pgl-roundel i{width:1px;height:20px;background:var(--gold);transform:rotate(20deg)}
+.inv .pgl-roundel .pgl-jw{font-family:"Amiri",serif;font-size:18px}
+.inv .pgl-k{font-family:"Cinzel",serif;font-size:clamp(9px,2.5cqi,10.5px);letter-spacing:.32em;text-transform:uppercase;color:var(--accent);padding-left:.32em;white-space:nowrap}
+.inv .pgl-bn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(36px,11.4cqi,50px);line-height:1.02;color:var(--ink);letter-spacing:-.01em;text-wrap:balance}
+.inv .pgl-bn i{font-weight:400;color:var(--accent);font-size:.7em;padding:0 .08em}
+.inv .pgl-bd{font-family:"Cinzel",serif;font-size:13px;letter-spacing:.3em;color:var(--ink);padding-left:.3em}
+.inv .pgl-go{font-family:"Cinzel",serif;font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px;margin-top:4px;white-space:nowrap}
+.inv .pgl-go::before,.inv .pgl-go::after{content:"";width:26px;height:1px;background:currentColor;opacity:.55}
+/* a tent card with the guest's name */
+.inv .pgl-place{position:absolute;left:50%;bottom:3.4%;transform:translateX(-50%) rotate(-1.2deg);width:min(66%,270px);padding:12px 14px 10px;text-align:center;color:var(--ink);display:flex;flex-direction:column;gap:2px;
+  background:linear-gradient(180deg,rgba(80,60,40,.12),transparent 14%),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 -1px 0 rgba(255,255,255,.8),0 10px 12px -8px rgba(40,30,25,.5),inset 0 0 0 1px color-mix(in srgb,var(--edge) 50%,transparent);transition:opacity .4s}
+.inv .pgl-place small{font-family:"Cinzel",serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
+.inv .pgl-place b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:21px;line-height:1.1;color:var(--accent)}
+/* opening: the band slides down off the fold, the gates swing open onto the garden */
+.inv.opening .pgl-band{transform:translateY(150%);opacity:0}
+.inv.opening .pgl-gate.l{transform:rotateY(-106deg)}
+.inv.opening .pgl-gate.r{transform:rotateY(106deg)}
+.inv.opening .pgl-place{opacity:0}
+.inv.opening .pgl-fold{transform:scale(1.06)}
 .inv.opening .cv-pergola{opacity:0}
 
-/* page: the arch with the details inside it */
-.inv .pg-pergola{padding:0;justify-content:flex-start;container-type:inline-size}
-.inv .pg-pergola .pgl-stage{position:relative;left:auto;bottom:auto;transform:none;height:auto;width:min(100%,470px);margin:6px auto 70px}
-.inv .pgl-body{position:absolute;left:19.5%;right:19.5%;top:43%;bottom:4%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.inv .pgl-pills{display:flex;gap:6px;justify-content:center;margin-top:14px}
-.inv .pgl-pill{padding:10px 16px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
-.inv .pgl-pill.ghost{background:color-mix(in srgb,var(--sheet) 70%,transparent);color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+/* ---------- page: inside the fold ---------- */
+.inv .pg-pergola{padding:14px 0 64px;justify-content:center}
+.inv .pgl-inside{position:relative;width:92%;max-width:390px;display:flex;justify-content:center;padding:30px 0 26px;box-shadow:0 0 0 2.5px var(--edge),0 22px 34px -16px rgba(40,30,25,.45)}
+.inv .pgl-side{position:absolute;top:0;bottom:0;width:8%}
+.inv .pgl-side.l{left:0}.inv .pgl-side.r{right:0}
+.inv .pgl-side .pgl-face{mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M0 0H16V16H0ZM8 1.6L14.4 8L8 14.4L1.6 8Z'/%3E%3C/svg%3E") 50% 0/14px 14px repeat;box-shadow:none}
+.inv .pgl-side.l{box-shadow:inset -3px 0 0 var(--edge)}.inv .pgl-side.r{box-shadow:inset 3px 0 0 var(--edge)}
+.inv .pgl-inside .pgl-rose{z-index:1}
+.inv .pgl-mount{position:relative;z-index:2;width:70%;padding:26px 14px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--ink);
+  background:radial-gradient(80% 40% at 30% 10%,rgba(255,255,255,.6),transparent),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 1px 1px rgba(0,0,0,.12),0 12px 20px -8px rgba(30,25,20,.45)}
+.inv .pgl-mount::before{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--edge) 75%,transparent);pointer-events:none}
+.inv .pgl-corner{position:absolute;width:30px;height:30px;background:url(assets/foil.jpg) 0 0/120px,var(--gold);background-blend-mode:overlay;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.inv .pgl-corner.tl{left:-6px;top:-6px;clip-path:polygon(0 0,100% 0,0 100%)}
+.inv .pgl-corner.tr{right:-6px;top:-6px;clip-path:polygon(0 0,100% 0,100% 100%)}
+.inv .pgl-corner.bl{left:-6px;bottom:-6px;clip-path:polygon(0 0,100% 100%,0 100%)}
+.inv .pgl-corner.br{right:-6px;bottom:-6px;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.inv .pgl-mount .pgl-k{font-size:10px}
+.inv .pgl-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(38px,11.5cqi,48px);line-height:.96;margin:0;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .pgl-names i{font-weight:400;font-size:.55em;color:var(--accent);margin:.05em 0}
+.inv .pgl-date{font-family:"Cinzel",serif;display:flex;gap:10px;align-items:center;color:var(--accent);margin:4px 0 0}
+.inv .pgl-date b{font-weight:400;font-size:24px;letter-spacing:.06em}
+.inv .pgl-date span{opacity:.6}
+.inv .pgl-day{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin:0}
+.inv .pgl-sm{font-family:"Cormorant Garamond",serif;font-size:14px;opacity:.8;margin:0}
+.inv .pgl-ven{font-family:"Cinzel",serif;font-size:12px;letter-spacing:.14em;margin:4px 0 0;line-height:1.5}
+.inv .pgl-bis{font-family:"Amiri",serif;font-size:17px;color:var(--accent);margin:0}
+.inv .pg-pergola .couple-ph{width:min(36%,112px);margin-bottom:6px;border-radius:999px 999px 4px 4px/80px 80px 4px 4px;box-shadow:0 0 0 3px var(--sheet),0 0 0 4.5px var(--edge)}
+.inv .pgl-links{display:flex;gap:5px;flex-wrap:nowrap;justify-content:center;margin-top:8px}
+.inv .pgl-links a{font-family:"Cinzel",serif;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-decoration:none;padding:8px 9px;border-radius:999px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);white-space:nowrap}
+.inv .pgl-links a:first-child{background:var(--accent);color:#fff;box-shadow:none}
 
-/* skin: arch-topped cards, a rose at the crown, a lattice rule under each heading */
+/* ---------- skin ---------- */
 .fam-pergola .scroller{background:var(--ground)}
-.fam-pergola .scroller::before{content:"";position:fixed;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.7;pointer-events:none}
-.fam-pergola.cardsecs .sec{position:relative;background:var(--sheet);color:var(--ink);border-radius:999px 999px 4px 4px/120px 120px 4px 4px;padding-top:70px!important;margin-top:34px;
-  box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px color-mix(in srgb,var(--gold) 70%,transparent),0 16px 30px -18px rgba(60,40,40,.45)}
-.fam-pergola.cardsecs .sec::before{content:"";position:absolute;left:50%;top:-26px;width:74px;height:74px;transform:translateX(-50%);background-image:var(--pgl-img);background-size:var(--pgl-size);background-position:var(--pgl-pos);background-repeat:no-repeat;
-  -webkit-mask-image:radial-gradient(closest-side,#000 50%,transparent 100%);mask-image:radial-gradient(closest-side,#000 50%,transparent 100%);pointer-events:none}
-.fam-pergola .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:36px;line-height:1.15;color:var(--accent);padding-bottom:14px;
-  background:repeating-linear-gradient(45deg,transparent 0 5px,color-mix(in srgb,var(--gold) 80%,transparent) 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,color-mix(in srgb,var(--gold) 80%,transparent) 5px 6px);
-  background-size:90px 7px;background-position:50% 100%;background-repeat:no-repeat}
+.fam-pergola .scroller::before{content:"";position:fixed;inset:0;background:url(assets/paper.jpg) 0 0/380px;mix-blend-mode:multiply;opacity:.5;pointer-events:none}
+.fam-pergola.cardsecs .sec{position:relative;overflow:hidden;color:var(--ink);padding-top:92px!important;border-radius:2px;margin:18px 14px!important;
+  background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;box-shadow:inset 0 0 0 2px var(--edge),inset 0 0 0 3px rgba(255,255,255,.6),0 14px 26px -14px rgba(40,30,25,.4)}
+.fam-pergola.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:54px;background:var(--art) var(--ap)/var(--az,cover);pointer-events:none}
+.fam-pergola.cardsecs .sec::after{content:"";position:absolute;left:0;right:0;top:0;height:54px;pointer-events:none;background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M0 0H16V16H0ZM8 1.6L14.4 8L8 14.4L1.6 8Z'/%3E%3C/svg%3E") 0 2px/18px 18px repeat-x;
+  box-shadow:inset 0 -2px 0 var(--edge)}
+.fam-pergola .sec h2{font-family:"Cinzel",serif;font-weight:400;font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);padding:0 0 18px .3em;position:relative}
+.fam-pergola .sec h2::after{content:"";position:absolute;left:50%;bottom:0;width:70px;height:9px;transform:translateX(-50%);background:var(--edge);
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 9'%3E%3Cpath d='M0 4.5H24M46 4.5H70' stroke='%23000' stroke-width='.8'/%3E%3Cpath d='M35 .5L39 4.5L35 8.5L31 4.5Z'/%3E%3Cpath d='M27 2.5L29 4.5L27 6.5L25 4.5ZM43 2.5L45 4.5L43 6.5L41 4.5Z'/%3E%3C/svg%3E") center/contain no-repeat}
 .fam-pergola .info,.fam-pergola .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-pergola .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:12px 6px!important}
+.fam-pergola .info > div{border-bottom:1px solid color-mix(in srgb,var(--edge) 45%,transparent)!important;padding:13px 6px!important}
 .fam-pergola .info > div:last-child{border-bottom:0!important}
-.fam-pergola .info span{color:var(--accent);letter-spacing:.2em}
+.fam-pergola .info span{color:var(--accent);font-family:"Cinzel",serif;font-size:10px;letter-spacing:.22em}
 .fam-pergola .count > div{background:none!important;border:0!important;box-shadow:none!important}
-.fam-pergola .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
-.fam-pergola .ibtn,.fam-pergola .seg button{border-radius:999px}
-.fam-pergola .ibtn{border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
-.fam-pergola .seg button[aria-pressed="true"],.fam-pergola button.submit{font-weight:700;background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
-.fam-pergola button.submit{border-radius:999px}
+.fam-pergola .count b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:40px;color:var(--accent)}
+.fam-pergola .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-pergola .seg button{border-radius:999px}
+.fam-pergola .seg button[aria-pressed="true"],.fam-pergola button.submit{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;font-weight:600}
+.fam-pergola button.submit{border-radius:999px;font-family:"Cinzel",serif;letter-spacing:.22em}
+.fam-pergola input,.fam-pergola select,.fam-pergola textarea{background:transparent;color:var(--ink)}
 .fam-pergola .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-pergola .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .cv-pergola .pgl-art{animation:none}.inv .cv-pergola .pgl-half,.inv .cv-pergola .pgl-win{transition:opacity .6s}}
-.fam-pergola .info span{opacity:.9}
+@media (prefers-reduced-motion: reduce){.inv .pgl-gate,.inv .pgl-band,.inv .pgl-fold{transition:none}}

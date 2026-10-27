@@ -1,93 +1,93 @@
-/* ===== hibiskus ===== */
-.inv .cv-hibiskus,.inv .pg-hibiskus{background:linear-gradient(color-mix(in srgb,var(--ground) 72%,transparent),color-mix(in srgb,var(--ground) 72%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal}
-/* the cream card, soft-pressed cotton */
-.inv .hbs-card{position:absolute;overflow:hidden;border-radius:2px;color:var(--ink);
-  background:linear-gradient(170deg,rgba(255,255,255,.35),transparent 40%,rgba(120,80,40,.05)),linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);
-  background-blend-mode:normal,normal,multiply,normal;box-shadow:0 1px 1px rgba(60,30,20,.12),0 20px 34px -16px rgba(60,30,20,.45),0 5px 10px -5px rgba(60,30,20,.2)}
-.inv .hbs-dk .hbs-card{background:linear-gradient(170deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.2)),linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,normal,multiply,normal}
-.inv .hbs-cl{position:absolute;width:74%;height:auto;aspect-ratio:1;pointer-events:none;mix-blend-mode:multiply;z-index:1}
-.inv .hbs-dk .hbs-cl{mix-blend-mode:normal}
-.inv .hbs-cl.tr{right:-6%;top:-5%;transform:scaleX(-1)}
-.inv .hbs-cl.bl{left:-6%;bottom:-5%;transform:scaleY(-1)}
-/* type */
-.inv .hbs-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--ink);opacity:.85;margin:0}
-.inv .hbs-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(44px,13.4cqi,56px);line-height:.98;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:12px 0 8px}
-.inv .hbs-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold);line-height:1;margin:2px 0 0}
-.inv .hbs-names.cv{font-size:clamp(42px,12.6cqi,52px)}
-.inv .hbs-sdate{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.3em;padding-left:.3em;color:var(--ink);margin:2px 0 0}
-.inv .hbs-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;color:var(--ink);opacity:.85;margin:5px 0 0;max-width:22ch}
-.inv .hbs-date{display:flex;flex-direction:column;align-items:center;margin:4px 0 0}
-.inv .hbs-date span{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10.5px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--accent)}
-.inv .hbs-date b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:22px;color:var(--ink);margin-top:2px}
-.inv .hbs-hj,.inv .hbs-time{font-family:"Cormorant Garamond",serif;font-size:15px;color:var(--ink);margin:4px 0 0}
-.inv .hbs-hj{font-style:italic;opacity:.75;font-size:14px}
-.inv .hbs-time{font-weight:600}
-.inv .hbs-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;line-height:1.25;color:var(--ink);text-decoration:none;margin:8px auto 0;max-width:24ch;border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);padding-bottom:2px}
-.inv .hbs-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
-.inv .hbs-cbody,.inv .hbs-body > p,.inv .hbs-names{text-shadow:0 0 8px var(--sheet),0 0 14px var(--sheet)}
+/* ===== hibiskus: a fanned stack of three pieces on silk, held by a wax seal ===== */
+.inv .hbs-silk{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .hbs-silk::before{content:"";position:absolute;inset:-20%;filter:blur(18px);
+  background:linear-gradient(122deg,transparent 10%,rgba(255,255,255,.55) 18%,transparent 26%,rgba(60,30,20,.14) 36%,transparent 44%,rgba(255,255,255,.45) 55%,transparent 63%,rgba(60,30,20,.16) 74%,transparent 82%,rgba(255,255,255,.4) 90%)}
+.inv .hbs-dk .hbs-silk::before{background:linear-gradient(122deg,transparent 10%,rgba(255,255,255,.1) 18%,transparent 26%,rgba(0,0,0,.3) 36%,transparent 44%,rgba(255,255,255,.08) 55%,transparent 63%,rgba(0,0,0,.3) 74%,transparent 82%)}
+.inv .hbs-silk::after{content:"";position:absolute;inset:0;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.5}
+.inv .hbs-pearls{position:absolute;height:auto;pointer-events:none;filter:drop-shadow(0 5px 5px rgba(30,20,10,.35))}
+.inv .hbs-face{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink);
+  background:linear-gradient(165deg,rgba(255,255,255,.4),transparent 45%,rgba(0,0,0,.04)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal}
+.inv .hbs-fl{position:absolute;height:auto;mix-blend-mode:multiply;filter:var(--flt);pointer-events:none}
+.inv .hbs-k{position:relative;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--accent)}
+.inv .hbs-names{position:relative;font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(46px,15cqi,60px);line-height:.95;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:10px 0 6px}
+.inv .hbs-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold);margin:-2px 0 2px}
+.inv .hbs-date{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;font-family:"Cormorant Garamond",serif;color:var(--ink);margin-top:6px}
+.inv .hbs-date span{flex-basis:100%;font-style:italic;font-size:15px;margin-bottom:2px}
+.inv .hbs-date b{font-weight:500;font-size:26px;letter-spacing:.04em;line-height:1}
+.inv .hbs-date i{width:5px;height:5px;transform:rotate(45deg);background:var(--accent);opacity:.8}
+.inv .hbs-cven{position:relative;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:10px;color:var(--ink)}
 
-/* cover: a folded card; the front panel folds up from the top edge */
-.inv .cv-hibiskus{overflow:hidden;transition:opacity .45s 1.05s}
-.inv .hbs-stage{position:absolute;inset:0;perspective:1200px}
-.inv .hbs-inside,.inv .cv-hibiskus .hbs-card{position:absolute;left:7%;right:7%;top:5.5%;bottom:5.5%}
-.inv .hbs-inside{overflow:hidden;border-radius:2px;background:linear-gradient(rgba(0,0,0,.08),transparent 18%),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,multiply,normal;filter:brightness(.97);box-shadow:0 20px 34px -16px rgba(60,30,20,.45)}
-.inv .cv-hibiskus .hbs-card{transform-origin:50% 0;transition:transform 1.35s cubic-bezier(.45,0,.2,1);backface-visibility:hidden}
-.inv .hbs-cbody{position:absolute;inset:27% 9% 7%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .hbs-to{margin:auto 0 0;color:var(--ink)}
-.inv .hbs-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
-.inv .hbs-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:27px;color:var(--accent)}
-.inv .hbs-open{margin-top:14px;border:0;cursor:pointer;padding:13px 32px;border-radius:999px;background:var(--accent);color:#fff;white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;box-shadow:0 10px 18px -10px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.2)}
-.inv .hbs-cbody > p:first-child + .hbs-names{margin-top:10px}
-.inv .cv-hibiskus .hbs-to:first-of-type{margin-top:auto}
-.inv .hbs-dk .hbs-open{color:#2a1418}
-.inv.opening .cv-hibiskus .hbs-card{transform:rotateX(-178deg)}
+/* cover: the stack */
+.inv .cv-hibiskus{background:var(--ground);overflow:hidden;transition:opacity .45s 1.15s}
+.inv .cv-hibiskus .hbs-pearls{width:50%;right:-12%;top:-3%;transform:rotate(-24deg)}
+.inv .hbs-stack{position:absolute;inset:0}
+.inv .hbs-c{position:absolute;width:72%;transition:transform 1.3s cubic-bezier(.45,0,.2,1),opacity .6s .75s}
+.inv .hbs-c1{left:11%;top:13%;height:52%;transform:rotate(-1.5deg);filter:drop-shadow(0 14px 14px rgba(40,20,15,.3)) drop-shadow(0 1px 2px rgba(40,20,15,.25))}
+.inv .hbs-c1 .hbs-face{padding:40% 18px 18px;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .hbs-fl.cv{width:62%;right:-17%;top:-19%;transform:rotate(-12deg)}
+/* vellum, peeking top left */
+.inv .hbs-c2{left:5%;top:9.5%;height:52%;transform:rotate(-6deg);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  background:linear-gradient(170deg,rgba(255,255,255,.62),rgba(255,255,255,.42));box-shadow:inset 0 0 0 1px rgba(255,255,255,.8),0 8px 14px -6px rgba(40,20,15,.25)}
+.inv .hbs-dk .hbs-c2{background:linear-gradient(170deg,rgba(255,255,255,.5),rgba(255,255,255,.34))}
+/* the dyed card at the back, its edge lettered with the guest's name */
+.inv .hbs-c3{left:19%;top:24%;height:58%;transform:rotate(6deg);filter:drop-shadow(0 16px 16px rgba(40,20,15,.32))}
+.inv .hbs-c3 .hbs-face{background:linear-gradient(165deg,rgba(255,255,255,.18),transparent 50%,rgba(0,0,0,.1)),url(assets/paper.jpg) 0 0/260px,var(--back);background-blend-mode:normal,multiply,normal;justify-content:flex-end;padding:0 16px 7%;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .hbs-to{align-self:flex-end;text-align:right;color:#fff;max-width:72%;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.inv .hbs-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:8.5px;letter-spacing:.28em;text-transform:uppercase;opacity:.92}
+.inv .hbs-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:30px;line-height:1.05}
+/* the wax seal holding the stack */
+.inv .hbs-seal{position:absolute;left:4%;top:57%;width:30%;border:0;padding:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;z-index:5;transition:opacity .4s,transform .5s}
+.inv .hbs-seal img{width:78%;height:auto;filter:drop-shadow(0 6px 6px rgba(30,15,10,.4));transform:rotate(-12deg)}
+.inv .hbs-seal span{margin-top:-8px;padding:7px 12px;background:var(--sheet);color:var(--accent);font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;border-radius:999px;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),0 5px 10px -3px rgba(30,15,10,.35)}
+/* opening: the seal lifts, the stack fans apart */
+.inv.opening .hbs-seal{opacity:0;transform:translateY(-10px) scale(.92)}
+.inv.opening .hbs-c1{transform:translate(-30%,-6%) rotate(-22deg);opacity:0}
+.inv.opening .hbs-c2{transform:translate(-50%,-10%) rotate(-34deg);opacity:0}
+.inv.opening .hbs-c3{transform:translate(34%,6%) rotate(24deg);opacity:0}
 .inv.opening .cv-hibiskus{opacity:0}
 
-/* page: the inside of the card */
-.inv .pg-hibiskus{padding:0;justify-content:flex-start}
-.inv .pg-hibiskus .hbs-card{position:relative;margin:18px 16px 86px;width:calc(100% - 32px);min-height:690px}
-.inv .pg-hibiskus .hbs-cl{width:70%}
-.inv .hbs-body{position:relative;z-index:3;padding:190px 11% 200px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .hbs-ph{display:none}
-.inv .hbs-ph.on{display:block;width:44%;aspect-ratio:4/5;border-radius:50% 50% 8px 8px/36% 36% 8px 8px;overflow:hidden;margin:-70px auto 16px;box-shadow:0 0 0 5px var(--sheet),0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent),0 12px 22px -12px rgba(0,0,0,.4)}
-.inv .hbs-ph img{width:100%;height:100%;object-fit:cover;display:block}
-.inv .hbs-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
-.inv .hbs-pill{flex:0 0 auto;width:auto!important;padding:11px 22px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
-.inv .hbs-dk .hbs-pill{color:#2a1418}
-.inv .hbs-pill.ghost{background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+/* page: the pieces laid out */
+.inv .pg-hibiskus{background:var(--ground);color:var(--ink);padding:22px 0 84px;overflow:hidden;justify-content:flex-start}
+.inv .pg-hibiskus > :not(.hbs-silk):not(.hbs-pearls){position:relative;z-index:2}
+.inv .pg-hibiskus .hbs-pearls{width:60%;left:-24%;bottom:-4%;transform:rotate(150deg)}
+.inv .hbs-main{width:84%;max-width:340px;transform:rotate(-1.5deg);filter:drop-shadow(0 14px 14px rgba(40,20,15,.3))}
+.inv .hbs-main .hbs-face{position:relative;min-height:290px;padding:92px 18px 36px;justify-content:flex-start;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .hbs-fl.pg{width:54%;right:-11%;top:-15%;transform:rotate(-10deg)}
+.inv .pg-hibiskus .hbs-names{font-size:clamp(42px,13cqi,52px);margin:6px 0 2px}
+.inv .pg-hibiskus .hbs-date b{font-size:23px}
+.inv .hbs-bis{position:relative;font-family:"Amiri",serif;font-size:15px;color:var(--accent);margin-bottom:6px}
+.inv .hbs-hj{position:relative;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8;margin-top:6px}
+.inv .pg-hibiskus .couple-ph.front{position:relative;width:70px;height:86px;border-radius:50%;overflow:hidden;margin:0 0 8px;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--gold)}
+.inv .pg-hibiskus .couple-ph.front img{width:100%;height:100%;object-fit:cover}
+.inv .hbs-low{position:relative;width:88%;max-width:350px;height:178px;margin-top:-16px}
+.inv .hbs-vel{position:absolute;z-index:2;left:2%;right:14%;top:0;padding:20px 18px 18px;transform:rotate(2.5deg);text-align:center;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  background:linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.55));box-shadow:inset 0 0 0 1px rgba(255,255,255,.85),0 8px 14px -6px rgba(40,20,15,.25)}
+.inv .hbs-time{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
+.inv .hbs-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:18px;color:var(--ink);margin-top:4px;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 40%,transparent);text-underline-offset:4px}
+.inv .hbs-cor{position:absolute;z-index:1;right:0;left:20%;top:62px;height:112px;transform:rotate(-3deg);display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:0 12px 14px;
+  background:url(assets/paper.jpg) 0 0/240px,var(--back);background-blend-mode:multiply;-webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .hbs-cor a{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--accent);background:var(--sheet);padding:10px 15px;border-radius:999px}
 
-/* skin: cream cards with a bloom tucked into the top right corner, script headings */
-.fam-hibiskus .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 72%,transparent),color-mix(in srgb,var(--ground) 72%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal}
-.fam-hibiskus.cardsecs .sec{position:relative;overflow:hidden;border-radius:2px;color:var(--ink);
-  background:linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  box-shadow:0 16px 28px -14px rgba(60,30,20,.4),0 1px 2px rgba(0,0,0,.08)}
-.fam-hibiskus.hbs-dk.cardsecs .sec{background:linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet)}
-.fam-hibiskus.cardsecs .sec::before{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;background:var(--hbs-bloom) center/contain no-repeat;transform:scaleX(-1);mix-blend-mode:multiply;pointer-events:none}
-.fam-hibiskus.hbs-dk.cardsecs .sec::before{mix-blend-mode:normal}
+/* skin: cream cards with a dyed edge and an engraved hibiscus */
+.fam-hibiskus .scroller{background:var(--ground)}
+.fam-hibiskus .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.4}
+.fam-hibiskus.cardsecs .sec{position:relative;overflow:hidden;color:var(--ink);border-radius:2px;border-left:6px solid var(--back);
+  background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;box-shadow:0 14px 22px -12px rgba(40,20,15,.35),0 1px 2px rgba(40,20,15,.12)}
+.fam-hibiskus.cardsecs .sec::before{content:"";position:absolute;right:-18px;top:-14px;width:96px;height:118px;background:var(--accent);opacity:.2;transform:rotate(-14deg);
+  -webkit-mask:var(--hbs-eng) center/contain no-repeat;mask:var(--hbs-eng) center/contain no-repeat;pointer-events:none}
 .fam-hibiskus.cardsecs .sec > *{position:relative}
-.fam-hibiskus .sec h2{font-family:"Great Vibes",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:38px;color:var(--accent);line-height:1.15}
-.fam-hibiskus .sec h2::after{content:"";display:block;width:64px;height:1px;margin:8px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.fam-hibiskus .sec h2{font-family:"Great Vibes",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:38px;line-height:1.1;color:var(--accent)}
+.fam-hibiskus .sec h2::after{content:"";display:block;width:84px;height:5px;margin:6px auto 0;background:linear-gradient(45deg,transparent 40%,var(--accent) 41% 59%,transparent 60%) center/5px 5px no-repeat,linear-gradient(var(--gold),var(--gold)) left center/34px 1px no-repeat,linear-gradient(var(--gold),var(--gold)) right center/34px 1px no-repeat}
+.fam-hibiskus .sec .rule{display:none}
 .fam-hibiskus .info,.fam-hibiskus .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-hibiskus .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 35%,transparent)!important;padding:13px 6px!important}
+.fam-hibiskus .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:13px 6px!important}
 .fam-hibiskus .info > div:last-child{border-bottom:0!important}
-.fam-hibiskus .info span{color:var(--accent);letter-spacing:.2em}
+.fam-hibiskus .info span{color:var(--accent);font-weight:600;letter-spacing:.24em}
 .fam-hibiskus .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
-.fam-hibiskus .seg button[aria-pressed="true"],.fam-hibiskus button.submit{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
-.fam-hibiskus.hbs-dk .seg button[aria-pressed="true"],.fam-hibiskus.hbs-dk button.submit{color:#2a1418!important}
-.fam-hibiskus.hbs-dk input,.fam-hibiskus.hbs-dk select,.fam-hibiskus.hbs-dk textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-hibiskus .seg button[aria-pressed="true"],.fam-hibiskus button.submit{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;font-weight:700}
 .fam-hibiskus button.submit{border-radius:999px}
 .fam-hibiskus .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-hibiskus .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .cv-hibiskus .hbs-card{transition:opacity .6s}.inv.opening .cv-hibiskus .hbs-card{transform:none;opacity:0}}
-.inv .hbs-cven + .hbs-open,.inv .hbs-sdate + .hbs-open{margin-top:auto}
-/* cover composition: a big spray top right, a smaller one bottom left; the greeting and button sit bottom right */
-.inv .cv-hibiskus .hbs-cl.tr{width:84%;right:-3%;top:-3%}
-.inv .cv-hibiskus .hbs-cl.bl{width:64%;left:-4%;bottom:-3%}
-.inv .cv-hibiskus .hbs-cbody{inset:31% 8% 6.5%}
-.inv .cv-hibiskus .hbs-to,.inv .cv-hibiskus .hbs-open{align-self:flex-end}
-.inv .cv-hibiskus .hbs-to{text-align:right;padding-right:4px}
-.fam-hibiskus .sec .rule{display:none}
-.fam-hibiskus .seg button[aria-pressed="true"],.fam-hibiskus button.submit{font-weight:700}
-.inv .hbs-inside .hbs-cl{width:84%;right:-3%;top:-3%;opacity:.9}
+@media (prefers-reduced-motion: reduce){.inv .hbs-c{transition:opacity .5s}.inv.opening .hbs-c1,.inv.opening .hbs-c2,.inv.opening .hbs-c3{transform:none}}

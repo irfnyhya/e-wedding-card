@@ -1,71 +1,91 @@
-/* ===== pulau ===== */
-.inv .cv-pulau,.inv .pg-pulau{background:linear-gradient(color-mix(in srgb,var(--ground) 70%,transparent),color-mix(in srgb,var(--ground) 70%,transparent)),url(assets/linen.jpg) 0 0/250px,var(--ground);background-blend-mode:normal,multiply,normal}
-/* cold-pressed watercolour paper with a deckled edge */
-.inv .pul-card{position:absolute;inset:5% 7.5% 6%;color:var(--ink);overflow:hidden;
-  background:linear-gradient(color-mix(in srgb,var(--sheet) 55%,transparent),color-mix(in srgb,var(--sheet) 55%,transparent)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.14)) drop-shadow(0 18px 18px rgba(30,25,15,.3))}
-.inv .pul-scene{position:absolute;left:0;top:0;width:100%;height:auto;aspect-ratio:400/300;mix-blend-mode:multiply;pointer-events:none}
-.inv .pul-card::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.35;pointer-events:none}
-/* type */
-.inv .pul-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.38em;padding-left:.38em;text-transform:uppercase;color:var(--accent);margin:0}
-.inv .pul-names{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(32px,10cqi,42px);line-height:1.04;color:var(--ink);letter-spacing:.01em;
-  display:flex;flex-direction:column;align-items:center;margin:12px 0 6px}
-.inv .pul-names i{font-family:"Bodoni Moda",serif;font-style:italic;font-size:.5em;color:var(--accent);margin:2px 0 1px;line-height:1.1}
-.inv .pul-names.cv{font-size:clamp(30px,9.4cqi,40px)}
-.inv .pul-wave{display:block;width:72px;height:7px;margin:6px auto 10px;background:var(--pul-wave,none) center/100% 100% no-repeat;opacity:.9}
-.inv .cv-pulau .pul-wave,.inv .pg-pulau .pul-wave{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 60%,transparent),transparent) center/100% 1px no-repeat}
-.inv .pul-date{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.3em;padding-left:.3em;color:var(--accent);margin:0}
-.inv .pul-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--ink);opacity:.85;margin:5px 0 0;max-width:24ch}
-.inv .pul-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin:6px 0 0}
-.inv .pul-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+/* ===== pulau: a fine-art plate card, folded, full screen ===== */
+.inv .pul-stock{position:absolute;inset:0;background:radial-gradient(ellipse 120% 80% at 70% 20%,rgba(255,255,255,.28),transparent 60%),linear-gradient(180deg,transparent 60%,rgba(0,0,0,.05)),url(assets/paper.jpg) 0 0/320px,var(--stock);background-blend-mode:normal,normal,multiply,normal}
+.inv .pul-dk .pul-stock,.inv .cv-pulau.pul-dk .pul-stock{background:radial-gradient(ellipse 120% 80% at 70% 20%,rgba(255,255,255,.07),transparent 60%),url(assets/paper.jpg) 0 0/320px,var(--stock);background-blend-mode:normal,multiply,normal}
+.inv .pul-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:var(--accent)}
+.inv .pul-names{font-family:"Bodoni Moda",serif;font-weight:400;color:var(--accent);line-height:.98;letter-spacing:-.01em;display:flex;flex-direction:column;align-items:flex-start;text-align:left;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.inv .pul-dk .pul-names{text-shadow:0 1px 1px rgba(0,0,0,.45)}
+.inv .pul-names i{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;font-size:.62em;color:var(--gold);margin-right:.18em}
 
-/* cover */
-.inv .cv-pulau{overflow:hidden;transition:opacity .45s .95s}
-.inv .cv-pulau .pul-card{transition:transform 1.3s cubic-bezier(.55,0,.3,1)}
-.inv .pul-cbody{position:absolute;left:9%;right:9%;top:43%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .pul-foot{position:absolute;left:0;right:0;bottom:6%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px}
-.inv .pul-to{text-align:center;margin:0;color:var(--ink)}
-.inv .pul-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
-.inv .pul-to b{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;font-size:19px;color:var(--accent)}
-.inv .pul-open{border:0;cursor:pointer;padding:13px 34px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;box-shadow:0 10px 18px -10px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.18)}
-/* opening: the card glides down off the table */
-.inv.opening .cv-pulau .pul-card{transform:translateY(112%) rotate(4deg)}
+/* cover: the front of the fold */
+.inv .cv-pulau{background:var(--ground);overflow:hidden;perspective:1500px;transition:opacity .45s 1.05s}
+.inv .pul-inside{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px,var(--sheet);background-blend-mode:multiply}
+.inv .pul-front{position:absolute;inset:0;transform-origin:0 50%;transform-style:preserve-3d;transition:transform 1.35s cubic-bezier(.5,0,.25,1),box-shadow 1.35s;box-shadow:0 0 0 rgba(0,0,0,0)}
+.inv .pul-spine{position:absolute;left:0;top:0;bottom:0;width:16px;background:linear-gradient(90deg,rgba(0,0,0,.16),rgba(0,0,0,.04) 40%,rgba(255,255,255,.18) 70%,transparent)}
+.inv .pul-head{position:absolute;left:11%;right:9%;top:8.2%;display:flex;justify-content:space-between;align-items:baseline}
+.inv .pul-no{font-family:"Bodoni Moda",serif;font-style:italic;font-size:12px;color:var(--ink);opacity:.75}
+/* the plate mark: a shallow bed pressed into the card */
+.inv .pul-mark{position:absolute;left:9%;right:9%;top:12.5%;height:41%;background:rgba(0,0,0,.022);
+  box-shadow:inset 1px 1.5px 1px rgba(0,0,0,.16),inset -1px -1px 0 rgba(255,255,255,.75),0 1px 0 rgba(255,255,255,.55),0 -1px 0 rgba(0,0,0,.05)}
+.inv .pul-dk .pul-mark{background:rgba(0,0,0,.12);box-shadow:inset 1px 1.5px 2px rgba(0,0,0,.5),inset -1px -1px 0 rgba(255,255,255,.1),0 1px 0 rgba(255,255,255,.07)}
+.inv .pul-plate{position:absolute;inset:16px;background:url(assets/pd-paint-hassam-island.jpg) 50% 38%/cover;border:5px solid #fbf8f0;
+  box-shadow:0 1px 1px rgba(0,0,0,.25),0 7px 12px -5px rgba(0,0,0,.35)}
+.inv .pul-plate::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);background:linear-gradient(160deg,rgba(255,255,255,.12),transparent 40%)}
+/* gilt photo corners */
+.inv .pul-c{position:absolute;width:30px;height:30px;background:url(assets/foil.jpg) 0 0/120px,linear-gradient(135deg,color-mix(in srgb,var(--gold) 60%,#fff),var(--gold) 50%,color-mix(in srgb,var(--gold) 70%,#000));background-blend-mode:overlay;
+  filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.35))}
+.inv .pul-c::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 46%,rgba(255,255,255,.55) 49%,transparent 53%)}
+.inv .pul-c.tl{left:9px;top:9px;clip-path:polygon(0 0,100% 0,0 100%)}
+.inv .pul-c.tr{right:9px;top:9px;clip-path:polygon(0 0,100% 0,100% 100%);transform:none}
+.inv .pul-c.bl{left:9px;bottom:9px;clip-path:polygon(0 0,100% 100%,0 100%)}
+.inv .pul-c.br{right:9px;bottom:9px;clip-path:polygon(100% 0,100% 100%,0 100%)}
+/* pencil under the plate, as a print is signed */
+.inv .pul-pencil{position:absolute;left:11%;right:11%;top:55%;display:flex;justify-content:space-between;gap:12px;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:#66625c;letter-spacing:.02em}
+.inv .pul-dk .pul-pencil{color:#b8b2a6}
+.inv .pul-pencil span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inv .pul-pencil span:last-child{white-space:nowrap}
+.inv .pul-names.cv{position:absolute;left:10%;right:8%;top:61.5%;font-size:clamp(44px,15cqi,62px)}
+.inv .pul-foot{position:absolute;left:10%;right:8%;bottom:6.5%;display:flex;justify-content:space-between;align-items:flex-end;gap:14px}
+.inv .pul-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;line-height:1.25;color:var(--ink);max-width:48%;text-align:left}
+.inv .pul-open{flex:0 0 auto;border:0;cursor:pointer;padding:14px 22px;border-radius:999px;background:var(--accent);color:var(--stock);font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.26em;text-transform:uppercase;white-space:nowrap;
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 8px 16px -6px rgba(0,0,0,.4)}
+.inv .pul-dk .pul-open,.inv .cv-pulau.pul-dk .pul-open{color:var(--ground)}
+/* opening: the front swings open on the fold */
+.inv.opening .pul-front{transform:rotateY(-104deg);box-shadow:30px 0 60px rgba(0,0,0,.25)}
 .inv.opening .cv-pulau{opacity:0}
 
-/* page */
-.inv .pg-pulau{padding:0;justify-content:flex-start}
-.inv .pg-pulau .pul-card{position:relative;inset:auto;margin:16px 16px 86px;width:calc(100% - 32px);min-height:660px}
-.inv .pul-body{position:relative;z-index:3;padding:62% 10% 36px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .pul-ph{display:none}
-.inv .pul-ph.on{display:block;width:46%;aspect-ratio:1;border-radius:50%;overflow:hidden;margin:-22% auto 16px;box-shadow:0 0 0 5px var(--sheet),0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent),0 12px 22px -12px rgba(0,0,0,.45)}
-.inv .pul-ph img{width:100%;height:100%;object-fit:cover;display:block}
-.inv .pul-when{display:flex;flex-direction:column;align-items:center;gap:2px;margin:2px 0 0}
-.inv .pul-when span{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:600;letter-spacing:.28em;padding-left:.28em;text-transform:uppercase;color:var(--accent)}
-.inv .pul-when b{font-family:"Bodoni Moda",serif;font-weight:400;font-size:19px;color:var(--ink);margin:2px 0}
-.inv .pul-ven{display:block;margin:14px auto 0;max-width:26ch;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:18px;line-height:1.25;color:var(--ink);text-decoration:none}
-.inv .pul-ven small{display:block;font-style:normal;font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
-.inv .pul-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:24px}
-.inv .pul-pill{flex:0 0 auto;width:auto!important;padding:11px 22px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
-.inv .pul-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+/* page: the inside of the fold */
+.inv .pg-pulau{background:var(--stock);color:var(--ink);padding:40px 0 92px;justify-content:center;align-items:stretch;overflow:hidden}
+.inv .pg-pulau > .pul-stock{background-color:var(--sheet)}
+.inv .pul-strip{position:absolute;left:0;top:0;bottom:0;width:15%;background:url(assets/pd-paint-hassam-island.jpg) 30% 50%/auto 100%;box-shadow:inset -1px 0 0 rgba(0,0,0,.15)}
+.inv .pul-flap{position:absolute;left:15%;top:0;bottom:0;width:22px;background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(0,0,0,.05) 50%,transparent)}
+.inv .pul-in{position:relative;z-index:2;margin-left:15%;padding:0 22px 0 30px;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.inv .pg-pulau .pul-names{font-size:clamp(44px,14cqi,58px);margin:14px 0 20px}
+.inv .pul-big{display:flex;align-items:flex-end;gap:12px;color:var(--accent);padding:14px 0 12px;border-top:1px solid color-mix(in srgb,var(--gold) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 60%,transparent);width:100%}
+.inv .pul-big b{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(64px,21cqi,86px);line-height:.8;letter-spacing:-.03em}
+.inv .pul-big b i{font-style:normal;color:var(--gold);margin:0 .02em}
+.inv .pul-big span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;line-height:1.2;color:var(--ink);padding-bottom:4px}
+.inv .pul-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8;margin-top:8px}
+.inv .pul-meta{margin-top:16px;display:flex;flex-direction:column;gap:10px;width:100%}
+.inv .pul-meta p{font-family:"Cormorant Garamond",serif;font-size:17px;line-height:1.25}
+.inv .pul-meta small{display:block;font-weight:600;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.inv .pul-meta a{color:inherit;font-style:italic;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--gold) 60%,transparent);text-underline-offset:4px}
+.inv .pul-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.inv .pul-pill{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;padding:12px 20px;border-radius:999px;background:var(--accent);color:var(--stock)}
+.inv .pul-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 60%,transparent)}
+.inv .pul-dk .pul-pill:not(.ghost){color:var(--ground)}
+.inv .pul-bis{font-family:"Amiri",serif;font-size:17px;color:var(--accent);margin-bottom:10px}
+.inv .pg-pulau .couple-ph.front{width:132px;aspect-ratio:4/5;margin:0 0 14px;border:5px solid #fbf8f0;box-shadow:0 7px 12px -5px rgba(0,0,0,.35);border-radius:0;overflow:hidden}
+.inv .pg-pulau .couple-ph.front img{width:100%;height:100%;object-fit:cover;border-radius:0}
 
-/* skin: paper cards washed with turquoise along the top, Bodoni italic headings and a wave rule */
-.fam-pulau .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 70%,transparent),color-mix(in srgb,var(--ground) 70%,transparent)),url(assets/linen.jpg) 0 0/250px,var(--ground);background-blend-mode:normal,multiply,normal}
-.fam-pulau.cardsecs .sec{position:relative;overflow:hidden;border-radius:2px;color:var(--ink);padding-top:44px;
-  background:var(--pul-wash) top/100% 58px no-repeat,linear-gradient(color-mix(in srgb,var(--sheet) 55%,transparent),color-mix(in srgb,var(--sheet) 55%,transparent)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply,normal,multiply,normal;
-  box-shadow:0 16px 26px -14px rgba(30,25,15,.38),0 1px 2px rgba(0,0,0,.08)}
-.fam-pulau .sec h2{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:.01em;font-size:27px;color:var(--accent);line-height:1.2}
-.fam-pulau .sec h2::after{content:"";display:block;width:72px;height:7px;margin:10px auto 0;background:var(--pul-wave) center/100% 100% no-repeat}
+/* skin: plate-marked cards, Didone headings with a roman number */
+.fam-pulau .scroller{background:url(assets/paper.jpg) 0 0/320px,var(--stock);background-blend-mode:multiply;counter-reset:pulsec}
+.fam-pulau.cardsecs .sec{counter-increment:pulsec;color:var(--ink);border-radius:0;background:url(assets/paper.jpg) 0 0/320px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:inset 0 0 0 12px var(--sheet),inset 1px 1px 0 12px rgba(0,0,0,.12),inset -1px -1px 0 12px rgba(255,255,255,.7),0 1px 2px rgba(0,0,0,.12),0 14px 24px -14px rgba(0,0,0,.35)}
+.fam-pulau.pul-dk.cardsecs .sec{box-shadow:inset 0 0 0 12px var(--sheet),inset 1px 1px 1px 12px rgba(0,0,0,.45),inset -1px -1px 0 12px rgba(255,255,255,.08),0 14px 24px -14px rgba(0,0,0,.6)}
+.fam-pulau .sec h2{font-family:"Bodoni Moda",serif;font-weight:400;text-transform:none;letter-spacing:0;font-size:27px;line-height:1.1;color:var(--accent)}
+.fam-pulau .sec h2::before{content:counter(pulsec,lower-roman) ".";display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--gold);margin-bottom:4px}
+.fam-pulau .sec h2::after{content:"";display:block;width:36px;height:1px;background:var(--gold);margin:12px auto 0}
+.fam-pulau .sec .rule{display:none}
 .fam-pulau .info,.fam-pulau .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-pulau .info > div{border-bottom:1px solid color-mix(in srgb,var(--accent) 22%,transparent)!important;padding:13px 6px!important}
+.fam-pulau .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:13px 6px!important}
 .fam-pulau .info > div:last-child{border-bottom:0!important}
-.fam-pulau .info span{color:var(--accent);letter-spacing:.2em}
+.fam-pulau .info span{color:var(--accent);font-weight:600;letter-spacing:.26em}
+.fam-pulau .count b{font-family:"Bodoni Moda",serif;font-weight:400;color:var(--accent)}
 .fam-pulau .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
-.fam-pulau .seg button[aria-pressed="true"],.fam-pulau button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
+.fam-pulau .seg button[aria-pressed="true"],.fam-pulau button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;font-weight:700}
+.fam-pulau.pul-dk .seg button[aria-pressed="true"],.fam-pulau.pul-dk button.submit{color:var(--ground)!important}
+.fam-pulau.pul-dk input,.fam-pulau.pul-dk select,.fam-pulau.pul-dk textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
 .fam-pulau button.submit{border-radius:999px}
 .fam-pulau .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-pulau .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .cv-pulau .pul-card{transition:none}.inv.opening .cv-pulau .pul-card{transform:none}}
-.fam-pulau .sec .rule{display:none}
-.fam-pulau .seg button[aria-pressed="true"],.fam-pulau button.submit{font-weight:700}
+@media (prefers-reduced-motion: reduce){.inv .pul-front{transition:opacity .6s}.inv.opening .pul-front{transform:none;opacity:0}}

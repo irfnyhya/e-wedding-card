@@ -1,95 +1,126 @@
-/* ===== dongeng ===== */
-.inv .cv-dongeng,.inv .pg-dongeng{background:var(--ground);color:var(--pagefg)}
-/* the book's cloth cover */
-.inv .dg-cloth{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 85% 65% at 50% 40%,rgba(255,255,255,.1),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.3)),var(--ground)}
-.inv .dg-cloth::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+/* ===== dongeng: paper toy theatre ===== */
+.inv .dg-back{position:absolute;background:var(--art) var(--artpos)/cover no-repeat}
+.inv .dg-back::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.15}
+.inv .dg-wing{position:absolute;height:auto;pointer-events:none;mix-blend-mode:multiply}
+.inv .dg-drape{position:absolute;background:repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0,rgba(255,255,255,.1) 2.4cqi,rgba(0,0,0,.05) 4cqi,rgba(0,0,0,.3) 5.4cqi),url(assets/velvet.jpg) 0 0/160px,var(--curtain);background-blend-mode:normal,soft-light,normal;
+  -webkit-mask:var(--drape) 0 0/100% 100% no-repeat;mask:var(--drape) 0 0/100% 100% no-repeat}
+.inv .dg-drape.r{transform:scaleX(-1)}
+.inv .dg-pelmet{position:absolute;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,rgba(255,255,255,.12) 70%,rgba(0,0,0,.2)),url(assets/velvet.jpg) 0 0/160px,var(--curtain);background-blend-mode:normal,soft-light,normal;
+  -webkit-mask:linear-gradient(#000,#000) 0 0/100% calc(100% - 3cqi) no-repeat,var(--scal) 0 100%/6cqi 3cqi repeat-x;mask:linear-gradient(#000,#000) 0 0/100% calc(100% - 3cqi) no-repeat,var(--scal) 0 100%/6cqi 3cqi repeat-x}
+.inv .dg-pelmet::after{content:"";position:absolute;left:0;right:0;bottom:3.6cqi;height:1.2cqi;background:repeating-linear-gradient(90deg,var(--gold) 0 1px,transparent 1px 2.4px),linear-gradient(var(--gold),var(--gold)) 0 0/100% 2px no-repeat;opacity:.9}
+.inv .dg-names{font-family:"IM Fell English",serif;font-weight:400;line-height:1;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .dg-names em{font-style:italic;font-size:.4em;color:var(--ink);opacity:.75;margin:.18em 0 .12em}
+.inv .dg-tale{font-family:"IM Fell English",serif;font-style:italic;font-size:3.6cqi;color:var(--ink);opacity:.85}
+.inv .dg-fl{display:block;width:13cqi;height:auto;margin:2.4cqi auto 1.6cqi;color:var(--gold)}
+.inv .dg-date{font-family:"IM Fell English SC",serif;font-size:3.4cqi;letter-spacing:.1em;color:var(--ink)}
+/* the hanging paper banner */
+.inv .dg-banner{position:relative;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.inv .dg-thread{position:absolute;bottom:100%;width:1px;height:60cqi;background:linear-gradient(180deg,transparent,rgba(40,30,20,.7) 20%)}
+.inv .dg-thread.l{left:14%}.inv .dg-thread.r{right:14%}
+.inv .dg-bin{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:6cqi 5cqi 10cqi;color:var(--ink);
+  background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.55),transparent 65%),url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 5cqi),0 100%)}
+.inv .dg-bin::before{content:"";position:absolute;inset:2cqi 2cqi 7.4cqi;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);outline:.5px solid color-mix(in srgb,var(--gold) 50%,transparent);outline-offset:-3px;pointer-events:none}
+.inv .dg-bin::after{content:"";position:absolute;left:2cqi;right:2cqi;bottom:2cqi;height:5.4cqi;pointer-events:none;
+  background:linear-gradient(to top right,transparent calc(50% - .5px),color-mix(in srgb,var(--gold) 80%,transparent) 50%,transparent calc(50% + .5px)) 0 0/50% 100% no-repeat,linear-gradient(to top left,transparent calc(50% - .5px),color-mix(in srgb,var(--gold) 80%,transparent) 50%,transparent calc(50% + .5px)) 100% 0/50% 100% no-repeat}
 
-/* the parchment page */
-.inv .dg-page{position:relative;container-type:inline-size;display:flex;flex-direction:column;color:var(--ink);
-  background:radial-gradient(ellipse 80% 75% at 55% 45%,transparent 55%,rgba(150,100,40,.22) 100%),url(assets/paper.jpg) 0 0/220px,var(--parch);background-blend-mode:multiply,multiply,normal}
-.inv .dg-top,.inv .dg-bot{display:block;width:100%;height:auto;position:relative;z-index:1;overflow:visible}
-.inv .dg-top{margin-bottom:-1px}.inv .dg-bot{margin-top:-1px}
-.inv .dg-mid{display:grid;grid-template-columns:16.667% 1fr 16.667%;position:relative}
-.inv .dg-side{display:block;background:var(--dgl) 0 0/100% auto repeat-y}
-.inv .dg-side.r{background-image:var(--dgr)}
-.inv .dg-in{position:relative;z-index:2}
-.inv .dg-gutter{position:absolute;left:0;top:0;bottom:0;width:9%;pointer-events:none;z-index:3;background:linear-gradient(90deg,rgba(70,45,20,.28),rgba(70,45,20,.08) 40%,transparent)}
-
-/* type */
-.inv .dg-tale{position:relative;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;line-height:1.4;text-align:left;color:var(--ink);margin:0 0 12px;max-width:100%}
-.inv .dg-init{float:left;position:relative;width:46px;height:46px;margin:3px 9px 0 0;filter:drop-shadow(0 1px 1px rgba(60,40,20,.3))}
-.inv .dg-init svg{position:absolute;inset:0;width:100%;height:100%}
-.inv .dg-init b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Uncial Antiqua",serif;font-style:normal;font-weight:400;font-size:32px;line-height:1;padding-top:2px;
-  background:url(assets/foil.jpg) 0 0/120px,linear-gradient(180deg,#f6e3a2,#c99a40 55%,#9a6a22);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))}
-.inv .dg-k{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin:0;clear:both}
-.inv .dg-names{font-family:"Uncial Antiqua",serif;font-weight:400;color:var(--accent);line-height:1.08;display:flex;flex-direction:column;align-items:center;margin:8px 0 2px;font-size:clamp(26px,9cqi,36px);overflow-wrap:anywhere}
-.inv .dg-names em{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold);margin:1px 0}
-.inv .dg-rule{display:block;position:relative;width:90px;height:10px;margin:8px auto;background:linear-gradient(90deg,transparent,var(--gold) 30%,transparent 44%,transparent 56%,var(--gold) 70%,transparent) center/100% 1px no-repeat}
-.inv .dg-rule::before,.inv .dg-rule::after{content:"";position:absolute;top:50%;width:5px;height:5px;border-radius:50%;transform:translate(-50%,-50%)}
-.inv .dg-rule::before{left:42%;background:var(--red)}.inv .dg-rule::after{left:58%;background:var(--blue)}
-.inv .dg-date{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.28em;color:var(--ink);margin:0}
-
-.inv .dg-pair{display:block;width:120px;height:40px;margin:14px auto 0}
-/* cover: the open book, its top page */
-.inv .cv-dongeng{overflow:hidden;transition:opacity .45s 1.1s}
-.inv .dg-book{position:absolute;left:7%;right:9%;top:4.5%;z-index:2;perspective:1700px}
-.inv .dg-under{position:absolute;inset:0;background:radial-gradient(ellipse 80% 75% at 55% 45%,transparent 55%,rgba(150,100,40,.22) 100%),url(assets/paper.jpg) 0 0/220px,var(--parch);background-blend-mode:multiply,multiply,normal;
-  box-shadow:1px 1px 0 #efe2c4,2px 2px 0 #d6c39c,3px 3px 0 #ecdcbc,4px 4px 0 #d0bc94,5px 5px 0 #e9d9b8,6px 6px 0 #c8b28a,7px 7px 0 rgba(0,0,0,.25),0 24px 34px -10px rgba(0,0,0,.55)}
-.inv .dg-leaf{position:relative;transform-style:preserve-3d;transform-origin:0 50%;transition:transform 1.4s cubic-bezier(.5,.05,.3,1)}
-.inv .dg-front{position:relative;-webkit-backface-visibility:hidden;backface-visibility:hidden;box-shadow:1px 0 0 rgba(120,90,50,.25)}
-.inv .dg-back{position:absolute;inset:0;transform:rotateY(180deg);-webkit-backface-visibility:hidden;backface-visibility:hidden;
-  background:linear-gradient(270deg,rgba(70,45,20,.25),transparent 12%),url(assets/paper.jpg) 0 0/220px,var(--parch);background-blend-mode:normal,multiply,normal}
-.inv .cv-dongeng .dg-mid{height:100cqi}
-.inv .dg-ctext{position:absolute;left:1cqi;right:1cqi;top:-11cqi;bottom:-11cqi;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.inv .dg-foot{position:absolute;left:0;right:0;bottom:5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .4s}
-.inv .dg-to{text-align:center;margin:0}
-.inv .dg-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.85}
-.inv .dg-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:21px}
-.inv .dg-open{cursor:pointer;padding:13px 36px;border-radius:999px;border:0;background:var(--accent);color:var(--parch);font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.32em;text-transform:uppercase;white-space:nowrap;
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--ground) 60%,transparent),0 0 0 5px color-mix(in srgb,var(--gold) 40%,transparent),0 10px 22px -10px rgba(0,0,0,.6)}
-.inv .dg-dark .dg-open{background:var(--parch);color:var(--accent)}
-/* opening: the page turns */
-.inv.opening .dg-leaf{transform:rotateY(-168deg)}
-.inv.opening .dg-foot{opacity:0}
+/* cover: five layers, back to front */
+.inv .cv-dongeng{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
+.inv .cv-dongeng > div{position:absolute;inset:0;transform-origin:50% 44%;transition:transform 1.35s cubic-bezier(.55,0,.25,1) .1s}
+.inv .cv-dongeng .dg-back{left:8%;right:8%;top:4%;bottom:21%}
+.inv .dg-floor{position:absolute;left:8%;right:8%;top:71%;bottom:21%;background:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 1px,transparent 1px 9cqi),linear-gradient(180deg,#6b4a30,#8a6644 40%,#5a3c26);box-shadow:inset 0 3px 6px rgba(0,0,0,.4)}
+.inv .cv-dongeng .dg-wing.l{left:6cqi;bottom:24%;width:36cqi;transform:rotate(-6deg)}
+.inv .cv-dongeng .dg-wing.r{right:5cqi;bottom:24%;width:36cqi;transform:scaleX(-1) rotate(-4deg)}
+.inv .cv-dongeng .dg-banner{position:absolute;left:23cqi;right:23cqi;top:24%;transition:transform 1.1s cubic-bezier(.6,0,.3,1) .05s}
+.inv .cv-dongeng .dg-names{font-size:clamp(28px,9.4cqi,40px);margin:2.6cqi 0 0;overflow-wrap:anywhere}
+.inv .cv-dongeng .dg-tale{font-size:3.1cqi}
+.inv .cv-dongeng .dg-bin{padding:5cqi 3.6cqi 9cqi}
+.inv .cv-dongeng .dg-date{font-size:3cqi}
+.inv .cv-dongeng .dg-drape{top:9%;bottom:21%;width:17cqi}
+.inv .cv-dongeng .dg-drape.l{left:8%}.inv .cv-dongeng .dg-drape.r{right:8%}
+.inv .dg-tie{position:absolute;top:calc(9% + 70% * .62);width:7cqi;height:12cqi;margin-top:-4cqi;
+  background:radial-gradient(circle at 50% 22%,color-mix(in srgb,var(--gold) 70%,#fff) 0 .8cqi,var(--gold) 1.6cqi,color-mix(in srgb,var(--gold) 60%,#000) 2.2cqi,transparent 2.4cqi),repeating-linear-gradient(90deg,var(--gold) 0 1px,color-mix(in srgb,var(--gold) 55%,#000) 1px 2px) 50% 100%/3.6cqi 70% no-repeat;
+  clip-path:polygon(50% 0,100% 30%,72% 40%,90% 100%,10% 100%,28% 40%,0 30%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+.inv .dg-tie.l{left:calc(8% + 17cqi * .36)}.inv .dg-tie.r{right:calc(8% + 17cqi * .36)}
+.inv .cv-dongeng .dg-pelmet{left:8%;right:8%;top:3%;height:14%}
+.inv .dg-l4{filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.inv .dg-pros{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 20%,rgba(255,255,255,.14),transparent 70%),url(assets/paper.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal;
+  -webkit-mask:var(--pros) 0 0/100% 100% no-repeat;mask:var(--pros) 0 0/100% 100% no-repeat}
+.inv .dg-dark .dg-pros{background-blend-mode:normal,soft-light,normal}
+.inv .dg-gilt{position:absolute;inset:0;width:100%;height:100%;stroke:var(--gold);stroke-width:1.2;pointer-events:none}
+.inv .dg-gilt .t{stroke-width:.5}
+.inv .dg-cart{position:absolute;left:50%;top:2%;transform:translateX(-50%);z-index:2;padding:1.6cqi;white-space:nowrap;
+  background:url(assets/foil.jpg) 0 0/140px,var(--gold);background-blend-mode:overlay;clip-path:polygon(5% 0,95% 0,100% 50%,95% 100%,5% 100%,0 50%)}
+.inv .dg-cart span{display:block;padding:1.8cqi 7cqi;background:url(assets/paper.jpg) 0 0/180px,var(--sheet);background-blend-mode:multiply;clip-path:polygon(4.6% 0,95.4% 0,100% 50%,95.4% 100%,4.6% 100%,0 50%);
+  font-family:"IM Fell English SC",serif;font-size:3.3cqi;letter-spacing:.16em;color:var(--accent)}
+.inv .dg-lights{position:absolute;left:10%;right:10%;top:calc(79% - 2.2cqi);height:3cqi;
+  background:radial-gradient(ellipse 50% 60% at 50% 100%,#fff6d8 0 30%,#ffd98a 45%,rgba(255,200,110,.0) 80%) 0 0/8.2cqi 100% repeat-x;filter:drop-shadow(0 -4px 6px rgba(255,214,140,.8))}
+.inv .dg-apron{position:absolute;left:8%;right:8%;top:82%;bottom:2.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.6cqi;color:var(--pagefg);text-align:center}
+.inv .dg-to small{display:block;font-family:"IM Fell English SC",serif;font-size:2.9cqi;letter-spacing:.18em;opacity:.85}
+.inv .dg-to b{display:block;font-family:"IM Fell English",serif;font-style:italic;font-weight:400;font-size:5.6cqi;line-height:1.15}
+.inv .dg-open{border:0;cursor:pointer;padding:2.6cqi 7cqi;border-radius:999px;font-family:"IM Fell English SC",serif;font-size:3.4cqi;letter-spacing:.16em;color:var(--ink);
+  background:url(assets/paper.jpg) 0 0/180px,var(--sheet);background-blend-mode:multiply;box-shadow:0 0 0 1px var(--gold),0 0 0 3.5px color-mix(in srgb,var(--sheet) 30%,transparent),0 0 0 4.5px color-mix(in srgb,var(--gold) 70%,transparent),0 6px 10px -4px rgba(0,0,0,.5)}
+/* opening: the banner rises into the flies, the stage comes towards you layer by layer */
+.inv.opening .cv-dongeng .dg-banner{transform:translateY(-140cqi)}
+.inv.opening .dg-l4{transform:scale(2.9)}
+.inv.opening .dg-l3{transform:scale(2.1)}
+.inv.opening .dg-l1{transform:scale(1.55)}
+.inv.opening .dg-l0{transform:scale(1.22)}
 .inv.opening .cv-dongeng{opacity:0}
 
-/* page */
-.inv .pg-dongeng{position:relative;padding:30px 18px 96px;overflow:hidden}
-.inv .dg-pw{position:relative;z-index:1;width:100%;max-width:400px;margin:0 auto}
-.inv .dg-stack{position:relative;box-shadow:1px 1px 0 #efe2c4,2px 2px 0 #d6c39c,3px 3px 0 #ecdcbc,4px 4px 0 #d0bc94,5px 5px 0 #e9d9b8,6px 6px 0 #c8b28a,7px 7px 0 rgba(0,0,0,.25),0 24px 34px -10px rgba(0,0,0,.55)}
-.inv .pg-dongeng .dg-in{margin:-7cqi 0 -9cqi;min-height:80cqi;display:flex}
-.inv .dg-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 1cqi}
-.inv .pg-dongeng .dg-names{font-size:clamp(30px,10.5cqi,42px)}
-.inv .dg-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
-.inv .pg-dongeng .dg-date{font-size:11.5px;letter-spacing:.2em;line-height:1.6}
-.inv .dg-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin:0}
-.inv .dg-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin:10px 0 0}
-.inv .dg-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
-.inv .dg-pill{flex:0 0 auto;width:auto!important;padding:11px 16px;border-radius:999px;background:var(--accent);color:var(--parch);text-decoration:none;font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
-.inv .dg-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent)}
-.inv .pg-dongeng .couple-ph.front{width:34cqi;margin:4px auto 14px;box-shadow:0 0 0 2px var(--gold),0 0 0 4px var(--parch),0 0 0 5px var(--ink)}
+/* page: on the stage */
+.inv .pg-dongeng{background:var(--ground);color:var(--ink);padding:0 0 70px;justify-content:flex-start;overflow:hidden}
+.inv .pg-dongeng .dg-back{left:0;right:0;top:0;height:78%;-webkit-mask:linear-gradient(180deg,#000 70%,transparent);mask:linear-gradient(180deg,#000 70%,transparent)}
+.inv .pg-dongeng .dg-wing{top:28%;width:42cqi;z-index:1}
+.inv .pg-dongeng .dg-wing.l{left:-10cqi;transform:rotate(-8deg)}
+.inv .pg-dongeng .dg-wing.r{right:-10cqi;transform:scaleX(-1) rotate(-6deg)}
+.inv .pg-dongeng .dg-drape{top:0;height:72%;width:15cqi;z-index:2}
+.inv .pg-dongeng .dg-drape.l{left:0}.inv .pg-dongeng .dg-drape.r{right:0}
+.inv .pg-dongeng .dg-pelmet{left:0;right:0;top:0;height:16cqi;z-index:3}
+.inv .dg-banner.big{z-index:4;width:82cqi;margin-top:21cqi}
+.inv .dg-banner.big .dg-thread{height:9cqi}
+.inv .dg-banner.big .dg-bin{padding:6cqi 6cqi 11cqi}
+.inv .dg-bis{font-family:"Amiri",serif;font-size:4.4cqi;color:var(--accent);margin-bottom:2.4cqi}
+.inv .pg-dongeng .couple-ph.front{width:28cqi;aspect-ratio:4/5;margin:2cqi auto 2cqi;border-radius:50% 50% 2px 2px / 36% 36% 2px 2px;overflow:hidden;box-shadow:0 0 0 1px var(--gold),0 0 0 4px var(--sheet),0 0 0 5px color-mix(in srgb,var(--gold) 55%,transparent)}
+.inv .pg-dongeng .dg-k{font-family:"IM Fell English SC",serif;font-size:3.2cqi;letter-spacing:.2em;color:var(--accent);margin-top:2cqi}
+.inv .pg-dongeng .dg-names{font-size:clamp(32px,10.2cqi,46px);margin-top:1.6cqi;overflow-wrap:anywhere}
+.inv .pg-dongeng .dg-date{font-size:3.8cqi}
+.inv .dg-hj{font-family:"IM Fell English",serif;font-style:italic;font-size:3.6cqi;margin-top:1.4cqi;opacity:.75}
+.inv .dg-ven{font-family:"IM Fell English",serif;font-style:italic;font-size:4.4cqi;margin-top:2cqi}
+.inv .dg-pills{display:flex;gap:2.4cqi;margin-top:3.4cqi;flex-wrap:wrap;justify-content:center}
+.inv .dg-pill{padding:2.8cqi 5.4cqi;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;font-family:"IM Fell English SC",serif;font-size:3.3cqi;letter-spacing:.14em}
+.inv .dg-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 85%,transparent)}
 
-/* skin: parchment cards with a vine band across the top */
+/* skin: cream playbill cards under a scalloped pelmet */
 .fam-dongeng .scroller{background:var(--ground)}
-.fam-dongeng .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.55}
-.fam-dongeng.cardsecs .sec{position:relative;overflow:hidden;padding-top:46px;color:var(--ink);border-radius:2px;
-  background:radial-gradient(ellipse 85% 80% at 55% 45%,transparent 55%,rgba(150,100,40,.18) 100%),url(assets/paper.jpg) 0 0/220px,var(--parch);background-blend-mode:multiply,multiply,normal;
-  box-shadow:inset 0 0 0 6px var(--parch),inset 0 0 0 6.8px color-mix(in srgb,var(--ink) 55%,transparent),inset 0 0 0 8.5px var(--parch),inset 0 0 0 9.2px color-mix(in srgb,var(--gold) 70%,transparent),3px 3px 0 #d6c39c,0 18px 28px -12px rgba(0,0,0,.5)}
-.fam-dongeng.cardsecs .sec::before{content:"";position:absolute;left:10px;right:10px;top:10px;height:22px;background:var(--dg-band) 0 0/auto 100% repeat-x;pointer-events:none;border-bottom:.8px solid color-mix(in srgb,var(--ink) 40%,transparent)}
-.fam-dongeng .sec h2{font-family:"Uncial Antiqua",serif;font-weight:400;text-transform:none;letter-spacing:.02em;font-size:23px;color:var(--accent)}
-.fam-dongeng .sec h2::after{content:"";display:block;width:120px;height:20px;margin:6px auto 0;border:0;background:var(--dg-mark) center/contain no-repeat}
+.fam-dongeng .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/240px;mix-blend-mode:multiply;opacity:.45}
+.fam-dongeng.dg-dark .scroller::before{mix-blend-mode:soft-light}
+.fam-dongeng.cardsecs .sec{position:relative;color:var(--ink);border-radius:0;padding-top:40px!important;
+  background:radial-gradient(ellipse at 50% 0,rgba(255,255,255,.5),transparent 60%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 80%,transparent),inset 0 0 0 10px var(--sheet),inset 0 0 0 10.5px color-mix(in srgb,var(--gold) 50%,transparent),0 16px 24px -12px rgba(0,0,0,.5)}
+.fam-dongeng.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.2),transparent 40%,rgba(255,255,255,.1)),url(assets/velvet.jpg) 0 0/160px,var(--curtain);background-blend-mode:normal,soft-light,normal;
+  -webkit-mask:linear-gradient(#000,#000) 0 0/100% 12px no-repeat,var(--scal) 0 100%/24px 10px repeat-x;mask:linear-gradient(#000,#000) 0 0/100% 12px no-repeat,var(--scal) 0 100%/24px 10px repeat-x}
+.fam-dongeng .sec h2{font-family:"IM Fell English SC",serif;font-weight:400;text-transform:none;letter-spacing:.14em;font-size:24px;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:12px}
+.fam-dongeng .sec h2::before,.fam-dongeng .sec h2::after{content:"";flex:0 0 34px;height:7px;border:0;margin:0;
+  background:radial-gradient(circle,var(--gold) 2px,transparent 2.4px) 100% 50%/7px 7px no-repeat,linear-gradient(var(--gold),var(--gold)) 0 50%/80% 1px no-repeat}
+.fam-dongeng .sec h2::after{transform:scaleX(-1)}
 .fam-dongeng .sec,.fam-dongeng .sec p,.fam-dongeng .info b{color:var(--ink)}
 .fam-dongeng .info,.fam-dongeng .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-dongeng .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 35%,transparent)!important;padding:14px 6px!important}
+.fam-dongeng .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
 .fam-dongeng .info > div:last-child{border-bottom:0!important}
-.fam-dongeng .info span{color:var(--gold);letter-spacing:.22em}
-.fam-dongeng .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
-.fam-dongeng .count b{color:var(--accent);font-family:"Cormorant Garamond",serif;font-weight:600}
-.fam-dongeng input,.fam-dongeng select,.fam-dongeng textarea{background:rgba(255,255,255,.75)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--gold) 50%,transparent)!important}
+.fam-dongeng .info span{color:var(--accent);font-family:"IM Fell English SC",serif;letter-spacing:.14em}
+.fam-dongeng .info b{font-family:"IM Fell English",serif;font-weight:400}
+.fam-dongeng .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 70%,transparent)}
+.fam-dongeng .count b{color:var(--accent);font-family:"IM Fell English",serif;font-weight:400}
+.fam-dongeng input,.fam-dongeng select,.fam-dongeng textarea{background:rgba(255,255,255,.75)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--gold) 55%,transparent)!important}
 .fam-dongeng .seg button{border-radius:999px!important;color:var(--ink)}
-.fam-dongeng .seg button[aria-pressed="true"],.fam-dongeng button.submit{background:var(--accent)!important;color:var(--parch)!important;border-color:var(--accent)!important;border-radius:999px}
-.fam-dongeng .dock{background:color-mix(in srgb,var(--parch) 95%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-dongeng .seg button[aria-pressed="true"],.fam-dongeng button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-dongeng .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-dongeng .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .dg-leaf{transition:none}}
-.fam-dongeng .sec label,.fam-dongeng .info span,.fam-dongeng .count span,.fam-dongeng button.submit,.fam-dongeng .seg button,.fam-dongeng .sec h3,.fam-dongeng .sec h4{font-family:"Cormorant Garamond",serif!important;font-weight:700}
-.fam-dongeng .sec h3,.fam-dongeng .sec h4{font-weight:600;letter-spacing:.18em}
+@media (prefers-reduced-motion: reduce){.inv .cv-dongeng > div,.inv .cv-dongeng .dg-banner{transition:none}}
+.inv .dg-spand{position:absolute;top:5.5%;width:15cqi;height:auto;color:var(--gold);z-index:2}
+.inv .dg-spand.l{left:4cqi}.inv .dg-spand.r{right:4cqi;transform:scaleX(-1)}
+.inv .dg-l1{mix-blend-mode:multiply}
+.inv .cv-dongeng .dg-names span{white-space:nowrap}
+.inv .pg-dongeng .dg-names span{white-space:nowrap}

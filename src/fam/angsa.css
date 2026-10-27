@@ -1,128 +1,111 @@
-/* ===== angsa (Tasik Angsa) ===== */
+/* ===== angsa (Tasik Angsa): a silk keepsake box with a pearl-set lake cameo on its lid ===== */
 .inv .cv-angsa,.inv .pg-angsa{background:var(--ground)}
-.inv .ags-paper{position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 40% at 50% 30%,color-mix(in srgb,var(--sheet) 80%,transparent),transparent 75%)}
-.inv .ags-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.8}
-.inv .pg-angsa .ags-paper{position:fixed}
-
-/* the lake medallion */
-.inv .ags-medal{position:absolute;aspect-ratio:200/260}
-/* dark colourways: the wreath sits on a slim cream cameo mount, crisp-edged, with a gilt hairline */
-.inv .ags-mount{display:none}
-.inv .ags-mounted .ags-mount{display:block;position:absolute;inset:-13% -14%;border-radius:50%;background:linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/paper.jpg) 0 0/260px,var(--sheet);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 90%,transparent),0 0 0 5px color-mix(in srgb,var(--ground) 80%,#000),0 0 0 6px color-mix(in srgb,var(--gold) 60%,transparent),0 18px 30px -12px rgba(0,0,0,.6)}
-.inv .ags-mounted .ags-mount::after{content:"";position:absolute;inset:6px;border-radius:50%;border:.5px solid color-mix(in srgb,var(--gold) 80%,transparent)}
-.inv .ags-mounted .ags-medal.cv{top:12.5%;width:min(58cqw,33cqh)}
-.inv .ags-mounted .ags-glow{box-shadow:inset 0 0 22px 4px color-mix(in srgb,var(--sky1) 70%,transparent)}
-.inv .ags-mounted .ags-lake .sun{opacity:.55}
-.inv .ags-mounted .ags-lake .mist ellipse{opacity:.35}
-.inv .ags-mounted .ags-lake .shim path{stroke-opacity:.35}
-.inv .ags-oval{position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),0 10px 24px -14px rgba(60,40,50,.4)}
-.inv .ags-lake{position:absolute;inset:0;width:100%;height:100%}
-.inv .ags-oval .ags-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 32%;z-index:1}
-.inv .ags-glow{position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 26px 8px color-mix(in srgb,var(--sheet) 75%,transparent);z-index:2;pointer-events:none}
-.inv .ags-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);pointer-events:none}
-.inv .cv-angsa .ags-cbody .ags-names{color:var(--cname)}
-.inv .cv-angsa .ags-cbody,.inv .cv-angsa .ags-cbody .ags-names i,.inv .cv-angsa .ags-to{color:var(--cink)}
-.inv .cv-angsa .ags-cbody .ags-ven,.inv .cv-angsa .ags-cbody .ags-date{color:var(--cink)}
-.inv .cv-angsa .ags-to b{color:var(--cname)}
-.inv .cv-angsa .ags-k.top{color:var(--cname)}
-.inv .ags-lake .s1{stop-color:var(--sky1)}
-.inv .ags-lake .s2{stop-color:var(--sky2)}
-.inv .ags-lake .w1{stop-color:color-mix(in srgb,var(--sky2) 70%,var(--water))}
-.inv .ags-lake .w2{stop-color:color-mix(in srgb,var(--water) 85%,var(--hill))}
-.inv .ags-lake .sun{fill:#fff;opacity:.75}
-.inv .ags-lake .h1{fill:var(--hill);opacity:.45}
-.inv .ags-lake .h2{fill:color-mix(in srgb,var(--hill) 80%,var(--water));opacity:.6}
-.inv .ags-lake .trees ellipse{fill:color-mix(in srgb,var(--hill) 60%,#7f9a88);opacity:.55}
-.inv .ags-lake .refl ellipse{fill:#fff;opacity:.4}
-.inv .ags-lake .shim path{stroke:#fff;stroke-width:.6;stroke-linecap:round}
-.inv .ags-lake .shim{animation:agShim 12s ease-in-out infinite alternate}
-@keyframes agShim{from{transform:translateX(-4px)}to{transform:translateX(4px)}}
-.inv .ags-lake .mist ellipse{fill:#fff;opacity:.7}
-.inv .ags-lake .ripple ellipse{fill:none;stroke:#fff;stroke-width:.6;opacity:.7}
-.inv .ags-lake .sw{fill:var(--grad);stroke:color-mix(in srgb,var(--water) 60%,#7a7590);stroke-width:.35}
-.inv .ags-lake .nk{fill:none;stroke:#fff;stroke-width:5.2;stroke-linecap:round}
-.inv .ags-lake .bk{fill:#e9a07a}
-.inv .ags-lake .fe{fill:none;stroke:color-mix(in srgb,var(--water) 70%,#8a86a0);stroke-width:.4;opacity:.8}
-.inv .ags-lake .sb{stop-color:color-mix(in srgb,var(--water) 55%,#fff)}
-.inv .ags-lake .swrefl{opacity:.3}
-.inv .ags-lake .reeds path{fill:none;stroke:color-mix(in srgb,var(--hill) 50%,#6e8a72);stroke-width:.7;opacity:.6}
-/* the rose wreath */
-.inv .ags-f{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%) rotate(var(--r,0deg));background-repeat:no-repeat;z-index:3;mix-blend-mode:multiply;
-  -webkit-mask-image:radial-gradient(closest-side,#000 50%,transparent 100%);mask-image:radial-gradient(closest-side,#000 50%,transparent 100%)}
-.inv .ags-f.leaf{-webkit-mask-image:radial-gradient(closest-side,#000 38%,transparent 100%);mask-image:radial-gradient(closest-side,#000 38%,transparent 100%)}
+.inv .ags-ground{position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 50% at 50% 42%,rgba(255,255,255,.35),transparent 70%),var(--ground)}
+.inv .ags-ground::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/380px;mix-blend-mode:multiply;opacity:.5}
+.inv .ags-dk .ags-ground::after,.fam-angsa.ags-dk .scroller::before{mix-blend-mode:soft-light;opacity:.7}
+.inv .pg-angsa .ags-ground{position:fixed}
+/* moiré silk: the colour, the silk weave and two soft diagonal sheens */
+.inv .ags-silk,.inv .ags-inbox{background:linear-gradient(125deg,rgba(255,255,255,.28),transparent 22%,transparent 48%,rgba(255,255,255,.22) 60%,transparent 74%,rgba(0,0,0,.06)),url(assets/silk.jpg) 0 0/220px,var(--silk);background-blend-mode:normal,soft-light,normal}
+/* the lake in a gilt bezel ringed with pearls */
+.inv .ags-cameo{position:absolute;display:block;aspect-ratio:100/126}
+.inv .ags-lake{position:absolute;inset:6%;border-radius:50%;overflow:hidden;background:var(--art) var(--ap)/auto 150% no-repeat;
+  box-shadow:0 0 0 3px #fff8,0 0 0 4px rgba(0,0,0,.12),inset 0 2px 8px rgba(0,0,0,.35)}
+.inv .ags-lake::before{content:"";position:absolute;inset:-6px;border-radius:50%;z-index:-1}
+.inv .ags-lake::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(70% 50% at 35% 22%,rgba(255,255,255,.35),transparent 60%);pointer-events:none}
+.inv .ags-cameo::before{content:"";position:absolute;inset:3.2%;border-radius:50%;background:url(assets/foil.jpg) 0 0/140px,var(--gold);background-blend-mode:overlay;box-shadow:0 3px 6px rgba(40,25,30,.35),inset 0 0 0 1px rgba(255,255,255,.45)}
+.inv .ags-photo{width:100%;height:100%;object-fit:cover;display:block}
+.inv .ags-pearls{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .6px .6px rgba(40,25,30,.4))}
+.inv .ags-swan{display:block;overflow:visible}
+.inv .ags-swan path{fill:var(--gold)}
+.inv .ags-swan path.n{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round}
+.inv .ags-swan path.w{fill:none;stroke:var(--gold);stroke-width:.8;stroke-linecap:round;opacity:.8}
 
 /* type */
-.inv .ags-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:700;letter-spacing:.36em;text-transform:uppercase;color:var(--accent);margin:0;text-align:center}
-.inv .ags-k.top{position:absolute;left:0;right:0;top:5%;z-index:3}
-.inv .ags-names{font-family:"Alex Brush",cursive;font-weight:400;font-size:clamp(40px,12cqi,50px);line-height:1;color:var(--accent);margin:10px 0 4px;display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:.22em}
-.inv .ags-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--ink);opacity:.6}
-.inv .ags-names.sm{font-size:clamp(36px,10.6cqi,44px);margin:0 0 4px}
-.inv .ags-rule{display:block;width:110px;height:12px;margin:4px auto 10px}
-.inv .ags-rule path{fill:none;stroke:var(--gold);stroke-width:.8;stroke-linecap:round}
-.inv .ags-date{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--ink);margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
-.inv .ags-date b{font-style:normal;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
-.inv .ags-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--ink);margin:4px 0 0}
-.inv .ags-time{font-family:"Cormorant Garamond",serif;font-size:14px;color:var(--ink);margin:4px 0 0}
-.inv .ags-addr{font-family:"Cormorant Garamond",serif;font-size:13px;color:var(--ink);opacity:.75;margin:2px 0 0;max-width:260px;line-height:1.35}
-.inv .ags-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;color:var(--ink);opacity:.7;margin:3px 0 0}
-.inv .ags-bis{font-family:"Amiri",serif;font-size:17px;color:var(--accent);margin:0 0 10px}
+.inv .ags-k{font-family:"Cormorant Garamond",serif;font-size:10px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);padding-left:.32em;margin:0;white-space:nowrap}
+.inv .ags-bis{font-family:"Amiri",serif;font-size:18px;color:var(--accent);margin:0}
 
-/* cover */
-.inv .cv-angsa{overflow:hidden;container-type:size;transition:opacity .5s 1s}
-.inv .ags-medal.cv{left:0;right:0;margin:0 auto;top:10%;width:min(68cqw,38cqh);transition:transform 1.4s cubic-bezier(.5,0,.25,1),opacity 1.1s .2s}
-.inv .ags-cbody{position:absolute;left:8%;right:8%;top:62%;bottom:4%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .45s}
-.inv .ags-to{margin:12px 0 0;text-align:center;color:var(--ink)}
-.inv .ags-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
-.inv .ags-to b{font-family:"Alex Brush",cursive;font-weight:400;font-size:25px;color:var(--accent)}
-.inv .ags-open{margin-top:24px;border:0;cursor:pointer;padding:12px 32px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
-  box-shadow:0 8px 16px -8px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.2)}
-/* opening: a morning mist rises over everything */
-.inv .ags-rise{position:absolute;left:0;right:0;top:0;height:200%;z-index:6;pointer-events:none;transform:translateY(60%);opacity:0;
-  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--sheet) 80%,transparent) 20%,var(--sheet) 40%);transition:transform 1.4s cubic-bezier(.4,0,.2,1),opacity .6s}
-.inv.opening .ags-rise{transform:translateY(-45%);opacity:1}
-.inv.opening .ags-medal.cv{transform:scale(1.12);opacity:0}
-.inv.opening .ags-cbody,.inv.opening .cv-angsa .ags-k.top{opacity:0;transition:opacity .5s}
+/* ---------- cover ---------- */
+.inv .cv-angsa{overflow:hidden;transition:opacity .45s 1.2s}
+.inv .ags-box{position:absolute;left:8%;right:8%;top:5.5%;height:75%}
+.inv .ags-base{position:absolute;inset:0;border-radius:6px;background:color-mix(in srgb,var(--silk) 80%,#000);box-shadow:0 30px 40px -20px rgba(40,25,30,.5)}
+.inv .ags-base .ags-tissue{position:absolute;inset:12px;border-radius:3px}
+.inv .ags-tissue{background:linear-gradient(160deg,rgba(255,255,255,.7),rgba(255,255,255,.3) 30%,rgba(255,255,255,.65) 55%,rgba(255,255,255,.35) 80%),url(assets/paper.jpg) 0 0/240px,#f7f3ef;background-blend-mode:normal,multiply,normal;box-shadow:inset 0 4px 14px rgba(0,0,0,.28)}
+.inv .ags-incard{position:absolute;left:16%;right:16%;top:16%;bottom:16%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;box-shadow:inset 0 0 0 2px var(--gold),0 6px 12px -4px rgba(0,0,0,.3)}
+.inv .ags-lid{position:absolute;inset:0;border:0;padding:0;margin:0;cursor:pointer;display:block;border-radius:6px;background:none;
+  filter:drop-shadow(0 2px 3px rgba(40,25,30,.25)) drop-shadow(0 22px 22px rgba(40,25,30,.3));transition:transform 1.25s cubic-bezier(.5,0,.25,1)}
+.inv .ags-silk{position:absolute;inset:0;border-radius:6px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(0,0,0,.12),inset 0 0 22px rgba(0,0,0,.12)}
+/* the lid's side, seen just below its top edge */
+.inv .ags-silk::after{content:"";position:absolute;left:0;right:0;top:100%;height:14px;border-radius:0 0 6px 6px;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.32)),url(assets/silk.jpg) 0 0/220px,var(--silk);background-blend-mode:normal,soft-light,normal}
+/* gilt piping inset round the lid */
+.inv .ags-pipe{position:absolute;inset:11px;border-radius:3px;border:1.6px solid transparent;background:url(assets/foil.jpg) 0 0/160px border-box,var(--gold) border-box;background-blend-mode:overlay;
+  mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0) border-box}
+.inv .ags-lid > .ags-lace{position:absolute;left:15%;width:70%;top:3.5%;height:auto;filter:drop-shadow(0 2px 2px rgba(40,25,30,.25));pointer-events:none}
+.inv .ags-lid > .ags-cameo{left:27%;width:46%;top:13%}
+.inv .ags-lid > .ags-swan{position:absolute;left:50%;top:50.5%;width:80px;transform:translateX(-50%);filter:drop-shadow(0 1px 0 rgba(255,255,255,.5)) drop-shadow(0 -.5px 0 rgba(0,0,0,.25))}
+.inv .ags-dk .ags-lid > .ags-swan{filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+/* satin ribbon round the lid */
+.inv .ags-rib{position:absolute;left:0;right:0;top:70%;height:9%;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 25%,rgba(0,0,0,.12) 50%,rgba(255,255,255,.28) 72%,rgba(0,0,0,.18)),url(assets/silk.jpg) 0 0/160px,var(--rib);background-blend-mode:normal,soft-light,normal;
+  box-shadow:0 2px 3px rgba(0,0,0,.22)}
+.inv .ags-rib::after{content:"";position:absolute;left:0;right:0;top:100%;height:14px;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.35)),var(--rib)}
+/* the gilt-edged name card resting on the ribbon */
+.inv .ags-label{position:absolute;left:12%;right:12%;top:61%;display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 10px 14px;transform:rotate(-1.4deg);color:var(--ink);text-align:center;
+  background:radial-gradient(80% 60% at 30% 10%,rgba(255,255,255,.6),transparent),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 5px var(--sheet),inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 70%,transparent),0 8px 14px -6px rgba(40,25,30,.45),0 1px 2px rgba(40,25,30,.2)}
+.inv .ags-ln{font-family:"Alex Brush",cursive;font-size:clamp(28px,8.8cqi,38px);line-height:1.05;color:var(--accent);text-wrap:balance}
+.inv .ags-ln i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.55em;color:var(--ink);opacity:.7}
+.inv .ags-ld{font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase}
+.inv .ags-to{display:flex;flex-direction:column;gap:1px;margin-top:5px;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.inv .ags-to small{font-family:"Cormorant Garamond",serif;font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;opacity:.72}
+.inv .ags-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:18px;color:var(--ink)}
+/* a ribbon pull-tab hanging from the front of the lid */
+.inv .ags-tab{position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);width:58%;height:46px;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%);background:linear-gradient(90deg,rgba(0,0,0,.14),rgba(255,255,255,.22) 30%,rgba(0,0,0,.05) 60%,rgba(255,255,255,.18) 85%,rgba(0,0,0,.12)),url(assets/silk.jpg) 0 0/160px,var(--rib);background-blend-mode:normal,soft-light,normal}
+.inv .ags-tab span{font-family:"Cormorant Garamond",serif;font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:#fff;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.inv .ags-dk .ags-tab span{color:#2b2130;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+/* opening: the lid lifts off and away, showing the card on tissue inside */
+.inv.opening .ags-lid{transform:translateY(-118%) rotate(-5deg)}
 .inv.opening .cv-angsa{opacity:0}
 
-/* page */
-.inv .pg-angsa{padding:0;justify-content:flex-start;container-type:inline-size}
-.inv .ags-card{position:relative;z-index:1;margin:18px 16px 86px;padding:46px 0 34px;border-radius:999px 999px 18px 18px/240px 240px 18px 18px;background:color-mix(in srgb,var(--sheet) 82%,transparent);
-  box-shadow:inset 0 0 0 7px color-mix(in srgb,var(--sheet) 90%,transparent),inset 0 0 0 8px color-mix(in srgb,var(--gold) 70%,transparent),0 18px 34px -20px rgba(60,40,50,.45)}
-.inv .ags-medal.pg{position:relative;width:62%;margin:0 auto}
-.inv .ags-body{position:relative;padding:26px 26px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .ags-pills{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap}
-.inv .ags-pill{padding:11px 22px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;white-space:nowrap;font-family:"Cormorant Garamond",serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
-.inv .ags-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+/* ---------- page: inside the box ---------- */
+.inv .pg-angsa{padding:12px 0 60px;justify-content:center}
+.inv .ags-inbox{position:relative;width:93%;max-width:390px;padding:14px;border-radius:6px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 20px 30px -16px rgba(40,25,30,.45)}
+.inv .ags-inbox > .ags-tissue{position:absolute;inset:14px;border-radius:3px}
+.inv .ags-lace.pg{position:absolute;right:-6%;top:3%;width:52%;transform:rotate(18deg);z-index:1;filter:drop-shadow(0 2px 3px rgba(40,25,30,.25))}
+.inv .ags-strand{position:absolute;left:-14%;bottom:-2%;width:42%;transform:rotate(-28deg);z-index:1;filter:drop-shadow(0 3px 3px rgba(40,25,30,.35));pointer-events:none}
+.inv .ags-card{position:relative;z-index:2;margin:78px 8% 22px;padding:88px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--ink);transform:rotate(-.8deg);
+  background:radial-gradient(80% 40% at 30% 10%,rgba(255,255,255,.6),transparent),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 6px var(--sheet),inset 0 0 0 6.6px color-mix(in srgb,var(--gold) 70%,transparent),0 12px 22px -8px rgba(40,25,30,.45)}
+.inv .ags-cameo.pg{left:50%;top:-70px;width:116px;transform:translateX(-50%)}
+.inv .ags-names{font-family:"Alex Brush",cursive;font-weight:400;font-size:clamp(42px,12.4cqi,52px);line-height:.98;margin:0;color:var(--accent);display:flex;flex-direction:column;align-items:center}
+.inv .ags-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--ink);opacity:.7;margin:-.1em 0 0}
+.inv .ags-date{display:flex;align-items:center;gap:10px;margin:4px 0 0;font-family:"Cormorant Garamond",serif}
+.inv .ags-date span{font-size:10.5px;font-weight:600;letter-spacing:.14em;white-space:nowrap;text-transform:uppercase;padding:6px 0;border-top:1px solid color-mix(in srgb,var(--gold) 70%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .ags-date b{font-weight:300;font-size:40px;line-height:1;color:var(--accent)}
+.inv .ags-sm{font-family:"Cormorant Garamond",serif;font-size:14px;opacity:.8;margin:0}
+.inv .ags-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin:2px 0 0}
+.inv .ags-links{display:flex;flex-wrap:nowrap;justify-content:center;gap:5px;margin-top:8px}
+.inv .ags-links a{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;text-decoration:none;color:var(--accent);padding:9px 10px;border-radius:999px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);white-space:nowrap}
+.inv .ags-links a:first-child{background:var(--accent);color:#fff;box-shadow:none}
 
-/* skin: paper cards, a rose in the corner, a ripple rule under script headings */
-.fam-angsa .scroller{background:radial-gradient(80% 30% at 50% 0%,color-mix(in srgb,var(--sky1) 60%,transparent),transparent 70%),var(--ground)}
-.fam-angsa .scroller::before{content:"";position:fixed;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.75;pointer-events:none}
-.fam-angsa.cardsecs .sec{position:relative;background:var(--sheet);color:var(--ink);border-radius:18px;
-  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--gold) 70%,transparent),0 16px 30px -18px rgba(60,40,50,.4)}
-.fam-angsa.cardsecs .sec::before{content:"";position:absolute;left:-14px;top:-16px;width:70px;height:70px;background-image:var(--ags-img);background-size:var(--ags-size);background-position:var(--ags-pos);background-repeat:no-repeat;transform:rotate(-12deg);
-  -webkit-mask-image:radial-gradient(closest-side,#000 50%,transparent 100%);mask-image:radial-gradient(closest-side,#000 50%,transparent 100%);pointer-events:none}
-.fam-angsa .sec h2{font-family:"Alex Brush",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:38px;line-height:1.15;color:var(--accent);padding-bottom:16px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12'%3E%3Cpath d='M30 6Q60 1 90 6M40 8.5Q60 5 80 8.5M50 11Q60 9 70 11' fill='none' stroke='%23c9a3ab' stroke-width='.8'/%3E%3C/svg%3E") 50% 100%/110px 12px no-repeat}
+/* ---------- skin: gilt-edged cards on silk ---------- */
+.fam-angsa .scroller{background:linear-gradient(125deg,rgba(255,255,255,.2),transparent 40%,rgba(255,255,255,.15) 70%,transparent),var(--ground)}
+.fam-angsa .scroller::before{content:"";position:fixed;inset:0;background:url(assets/silk.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.55;pointer-events:none}
+.fam-angsa.cardsecs .sec{color:var(--ink);border-radius:3px;margin:18px 14px!important;padding-top:50px!important;
+  background:radial-gradient(80% 30% at 30% 5%,rgba(255,255,255,.6),transparent),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 6px var(--sheet),inset 0 0 0 6.6px color-mix(in srgb,var(--gold) 70%,transparent),0 14px 26px -12px rgba(40,25,30,.4)}
+.fam-angsa .sec h2{font-family:"Alex Brush",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:40px;line-height:1.1;color:var(--accent);padding-bottom:20px;position:relative}
+.fam-angsa .sec h2::after{content:"";position:absolute;left:50%;bottom:0;width:84px;height:12px;transform:translateX(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 12'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.75'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.45' stop-color='%23f3eee7'/%3E%3Cstop offset='.85' stop-color='%23cbbfb2'/%3E%3Cstop offset='1' stop-color='%23a2968a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M0 6H84' stroke='%23b9a27a' stroke-width='.6'/%3E%3Ccircle cx='6' cy='6' r='3' fill='url(%23g)'/%3E%3Ccircle cx='18' cy='6' r='3' fill='url(%23g)'/%3E%3Ccircle cx='30' cy='6' r='3.6' fill='url(%23g)'/%3E%3Ccircle cx='42' cy='6' r='4.6' fill='url(%23g)'/%3E%3Ccircle cx='54' cy='6' r='3.6' fill='url(%23g)'/%3E%3Ccircle cx='66' cy='6' r='3' fill='url(%23g)'/%3E%3Ccircle cx='78' cy='6' r='3' fill='url(%23g)'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 1px .5px rgba(0,0,0,.25))}
 .fam-angsa .info,.fam-angsa .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-angsa .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:12px 6px!important}
+.fam-angsa .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:13px 6px!important}
 .fam-angsa .info > div:last-child{border-bottom:0!important}
-.fam-angsa .info span{color:var(--accent);letter-spacing:.2em}
+.fam-angsa .info span{color:var(--accent);letter-spacing:.22em;font-weight:600}
 .fam-angsa .count > div{background:none!important;border:0!important;box-shadow:none!important}
-.fam-angsa .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
-.fam-angsa .ibtn,.fam-angsa .seg button{border-radius:999px}
-.fam-angsa .ibtn{border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
-.fam-angsa .seg button[aria-pressed="true"],.fam-angsa button.submit{font-weight:700;background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
-.fam-angsa button.submit{border-radius:999px}
+.fam-angsa .count b{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:40px;color:var(--accent)}
+.fam-angsa .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-angsa .seg button{border-radius:999px}
+.fam-angsa .seg button[aria-pressed="true"],.fam-angsa button.submit{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;font-weight:700}
+.fam-angsa button.submit{border-radius:999px;letter-spacing:.22em}
+.fam-angsa input,.fam-angsa select,.fam-angsa textarea{background:transparent;color:var(--ink)}
 .fam-angsa .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-angsa .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .ags-lake .shim{animation:none}.inv .ags-rise,.inv .ags-medal.cv{transition:opacity .6s}}
-.fam-angsa .info span{opacity:.9}
-/* mounted (dark) cover: no paper glow; the lake sits deeper inside the cameo so every rose lies on the cream mount */
-.inv .ags-mounted .ags-paper{background:none}
-.inv .ags-mounted .ags-paper::after{opacity:.35}
-.inv .ags-mounted .ags-oval{inset:11% 12%}
-.inv .ags-mounted .ags-ring{inset:calc(11% - 6px) calc(12% - 6px)}
-.inv .ags-mounted .ags-mount{inset:-6% -7%}
-.inv .ags-mounted .ags-medal.cv{top:11%;width:min(64cqw,36cqh)}
-.inv .ags-mounted .ags-medal.cv{clip-path:ellipse(calc(57% + 7px) calc(56% + 7px) at 50% 50%)}
+@media (prefers-reduced-motion: reduce){.inv .ags-lid{transition:none}}

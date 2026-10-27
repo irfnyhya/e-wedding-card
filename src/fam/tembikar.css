@@ -1,87 +1,96 @@
-/* ===== tembikar ===== */
-.inv .cv-tembikar,.inv .pg-tembikar{background:linear-gradient(color-mix(in srgb,var(--ground) 74%,transparent),color-mix(in srgb,var(--ground) 74%,transparent)),url(assets/linen.jpg) 0 0/230px,var(--ground);background-blend-mode:normal,multiply,normal}
-/* the ivory card: glaze-smooth paper, a double cobalt rule, painted corners and side vines */
-.inv .tbk-card{position:absolute;color:var(--accent);border-radius:2px;
-  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.5),transparent 60%),linear-gradient(color-mix(in srgb,var(--sheet) 70%,transparent),color-mix(in srgb,var(--sheet) 70%,transparent)),url(assets/paper.jpg) 0 0/300px,var(--sheet);
-  background-blend-mode:normal,normal,multiply,normal;box-shadow:0 1px 1px rgba(0,0,0,.12),0 20px 34px -16px rgba(10,20,50,.45),0 5px 10px -5px rgba(10,20,50,.2)}
-.inv .tbk-dk .tbk-card{background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.06),transparent 60%),linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,normal,multiply,normal}
-.inv .tbk-card::before{content:"";position:absolute;inset:4px;border:1.6px solid var(--gold);pointer-events:none}
-.inv .tbk-card::after{content:"";position:absolute;inset:8px;border:.7px solid var(--gold);pointer-events:none}
-.inv .tbk-c{position:absolute;width:148px;height:148px;background:var(--tbk-cn) 0 0/100% 100% no-repeat;pointer-events:none;z-index:1}
-.inv .tbk-c.tl{left:11px;top:11px}
-.inv .tbk-c.tr{right:11px;top:11px;transform:scaleX(-1)}
-.inv .tbk-c.bl{left:11px;bottom:11px;transform:scaleY(-1)}
-.inv .tbk-c.br{right:11px;bottom:11px;transform:scale(-1,-1)}
-.inv .tbk-st{position:absolute;pointer-events:none;z-index:1}
-.inv .tbk-st.l,.inv .tbk-st.r{top:158px;bottom:158px;width:29.6px;background:var(--tbk-v) 0 0/29.6px 88.8px round}
-.inv .tbk-st.l{left:11px}.inv .tbk-st.r{right:11px;transform:scaleX(-1)}
-.inv .tbk-st.t,.inv .tbk-st.b{left:158px;right:158px;height:29.6px;background:var(--tbk-h) 0 0/88.8px 29.6px round}
-.inv .tbk-st.t{top:11px}.inv .tbk-st.b{bottom:11px;transform:scaleY(-1)}
-/* the Ming dish: a real object, tinted to the colourway */
-.inv .tbk-dish{display:block;background:url(assets/pd-asia-1.webp) center/contain no-repeat;filter:var(--tbk-dish) drop-shadow(0 2px 2px rgba(0,0,0,.25)) drop-shadow(0 14px 16px rgba(10,20,50,.35))}
-/* type */
-.inv .tbk-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--gold);margin:0}
-.inv .tbk-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(38px,11.6cqi,48px);line-height:1.02;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:10px 0 4px}
-.inv .tbk-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold);margin:0 0 2px;line-height:1.2}
-.inv .tbk-names.cv{font-size:clamp(34px,10.4cqi,44px)}
-.inv .tbk-ruyi{display:block;width:120px;height:16px;margin:6px auto 10px;background:center/100% 100% no-repeat}
-.inv .tbk-date{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--accent);margin:0;line-height:1.7}
-.inv .tbk-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;color:var(--accent);opacity:.9;margin:4px 0 0;max-width:22ch}
-.inv .tbk-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--accent);opacity:.8;margin:4px 0 0}
-.inv .tbk-time{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:15px;color:var(--accent);margin:8px 0 0}
-.inv .tbk-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;line-height:1.25;color:var(--accent);text-decoration:none;margin:6px auto 0;max-width:22ch;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding-bottom:2px}
-.inv .tbk-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+/* ===== tembikar: a keepsake box in blue-and-white tile paper, a Ming dish beside it ===== */
+.inv .tbk-linen{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 45% 40%,rgba(255,255,255,.18),transparent 60%,rgba(0,0,0,.14)),url(assets/linen.jpg) 0 0/220px,var(--ground);background-blend-mode:normal,soft-light,normal}
+.inv .tbk-dish{position:absolute;background:url(assets/pd-asia-1.webp) center/contain no-repeat;filter:var(--filt) drop-shadow(0 14px 16px rgba(10,20,40,.35))}
+.inv .tbk-paper{position:absolute;inset:0;background:url(assets/pd-illum-4.jpg) 0 0/56% auto;filter:var(--filt)}
+.inv .tbk-k{font-family:"Cinzel",serif;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);line-height:1.5}
+.inv .tbk-names{font-family:"Cinzel",serif;font-weight:400;font-size:clamp(19px,6cqi,25px);letter-spacing:.1em;line-height:1.15;color:var(--accent);display:flex;flex-direction:column;align-items:center;text-transform:uppercase;margin:8px 0 6px;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.inv .tbk-dk .tbk-names{text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.inv .tbk-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.8em;text-transform:none;letter-spacing:0;margin:1px 0}
+/* the round label: die-cut ivory card with a printed porcelain border */
+.inv .tbk-round{position:absolute;left:50%;top:50%;width:62%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;color:var(--accent);
+  background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.5),transparent 60%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 1px 1px rgba(0,0,0,.25),0 10px 16px -6px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.6)}
+.inv .tbk-dk .tbk-round{background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.08),transparent 60%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,soft-light,normal}
+.inv .tbk-ring{position:absolute;inset:3.5%;width:93%;height:93%}
+.inv .tbk-rin{position:absolute;inset:19% 15% 15%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.inv .tbk-ed{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px;color:var(--ink);letter-spacing:.06em}
 
-/* cover: the dish lies on the cloth, half under the card */
-.inv .cv-tembikar{overflow:hidden;transition:opacity .45s .95s}
-.inv .tbk-plate{position:absolute;width:74%;aspect-ratio:1;right:-22%;top:-3%;transform:rotate(-14deg);transition:transform 1.3s cubic-bezier(.5,0,.25,1)}
-.inv .cv-tembikar .tbk-card{left:7%;right:9%;top:15%;bottom:4.5%;transform:rotate(-1.4deg);transition:transform 1.3s cubic-bezier(.5,0,.25,1)}
-.inv .tbk-cbody{position:absolute;inset:19% 14% 16%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.inv .tbk-to{margin:16px 0 0;color:var(--accent)}
-.inv .tbk-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
-.inv .tbk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:24px}
-.inv .tbk-open{margin-top:16px;border:0;cursor:pointer;padding:12px 28px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 10px 18px -10px rgba(10,20,50,.7),inset 0 0 0 1px rgba(255,255,255,.18),inset 0 0 0 3px var(--accent),inset 0 0 0 4px rgba(255,255,255,.35)}
-/* opening: the card slides down and the dish slides away, apart */
-.inv.opening .cv-tembikar .tbk-card{transform:translate(-10%,70%) rotate(-7deg)}
-.inv.opening .tbk-plate{transform:translate(45%,-40%) rotate(10deg)}
+/* cover */
+.inv .cv-tembikar{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
+.inv .tbk-dish.aside{width:84%;aspect-ratio:1;left:-38%;bottom:-14%;transform:rotate(18deg);transition:transform 1.2s cubic-bezier(.5,0,.3,1)}
+.inv .tbk-box{position:absolute;left:10%;width:80%;top:12%;aspect-ratio:1}
+.inv .tbk-inner{position:absolute;inset:0;background:repeating-linear-gradient(118deg,rgba(255,255,255,0) 0 22px,rgba(255,255,255,.55) 30px,rgba(0,0,0,.05) 44px),var(--sheet);
+  box-shadow:inset 0 0 0 7px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 8px rgba(255,255,255,.3),inset 0 0 26px 8px rgba(0,0,0,.3),0 20px 26px -12px rgba(0,0,0,.4)}
+.inv .tbk-lid{position:absolute;inset:-2.5%;transition:transform 1.25s cubic-bezier(.5,0,.25,1);box-shadow:0 30px 34px -14px rgba(10,15,30,.5),0 10px 10px -6px rgba(10,15,30,.35)}
+.inv .tbk-lid::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(150deg,rgba(255,255,255,.25),transparent 35%,transparent 70%,rgba(0,0,0,.12));box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),inset 0 1px 0 1px rgba(255,255,255,.35),inset 0 0 14px rgba(0,0,0,.2)}
+/* the lid's side, seen just below its front edge */
+.inv .tbk-rim{position:absolute;left:0;right:0;bottom:-10px;height:10px;background:url(assets/pd-illum-4.jpg) 0 100%/56% auto;filter:var(--filt) brightness(.62);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+/* satin ribbon crossing the lid */
+.inv .tbk-rib{position:absolute;left:50%;top:0;bottom:-10px;width:13%;transform:translateX(-50%);z-index:1;
+  background:url(assets/silk.jpg) 0 0/120px,linear-gradient(90deg,#d7cfbf,#fbf7ee 22%,#efe8da 48%,#fffcf5 70%,#d3cab9);background-blend-mode:soft-light,normal;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 2px 5px rgba(0,0,0,.28)}
+.inv .tbk-rib.h{left:0;right:0;top:50%;bottom:auto;width:auto;height:13%;transform:translateY(-50%);background:url(assets/silk.jpg) 0 0/120px,linear-gradient(180deg,#d7cfbf,#fbf7ee 22%,#efe8da 48%,#fffcf5 70%,#d3cab9);background-blend-mode:soft-light,normal}
+.inv .tbk-dk .tbk-rib{filter:brightness(.92)}
+.inv .tbk-lid .tbk-round{z-index:2}
+/* the folded place card in front */
+.inv .tbk-place{position:absolute;left:19%;right:7%;top:67%;perspective:600px;transition:transform 1s cubic-bezier(.5,0,.3,1),opacity .6s}
+.inv .tbk-pin{transform:rotateX(14deg) rotate(-2deg);transform-origin:50% 100%;padding:22px 16px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);
+  background:linear-gradient(180deg,rgba(255,255,255,.4),transparent 30%,rgba(0,0,0,.05)),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 0 9px var(--sheet),inset 0 0 0 9.6px color-mix(in srgb,var(--accent) 45%,transparent),0 18px 18px -12px rgba(10,15,30,.5),0 2px 2px rgba(10,15,30,.15)}
+.inv .tbk-dk .tbk-pin{background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:soft-light}
+.inv .tbk-pin small{font-family:"Cinzel",serif;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);padding:0 10px}
+.inv .tbk-pin b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:23px;line-height:1.1;padding:0 10px}
+.inv .tbk-open{margin-top:8px;border:0;cursor:pointer;padding:11px 22px;border-radius:999px;background:var(--accent);color:var(--sheet);font-family:"Cinzel",serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 10px -4px rgba(10,15,30,.5)}
+/* opening: the lid lifts off */
+.inv.opening .tbk-lid{transform:translateY(-82cqh) rotate(-9deg) scale(1.06)}
+.inv.opening .tbk-place{transform:translateY(32cqh);opacity:0}
+.inv.opening .tbk-dish.aside{transform:translate(-30%,10%) rotate(30deg)}
 .inv.opening .cv-tembikar{opacity:0}
 
-/* page */
-.inv .pg-tembikar{padding:0;justify-content:flex-start}
-.inv .pg-tembikar .tbk-card{position:relative;margin:18px 16px 86px;width:calc(100% - 32px);min-height:680px}
-.inv .tbk-body{position:relative;z-index:3;padding:52px 15% 120px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.inv .tbk-crest{position:relative;width:62%;aspect-ratio:1;margin:0 auto 6px}
-.inv .tbk-crest .tbk-dish{position:absolute;inset:0}
-.inv .tbk-well{display:none}
-.inv .tbk-well.on{display:block;position:absolute;inset:17.5%;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 2px var(--sheet),0 0 0 1.5px var(--gold)}
-.inv .tbk-well img{width:100%;height:100%;object-fit:cover;display:block}
-.inv .tbk-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
-.inv .tbk-pill{flex:0 0 auto;width:auto!important;padding:11px 20px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;white-space:nowrap;
-  font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
-.inv .tbk-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+/* page: the dish holding the round card, a details card below */
+.inv .pg-tembikar{background:var(--ground);color:var(--ink);padding:30px 0 92px;overflow:hidden}
+.inv .pg-tembikar > :not(.tbk-linen):not(.tbk-lidaside){position:relative;z-index:2}
+.inv .tbk-lidaside{position:absolute;left:-34%;bottom:2%;width:66%;aspect-ratio:1;transform:rotate(-14deg);box-shadow:0 24px 28px -12px rgba(10,15,30,.45);opacity:.95}
+.inv .tbk-lidaside::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),inset 0 0 14px rgba(0,0,0,.2)}
+.inv .tbk-dishwrap{width:86%;max-width:350px;aspect-ratio:1}
+.inv .tbk-dishwrap .tbk-dish{inset:0}
+.inv .tbk-dishwrap .tbk-round{width:60%}
+.inv .tbk-dishwrap .tbk-rin{inset:15%}
+.inv .tbk-dishwrap .tbk-names{font-size:clamp(20px,6.4cqi,26px)}
+.inv .tbk-bis{font-family:"Amiri",serif;font-size:13px;color:var(--accent);margin-bottom:4px}
+.inv .pg-tembikar .couple-ph.front{position:absolute;z-index:3;right:-3%;top:-1%;width:92px;height:92px;transform:rotate(6deg);border-radius:50%;overflow:hidden;border:4px solid var(--sheet);box-shadow:0 0 0 1px var(--accent),0 8px 14px -4px rgba(10,15,30,.4);margin:0}
+.inv .pg-tembikar .couple-ph.front img{width:100%;height:100%;object-fit:cover}
+.inv .tbk-det{width:80%;max-width:330px;margin-top:-8px;padding:22px 20px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;
+  background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 0 9px var(--sheet),inset 0 0 0 9.6px color-mix(in srgb,var(--accent) 45%,transparent),0 16px 22px -12px rgba(10,15,30,.45)}
+.inv .tbk-dk .tbk-det{background-blend-mode:soft-light}
+.inv .tbk-date{font-family:"Cinzel",serif;font-size:15px;letter-spacing:.12em;color:var(--accent)}
+.inv .tbk-date small{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;letter-spacing:0;color:var(--ink);margin-bottom:2px}
+.inv .tbk-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8;margin-top:4px}
+.inv .tbk-time{font-family:"Cinzel",serif;font-size:10px;letter-spacing:.2em;margin-top:8px}
+.inv .tbk-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;color:var(--ink);margin-top:6px;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:4px}
+.inv .tbk-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.inv .tbk-pill{font-family:"Cinzel",serif;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--sheet)}
+.inv .tbk-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 60%,transparent)}
 
-/* skin: ivory cards with a double cobalt rule and painted sprigs in two corners */
-.fam-tembikar .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 74%,transparent),color-mix(in srgb,var(--ground) 74%,transparent)),url(assets/linen.jpg) 0 0/230px,var(--ground);background-blend-mode:normal,multiply,normal}
-.fam-tembikar.cardsecs .sec{position:relative;border-radius:2px;color:var(--accent);
-  background:var(--tbk-sp) 9px 9px/74px 74px no-repeat,linear-gradient(color-mix(in srgb,var(--sheet) 70%,transparent),color-mix(in srgb,var(--sheet) 70%,transparent)),url(assets/paper.jpg) 0 0/300px,var(--sheet);background-blend-mode:normal,normal,multiply,normal;
-  box-shadow:inset 0 0 0 4px var(--sheet),inset 0 0 0 5.5px var(--gold),inset 0 0 0 8px var(--sheet),inset 0 0 0 8.7px var(--gold),0 16px 28px -14px rgba(10,20,50,.4)}
-.fam-tembikar.tbk-dk.cardsecs .sec{background:var(--tbk-sp) 9px 9px/74px 74px no-repeat,linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,normal,multiply,normal}
-.fam-tembikar.cardsecs .sec::after{content:"";position:absolute;right:9px;bottom:9px;width:74px;height:74px;background:var(--tbk-sp) center/100% no-repeat;transform:scale(-1,-1);pointer-events:none}
-.fam-tembikar.cardsecs .sec > *{position:relative;z-index:1}
-.fam-tembikar .sec h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-transform:uppercase;letter-spacing:.32em;font-size:15px;color:var(--accent);line-height:1.4}
-.fam-tembikar .sec h2::after{content:"";display:block;width:120px;height:16px;margin:8px auto 0;background:var(--tbk-ruyi) center/100% 100% no-repeat}
+/* skin: ivory cards edged with the tile paper, engraved roman headings */
+.fam-tembikar .scroller{background:url(assets/linen.jpg) 0 0/220px,var(--ground);background-blend-mode:soft-light}
+.fam-tembikar.cardsecs .sec{position:relative;overflow:hidden;color:var(--ink);border-radius:0;padding-top:40px;background:url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 8px color-mix(in srgb,var(--accent) 60%,transparent),inset 0 0 0 10px var(--sheet),inset 0 0 0 10.6px color-mix(in srgb,var(--accent) 40%,transparent),0 14px 24px -12px rgba(10,15,30,.4)}
+.fam-tembikar.tbk-dk.cardsecs .sec{background-blend-mode:soft-light}
+.fam-tembikar.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;background:url(assets/pd-illum-4.jpg) 0 30%/150px auto;filter:var(--filt);box-shadow:inset 0 -1px 0 rgba(0,0,0,.2)}
+.fam-tembikar.cardsecs .sec > *{position:relative}
+.fam-tembikar .sec h2{font-family:"Cinzel",serif;font-weight:400;text-transform:uppercase;letter-spacing:.26em;font-size:15px;line-height:1.5;color:var(--accent)}
+.fam-tembikar .sec h2::after{content:"";display:block;width:90px;height:7px;margin:10px auto 0;background:radial-gradient(circle,transparent 1.6px,var(--accent) 2px 2.6px,transparent 3px) center/7px 7px no-repeat,linear-gradient(var(--accent),var(--accent)) left 3px/38px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) right 3px/38px 1px no-repeat}
+.fam-tembikar .sec .rule{display:none}
 .fam-tembikar .info,.fam-tembikar .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-tembikar .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 30%,transparent)!important;padding:13px 6px!important}
+.fam-tembikar .info > div{border-bottom:1px solid color-mix(in srgb,var(--accent) 25%,transparent)!important;padding:13px 6px!important}
 .fam-tembikar .info > div:last-child{border-bottom:0!important}
-.fam-tembikar .info span{color:var(--gold);letter-spacing:.2em}
-.fam-tembikar .info b{color:var(--accent)}
+.fam-tembikar .info span{color:var(--accent);font-family:"Cinzel",serif;letter-spacing:.2em}
+.fam-tembikar .count b{font-family:"Cinzel",serif;font-weight:400;color:var(--accent)}
 .fam-tembikar .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
-.fam-tembikar .seg button[aria-pressed="true"],.fam-tembikar button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
-.fam-tembikar.tbk-dk input,.fam-tembikar.tbk-dk select,.fam-tembikar.tbk-dk textarea{background:rgba(255,255,255,.07);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-tembikar .seg button[aria-pressed="true"],.fam-tembikar button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;font-weight:600}
+.fam-tembikar.tbk-dk input,.fam-tembikar.tbk-dk select,.fam-tembikar.tbk-dk textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
 .fam-tembikar button.submit{border-radius:999px}
 .fam-tembikar .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-tembikar .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .tbk-plate,.inv .cv-tembikar .tbk-card{transition:none}.inv.opening .tbk-plate,.inv.opening .cv-tembikar .tbk-card{transform:none}}
-.fam-tembikar .sec .rule{display:none}
-.fam-tembikar .seg button[aria-pressed="true"],.fam-tembikar button.submit{font-weight:700}
+@media (prefers-reduced-motion: reduce){.inv .tbk-lid,.inv .tbk-place,.inv .tbk-dish.aside{transition:opacity .5s}.inv.opening .tbk-lid{transform:none;opacity:0}}

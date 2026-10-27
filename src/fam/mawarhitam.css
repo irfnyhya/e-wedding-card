@@ -1,96 +1,115 @@
-/* ===== mawarhitam (Mawar Malam) ===== */
-.inv .cv-mawarhitam,.inv .pg-mawarhitam{background:radial-gradient(ellipse 80% 55% at 38% 42%,color-mix(in srgb,var(--ground) 88%,#fff 4%),var(--ground) 70%);color:var(--pagefg)}
-.inv .mwh-vel{position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
-/* oil roses: "lighten" lets the painting's dark ground sink into the velvet */
-.inv .mwh-rose{position:absolute;z-index:1;pointer-events:none;background-repeat:no-repeat;mix-blend-mode:lighten;filter:var(--rf);
-  -webkit-mask:radial-gradient(ellipse 50% 50% at 50% 50%,#000 40%,rgba(0,0,0,.55) 68%,transparent 97%);mask:radial-gradient(ellipse 50% 50% at 50% 50%,#000 40%,rgba(0,0,0,.55) 68%,transparent 97%)}
-.inv .mwh-rose.heap{right:-34%;top:-7%;width:104%}
-.inv .mwh-rose.stem{left:-34%;bottom:9%;width:84%}
-.inv .mwh-rose.bud{right:-20%;bottom:20%;width:50%;opacity:.9;filter:var(--rf2)}
-.inv .mwh-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 40% at 50% 44%,rgba(255,236,200,.07),transparent 70%)}
+/* ===== mawarhitam (Mawar Malam): a full-bleed painted card in a vellum belly band ===== */
+.inv .cv-mawarhitam,.inv .pg-mawarhitam{background:radial-gradient(ellipse 90% 70% at 50% 40%,color-mix(in srgb,var(--ground) 86%,#fff 5%),var(--ground) 70%,color-mix(in srgb,var(--ground) 70%,#000));color:var(--pagefg)}
+.inv .mwh-vel{position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6;pointer-events:none}
+/* gold (or silver) foil: a metal gradient with the foil grain over it */
+.inv .mwh-k,.inv .mwh-names,.inv .mwh-num b,.inv .mwh-num small,.inv .mwh-date,.inv .mwh-bis,.fam-mawarhitam .sec h2{
+  background:url(assets/foil.jpg) 0 0/170px,linear-gradient(172deg,color-mix(in srgb,var(--accent) 55%,#fff) 0%,var(--accent) 30%,var(--gold) 58%,color-mix(in srgb,var(--accent) 70%,#fff) 74%,var(--gold) 100%);
+  background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
 
-/* the card: cotton stock, gilt edge, a hairline frame with four gilt corner flourishes */
-.inv .mwh-card{position:relative;z-index:3;filter:drop-shadow(0 22px 22px rgba(0,0,0,.6)) drop-shadow(0 3px 4px rgba(0,0,0,.5))}
-.inv .mwh-face{position:relative;border:3px solid transparent;border-radius:3px;
-  background:linear-gradient(160deg,rgba(255,255,255,.35),transparent 38%,rgba(0,0,0,.06)) padding-box,url(assets/paper.jpg) 0 0/220px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,
-    linear-gradient(135deg,color-mix(in srgb,var(--gold) 60%,#3a2608),color-mix(in srgb,var(--gold) 45%,#fff) 22%,var(--gold) 40%,color-mix(in srgb,var(--gold) 35%,#fff) 58%,color-mix(in srgb,var(--gold) 70%,#2a1a04) 80%,color-mix(in srgb,var(--gold) 40%,#fff)) border-box;
-  background-blend-mode:normal,multiply,normal,normal;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
-.inv .mwh-face::before{content:"";position:absolute;inset:11px;border:.6px solid color-mix(in srgb,var(--gold) 75%,transparent);pointer-events:none}
-.inv .mwh-cn{position:absolute;width:15%;max-width:52px;aspect-ratio:1;background:var(--gold);-webkit-mask-size:100% 100%;mask-size:100% 100%;pointer-events:none;z-index:1}
-.inv .mwh-cn.tl{left:6px;top:6px}
-.inv .mwh-cn.tr{right:6px;top:6px;transform:scaleX(-1)}
-.inv .mwh-cn.bl{left:6px;bottom:6px;transform:scaleY(-1)}
-.inv .mwh-cn.br{right:6px;bottom:6px;transform:scale(-1)}
-.inv .mwh-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;padding:16% 12%}
+/* the card: black-core stock, a painted gilt edge, the painting printed to the edge */
+.inv .mwh-card{position:absolute;border-radius:4px;overflow:hidden;background:var(--card);container-type:inline-size;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 80%,#000),0 0 0 2.2px color-mix(in srgb,var(--accent) 70%,#fff 10%),0 0 0 3px color-mix(in srgb,var(--gold) 60%,#000),0 30px 40px -12px rgba(0,0,0,.8),0 6px 10px rgba(0,0,0,.55)}
+.inv .mwh-paint{position:absolute;left:0;right:0;bottom:0;background-repeat:no-repeat;background-size:cover;
+  -webkit-mask:linear-gradient(180deg,transparent,#000 24%);mask:linear-gradient(180deg,transparent,#000 24%)}
+/* a little varnish and paper: light raking from the top left, a vignette into the black */
+.inv .mwh-shade{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(125deg,rgba(255,240,215,.09),transparent 34%),radial-gradient(ellipse 120% 70% at 50% 62%,transparent 45%,rgba(0,0,0,.55)),linear-gradient(180deg,transparent 78%,rgba(0,0,0,.55))}
+.inv .mwh-shade::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.55}
+/* a fine foil double rule, notched at the corners like an engraved border */
+.inv .mwh-frame{position:absolute;inset:10px;pointer-events:none;border:1px solid color-mix(in srgb,var(--gold) 75%,transparent);
+  -webkit-mask:radial-gradient(circle 9px at 0 0,transparent 8px,#000 8.5px) top left/51% 51% no-repeat,radial-gradient(circle 9px at 100% 0,transparent 8px,#000 8.5px) top right/51% 51% no-repeat,radial-gradient(circle 9px at 0 100%,transparent 8px,#000 8.5px) bottom left/51% 51% no-repeat,radial-gradient(circle 9px at 100% 100%,transparent 8px,#000 8.5px) bottom right/51% 51% no-repeat;
+  mask:radial-gradient(circle 9px at 0 0,transparent 8px,#000 8.5px) top left/51% 51% no-repeat,radial-gradient(circle 9px at 100% 0,transparent 8px,#000 8.5px) top right/51% 51% no-repeat,radial-gradient(circle 9px at 0 100%,transparent 8px,#000 8.5px) bottom left/51% 51% no-repeat,radial-gradient(circle 9px at 100% 100%,transparent 8px,#000 8.5px) bottom right/51% 51% no-repeat}
+.inv .mwh-frame::after{content:"";position:absolute;inset:4px;border:.5px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+
 /* type */
-.inv .mwh-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:var(--ink);margin:0}
-.inv .mwh-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(34px,10.4cqi,44px);line-height:1.02;margin:14px 0 8px;display:flex;flex-direction:column;align-items:center;
-  background:url(assets/foil.jpg) 0 0/160px,linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--accent) 55%,color-mix(in srgb,var(--accent) 80%,#000));background-blend-mode:multiply;
-  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .6px 0 rgba(255,255,255,.7))}
-.inv .mwh-names span{display:block;padding:0 .12em}
-.inv .mwh-names em{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:2px 0}
-.inv .mwh-rule{display:block;width:70px;height:7px;margin:4px 0 12px;background:linear-gradient(var(--gold),var(--gold)) center/100% .6px no-repeat;position:relative}
-.inv .mwh-rule::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 2.5px var(--sheet)}
-.inv .mwh-date{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--ink);margin:0}
-.inv .mwh-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8;margin:4px 0 0}
-.inv .mwh-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16.5px;margin:10px 0 0;max-width:24ch;line-height:1.25}
-.inv .mwh-bis{font-family:"Amiri",serif;font-size:16px;margin:0 0 12px;color:var(--ink)}
+.inv .mwh-top{position:absolute;left:0;right:0;top:7.5%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 9%}
+.inv .mwh-k{font-family:"Bodoni Moda",serif;font-weight:500;font-size:10.5px;letter-spacing:.52em;padding-left:.52em;text-transform:uppercase;margin:0}
+.inv .mwh-names{font-family:"Bodoni Moda",serif;font-weight:600;font-optical-sizing:none;font-variation-settings:"opsz" 11;text-transform:uppercase;letter-spacing:.06em;line-height:.98;margin:.42em 0 .18em;display:flex;flex-direction:column;align-items:center;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+.inv .mwh-names span{white-space:nowrap}
+.inv .mwh-names em{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;text-transform:none;font-size:.62em;line-height:1;margin:.04em 0 .02em}
+.inv .mwh-rule{display:flex;align-items:center;width:46%;gap:9px;margin:12px auto 0}
+.inv .mwh-rule::before,.inv .mwh-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.inv .mwh-rule::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.inv .mwh-rule b{width:6px;height:6px;transform:rotate(45deg);background:url(assets/foil.jpg) 0 0/80px,var(--gold);background-blend-mode:overlay;box-shadow:0 0 0 2px var(--card),0 0 0 2.6px var(--gold)}
+/* the date as foiled numerals: 19 | 12 with the year set small beneath */
+.inv .mwh-num{position:absolute;left:0;right:0;bottom:4.2%;margin:0;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;column-gap:12px;font-family:"Bodoni Moda",serif;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.inv .mwh-num b{font-weight:500;font-optical-sizing:none;font-variation-settings:"opsz" 14;font-style:italic;font-size:13cqi;line-height:.9;letter-spacing:.02em}
+.inv .mwh-num i{width:1px;height:10cqi;background:linear-gradient(180deg,transparent,var(--gold),transparent);transform:rotate(18deg)}
+.inv .mwh-num small{flex-basis:100%;text-align:center;font-size:10px;letter-spacing:.7em;padding-left:.7em;margin-top:5px;font-weight:500}
+
+/* the vellum band: frosted tracing paper wrapped round the card, printed in dark ink */
+.inv .mwh-band{position:absolute;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 7%;border:0;cursor:pointer;color:#2a1f1c;text-align:left;
+  background:linear-gradient(180deg,rgba(255,255,255,.35),transparent 18%,transparent 82%,rgba(0,0,0,.12)),url(assets/paper.jpg) 0 0/200px,var(--vel);background-blend-mode:normal,multiply,normal;
+  -webkit-backdrop-filter:blur(3px) saturate(.7);backdrop-filter:blur(3px) saturate(.7);
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 -1px 0 rgba(0,0,0,.18) inset,0 8px 14px -6px rgba(0,0,0,.6)}
+/* where the band turns round the card's edges */
+.inv .mwh-band::before,.inv .mwh-band::after{content:"";position:absolute;top:0;bottom:0;width:7px;pointer-events:none}
+.inv .mwh-band::before{left:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.18) 60%,transparent)}
+.inv .mwh-band::after{right:0;background:linear-gradient(270deg,rgba(0,0,0,.28),rgba(255,255,255,.18) 60%,transparent)}
+.inv .mwh-bt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.inv .mwh-bt small{font-family:"Bodoni Moda",serif;font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.8}
+.inv .mwh-bt b{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;font-size:17px;line-height:1.15;overflow-wrap:anywhere}
+.inv .mwh-go{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px;font-family:"Bodoni Moda",serif;font-weight:600;font-size:9px;letter-spacing:.22em;text-transform:uppercase;padding:6px 0 6px 12px;text-align:center;max-width:96px;line-height:1.5;border-left:1px solid rgba(42,31,28,.35)}
+.inv .mwh-go i{width:14px;height:1px;background:currentColor;position:relative}
+.inv .mwh-go i::after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
 
 /* cover */
-.inv .cv-mawarhitam{overflow:hidden;transition:opacity .5s .95s}
-.inv .cv-mawarhitam .mwh-rose{transition:transform 1.3s cubic-bezier(.45,0,.2,1),opacity 1.1s}
-.inv .mwh-card.cc{position:absolute;left:15%;right:15%;top:15.5%;transform:rotate(-2.4deg);transition:transform 1.3s cubic-bezier(.45,0,.2,1)}
-.inv .mwh-card.cc .mwh-face{aspect-ratio:5/7}
-.inv .mwh-card.cc .mwh-names{font-size:clamp(32px,9.6cqi,40px)}
-.inv .mwh-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:5;display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity .35s}
-.inv .mwh-to{text-align:center;margin:0;text-shadow:0 1px 10px rgba(0,0,0,.9)}
-.inv .mwh-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
-.inv .mwh-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px;line-height:1.3}
-.inv .mwh-open{cursor:pointer;white-space:nowrap;padding:14px 40px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 85%,transparent);background:color-mix(in srgb,var(--ground) 60%,transparent);backdrop-filter:blur(4px);
-  color:color-mix(in srgb,var(--gold) 70%,#fff);font-family:"Cormorant Garamond",serif;font-weight:700;font-size:12px;letter-spacing:.3em;text-transform:uppercase;
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--ground) 45%,transparent),inset 0 0 0 3px color-mix(in srgb,var(--ground) 60%,transparent),inset 0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
-/* opening: the roses sink back into the dark while the card lifts towards you and straightens */
-.inv.opening .mwh-foot{opacity:0}
-.inv.opening .cv-mawarhitam .mwh-rose{opacity:0;transform:scale(.88) translateY(3%)}
-.inv.opening .mwh-card.cc{transform:rotate(0deg) translateY(-3%) scale(1.14)}
+.inv .cv-mawarhitam{overflow:hidden;transition:opacity .45s .95s}
+.inv .mwh-card.mcc{left:6%;right:6%;top:3.2%;bottom:3.2%;transform:rotate(-.6deg);transition:transform 1.2s cubic-bezier(.5,0,.2,1) .25s}
+.inv .mwh-band.mcb{left:4.6%;right:4.6%;top:64%;height:12.5%;transform:rotate(-.6deg);transition:transform .8s cubic-bezier(.55,0,.35,1),opacity .5s .3s}
+/* opening: the band slides off the foot of the card; the card comes up to you */
+.inv.opening .mwh-band.mcb{transform:translateY(240%) rotate(4deg);opacity:0}
+.inv.opening .mwh-card.mcc{transform:scale(1.035) rotate(0)}
 .inv.opening .cv-mawarhitam{opacity:0}
 
-/* page */
-.inv .pg-mawarhitam{padding:44px 0 92px;gap:22px;overflow:hidden}
-.inv .pg-mawarhitam > .mwh-pgwrap,.inv .pg-mawarhitam > .mwh-pills{position:relative;z-index:2}
-.inv .mwh-rose.top{left:-12%;right:-12%;top:-10%;width:124%;opacity:.95}
-.inv .mwh-pgwrap{width:82%;max-width:340px;margin-top:20cqi}
-.inv .mwh-card.big .mwh-face{min-height:min(112cqi,470px)}
-.inv .mwh-card.big .mwh-k{font-size:10.5px}
-.inv .mwh-card.big .mwh-in{padding:15% 11% 13%}
-.inv .pg-mawarhitam .couple-ph.front{margin-bottom:16px;box-shadow:0 0 0 1px var(--gold),0 0 0 4px var(--sheet),0 0 0 5px color-mix(in srgb,var(--gold) 50%,transparent)}
-.inv .mwh-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.inv .mwh-pill{flex:0 0 auto;width:auto!important;padding:12px 30px;border-radius:999px;background:var(--sheet);color:var(--ink);text-decoration:none;font-family:"Cormorant Garamond",serif;font-weight:700;font-size:12px;letter-spacing:.24em;text-transform:uppercase;
-  box-shadow:0 10px 22px -8px rgba(0,0,0,.7),inset 0 0 0 1px var(--gold),inset 0 0 0 3px var(--sheet),inset 0 0 0 3.6px color-mix(in srgb,var(--gold) 45%,transparent)}
-.inv .mwh-pill.ghost{background:transparent;color:var(--pagefg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent)}
+/* page: the unwrapped card; the type, then the painting, then the band and the numerals, in flow so nothing overlaps */
+.inv .pg-mawarhitam{min-height:100%;height:100%;padding:12px 4.5% 74px;justify-content:flex-start;align-items:stretch}
+.inv .mwh-card.mpc{position:relative;flex:1 0 auto;display:flex;flex-direction:column;align-items:stretch;padding-top:7%;min-height:0}
+.inv .mwh-card.mpc > .mwh-frame{z-index:3}
+.inv .mwh-card.mpc .mwh-top{position:relative;top:0;z-index:2}
+.inv .mwh-paint.mpp{position:relative;flex:1 1 200px;min-height:96px;height:auto!important;margin-top:-24px}
+.inv .pg-mawarhitam .mwh-k{font-size:10px}
+.inv .mwh-date{font-family:"Bodoni Moda",serif;font-size:11px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;margin:12px 0 0;line-height:1.7}
+.inv .mwh-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin:2px 0 0;color:var(--pagefg);opacity:.8}
+.inv .mwh-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;margin:6px 0 0;color:var(--pagefg);max-width:24ch;line-height:1.25;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+.inv .mwh-bis{font-family:"Amiri",serif;font-size:17px;margin:0 0 8px}
+.inv .pg-mawarhitam .couple-ph.front{width:min(22%,84px);margin:0 auto 8px;border-radius:50%;box-shadow:0 0 0 1px var(--gold),0 0 0 4px var(--card),0 0 0 5px color-mix(in srgb,var(--gold) 60%,transparent)}
+.inv .mwh-band.mpb{position:relative;z-index:4;margin:-40px -1.5% 0;padding:14px 5%;justify-content:center;gap:0;transform:rotate(-3deg);cursor:default}
+.inv .mwh-band.mpb a{font-family:"Bodoni Moda",serif;font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#2a1f1c;text-decoration:none;padding:6px 10px;white-space:nowrap}
+.inv .mwh-band.mpb i{width:5px;height:5px;transform:rotate(45deg);background:#2a1f1c;opacity:.55;flex:none}
+.inv .mwh-card.mpc .mwh-num{position:relative;bottom:auto;z-index:4;padding:10px 0 16px}
+.inv .mwh-card.mpc .mwh-num b{font-size:11cqi}
+.inv .mwh-card.mpc .mwh-date{margin-top:8px}
+.inv .mwh-card.mpc .mwh-ven{margin-top:3px}
 
-/* skin: gilt-edged cream cards on velvet, script headings over a hairline with a diamond */
-.fam-mawarhitam .scroller{background:radial-gradient(ellipse 90% 50% at 50% 0,color-mix(in srgb,var(--ground) 85%,#fff 5%),var(--ground) 70%) fixed,var(--ground)}
-.fam-mawarhitam .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.4}
-.fam-mawarhitam.cardsecs .sec{border:2.5px solid transparent;border-radius:3px;color:var(--ink);
-  background:linear-gradient(160deg,rgba(255,255,255,.3),transparent 30%) padding-box,url(assets/paper.jpg) 0 0/220px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,
-    linear-gradient(135deg,color-mix(in srgb,var(--gold) 60%,#3a2608),color-mix(in srgb,var(--gold) 45%,#fff) 22%,var(--gold) 40%,color-mix(in srgb,var(--gold) 35%,#fff) 58%,color-mix(in srgb,var(--gold) 70%,#2a1a04) 80%,color-mix(in srgb,var(--gold) 40%,#fff)) border-box;
-  background-blend-mode:normal,multiply,normal,normal;box-shadow:inset 0 0 0 7px var(--sheet),inset 0 0 0 7.6px color-mix(in srgb,var(--gold) 60%,transparent),0 18px 30px -10px rgba(0,0,0,.75)}
-.fam-mawarhitam .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;font-size:34px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.15}
-.fam-mawarhitam .sec .rule{width:96px;color:var(--gold);margin:2px auto 6px}
-.fam-mawarhitam .sec .rule::before,.fam-mawarhitam .sec .rule::after{height:.6px;opacity:1}
-.fam-mawarhitam .sec .rule i{width:5px;height:5px}
+/* skin: black duplex cards with painted gilt edges */
+.fam-mawarhitam .scroller{background:radial-gradient(ellipse 100% 50% at 50% 0,color-mix(in srgb,var(--ground) 86%,#fff 5%),var(--ground) 70%) fixed,var(--ground)}
+.fam-mawarhitam .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5}
+.fam-mawarhitam.cardsecs .sec{color:var(--ink);border-radius:3px;padding-top:40px;padding-bottom:40px;
+  background:linear-gradient(125deg,rgba(255,240,215,.06),transparent 40%),var(--sheet);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 80%,#000),0 0 0 2.2px color-mix(in srgb,var(--accent) 60%,#fff 10%),inset 0 0 0 10px var(--sheet),inset 0 0 0 11px color-mix(in srgb,var(--gold) 55%,transparent),0 18px 26px -10px rgba(0,0,0,.75)}
+.fam-mawarhitam .sec h2{font-family:"Bodoni Moda",serif;font-weight:500;font-size:15px;letter-spacing:.34em;padding-left:.34em}
+.fam-mawarhitam .sec .mwh-rule{margin:-4px auto 4px;width:110px}
+.fam-mawarhitam .sec .mwh-rule b{box-shadow:0 0 0 2px var(--sheet),0 0 0 2.6px var(--gold)}
+.fam-mawarhitam .sec .rule{display:none}
 .fam-mawarhitam .sec,.fam-mawarhitam .sec p,.fam-mawarhitam .info b{color:var(--ink)}
 .fam-mawarhitam .info,.fam-mawarhitam .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-mawarhitam .info > div{border-bottom:.6px solid color-mix(in srgb,var(--gold) 45%,transparent)!important;padding:13px 6px!important}
+.fam-mawarhitam .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 32%,transparent)!important;padding:14px 6px!important}
 .fam-mawarhitam .info > div:last-child{border-bottom:0!important}
-.fam-mawarhitam .info span{color:var(--accent);opacity:1;letter-spacing:.22em}
-.fam-mawarhitam .ibtn{border-radius:999px;color:var(--ink);background:transparent;border-color:color-mix(in srgb,var(--gold) 70%,transparent)}
-.fam-mawarhitam .count b{font-family:"Cormorant Garamond",serif;color:var(--accent)}
-.fam-mawarhitam .seg button{border-radius:999px!important}
-.fam-mawarhitam .seg button[aria-pressed="true"],.fam-mawarhitam button.submit{background:var(--ink)!important;color:var(--sheet)!important;border-radius:999px}
-.fam-mawarhitam .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .mwh-card.cc,.inv .cv-mawarhitam .mwh-rose{transition:none}}
-.fam-mawarhitam .dock{background:color-mix(in srgb,var(--sheet) 96%,transparent);border-top:1px solid color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 -8px 20px -10px rgba(0,0,0,.5)}
+.fam-mawarhitam .info span{color:var(--accent);opacity:1}
+.fam-mawarhitam .count b{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;color:var(--accent)}
+.fam-mawarhitam .timeline b{color:var(--accent)}
+.fam-mawarhitam .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
+.fam-mawarhitam input,.fam-mawarhitam select,.fam-mawarhitam textarea{background:rgba(255,255,255,.05)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--gold) 45%,transparent)!important}
+.fam-mawarhitam input::placeholder,.fam-mawarhitam textarea::placeholder{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+.fam-mawarhitam select option{background:var(--sheet);color:var(--ink)}
+.fam-mawarhitam .seg button{border-radius:999px!important;color:var(--ink)}
+.fam-mawarhitam .seg button[aria-pressed="true"],.fam-mawarhitam button.submit{background:var(--accent)!important;color:#1a1410!important;border-radius:999px}
+.fam-mawarhitam .wish{border-color:color-mix(in srgb,var(--gold) 30%,transparent)!important;background:rgba(255,255,255,.03)!important;color:var(--ink)}
+.fam-mawarhitam .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--accent);border-top:1px solid color-mix(in srgb,var(--gold) 45%,transparent);backdrop-filter:blur(6px)}
 .fam-mawarhitam .dock button{color:var(--ink)}
 .fam-mawarhitam .dock svg{color:var(--accent)}
+.fam-mawarhitam .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .mwh-card.mcc,.inv .mwh-band.mcb{transition:none}}
+.fam-mawarhitam .seg button[aria-pressed="true"],.fam-mawarhitam button.submit{font-weight:700}

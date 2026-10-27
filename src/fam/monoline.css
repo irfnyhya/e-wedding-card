@@ -1,79 +1,107 @@
-/* ===== monoline (Moden) ===== */
-/* same-colour paper: a soft light from above, the paper grain barely there */
-.inv .mln-paper{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 90% 60% at 50% 18%,color-mix(in srgb,var(--ground) 90%,#fff),transparent 75%),var(--ground)}
-.inv .mln-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.35}
-.inv .mln-sheet{position:relative;color:var(--ink);text-align:left;display:flex;flex-direction:column;
-  background:linear-gradient(170deg,color-mix(in srgb,var(--sheet) 92%,#fff),var(--sheet) 60%),var(--sheet);
-  box-shadow:0 .5px 1px rgba(0,0,0,.08),0 2px 4px -2px rgba(0,0,0,.08),0 22px 40px -18px rgba(0,0,0,.28)}
-.inv .mln-sheet::before{content:"";position:absolute;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4}
-.inv .mln-sheet > *{position:relative}
-.inv .mln-top{display:flex;justify-content:space-between;gap:12px;font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink);opacity:.75}
-.inv .mln-body{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
-/* the ampersand, printed tone-on-tone, very large */
-.inv .mln-amp{position:absolute;left:50%;top:50%;transform:translate(-46%,-54%);font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(220px,74cqi,300px);line-height:1;
-  color:color-mix(in srgb,var(--sheet) 86%,var(--accent));pointer-events:none;user-select:none}
-.inv .mln-names{position:relative;font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(44px,14.2cqi,58px);line-height:1;letter-spacing:-.01em;color:var(--accent);display:flex;flex-direction:column}
-.inv .mln-n1{align-self:flex-start;overflow-wrap:anywhere}
-.inv .mln-n2{align-self:flex-end;margin-top:.5em;overflow-wrap:anywhere;text-align:right}
-.inv .mln-rule{display:block;height:1px;background:var(--accent);opacity:.55;margin:0 0 14px}
-.inv .mln-meta{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
-.inv .mln-meta p{display:flex;flex-direction:column;gap:3px}
-.inv .mln-meta b{font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
-.inv .mln-meta p:first-child{flex:none}
-.inv .mln-meta span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.75}
-.inv .mln-mv{text-align:right}
-.inv .mln-meta em{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;line-height:1.2}
+/* ===== monoline ===== */
+.inv .cv-monoline,.inv .pg-monoline,.fam-monoline{--sh:rgba(30,24,16,.2);--sh2:rgba(30,24,16,.3);--lit:rgba(255,253,246,.55)}
+.inv .mln-dark,.fam-monoline.mln-dark{--sh:rgba(0,0,0,.45);--sh2:rgba(0,0,0,.6);--lit:rgba(255,255,255,.06)}
+/* the table: same-colour paper, window light falling across it in two soft bars */
+.inv .mln-table{position:absolute;inset:0;overflow:hidden;background:linear-gradient(170deg,color-mix(in srgb,var(--ground) 92%,#fff),var(--ground) 55%,color-mix(in srgb,var(--ground) 92%,#000))}
+.inv .mln-table::before{content:"";position:absolute;inset:-20%;transform:rotate(-24deg);filter:blur(14px);
+  background:linear-gradient(90deg,transparent 18%,var(--lit) 24%,var(--lit) 37%,transparent 43%,transparent 50%,var(--lit) 56%,var(--lit) 66%,transparent 72%)}
+.inv .mln-table::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.32}
+.inv .mln-dark .mln-table::after{mix-blend-mode:soft-light;opacity:.25}
 
-/* cover */
-.inv .cv-monoline{background:var(--ground);overflow:hidden;transition:opacity .4s .95s}
-.inv .mln-csheet{position:absolute;left:9%;right:9%;top:6.5%;aspect-ratio:5/7.2;z-index:3;padding:9% 9% 8%;transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .9s .3s,filter 1s .2s}
-.inv .mln-csheet .mln-body{margin:0 -1%}
-.inv .mln-foot{position:absolute;left:0;right:0;bottom:6%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .35s}
-.inv .mln-to{text-align:center}
-.inv .mln-to small{display:block;font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.75}
-.inv .mln-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:24px;line-height:1.4}
-.inv .mln-open,.inv .mln-pill{cursor:pointer;padding:13px 40px;border-radius:999px;white-space:nowrap;text-decoration:none;color:var(--pagefg);background:transparent;
-  border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);font-family:"Jost",sans-serif;font-size:10px;font-weight:500;letter-spacing:.32em;text-transform:uppercase}
-/* opening: the card lifts towards you and dissolves into the paper */
-.inv.opening .mln-csheet{transform:translateY(-3%) scale(1.08);opacity:0;filter:blur(3px)}
-.inv.opening .mln-foot{opacity:0}
+/* a card: 700gsm, the edge painted in one colour (an edge layer behind the face, offset like the board's thickness) */
+.inv .mln-card{position:absolute;display:block;text-decoration:none;color:var(--ink)}
+.inv .mln-card::before{content:"";position:absolute;inset:0;transform:translate(1.6px,2.2px);border-radius:1px;background:var(--edge);
+  box-shadow:0 2px 3px var(--sh),10px 16px 26px -8px var(--sh2)}
+.inv .mln-face{position:relative;display:flex;flex-direction:column;height:100%;border-radius:1px;color:var(--ink);
+  background:linear-gradient(150deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.03)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 0 0 .5px color-mix(in srgb,var(--edge) 55%,transparent)}
+.inv .mln-dark .mln-face{background:linear-gradient(150deg,rgba(255,255,255,.06),transparent 40%,rgba(0,0,0,.12)),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal}
+.inv .mln-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:"Jost",sans-serif;font-weight:500;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;text-align:left}
+.inv .mln-top span:last-child{color:var(--edge);font-weight:600}
+.inv .mln-dark .mln-top span:last-child{color:var(--edge)}
+/* the date: huge light numerals, the ornament of the card */
+.inv .mln-big{display:flex;flex-direction:column;font-family:"Jost",sans-serif;font-weight:200;font-size:clamp(100px,31cqi,128px);line-height:.8;letter-spacing:-.04em;color:var(--accent);margin:8% 0 0}
+.inv .mln-big b{font-weight:200}
+.inv .mln-big b:last-child{align-self:flex-end;margin-right:-.04em;position:relative}
+.inv .mln-big b:last-child::before{content:"";position:absolute;right:108%;top:52%;width:34px;height:1.2px;background:var(--edge)}
+.inv .mln-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(32px,10cqi,40px);line-height:.98;text-align:left;display:flex;flex-direction:column;margin-top:10%;overflow-wrap:anywhere}
+.inv .mln-names i{font-family:"Jost",sans-serif;font-style:normal;font-weight:300;font-size:.5em;line-height:1.3;color:var(--edge);padding-left:2px}
+.inv .mln-rule{display:block;height:1px;background:currentColor;opacity:.4;margin:auto 0 10px}
+.inv .mln-meta{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;text-align:left;font-family:"Jost",sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase}
+.inv .mln-meta b{font-weight:500}
+.inv .mln-meta span{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
+.inv .mln-mv{text-align:right}
+.inv .mln-meta em{font-family:"Cormorant Garamond",serif;font-size:13.5px;letter-spacing:0;text-transform:none}
+
+/* cover: a tilted stack */
+.inv .cv-monoline{background:var(--ground);overflow:hidden;transition:opacity .45s 1s}
+.inv .mln-c1{left:7%;top:6%;width:66%;aspect-ratio:1/1.86;z-index:3;transform:rotate(-2deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1),opacity .5s .7s}
+.inv .mln-c1 .mln-face{padding:8% 8% 7%}
+.inv .mln-c3{left:47%;top:30%;width:47%;aspect-ratio:.7;z-index:2;transform:rotate(5deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1),opacity .5s .65s}
+.inv .mln-c3 .mln-face{align-items:flex-end;justify-content:center;text-align:right;padding:10% 9% 10% 40%;gap:4px}
+.inv .mln-c3 small{font-family:"Jost",sans-serif;font-weight:500;font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--edge)}
+.inv .mln-c3 b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:24px;line-height:1}
+.inv .mln-c3 em{font-family:"Jost",sans-serif;font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;line-height:1.5}
+.inv .mln-c3 .mln-c3y{margin-top:auto;color:var(--ink);opacity:.7}
+.inv .mln-c2{right:5%;bottom:8%;width:60%;aspect-ratio:1.42;z-index:4;transform:rotate(3deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1),opacity .45s .5s}
+.inv .mln-c2 .mln-face{align-items:center;justify-content:center;text-align:center;gap:3px;padding:6%}
+.inv .mln-c2 small{font-family:"Jost",sans-serif;font-weight:500;font-size:8px;letter-spacing:.24em;padding-left:.24em;text-transform:uppercase;opacity:.8}
+.inv .mln-c2 b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(24px,7.4cqi,29px);line-height:1.1;max-width:100%;overflow-wrap:anywhere}
+.inv .mln-open{cursor:pointer;margin-top:8px;padding:10px 22px;border-radius:999px;border:0;white-space:nowrap;background:var(--edge);color:var(--sheet);
+  font-family:"Jost",sans-serif;font-size:10px;font-weight:500;letter-spacing:.26em;padding-left:calc(22px + .26em);text-transform:uppercase;box-shadow:0 4px 8px -3px var(--sh2)}
+.inv .mln-dark .mln-open{color:var(--ground)}
+/* opening: the stack fans apart and lifts away */
+.inv.opening .mln-c1{transform:translate(-22%,-14%) rotate(-9deg);opacity:0}
+.inv.opening .mln-c3{transform:translate(30%,-6%) rotate(12deg);opacity:0}
+.inv.opening .mln-c2{transform:translate(10%,40%) rotate(8deg);opacity:0}
 .inv.opening .cv-monoline{opacity:0}
 
-/* page */
-.inv .pg-monoline{background:var(--ground);padding:34px 0 92px;gap:26px;overflow:hidden}
-.inv .pg-monoline > :not(.mln-paper){position:relative;z-index:2}
-.inv .mln-psheet{width:86%;max-width:350px;min-height:min(130cqi,530px);padding:9% 9% 8%}
-.inv .mln-psheet .mln-body{padding:30px 0 34px}
-.inv .mln-k{font-family:"Jost",sans-serif;font-weight:500;font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:22px;position:relative}
-.inv .mln-bis{font-family:"Amiri",serif;font-size:15px;margin-bottom:14px;position:relative}
-.inv .mln-psheet .mln-names{font-size:clamp(48px,15cqi,62px)}
-.inv .mln-ph{display:none}
-.inv .pg-monoline.has-photo .mln-ph{display:block;margin-top:22px}
-.inv .mln-photo{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:50% 35%;display:block;filter:saturate(.85)}
-.inv .pg-monoline.has-photo .mln-amp{font-size:clamp(190px,62cqi,250px)}
-.inv .pg-monoline.has-photo .mln-psheet .mln-body{padding:24px 0 26px}
+/* page: the suite laid out flat */
+.inv .pg-monoline{background:var(--ground);padding:30px 0 96px;overflow:hidden}
+.inv .pg-monoline > .mln-lay{position:relative;z-index:2;width:82%;max-width:330px;display:flex;flex-direction:column}
+.inv .mln-pmain{position:relative;transform:rotate(-.8deg)}
+.inv .mln-pmain .mln-face{padding:22px 20px 44px;min-height:min(140cqi,560px)}
+.inv .mln-pmain .mln-big{margin-top:18px}
+.inv .mln-k{font-family:"Jost",sans-serif;font-weight:500;font-size:9px;letter-spacing:.3em;text-transform:uppercase;text-align:left;margin-top:22px;color:var(--edge)}
+.inv .mln-pmain .mln-names{margin-top:6px;margin-bottom:18px}
+.inv .mln-bis{font-family:"Amiri",serif;font-size:15px;text-align:left;margin-top:12px}
+.inv .mln-ph:empty{display:none}
+.inv .mln-photo{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;object-position:50% 35%;margin-top:14px;border-radius:1px;filter:grayscale(.2)}
+.inv .pg-monoline.has-photo .mln-big{font-size:clamp(80px,24cqi,100px);flex-direction:row;justify-content:space-between}
+.inv .pg-monoline.has-photo .mln-big b:last-child::before{display:none}
 .inv .pg-monoline .couple-ph.front{display:none}
-.inv .mln-pill{align-self:center;width:auto!important;flex:0 0 auto}
+.inv .mln-pair{display:flex;justify-content:flex-end;gap:10px;margin-top:-26px;padding-right:2px}
+.inv .mln-mini{position:relative;width:46%;aspect-ratio:1.3;cursor:pointer}
+.inv .mln-m1{transform:rotate(-3deg)}.inv .mln-m2{transform:rotate(2.5deg) translateY(10px)}
+.inv .mln-mini .mln-face{align-items:flex-start;justify-content:flex-end;text-align:left;padding:12px 14px;gap:1px}
+.inv .mln-mini small{font-family:"Jost",sans-serif;font-weight:200;font-size:30px;line-height:1;color:var(--edge);margin-bottom:auto}
+.inv .mln-mini b{font-family:"Jost",sans-serif;font-weight:500;font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+.inv .mln-mini em{font-family:"Cormorant Garamond",serif;font-size:14px}
 
-/* skin: plain cards on the same-colour paper; one fine rule above a light italic heading */
+/* skin: plain cards with a painted edge; each section numbered with a big light numeral over spaced grotesk caps */
 .fam-monoline .scroller{background:var(--ground)}
-.fam-monoline .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.3}
-.fam-monoline.cardsecs .sec{background:var(--sheet);color:var(--ink);border-radius:0;padding-top:46px;padding-bottom:38px;
-  box-shadow:0 .5px 1px rgba(0,0,0,.07),0 18px 32px -18px rgba(0,0,0,.26)}
-.fam-monoline.cardsecs .sec::before{content:"";position:absolute;left:28px;right:28px;top:26px;height:1px;background:var(--accent);opacity:.4;pointer-events:none}
-.fam-monoline .sec h2{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:34px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.1}
+.fam-monoline .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.3}
+.fam-monoline.mln-dark .scroller::before{mix-blend-mode:soft-light;opacity:.25}
+.fam-monoline .sheet{counter-reset:mln}
+.fam-monoline.cardsecs .sec{background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:1px;padding-top:28px;
+  box-shadow:inset 0 0 0 .5px color-mix(in srgb,var(--edge) 55%,transparent),1.6px 2.2px 0 var(--edge),0 2px 3px var(--sh),10px 16px 26px -10px var(--sh2)}
+.fam-monoline .sec h2{font-family:"Jost",sans-serif;font-weight:500;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink);line-height:1.3}
+.fam-monoline .sec h2::before{counter-increment:mln;content:counter(mln,decimal-leading-zero);display:block;font-family:"Jost",sans-serif;font-weight:200;font-size:46px;letter-spacing:-.02em;line-height:1;color:var(--edge);margin-bottom:8px}
+.fam-monoline .sec h2::after{content:"";display:block;width:28px;height:1.2px;margin:14px auto 0;background:var(--edge)}
 .fam-monoline .sec,.fam-monoline .sec p,.fam-monoline .info b{color:var(--ink)}
 .fam-monoline .info,.fam-monoline .info > div{border:0!important;background:none!important;box-shadow:none!important}
-.fam-monoline .info > div{border-bottom:1px solid color-mix(in srgb,var(--accent) 18%,transparent)!important;padding:14px 4px!important}
+.fam-monoline .info > div{border-bottom:1px solid color-mix(in srgb,var(--ink) 16%,transparent)!important;padding:14px 6px!important}
 .fam-monoline .info > div:last-child{border-bottom:0!important}
-.fam-monoline .info span{font-family:"Jost",sans-serif;font-weight:500;font-size:9px;color:var(--accent);letter-spacing:.28em;opacity:.8}
-.fam-monoline .count b{font-family:"Cormorant Garamond",serif;font-weight:300;color:var(--accent)}
-.fam-monoline .ibtn{border-radius:999px;color:var(--accent);background:transparent;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
-.fam-monoline input,.fam-monoline select,.fam-monoline textarea{background:color-mix(in srgb,var(--sheet) 85%,var(--ground));color:var(--ink);border-color:color-mix(in srgb,var(--accent) 25%,transparent)}
+.fam-monoline .info span{font-family:"Jost",sans-serif;color:var(--edge);letter-spacing:.24em}
+.fam-monoline .count b{font-family:"Jost",sans-serif;font-weight:200;color:var(--ink)}
+.fam-monoline .ibtn{border-radius:999px;color:var(--ink);background:transparent;border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+.fam-monoline input,.fam-monoline select,.fam-monoline textarea{background:color-mix(in srgb,var(--sheet) 90%,var(--ink) 4%);color:var(--ink);border:1px solid color-mix(in srgb,var(--ink) 25%,transparent)!important;border-radius:8px}
 .fam-monoline .seg button{border-radius:999px!important;color:var(--ink)}
-.fam-monoline .seg button[aria-pressed="true"],.fam-monoline button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px}
-.fam-monoline .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-monoline .seg button[aria-pressed="true"],.fam-monoline button.submit{background:var(--edge)!important;color:var(--sheet)!important;border-color:var(--edge)!important;border-radius:999px;font-weight:600}
+.fam-monoline.mln-dark .seg button[aria-pressed="true"],.fam-monoline.mln-dark button.submit{color:var(--ground)!important}
+.fam-monoline .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--ink);backdrop-filter:blur(6px)}
 .fam-monoline .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .mln-csheet{transition:opacity .4s}}
 .fam-monoline .sec .rule{display:none}
-.fam-monoline .seg button[aria-pressed="true"],.fam-monoline button.submit{font-weight:600}
+@media (prefers-reduced-motion: reduce){.inv .mln-c1,.inv .mln-c2,.inv .mln-c3{transition:opacity .4s}}
+.fam-monoline input::placeholder,.fam-monoline textarea::placeholder{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+.inv .pg-monoline.has-photo .mln-pmain .mln-face{min-height:0}

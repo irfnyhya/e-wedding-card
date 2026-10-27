@@ -1,90 +1,107 @@
 /* ===== cermin ===== */
-/* the surface: linen on light colourways, velvet on dark */
+.inv .cv-cermin,.inv .pg-cermin,.fam-cermin{--ml:color-mix(in srgb,var(--gold) 45%,#fff);--md:color-mix(in srgb,var(--gold) 55%,#2a1804);
+  --mirror:linear-gradient(125deg,var(--ml),var(--gold) 22%,var(--md) 40%,color-mix(in srgb,var(--gold) 30%,#fff) 55%,var(--gold) 72%,var(--md))}
+/* the surface: linen on light colourways, velvet on dark; a soft pool of light on it */
 .inv .crm-bed{position:absolute;inset:0;overflow:hidden;
-  background:radial-gradient(ellipse 80% 55% at 50% 30%,color-mix(in srgb,var(--ground) 86%,#fff),transparent 75%),linear-gradient(170deg,var(--ground),color-mix(in srgb,var(--ground) 82%,#000))}
-.inv .crm-bed::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/230px;mix-blend-mode:soft-light;opacity:.4}
+  background:radial-gradient(ellipse 80% 55% at 45% 32%,color-mix(in srgb,var(--ground) 84%,#fff),transparent 75%),linear-gradient(170deg,var(--ground),color-mix(in srgb,var(--ground) 80%,#000))}
+.inv .crm-bed::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/230px;mix-blend-mode:soft-light;opacity:.42}
+.inv .crm-dark .crm-bed{background:radial-gradient(ellipse 75% 50% at 45% 30%,color-mix(in srgb,var(--ground) 70%,#fff 8%),transparent 75%),linear-gradient(170deg,var(--ground),color-mix(in srgb,var(--ground) 70%,#000))}
+.inv .crm-dark .crm-bed::after{background-image:url(assets/velvet.jpg);background-size:300px;opacity:.55}
 
-/* the object: a cream card with the acrylic pinned over it; the window is an arch */
-.inv .crm-obj{position:relative;--wl:8%;--wt:5.58%;--wb:16.28%;--ry:37.5%}
-.inv .crm-card{position:absolute;inset:0;transform:translate(2.6%,2.2%) rotate(1.6deg);border-radius:1px;
+/* the object: a cotton card with the acrylic pinned over it; the window is an arch */
+.inv .crm-obj{position:relative;--wl:8%;--wt:5.31%;--wb:20.35%;--ry:37.5%}
+.inv .crm-card{position:absolute;inset:0;transform:translate(2.6%,2%) rotate(1.4deg);border-radius:1px;
   background:linear-gradient(135deg,rgba(255,255,255,.4),transparent 45%),url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:normal,multiply,normal;
-  box-shadow:0 1px 1px rgba(0,0,0,.12),8px 14px 24px -8px rgba(20,12,4,.38)}
+  box-shadow:0 1px 1px rgba(0,0,0,.12),8px 14px 24px -8px rgba(20,12,4,.4)}
 .inv .crm-win{position:absolute;left:var(--wl);right:var(--wl);top:var(--wt);bottom:var(--wb);border-radius:50% 50% 0 0/var(--ry) var(--ry) 0 0;overflow:hidden;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);padding:22% 9% 8%;
-  background:linear-gradient(color-mix(in srgb,var(--sheet) 55%,transparent),color-mix(in srgb,var(--sheet) 55%,transparent)),url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:normal,multiply,normal}
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);padding:10% 7% 5%;
+  background:linear-gradient(color-mix(in srgb,var(--sheet) 50%,transparent),color-mix(in srgb,var(--sheet) 50%,transparent)),url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:normal,multiply,normal}
 /* the acrylic casts a soft shadow onto the card inside the arch (it stands on pins) */
-.inv .crm-win::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 5px 8px 12px -4px rgba(30,18,4,.32)}
-.inv .crm-acr{position:absolute;inset:0;filter:drop-shadow(0 1.5px 0 rgba(60,40,10,.55)) drop-shadow(0 12px 16px rgba(20,12,4,.34))}
+.inv .crm-win::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 6px 9px 14px -4px rgba(30,18,4,.34)}
+.inv .crm-acr{position:absolute;inset:0;filter:drop-shadow(0 1.5px 0 rgba(60,40,10,.55)) drop-shadow(0 14px 18px rgba(20,12,4,.38))}
 .inv .crm-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-/* the date, laser-frosted into the mirror */
-.inv .crm-base{position:absolute;left:12%;right:12%;bottom:0;height:var(--wb);display:flex;align-items:center;justify-content:center;text-align:center;
-  font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.34em;padding-left:.34em;text-transform:uppercase;line-height:1.3;
-  color:rgba(255,255,255,.78);text-shadow:0 0 1px rgba(255,255,255,.6),0 .6px 0 rgba(60,40,10,.35);mix-blend-mode:screen}
-.inv .crm-k{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9px;letter-spacing:.38em;padding-left:.38em;text-transform:uppercase;color:var(--accent)}
-.inv .crm-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(38px,12cqi,50px);line-height:.98;color:var(--accent);margin:12px 0 6px;
+/* the date, laser-frosted into the mirror in large numerals */
+.inv .crm-base{position:absolute;left:10%;right:10%;bottom:0;height:var(--wb);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:4%;
+  color:rgba(255,255,255,.82);text-shadow:0 0 1px rgba(255,255,255,.7),0 .8px 0 rgba(60,40,10,.4);mix-blend-mode:screen}
+.inv .crm-base b{font-family:"Playfair Display",serif;font-weight:400;font-size:clamp(34px,11cqi,46px);line-height:1;letter-spacing:.04em;display:flex;align-items:center;gap:.12em}
+.inv .crm-base b i,.inv .crm-num i{font-style:normal;font-size:.55em}
+.inv .crm-base span{font-family:"Playfair Display",serif;font-size:10px;letter-spacing:.6em;padding-left:.6em;margin-top:5px}
+.inv .crm-crest{display:block;width:34%;aspect-ratio:100/36;flex:none;margin-bottom:10px;background:var(--mirror);-webkit-mask:var(--crest) center/100% 100% no-repeat;mask:var(--crest) center/100% 100% no-repeat}
+.inv .crm-k{font-family:"Playfair Display",serif;font-weight:500;font-size:9.5px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--accent)}
+.inv .crm-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(46px,14.6cqi,60px);line-height:.92;color:var(--accent);margin:10px 0 2px;
   display:flex;flex-direction:column;align-items:center;overflow-wrap:anywhere}
-.inv .crm-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--ink);opacity:.75;margin:2px 0}
-.inv .crm-cv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:6px;opacity:.85}
-.inv .crm-cv::before,.inv .crm-date::before{content:"";display:block;width:30px;height:1px;margin:2px auto 10px;background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.inv .crm-names span{font-family:"Playfair Display",serif;font-style:italic;font-size:.34em;color:var(--ink);opacity:.75;margin:4px 0}
+.inv .crm-prule{display:block;width:96px;height:8px;margin:10px 0 6px;flex:none;background:var(--mirror);-webkit-mask:var(--prule) center/100% 100% no-repeat;mask:var(--prule) center/100% 100% no-repeat}
+.inv .crm-cv{font-family:"Playfair Display",serif;font-style:italic;font-size:14px;margin-top:4px;opacity:.85}
+
+/* pearls, lying on the table */
+.inv .crm-pearls{position:absolute;height:auto;pointer-events:none;filter:drop-shadow(2px 5px 4px rgba(20,12,4,.45))}
+/* the place card: frosted acrylic on a tiny gold foot, with the guest's name and the button */
+.inv .crm-place{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;text-decoration:none;color:var(--ink);
+  background:linear-gradient(160deg,rgba(255,255,255,.75),rgba(255,255,255,.5) 40%,rgba(255,255,255,.62)),url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  border-radius:3px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),inset 0 0 0 2.5px color-mix(in srgb,var(--gold) 45%,transparent),0 1px 0 var(--md),0 14px 18px -8px rgba(20,12,4,.5)}
+.inv .crm-place::after{content:"";position:absolute;left:30%;right:30%;bottom:-5px;height:5px;border-radius:0 0 2px 2px;background:var(--mirror);box-shadow:0 3px 4px rgba(0,0,0,.3)}
+.inv .crm-place small{font-family:"Playfair Display",serif;font-size:8.5px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--accent)}
+.inv .crm-place b{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(26px,8cqi,32px);line-height:1.15;color:var(--ink);max-width:96%;overflow-wrap:anywhere}
+.inv .crm-open{cursor:pointer;margin-top:6px;padding:10px 28px;border-radius:999px;white-space:nowrap;color:var(--accent);
+  font-family:"Playfair Display",serif;font-size:10.5px;font-weight:600;letter-spacing:.28em;padding-left:calc(28px + .28em);text-transform:uppercase;
+  background:linear-gradient(var(--sheet),var(--sheet)) padding-box,var(--mirror) border-box;border:2px solid transparent;box-shadow:0 6px 12px -4px rgba(20,12,4,.4)}
 
 /* cover */
 .inv .cv-cermin{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
-.inv .crm-cobj{position:absolute;left:9.5%;right:9.5%;top:6.5%;aspect-ratio:300/430;z-index:3}
-.inv .crm-cobj .crm-acr{transition:transform 1.3s cubic-bezier(.5,0,.2,1),opacity .6s .7s;transform-origin:50% 0}
-/* one slow ambient move: a reflection drifts across the mirror */
+.inv .crm-cobj{position:absolute;left:11%;width:78%;top:7.5%;aspect-ratio:300/452;z-index:3;transform:rotate(-1deg)}
+.inv .crm-cobj .crm-acr{transition:transform 1.25s cubic-bezier(.5,0,.2,1),opacity .6s .65s;transform-origin:50% 30%}
 @keyframes crmDrift{0%,100%{transform:translateX(-60%)}50%{transform:translateX(70%)}}
 .inv .crm-cobj .crm-refl{animation:crmDrift 12s ease-in-out infinite}
-.inv .crm-foot{position:absolute;left:0;right:0;bottom:6.5%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .35s}
-.inv .crm-to{text-align:center}
-.inv .crm-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
-.inv .crm-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:29px;line-height:1.25}
-.inv .crm-open,.inv .crm-pill{cursor:pointer;padding:13px 38px;border-radius:999px;border:0;white-space:nowrap;text-decoration:none;color:var(--accent);
-  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
-  background:linear-gradient(var(--sheet),var(--sheet)) padding-box,linear-gradient(125deg,color-mix(in srgb,var(--gold) 45%,#fff),var(--gold) 30%,color-mix(in srgb,var(--gold) 60%,#2a1804) 50%,color-mix(in srgb,var(--gold) 35%,#fff) 65%,var(--gold)) border-box;
-  border:2.5px solid transparent;box-shadow:0 10px 22px -6px rgba(20,12,4,.45)}
-/* opening: the acrylic lifts off its pins and away */
-.inv.opening .crm-cobj .crm-acr{transform:translateY(-34%) scale(1.12) rotateX(8deg);opacity:0}
-.inv.opening .crm-foot{opacity:0}
+.inv .crm-cpearls{width:62%;right:-17%;bottom:-11%;transform:rotate(-64deg);z-index:4;transition:transform 1s,opacity .5s}
+.inv .crm-cplace{left:8%;width:64%;bottom:5.5%;padding:14px 10px 14px;z-index:5;transform:rotate(-2deg);transition:transform .9s cubic-bezier(.5,0,.6,1),opacity .4s .3s}
+/* opening: the mirror lifts off its pins towards you; the place card and pearls slide aside */
+.inv.opening .crm-cobj .crm-acr{transform:translateY(-6%) scale(1.25);opacity:0}
+.inv.opening .crm-cplace{transform:translateY(60%) rotate(-4deg);opacity:0}
+.inv.opening .crm-cpearls{transform:translate(20%,20%) rotate(-64deg);opacity:0}
 .inv.opening .cv-cermin{opacity:0}
 
-/* page */
-.inv .pg-cermin{background:var(--ground);padding:34px 0 92px;gap:28px;overflow:hidden}
-.inv .pg-cermin > :not(.crm-bed){position:relative;z-index:2}
-.inv .crm-pobj{width:84%;max-width:340px;aspect-ratio:300/470;--wt:5.1%;--wb:15.74%;--ry:33.9%}
-.inv .crm-pobj .crm-win{padding:24% 8% 7%}
-.inv .crm-pobj .crm-k{font-size:9.5px}
-.inv .crm-pobj .crm-names{font-size:clamp(40px,12.6cqi,52px)}
-.inv .crm-date{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:4px}
-.inv .crm-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:3px;opacity:.8}
+/* page: the card rimmed in mirror gold, pearls and the place card beside it */
+.inv .pg-cermin{background:var(--ground);padding:30px 0 100px;overflow:hidden}
+.inv .pg-cermin > .crm-play{position:relative;z-index:2;width:84%;max-width:340px}
+.inv .crm-parch{position:relative;z-index:2;border:7px solid transparent;border-radius:999px 999px 3px 3px/170px 170px 3px 3px;transform:rotate(-.8deg);
+  background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 45%) padding-box,url(assets/paper.jpg) 0 0/230px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,var(--mirror) border-box;
+  background-blend-mode:normal,multiply,normal,normal;box-shadow:0 1.5px 0 var(--md),0 18px 30px -10px rgba(20,12,4,.45)}
+.inv .crm-pin{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink);padding:44px 18px 30px;margin:5px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);border-radius:999px 999px 1px 1px/160px 160px 1px 1px}
+.inv .crm-pin .crm-crest{width:38%}
+.inv .crm-pin .crm-names{font-size:clamp(48px,15cqi,62px)}
+.inv .crm-num{font-family:"Playfair Display",serif;font-size:30px;line-height:1;letter-spacing:.04em;color:var(--accent);display:flex;align-items:center;gap:.12em;margin:4px 0 6px}
+.inv .crm-date{font-family:"Playfair Display",serif;font-weight:500;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);opacity:.85}
+.inv .crm-hj{font-family:"Playfair Display",serif;font-style:italic;font-size:13px;margin-top:3px;opacity:.75}
+.inv .crm-ven{font-family:"Playfair Display",serif;font-style:italic;font-size:16px;margin-top:8px;max-width:24ch;line-height:1.3}
 .inv .crm-bis{font-family:"Amiri",serif;font-size:15px;margin-bottom:6px}
-.inv .crm-pobj .crm-base{font-size:12px;letter-spacing:.22em;font-style:normal}
-.inv .pg-cermin.has-photo .crm-win{padding-top:6%;justify-content:flex-start}
-.inv .crm-photo{width:56%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%;border-radius:999px 999px 2px 2px;display:block;margin:4% auto 10px;flex:none;
-  box-shadow:0 0 0 3px var(--sheet),0 0 0 4px color-mix(in srgb,var(--gold) 80%,transparent)}
-.inv .pg-cermin.has-photo .crm-names{margin-top:6px;font-size:clamp(34px,10.5cqi,44px)}
+.inv .crm-ppearls{width:54%;left:-30%;bottom:-26%;transform:rotate(76deg);z-index:3}
+.inv .crm-pplace{position:relative;z-index:4;width:62%;margin:-26px -6% 0 auto;padding:14px 10px;transform:rotate(3deg);cursor:pointer}
+.inv .crm-pplace b{font-size:26px}
+.inv .pg-cermin.has-photo .crm-pin{padding-top:22px}
+.inv .crm-photo{width:52%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%;border-radius:999px 999px 2px 2px;display:block;margin:0 auto 12px;flex:none;
+  box-shadow:0 0 0 3px var(--sheet),0 0 0 4.5px color-mix(in srgb,var(--gold) 80%,transparent)}
 .inv .pg-cermin .couple-ph.front{display:none}
-.inv .crm-pill{align-self:center;width:auto!important;flex:0 0 auto}
 
-/* skin: arch-topped cream cards rimmed in mirror gold, script headings */
+/* skin: arch-topped cotton cards rimmed in mirror gold, script headings over a pearl rule */
 .fam-cermin .scroller{background:linear-gradient(170deg,color-mix(in srgb,var(--ground) 90%,#fff),var(--ground) 40%,color-mix(in srgb,var(--ground) 86%,#000))}
 .fam-cermin .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/230px;mix-blend-mode:soft-light;opacity:.35}
-.fam-cermin.cardsecs .sec{border:5px solid transparent;border-radius:140px 140px 3px 3px/110px 110px 3px 3px;color:var(--ink);padding-top:44px;padding-bottom:34px;
-  background:url(assets/paper.jpg) 0 0/230px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,
-    linear-gradient(125deg,color-mix(in srgb,var(--gold) 45%,#fff),var(--gold) 22%,color-mix(in srgb,var(--gold) 55%,#2a1804) 40%,color-mix(in srgb,var(--gold) 30%,#fff) 55%,var(--gold) 72%,color-mix(in srgb,var(--gold) 60%,#2a1804)) border-box;
-  background-blend-mode:multiply,normal,normal;box-shadow:0 12px 26px -10px rgba(20,12,4,.42)}
-.fam-cermin .sec h2{font-family:"Great Vibes",cursive;font-weight:400;font-size:36px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.1}
-.fam-cermin .sec h2::after{content:"";display:block;width:40px;height:1px;margin:10px auto 0;background:color-mix(in srgb,var(--gold) 80%,transparent)}
+.fam-cermin.cardsecs .sec{border:5px solid transparent;border-radius:140px 140px 3px 3px/110px 110px 3px 3px;color:var(--ink);padding-top:46px;padding-bottom:34px;
+  background:url(assets/paper.jpg) 0 0/230px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,var(--mirror) border-box;
+  background-blend-mode:multiply,normal,normal;box-shadow:0 1.5px 0 var(--md),0 12px 26px -10px rgba(20,12,4,.42)}
+.fam-cermin .sec h2{font-family:"Great Vibes",cursive;font-weight:400;font-size:38px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.1}
+.fam-cermin .sec h2::after{content:"";display:block;width:96px;height:8px;margin:10px auto 0;background:var(--mirror);-webkit-mask:var(--prule) center/100% 100% no-repeat;mask:var(--prule) center/100% 100% no-repeat}
 .fam-cermin .sec,.fam-cermin .sec p,.fam-cermin .info b{color:var(--ink)}
 .fam-cermin .info,.fam-cermin .info > div{border:0!important;background:none!important;box-shadow:none!important}
 .fam-cermin .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
 .fam-cermin .info > div:last-child{border-bottom:0!important}
 .fam-cermin .info span{color:var(--accent);letter-spacing:.22em}
+.fam-cermin .count b{font-family:"Playfair Display",serif;font-weight:400;color:var(--accent)}
 .fam-cermin .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 65%,transparent)}
 .fam-cermin input,.fam-cermin select,.fam-cermin textarea{background:#fff;color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
 .fam-cermin .seg button{border-radius:999px!important;color:var(--ink)}
-.fam-cermin .seg button[aria-pressed="true"],.fam-cermin button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-cermin .seg button[aria-pressed="true"],.fam-cermin button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px;font-weight:600}
 .fam-cermin .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-cermin .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .crm-cobj .crm-refl{animation:none}.inv .crm-cobj .crm-acr{transition:opacity .4s}}
 .fam-cermin .sec .rule{display:none}
-.fam-cermin .seg button[aria-pressed="true"],.fam-cermin button.submit{font-weight:600}
+@media (prefers-reduced-motion: reduce){.inv .crm-cobj .crm-refl{animation:none}.inv .crm-cobj .crm-acr,.inv .crm-cplace,.inv .crm-cpearls{transition:opacity .4s}}
