@@ -12,22 +12,22 @@ function kolamLace(w,h,n,c,uid){const d=6,r=1.5;let p='',holes='';
   // a second ring of tiny holes just inside the edge
   let ring='';const g=11,s0=d+7;for(let x=s0;x<=w-s0+.1;x+=(w-2*s0)/Math.round((w-2*s0)/g)){ring+=`M${(x-.8).toFixed(2)} ${s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${(x-.8).toFixed(2)} ${h-s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
   for(let y=s0;y<=h-s0+.1;y+=(h-2*s0)/Math.round((h-2*s0)/g)){ring+=`M${s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${w-s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
-  return `<svg class="kl-lace" viewBox="-4 -4 ${w+8} ${h+8}" preserveAspectRatio="none"><defs><filter id="kn${uid}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
+  return `<svg class="klm-lace" viewBox="-4 -4 ${w+8} ${h+8}" preserveAspectRatio="none"><defs><filter id="kn${uid}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
     <path d="${p}${holes}${ring}" style="fill:${c.lace}" fill-rule="evenodd"/><path d="${p}" fill="#000" filter="url(#kn${uid})" opacity=".8"/>
     <rect x="${d+12}" y="${d+12}" width="${w-2*d-24}" height="${h-2*d-24}" fill="none" style="stroke:${c.accent}" stroke-width=".5" stroke-dasharray="1.6 1.6" opacity=".55"/></svg>`}
 let kn=0;
-const klCard=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="kl-doily${big?' big':''}">${kolamLace(200,big?280:190,big?15:13,{lace:'var(--sheet)',accent:'var(--accent)'},++kn)}
-  <div class="kl-txt"><p class="kl-k kicker">${ev(o,L)}</p><p class="kl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kl-date">${esc(fmtDate(o.date,o.lang))}</p>${big&&o.venue?`<p class="kl-ven">${esc(o.venue)}</p>`:''}</div></div>`};
+const klCard=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="klm-doily${big?' big':''}">${kolamLace(200,big?280:190,big?15:13,{lace:'var(--sheet)',accent:'var(--accent)'},++kn)}
+  <div class="klm-txt"><p class="klm-k kicker">${ev(o,L)}</p><p class="klm-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="klm-date">${esc(fmtDate(o.date,o.lang))}</p>${big&&o.venue?`<p class="klm-ven">${esc(o.venue)}</p>`:''}</div></div>`};
 FAMILY({key:'kolam',name:'Kolam',meaning:'Lily pond',
   blurb:'A blush envelope standing open on Monet’s water-lily pond, with a lace doily card inside that rises out when guests open it.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
-  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-kolam"><div class="klm-paint"></div><div class="klm-veil"></div>
     <div class="reveal">${klCard(o,L,true)}</div>
-    <a class="kl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
-    ${guest?`<p class="kl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
-    <div class="kl-stage"><div class="kl-env kl-rear"><div class="kl-flap"></div><div class="kl-back"></div></div><div class="kl-in">${klCard(o,L,false)}</div><div class="kl-env kl-front"><div class="kl-pocket"></div><i class="kl-pearl"></i></div></div>
-    <${tag} class="kl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+    <a class="klm-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-kolam"><div class="klm-paint"></div><div class="klm-veil"></div>
+    ${guest?`<p class="klm-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+    <div class="klm-stage"><div class="klm-env klm-rear"><div class="klm-flap"></div><div class="klm-back"></div></div><div class="klm-in">${klCard(o,L,false)}</div><div class="klm-env klm-front"><div class="klm-pocket"></div><i class="klm-pearl"></i></div></div>
+    <${tag} class="klm-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
   skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[

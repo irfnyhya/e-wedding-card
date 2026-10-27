@@ -1,0 +1,95 @@
+/* ===== tezhip ===== */
+/* leather (dark colourways) or a pale desk */
+.inv .tzp-bg{position:absolute;inset:0;background:radial-gradient(ellipse 85% 65% at 50% 42%,rgba(255,255,255,.3),transparent 70%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,multiply,normal}
+.inv .tzp-dark .tzp-bg{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,230,180,.1),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 45%,rgba(0,0,0,.55)),url(assets/crackle.png) 0 0/420px,url(assets/velvet.jpg) 0 0/280px,var(--ground);background-blend-mode:normal,normal,soft-light,soft-light,normal}
+
+/* the leaf: burnished cream paper with toned edges */
+.inv .tzp-leaf{--b:clamp(22px,7cqi,30px);position:relative;color:var(--ink);
+  background:radial-gradient(ellipse 75% 70% at 50% 45%,transparent 60%,rgba(140,100,40,.2)),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 1px 1px rgba(0,0,0,.2),0 22px 40px -14px rgba(20,10,0,.6),0 4px 10px -4px rgba(20,10,0,.35)}
+.inv .tzp-border{position:absolute;inset:3.2%;pointer-events:none}
+.inv .tzp-s{position:absolute;display:block;overflow:hidden;mix-blend-mode:multiply}
+.inv .tzp-s.l,.inv .tzp-s.r{top:var(--b);bottom:var(--b);width:var(--b);background:url(assets/pd-illum-6.jpg) 0 0/100% auto repeat-y}
+.inv .tzp-s.l{left:0}
+.inv .tzp-s.r{right:0;transform:scaleX(-1);background-position:0 37%}
+.inv .tzp-s.t,.inv .tzp-s.b{left:var(--b);right:var(--b);height:var(--b)}
+.inv .tzp-s.t{top:0}.inv .tzp-s.b{bottom:0}
+.inv .tzp-s b,.inv .tzp-band b{position:absolute;left:0;top:0;width:var(--b);height:1400px;transform-origin:0 0;background:url(assets/pd-illum-6.jpg) 0 0/100% auto repeat-y}
+.inv .tzp-s.t b,.inv .tzp-band.t b{transform:rotate(90deg) translateY(-100%)}
+.inv .tzp-s.b b,.inv .tzp-band.b b{transform:rotate(-90deg) translateX(-100%);background-position:0 61%}
+.inv .tzp-c{position:absolute;width:var(--b);height:var(--b);display:block}
+.inv .tzp-c.tl{left:0;top:0}.inv .tzp-c.tr{right:0;top:0}.inv .tzp-c.bl{left:0;bottom:0}.inv .tzp-c.br{right:0;bottom:0}
+/* inside the border: jadwal rules in gold, lapis and black */
+.inv .tzp-in{position:relative;margin:calc(3.2% + var(--b) + 5px);padding:22px 14px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  border:1.5px solid #b48d42;box-shadow:inset 0 0 0 2.5px var(--sheet),inset 0 0 0 3.3px #21407c,inset 0 0 0 5px var(--sheet),inset 0 0 0 5.5px rgba(30,25,20,.55)}
+.inv .tzp-k{font-family:"Marcellus",serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;padding-left:.34em;color:#8a6526}
+.inv .tzp-names{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:clamp(34px,10.4cqi,44px);line-height:1.02;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:10px 0 4px}
+.inv .tzp-names span{font-size:.5em;color:#a37c34;margin:2px 0}
+.inv .tzp-rule{width:120px;height:12px;color:#a37c34;margin:6px 0 8px}
+.inv .tzp-date{font-family:"Marcellus",serif;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;padding-left:.26em}
+.inv .tzp-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin-top:3px}
+.inv .tzp-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:5px}
+.inv .tzp-bis{font-family:"Amiri",serif;font-size:17px;color:#1f3b72;margin-bottom:8px}
+/* the şemse medallion: the illumination clipped to a circle inside the gilt rim */
+.inv .tzp-med{position:relative;display:block;width:clamp(104px,33cqi,132px);aspect-ratio:120/148;filter:drop-shadow(0 2px 2px rgba(60,40,10,.3))}
+.inv .tzp-rim{position:absolute;inset:0;width:100%;height:100%;display:block}
+.inv .tzp-art{position:absolute;left:11.67%;width:76.67%;top:18.92%;height:62.16%;border-radius:50%;z-index:1;
+  background:url(assets/pd-illum-1.jpg) 51.7% 49.2%/300% auto no-repeat;box-shadow:0 0 0 1.2px #f1d98f,0 0 0 2.2px #6b4c1c}
+
+/* cover */
+.inv .cv-tezhip{background:var(--ground);overflow:hidden;transition:opacity .5s 1s}
+.inv .tzp-cl{position:absolute;left:50%;top:4.5%;width:88%;max-width:380px;transform:translateX(-50%);transition:transform 1.4s cubic-bezier(.45,0,.2,1)}
+.inv .tzp-cl .tzp-in{padding-top:18px;padding-bottom:12px}
+.inv .tzp-btn{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:12px;-webkit-tap-highlight-color:transparent}
+.inv .tzp-btn small{font-family:"Marcellus",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;padding:7px 16px 7px calc(16px + .3em);border-radius:999px;color:var(--sheet);background:#21407c;box-shadow:0 0 0 1px #b48d42}
+.inv .tzp-btn .tzp-med{transition:transform 1.4s cubic-bezier(.5,0,.2,1),opacity .6s .7s}
+.inv .tzp-to{position:absolute;left:0;right:0;bottom:3.5%;text-align:center;color:var(--pagefg);transition:opacity .4s}
+.inv .tzp-to small{display:block;font-family:"Marcellus",serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+.inv .tzp-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:21px;line-height:1.4}
+/* opening: the view passes into the rosette */
+.inv.opening .tzp-btn .tzp-med{transform:scale(5.5);opacity:0}
+.inv.opening .tzp-btn small,.inv.opening .tzp-to{opacity:0;transition:opacity .3s}
+.inv.opening .tzp-cl{transform:translateX(-50%) scale(1.08)}
+.inv.opening .cv-tezhip{opacity:0}
+
+/* page */
+.inv .pg-tezhip{background:var(--ground);padding:22px 0 84px;overflow:hidden}
+.inv .pg-tezhip > :not(.tzp-bg){position:relative;z-index:2}
+.inv .pg-tezhip .tzp-leaf{width:90%;max-width:390px}
+.inv .pg-tezhip .tzp-in{padding:24px 14px 26px}
+.inv .tzp-pm{margin-bottom:10px}
+.inv .pg-tezhip .tzp-in:has(.couple-ph) .tzp-pm{display:none}
+.inv .pg-tezhip .couple-ph.front{width:44%;margin:4px auto 14px}
+.inv .tzp-pills{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.inv .tzp-pill{padding:11px 24px;border-radius:999px;border:1px solid #b48d42;background:var(--sheet);color:var(--accent);text-decoration:none;white-space:nowrap;
+  font-family:"Marcellus",serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.inv .tzp-pill.ghost{background:#21407c;color:#f7efdc}
+
+/* skin: cream leaves with an illuminated band top and bottom and jadwal rules */
+.fam-tezhip .scroller{background:url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:multiply}
+.fam-tezhip.tzp-dk .scroller{background:radial-gradient(ellipse at 50% 0,rgba(255,230,180,.08),transparent 60%),url(assets/velvet.jpg) 0 0/280px,var(--ground);background-blend-mode:normal,soft-light,normal}
+.fam-tezhip.cardsecs .sec{--b:16px;background:url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:0;
+  padding-top:44px;padding-bottom:44px;box-shadow:0 16px 30px -12px rgba(20,10,0,.5)}
+.fam-tezhip.cardsecs .sec::before{content:"";position:absolute;left:10px;right:10px;top:calc(var(--b) + 14px);bottom:calc(var(--b) + 14px);pointer-events:none;z-index:0;
+  border-left:1px solid #b48d42;border-right:1px solid #b48d42;box-shadow:inset 3px 0 0 -2px #21407c,inset -3px 0 0 -2px #21407c}
+.fam-tezhip .tzp-band{position:absolute;left:0;right:0;height:var(--b);overflow:hidden;mix-blend-mode:multiply;z-index:0;pointer-events:none}
+.fam-tezhip .tzp-band.t{top:8px}.fam-tezhip .tzp-band.b{bottom:8px}
+.fam-tezhip .sec > :not(.tzp-band){position:relative;z-index:1}
+.fam-tezhip .sec h2{font-family:"Marcellus",serif;font-weight:400;text-transform:uppercase;letter-spacing:.3em;font-size:14px;color:var(--accent);padding-left:.3em}
+.fam-tezhip .sec,.fam-tezhip .sec p,.fam-tezhip .info b{color:var(--ink)}
+.fam-tezhip .rule{color:#a37c34}
+.fam-tezhip .info,.fam-tezhip .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-tezhip .info > div{border-bottom:1px solid rgba(163,124,52,.35)!important;padding:14px 6px!important}
+.fam-tezhip .info > div:last-child{border-bottom:0!important}
+.fam-tezhip .info span{font-family:"Marcellus",serif;color:#8a6526;letter-spacing:.2em}
+.fam-tezhip .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:rgba(163,124,52,.6)}
+.fam-tezhip .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-tezhip .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
+.fam-tezhip input,.fam-tezhip select,.fam-tezhip textarea{background:rgba(255,255,255,.6);color:var(--ink);border-color:rgba(163,124,52,.5)}
+.fam-tezhip .seg button{border-radius:999px!important}
+.fam-tezhip .seg button[aria-pressed="true"],.fam-tezhip button.submit{background:#21407c!important;color:#f7efdc!important;border-color:#21407c!important;border-radius:999px}
+.fam-tezhip .dock{background:color-mix(in srgb,var(--sheet) 95%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-tezhip .foot{color:var(--pagefg)}
+.fam-tezhip .giftcard{border:0!important;outline:0!important;box-shadow:none!important;border-radius:12px!important;background:rgba(255,255,255,.5)!important}
+.fam-tezhip .giftcard::before,.fam-tezhip .giftcard::after{display:none!important}
+@media (prefers-reduced-motion: reduce){.inv .tzp-cl,.inv .tzp-btn .tzp-med{transition:none}}

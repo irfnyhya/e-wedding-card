@@ -1,0 +1,89 @@
+/* ===== pisang ===== */
+.inv .cv-pisang,.inv .pg-pisang{background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(0,0,0,.18)),linear-gradient(color-mix(in srgb,var(--ground) 70%,transparent),color-mix(in srgb,var(--ground) 70%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,normal,multiply,normal}
+.inv .psg-bed{position:absolute;left:0;width:100%;pointer-events:none}
+.inv .psg-bed.cv{top:0;height:100%}
+/* the off-white card, with a soft shadow on the leaves */
+.inv .psg-card{position:absolute;color:var(--ink);border-radius:2px;
+  background:linear-gradient(160deg,rgba(255,255,255,.4),transparent 45%,rgba(90,70,30,.05)),linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);
+  background-blend-mode:normal,normal,multiply,normal;box-shadow:0 1px 1px rgba(0,0,0,.18),0 22px 30px -14px rgba(0,0,0,.55),0 6px 12px -6px rgba(0,0,0,.3)}
+.inv .psg-card::after{content:"";position:absolute;inset:10px;border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);pointer-events:none}
+/* type */
+.inv .psg-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--gold);margin:0;filter:brightness(.8)}
+.inv .psg-names{font-family:"Italianno",cursive;font-weight:400;font-size:clamp(50px,15cqi,62px);line-height:.86;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:12px 0 6px}
+.inv .psg-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.32em;color:var(--gold);line-height:1;margin:4px 0 6px}
+.inv .psg-names.cv{font-size:clamp(46px,14cqi,58px)}
+.inv .psg-sdate{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.3em;padding-left:.3em;color:var(--ink);margin:4px 0 0}
+.inv .psg-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:var(--ink);margin:0;max-width:22ch}
+.inv .psg-rib{display:block;width:90px;height:12px;margin:4px auto 12px;background:
+  linear-gradient(var(--accent),var(--accent)) center/100% 1px no-repeat,repeating-linear-gradient(60deg,transparent 0 5px,color-mix(in srgb,var(--accent) 45%,transparent) 5px 6px) center/100% 100% no-repeat;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);opacity:.7}
+.inv .psg-date{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0}
+.inv .psg-date span{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10.5px;letter-spacing:.28em;padding-left:.28em;text-transform:uppercase;color:var(--accent)}
+.inv .psg-date b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:21px;color:var(--ink)}
+.inv .psg-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin:6px 0 0}
+.inv .psg-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;line-height:1.25;color:var(--ink);text-decoration:none;margin:12px auto 0;max-width:24ch;border-bottom:1px solid color-mix(in srgb,var(--gold) 50%,transparent);padding-bottom:2px}
+.inv .psg-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+.inv .psg-to{margin:12px 0 0}
+.inv .psg-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
+.inv .psg-to b{font-family:"Italianno",cursive;font-weight:400;font-size:32px;color:var(--accent);line-height:1}
+
+/* cover: the card on the leaves, a leaf band wrapped round it */
+.inv .cv-pisang{overflow:hidden;transition:opacity .45s 1s}
+.inv .cv-pisang .psg-card{left:13%;right:13%;top:11%;bottom:10%;transition:transform 1.3s cubic-bezier(.5,0,.25,1)}
+.inv .psg-ctop{position:absolute;left:8%;right:8%;top:12%;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .psg-cbot{position:absolute;left:8%;right:8%;bottom:9%;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .psg-band{position:absolute;left:calc(13% - 5px);right:calc(13% - 5px);top:61%;height:58px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.35)) drop-shadow(0 1px 1px rgba(0,0,0,.3));transition:transform 1.25s cubic-bezier(.55,0,.3,1),opacity .5s .75s;z-index:3}
+.inv .psg-strip{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* the band's ends tuck behind the card edge */
+.inv .psg-band::before,.inv .psg-band::after{content:"";position:absolute;top:0;bottom:0;width:6px;background:linear-gradient(90deg,rgba(0,0,0,.4),transparent)}
+.inv .psg-band::before{left:0}.inv .psg-band::after{right:0;transform:scaleX(-1)}
+.inv .psg-label{position:relative;padding:9px 22px;border-radius:999px;white-space:nowrap;color:var(--accent);
+  background:linear-gradient(color-mix(in srgb,var(--sheet) 70%,transparent),color-mix(in srgb,var(--sheet) 70%,transparent)),url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 2px 5px rgba(0,0,0,.3),inset 0 0 0 1px color-mix(in srgb,var(--gold) 55%,transparent),inset 0 0 0 4px var(--sheet),inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 45%,transparent)}
+/* opening: the band slides off to the right, then the table fades */
+.inv.opening .psg-band{transform:translateX(105%);opacity:0}
+.inv.opening .cv-pisang .psg-card{transform:translateY(-2%) scale(1.02)}
+.inv.opening .cv-pisang{opacity:0}
+
+/* page */
+.inv .pg-pisang{padding:0;justify-content:flex-start}
+.inv .psg-bed.pg{top:0;height:100%}
+.inv .pg-pisang .psg-card{position:relative;margin:64px 26px 140px;width:calc(100% - 52px);min-height:560px;z-index:1}
+.inv .psg-body{position:relative;padding:44px 10% 40px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .psg-ph{display:none}
+.inv .psg-ph.on{display:block;width:52%;aspect-ratio:4/5;border-radius:3px;overflow:hidden;margin:0 auto 18px;box-shadow:0 0 0 5px #fff,0 0 0 6px color-mix(in srgb,var(--gold) 50%,transparent),0 10px 18px -10px rgba(0,0,0,.5);transform:rotate(-1.5deg)}
+.inv .psg-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.inv .psg-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+.inv .psg-pill{flex:0 0 auto;width:auto!important;padding:11px 22px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+.inv .psg-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+
+/* skin: off-white cards with a strip of banana leaf along the top edge, script headings */
+.fam-pisang .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 70%,transparent),color-mix(in srgb,var(--ground) 70%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal}
+.fam-pisang.cardsecs .sec{position:relative;border-radius:2px;color:var(--ink);padding-top:46px;
+  background:var(--psg-strip) 0 0/100% 20px no-repeat,linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,normal,multiply,normal;
+  box-shadow:0 18px 28px -14px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.1)}
+.fam-pisang .sec h2{font-family:"Italianno",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:44px;color:var(--accent);line-height:1}
+.fam-pisang .sec h2::after{content:"";display:block;width:90px;height:12px;margin:6px auto 0;opacity:.7;background:
+  linear-gradient(var(--accent),var(--accent)) center/100% 1px no-repeat,repeating-linear-gradient(60deg,transparent 0 5px,color-mix(in srgb,var(--accent) 45%,transparent) 5px 6px) center/100% 100% no-repeat;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+.fam-pisang .info,.fam-pisang .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-pisang .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 35%,transparent)!important;padding:13px 6px!important}
+.fam-pisang .info > div:last-child{border-bottom:0!important}
+.fam-pisang .info span{color:var(--accent);letter-spacing:.2em}
+.fam-pisang .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-pisang .seg button[aria-pressed="true"],.fam-pisang button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
+.fam-pisang button.submit{border-radius:999px}
+.fam-pisang .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-pisang .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .psg-band,.inv .cv-pisang .psg-card{transition:opacity .5s}.inv.opening .psg-band,.inv.opening .cv-pisang .psg-card{transform:none}}
+/* the black card */
+.inv .psg-dk .psg-card{background:linear-gradient(160deg,rgba(255,255,255,.05),transparent 45%,rgba(0,0,0,.2)),linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,normal,multiply,normal}
+.inv .psg-dk .psg-k{filter:none}
+.inv .psg-dk .psg-pill{color:#1b1e19}
+.fam-pisang.psg-dk.cardsecs .sec{background:var(--psg-strip) 0 0/100% 20px no-repeat,linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet)}
+.fam-pisang.psg-dk .seg button[aria-pressed="true"],.fam-pisang.psg-dk button.submit{color:#1b1e19!important}
+.fam-pisang.psg-dk input,.fam-pisang.psg-dk select,.fam-pisang.psg-dk textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-pisang .sec .rule{display:none}
+.fam-pisang .seg button[aria-pressed="true"],.fam-pisang button.submit{font-weight:700}

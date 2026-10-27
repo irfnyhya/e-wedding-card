@@ -1,0 +1,91 @@
+/* ===== rococo ===== */
+.inv .cv-rococo,.inv .pg-rococo{background:var(--ground);color:var(--pagefg)}
+.inv .rc-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 40% 30%,rgba(255,255,255,.35),transparent 70%),var(--ground)}
+.inv .rc-bg::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/280px;mix-blend-mode:multiply;opacity:.8}
+.inv .rc-dark .rc-bg,.inv .rc-dark.pg-rococo .rc-bg{background:radial-gradient(ellipse 80% 60% at 40% 30%,rgba(255,255,255,.07),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 50%,rgba(0,0,0,.4)),var(--ground)}
+.inv .rc-dark .rc-bg::after,.inv .rc-dark.pg-rococo .rc-bg::after{background:url(assets/velvet.jpg) 0 0/240px;opacity:.5;transform:none;inset:0}
+
+/* the aged, deckle-edged card */
+.inv .rc-shadow{filter:drop-shadow(0 1px 1px rgba(60,35,20,.22)) drop-shadow(0 14px 18px rgba(60,35,20,.24))}
+.inv .rc-dark .rc-shadow{filter:drop-shadow(0 1px 1px rgba(0,0,0,.4)) drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+.inv .rc-card{position:relative;container-type:inline-size;display:flex;flex-direction:column;color:var(--ink);
+  background:radial-gradient(ellipse 75% 70% at 50% 45%,transparent 55%,rgba(150,95,40,.2) 100%),linear-gradient(150deg,rgba(255,255,255,.35),transparent 40%),url(assets/paper.jpg) 0 0/220px,var(--paper);background-blend-mode:multiply,normal,multiply,normal;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;-webkit-mask-mode:luminance;mask-mode:luminance}
+.inv .rc-top,.inv .rc-foot{display:block;width:100%;height:auto;position:relative;z-index:1;overflow:visible}
+.inv .rc-mid{position:relative}
+.inv .rc-side{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.inv .rc-ink{fill:none;stroke:var(--accent);stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
+.inv .rc-ink.t{stroke-width:.6}
+.inv .rc-ink2{fill:none;stroke:var(--accent);stroke-width:.4;opacity:.5;transform:translate(1.3px,1.5px)}
+.inv .rc-side .rc-ink{stroke-width:1.1px}.inv .rc-side .rc-ink.t{stroke-width:.65px}.inv .rc-side .rc-ink2{stroke-width:.45px;transform:none}
+.inv .rc-dot{fill:var(--accent)}
+.inv .rc-lf{fill:none;stroke:var(--accent);stroke-width:.6}
+.inv .rc-lf.w{fill:var(--leafw);fill-opacity:.8}
+.inv .rc-thin{fill:none;stroke:var(--accent);stroke-width:.35}
+.inv .rc-wash{fill:var(--wash);opacity:.8;stroke:none}
+.inv .rc-wash.s{opacity:.35}.inv .rc-wash.d{opacity:1}
+.inv .rc-dash{fill:none;stroke:var(--accent);stroke-width:.55;stroke-dasharray:.6 2.6;stroke-linecap:round;opacity:.8}
+.inv .rc-side .rc-dash{stroke-width:.7px}
+
+/* type */
+.inv .rc-k{font-family:"IM Fell English SC",serif;font-size:12px;letter-spacing:.16em;color:var(--accent);margin:0;opacity:.9}
+.inv .rc-names{font-family:"Monsieur La Doulaise",cursive;font-weight:400;color:var(--accent);line-height:.92;display:flex;flex-direction:column;align-items:center;margin:8px 0 6px;font-size:clamp(46px,15.5cqi,64px);overflow-wrap:anywhere}
+.inv .rc-names em{font-family:"IM Fell English",serif;font-style:italic;font-size:.36em;line-height:1.3;color:var(--ink);opacity:.8}
+.inv .rc-date{font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.1em;color:var(--ink);margin:4px 0 0}
+.inv .rc-cven{font-family:"IM Fell English",serif;font-style:italic;font-size:14px;color:var(--ink);opacity:.85;margin:4px 0 0}
+
+/* cover */
+.inv .cv-rococo{overflow:hidden;transition:opacity .45s 1.05s}
+.inv .rc-cw{position:absolute;left:7%;right:7%;top:4.5%;z-index:2;transform:rotate(-1deg);transition:transform 1.3s cubic-bezier(.55,0,.25,1)}
+.inv .cv-rococo .rc-mid{height:58cqi}
+.inv .cv-rococo .rc-in{position:absolute;left:17%;right:17%;top:-24cqi;bottom:-24cqi;z-index:2}
+.inv .rc-ctext{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.inv .rc-foot2{position:absolute;left:0;right:0;bottom:5%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .4s}
+.inv .rc-to{text-align:center;margin:0}
+.inv .rc-to small{display:block;font-family:"IM Fell English SC",serif;font-size:11px;letter-spacing:.2em;opacity:.8}
+.inv .rc-to b{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;font-size:21px}
+.inv .rc-open{cursor:pointer;padding:12px 34px;border-radius:999px;border:0;background:var(--accent);color:var(--paper);font-family:"IM Fell English SC",serif;font-size:13px;letter-spacing:.2em;white-space:nowrap;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--paper) 40%,transparent),0 0 0 4px color-mix(in srgb,var(--accent) 45%,transparent),0 10px 20px -10px rgba(50,20,10,.6)}
+.inv .rc-dark .rc-open{background:var(--paper);color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--paper) 18%,transparent),0 10px 20px -10px rgba(0,0,0,.6)}
+/* opening: the card is drawn aside */
+.inv.opening .rc-cw{transform:translate(-118%,5%) rotate(-10deg)}
+.inv.opening .rc-foot2{opacity:0}
+.inv.opening .cv-rococo{opacity:0}
+
+/* page */
+.inv .pg-rococo{position:relative;padding:30px 16px 96px;overflow:hidden}
+.inv .rc-pw{position:relative;z-index:1;width:100%;max-width:400px;margin:0 auto;transform:rotate(-.6deg)}
+.inv .pg-rococo .rc-in{position:relative;z-index:2;margin:-25cqi 15cqi -12cqi;min-height:60cqi;display:flex}
+.inv .rc-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.inv .pg-rococo .rc-names{font-size:clamp(54px,18cqi,72px)}
+.inv .rc-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+.inv .pg-rococo .rc-date{font-size:14px;line-height:1.5}
+.inv .rc-hj{font-family:"IM Fell English",serif;font-style:italic;font-size:14px;opacity:.75;margin:2px 0 0}
+.inv .rc-ven{font-family:"IM Fell English",serif;font-style:italic;font-size:17px;margin:10px 0 0}
+.inv .rc-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.inv .rc-pill{flex:0 0 auto;width:auto!important;padding:10px 16px;border-radius:999px;background:var(--accent);color:var(--paper);text-decoration:none;font-family:"IM Fell English SC",serif;font-size:12.5px;letter-spacing:.1em}
+.inv .rc-pill.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+.inv .pg-rococo .couple-ph.front{width:32cqi;margin:0 auto 12px;border-radius:50%;aspect-ratio:4/5;box-shadow:0 0 0 1px var(--accent),0 0 0 4px var(--paper),0 0 0 4.8px color-mix(in srgb,var(--accent) 60%,transparent)}
+
+/* skin: aged paper with an inked double rule and a scroll crest over each heading */
+.fam-rococo .scroller{background:var(--ground)}
+.fam-rococo .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/280px;mix-blend-mode:multiply;opacity:.8}
+.fam-rococo.rc-dark .scroller::before{background:url(assets/velvet.jpg) 0 0/240px;mix-blend-mode:soft-light;opacity:.45}
+.fam-rococo.cardsecs .sec{background:radial-gradient(ellipse 80% 70% at 50% 45%,transparent 55%,rgba(150,95,40,.16) 100%),url(assets/paper.jpg) 0 0/220px,var(--sheet);background-blend-mode:multiply,multiply,normal;color:var(--ink);border-radius:2px;
+  box-shadow:inset 0 0 0 9px var(--sheet),inset 0 0 0 9.8px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 0 12px var(--sheet),inset 0 0 0 12.5px color-mix(in srgb,var(--accent) 35%,transparent),0 14px 26px -14px rgba(50,25,10,.45)}
+.fam-rococo.rc-dark.cardsecs .sec{box-shadow:inset 0 0 0 9px var(--sheet),inset 0 0 0 9.8px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 0 12px var(--sheet),inset 0 0 0 12.5px color-mix(in srgb,var(--accent) 35%,transparent),0 18px 30px -12px rgba(0,0,0,.6)}
+.fam-rococo .sec h2{font-family:"IM Fell English",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:.01em;font-size:28px;color:var(--accent)}
+.fam-rococo .sec h2::before{content:"";display:block;width:150px;height:36px;margin:0 auto 4px;background:var(--rc-crest) center/contain no-repeat}
+.fam-rococo .sec,.fam-rococo .sec p,.fam-rococo .info b{color:var(--ink)}
+.fam-rococo .info,.fam-rococo .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-rococo .info > div{border-bottom:1px dotted color-mix(in srgb,var(--accent) 45%,transparent)!important;padding:14px 6px!important}
+.fam-rococo .info > div:last-child{border-bottom:0!important}
+.fam-rococo .info span{color:var(--accent);font-family:"IM Fell English SC",serif;letter-spacing:.14em}
+.fam-rococo .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.fam-rococo .count b{color:var(--accent);font-family:"IM Fell English",serif;font-weight:400}
+.fam-rococo input,.fam-rococo select,.fam-rococo textarea{background:rgba(255,255,255,.7)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 35%,transparent)!important}
+.fam-rococo .seg button{border-radius:999px!important;color:var(--ink)}
+.fam-rococo .seg button[aria-pressed="true"],.fam-rococo button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-rococo .dock{background:color-mix(in srgb,var(--sheet) 95%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-rococo .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .rc-cw{transition:none}}

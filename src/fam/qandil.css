@@ -1,0 +1,83 @@
+/* ===== qandil ===== */
+/* the wall: dark plaster, warmed where the lanterns hang */
+.inv .qdl-wall{position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 42% at 50% 24%,rgba(255,190,100,.24),transparent 75%),radial-gradient(ellipse 120% 90% at 50% 45%,transparent 50%,rgba(0,0,0,.55)),url(assets/paper.jpg) 0 0/300px,var(--ground);
+  background-blend-mode:normal,normal,multiply,normal}
+.inv .qdl-stars{position:absolute;inset:-6%;background:var(--qstars) 0 0/64px 64px;opacity:.75;filter:blur(.35px);
+  -webkit-mask:radial-gradient(ellipse 62% 40% at 50% 27%,#000 10%,rgba(0,0,0,.35) 55%,transparent 80%);mask:radial-gradient(ellipse 62% 40% at 50% 27%,#000 10%,rgba(0,0,0,.35) 55%,transparent 80%);
+  mix-blend-mode:screen}
+.inv .qdl-lamps{position:absolute;left:0;right:0;top:0}
+.inv .qdl-svg{display:block;width:100%;height:auto;overflow:visible}
+.inv .qdl-halo{mix-blend-mode:screen;animation:qdl-breathe 4.5s ease-in-out infinite alternate}
+@keyframes qdl-breathe{from{opacity:.8}to{opacity:1}}
+.inv .qdl-txt{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--pagefg)}
+.inv .qdl-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;text-transform:uppercase;padding-left:.36em;color:var(--gold)}
+.inv .qdl-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(42px,12.6cqi,54px);line-height:1.05;display:flex;flex-direction:column;align-items:center;margin:10px 0 2px;
+  background:linear-gradient(180deg,#f8e3a6,#d9b061 55%,#b88a3e),var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,190,90,.25))}
+.inv .qdl-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;margin:0 0 2px}
+.inv .qdl-rule{width:110px;height:11px;color:var(--gold);margin:8px 0 10px}
+.inv .qdl-date{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.3em;text-transform:uppercase;padding-left:.3em}
+.inv .qdl-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75;margin-top:3px}
+.inv .qdl-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;margin-top:6px;opacity:.9}
+.inv .qdl-bis{font-family:"Amiri",serif;font-size:17px;color:var(--accent);margin:0 0 8px}
+
+/* cover */
+.inv .cv-qandil{background:var(--ground);overflow:hidden;transition:opacity .5s 1.05s}
+.inv .cv-qandil .qdl-lamps{transition:transform 1.45s cubic-bezier(.55,0,.35,1)}
+.inv .cv-qandil .qdl-stars{transition:transform 1.45s cubic-bezier(.3,0,.2,1),opacity 1.2s .2s}
+.inv .cv-qandil .qdl-txt{position:absolute;left:8%;right:8%;top:50%;transition:opacity .45s}
+.inv .qdl-foot{position:absolute;left:0;right:0;bottom:5%;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .4s}
+.inv .qdl-to{text-align:center}
+.inv .qdl-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.75}
+.inv .qdl-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:25px;line-height:1.3}
+.inv .qdl-open{cursor:pointer;padding:13px 38px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);color:#2a1a08;white-space:nowrap;
+  background:linear-gradient(180deg,#f5dc9c,#d4a95a);font-family:"Cormorant Garamond",serif;font-weight:700;font-size:12px;letter-spacing:.28em;text-transform:uppercase;
+  box-shadow:0 0 24px -4px rgba(255,190,90,.45),0 8px 16px -8px rgba(0,0,0,.6)}
+/* opening: the lanterns are drawn up out of sight, the stars of light spread and fade */
+.inv.opening .cv-qandil .qdl-lamps{transform:translateY(-82%)}
+.inv.opening .cv-qandil .qdl-stars{transform:scale(1.35);opacity:0}
+.inv.opening .cv-qandil .qdl-txt,.inv.opening .qdl-foot{opacity:0}
+.inv.opening .cv-qandil{opacity:0}
+
+/* page */
+.inv .pg-qandil{background:var(--ground);padding:0 0 84px;justify-content:flex-start;overflow:hidden}
+.inv .pg-qandil .qdl-lamps{position:relative;width:76%;max-width:360px;margin:0 auto}
+.inv .pg-qandil > .qdl-txt,.inv .pg-qandil > .qdl-pills,.inv .pg-qandil > .qdl-bis{position:relative;z-index:2}
+.inv .pg-qandil .qdl-stars{-webkit-mask:radial-gradient(ellipse 70% 38% at 50% 20%,#000 10%,rgba(0,0,0,.3) 60%,transparent 85%);mask:radial-gradient(ellipse 70% 38% at 50% 20%,#000 10%,rgba(0,0,0,.3) 60%,transparent 85%)}
+.inv .pg-qandil .qdl-txt{margin-top:4px;padding:0 8%}
+.inv .pg-qandil .qdl-names{font-size:clamp(36px,10.6cqi,44px);margin:6px 0 0}
+.inv .pg-qandil .qdl-rule{margin:4px 0 6px}
+.inv .pg-qandil .couple-ph.front{width:29%;margin:0 auto 10px}
+.inv .qdl-pills{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.inv .qdl-pill{padding:11px 24px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:linear-gradient(180deg,#f5dc9c,#d4a95a);color:#2a1a08;text-decoration:none;white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+.inv .qdl-pill.ghost{background:rgba(0,0,0,.25);color:var(--accent)}
+
+/* skin: dark plaster cards lit warmly from above, star-pierced dividers under the headings */
+.fam-qandil .scroller{background:radial-gradient(ellipse 90% 40% at 50% 0,rgba(255,190,100,.1),transparent 70%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,multiply,normal}
+.fam-qandil.cardsecs .sec{background:radial-gradient(ellipse 80% 55% at 50% 0,rgba(255,196,110,.16),transparent 70%),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);
+  border-radius:4px;border:1px solid color-mix(in srgb,var(--gold) 32%,transparent);padding-top:34px;padding-bottom:34px;box-shadow:0 18px 30px -14px rgba(0,0,0,.7)}
+.fam-qandil .sec h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-transform:uppercase;letter-spacing:.32em;font-size:14px;color:var(--accent);padding-left:.32em}
+.fam-qandil .sec h2::after{content:"";display:block;width:140px;height:12px;margin:12px auto 0;background:var(--gold);-webkit-mask:var(--qdiv) center/contain no-repeat;mask:var(--qdiv) center/contain no-repeat}
+.fam-qandil .sec .rule{display:none}
+.fam-qandil .sec,.fam-qandil .sec p,.fam-qandil .info b,.fam-qandil .timeline span{color:var(--ink)}
+.fam-qandil .info,.fam-qandil .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-qandil .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 25%,transparent)!important;padding:14px 6px!important}
+.fam-qandil .info > div:last-child{border-bottom:0!important}
+.fam-qandil .info span,.fam-qandil .timeline b{color:var(--accent);letter-spacing:.2em}
+.fam-qandil .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+.fam-qandil .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-qandil .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
+.fam-qandil .count span{color:var(--ink)}
+.fam-qandil input,.fam-qandil select,.fam-qandil textarea{background:rgba(255,255,255,.07)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--gold) 40%,transparent)!important}
+.fam-qandil input::placeholder,.fam-qandil textarea::placeholder{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+.fam-qandil select option{background:var(--sheet);color:var(--ink)}
+.fam-qandil label{color:var(--ink)}
+.fam-qandil .seg button{border-radius:999px!important;color:var(--ink);background:transparent;border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.fam-qandil .seg button[aria-pressed="true"],.fam-qandil button.submit{background:linear-gradient(180deg,#f5dc9c,#d4a95a)!important;color:#2a1a08!important;border-color:#d4a95a!important;border-radius:999px}
+.fam-qandil .wish{background:rgba(255,255,255,.05)!important;border-color:color-mix(in srgb,var(--gold) 25%,transparent)!important;color:var(--ink)}
+.fam-qandil .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px);border-top:1px solid color-mix(in srgb,var(--gold) 30%,transparent)}
+.fam-qandil .foot{color:var(--pagefg)}
+.fam-qandil .giftcard{border:1px solid color-mix(in srgb,var(--gold) 35%,transparent)!important;outline:0!important;box-shadow:none!important;border-radius:12px!important;background:rgba(255,255,255,.05)!important;color:var(--ink)}
+.fam-qandil .giftcard::before,.fam-qandil .giftcard::after{display:none!important}
+@media (prefers-reduced-motion: reduce){.inv .cv-qandil .qdl-lamps,.inv .cv-qandil .qdl-stars{transition:none}.inv .qdl-halo{animation:none}}

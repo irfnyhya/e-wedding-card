@@ -1,0 +1,93 @@
+/* ===== hibiskus ===== */
+.inv .cv-hibiskus,.inv .pg-hibiskus{background:linear-gradient(color-mix(in srgb,var(--ground) 72%,transparent),color-mix(in srgb,var(--ground) 72%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal}
+/* the cream card, soft-pressed cotton */
+.inv .hbs-card{position:absolute;overflow:hidden;border-radius:2px;color:var(--ink);
+  background:linear-gradient(170deg,rgba(255,255,255,.35),transparent 40%,rgba(120,80,40,.05)),linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);
+  background-blend-mode:normal,normal,multiply,normal;box-shadow:0 1px 1px rgba(60,30,20,.12),0 20px 34px -16px rgba(60,30,20,.45),0 5px 10px -5px rgba(60,30,20,.2)}
+.inv .hbs-dk .hbs-card{background:linear-gradient(170deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.2)),linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,normal,multiply,normal}
+.inv .hbs-cl{position:absolute;width:74%;height:auto;aspect-ratio:1;pointer-events:none;mix-blend-mode:multiply;z-index:1}
+.inv .hbs-dk .hbs-cl{mix-blend-mode:normal}
+.inv .hbs-cl.tr{right:-6%;top:-5%;transform:scaleX(-1)}
+.inv .hbs-cl.bl{left:-6%;bottom:-5%;transform:scaleY(-1)}
+/* type */
+.inv .hbs-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--ink);opacity:.85;margin:0}
+.inv .hbs-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(44px,13.4cqi,56px);line-height:.98;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:12px 0 8px}
+.inv .hbs-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold);line-height:1;margin:2px 0 0}
+.inv .hbs-names.cv{font-size:clamp(42px,12.6cqi,52px)}
+.inv .hbs-sdate{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.3em;padding-left:.3em;color:var(--ink);margin:2px 0 0}
+.inv .hbs-cven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15.5px;color:var(--ink);opacity:.85;margin:5px 0 0;max-width:22ch}
+.inv .hbs-date{display:flex;flex-direction:column;align-items:center;margin:4px 0 0}
+.inv .hbs-date span{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10.5px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--accent)}
+.inv .hbs-date b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:22px;color:var(--ink);margin-top:2px}
+.inv .hbs-hj,.inv .hbs-time{font-family:"Cormorant Garamond",serif;font-size:15px;color:var(--ink);margin:4px 0 0}
+.inv .hbs-hj{font-style:italic;opacity:.75;font-size:14px}
+.inv .hbs-time{font-weight:600}
+.inv .hbs-ven{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;line-height:1.25;color:var(--ink);text-decoration:none;margin:8px auto 0;max-width:24ch;border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);padding-bottom:2px}
+.inv .hbs-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+.inv .hbs-cbody,.inv .hbs-body > p,.inv .hbs-names{text-shadow:0 0 8px var(--sheet),0 0 14px var(--sheet)}
+
+/* cover: a folded card; the front panel folds up from the top edge */
+.inv .cv-hibiskus{overflow:hidden;transition:opacity .45s 1.05s}
+.inv .hbs-stage{position:absolute;inset:0;perspective:1200px}
+.inv .hbs-inside,.inv .cv-hibiskus .hbs-card{position:absolute;left:7%;right:7%;top:5.5%;bottom:5.5%}
+.inv .hbs-inside{overflow:hidden;border-radius:2px;background:linear-gradient(rgba(0,0,0,.08),transparent 18%),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,multiply,normal;filter:brightness(.97);box-shadow:0 20px 34px -16px rgba(60,30,20,.45)}
+.inv .cv-hibiskus .hbs-card{transform-origin:50% 0;transition:transform 1.35s cubic-bezier(.45,0,.2,1);backface-visibility:hidden}
+.inv .hbs-cbody{position:absolute;inset:27% 9% 7%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .hbs-to{margin:auto 0 0;color:var(--ink)}
+.inv .hbs-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
+.inv .hbs-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:27px;color:var(--accent)}
+.inv .hbs-open{margin-top:14px;border:0;cursor:pointer;padding:13px 32px;border-radius:999px;background:var(--accent);color:#fff;white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;box-shadow:0 10px 18px -10px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.2)}
+.inv .hbs-cbody > p:first-child + .hbs-names{margin-top:10px}
+.inv .cv-hibiskus .hbs-to:first-of-type{margin-top:auto}
+.inv .hbs-dk .hbs-open{color:#2a1418}
+.inv.opening .cv-hibiskus .hbs-card{transform:rotateX(-178deg)}
+.inv.opening .cv-hibiskus{opacity:0}
+
+/* page: the inside of the card */
+.inv .pg-hibiskus{padding:0;justify-content:flex-start}
+.inv .pg-hibiskus .hbs-card{position:relative;margin:18px 16px 86px;width:calc(100% - 32px);min-height:690px}
+.inv .pg-hibiskus .hbs-cl{width:70%}
+.inv .hbs-body{position:relative;z-index:3;padding:190px 11% 200px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .hbs-ph{display:none}
+.inv .hbs-ph.on{display:block;width:44%;aspect-ratio:4/5;border-radius:50% 50% 8px 8px/36% 36% 8px 8px;overflow:hidden;margin:-70px auto 16px;box-shadow:0 0 0 5px var(--sheet),0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent),0 12px 22px -12px rgba(0,0,0,.4)}
+.inv .hbs-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.inv .hbs-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+.inv .hbs-pill{flex:0 0 auto;width:auto!important;padding:11px 22px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+.inv .hbs-dk .hbs-pill{color:#2a1418}
+.inv .hbs-pill.ghost{background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+
+/* skin: cream cards with a bloom tucked into the top right corner, script headings */
+.fam-hibiskus .scroller{background:linear-gradient(color-mix(in srgb,var(--ground) 72%,transparent),color-mix(in srgb,var(--ground) 72%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--ground);background-blend-mode:normal,multiply,normal}
+.fam-hibiskus.cardsecs .sec{position:relative;overflow:hidden;border-radius:2px;color:var(--ink);
+  background:linear-gradient(color-mix(in srgb,var(--sheet) 60%,transparent),color-mix(in srgb,var(--sheet) 60%,transparent)),url(assets/paper.jpg) 0 0/280px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 16px 28px -14px rgba(60,30,20,.4),0 1px 2px rgba(0,0,0,.08)}
+.fam-hibiskus.hbs-dk.cardsecs .sec{background:linear-gradient(color-mix(in srgb,var(--sheet) 82%,transparent),color-mix(in srgb,var(--sheet) 82%,transparent)),url(assets/linen.jpg) 0 0/240px,var(--sheet)}
+.fam-hibiskus.cardsecs .sec::before{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;background:var(--hbs-bloom) center/contain no-repeat;transform:scaleX(-1);mix-blend-mode:multiply;pointer-events:none}
+.fam-hibiskus.hbs-dk.cardsecs .sec::before{mix-blend-mode:normal}
+.fam-hibiskus.cardsecs .sec > *{position:relative}
+.fam-hibiskus .sec h2{font-family:"Great Vibes",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:38px;color:var(--accent);line-height:1.15}
+.fam-hibiskus .sec h2::after{content:"";display:block;width:64px;height:1px;margin:8px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.fam-hibiskus .info,.fam-hibiskus .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-hibiskus .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 35%,transparent)!important;padding:13px 6px!important}
+.fam-hibiskus .info > div:last-child{border-bottom:0!important}
+.fam-hibiskus .info span{color:var(--accent);letter-spacing:.2em}
+.fam-hibiskus .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-hibiskus .seg button[aria-pressed="true"],.fam-hibiskus button.submit{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
+.fam-hibiskus.hbs-dk .seg button[aria-pressed="true"],.fam-hibiskus.hbs-dk button.submit{color:#2a1418!important}
+.fam-hibiskus.hbs-dk input,.fam-hibiskus.hbs-dk select,.fam-hibiskus.hbs-dk textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-hibiskus button.submit{border-radius:999px}
+.fam-hibiskus .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-hibiskus .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .cv-hibiskus .hbs-card{transition:opacity .6s}.inv.opening .cv-hibiskus .hbs-card{transform:none;opacity:0}}
+.inv .hbs-cven + .hbs-open,.inv .hbs-sdate + .hbs-open{margin-top:auto}
+/* cover composition: a big spray top right, a smaller one bottom left; the greeting and button sit bottom right */
+.inv .cv-hibiskus .hbs-cl.tr{width:84%;right:-3%;top:-3%}
+.inv .cv-hibiskus .hbs-cl.bl{width:64%;left:-4%;bottom:-3%}
+.inv .cv-hibiskus .hbs-cbody{inset:31% 8% 6.5%}
+.inv .cv-hibiskus .hbs-to,.inv .cv-hibiskus .hbs-open{align-self:flex-end}
+.inv .cv-hibiskus .hbs-to{text-align:right;padding-right:4px}
+.fam-hibiskus .sec .rule{display:none}
+.fam-hibiskus .seg button[aria-pressed="true"],.fam-hibiskus button.submit{font-weight:700}
+.inv .hbs-inside .hbs-cl{width:84%;right:-3%;top:-3%;opacity:.9}

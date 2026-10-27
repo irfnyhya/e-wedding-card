@@ -1,0 +1,81 @@
+/* ===== akad ===== */
+/* ground: warm linen, or velvet for the dark colourways */
+.inv .akd-bg{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(255,255,255,.4),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(60,40,20,.14)),url(assets/linen.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,normal,soft-light,normal}
+.inv .akd-dark .akd-bg{background:radial-gradient(ellipse 80% 60% at 50% 38%,rgba(255,255,255,.1),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 50%,rgba(0,0,0,.5)),url(assets/velvet.jpg) 0 0/320px,var(--ground);background-blend-mode:normal,normal,soft-light,normal}
+
+/* the card: heavy ivory stock with a soft shadow */
+.inv .akd-card{position:relative;aspect-ratio:300/440;color:var(--ink);
+  background:linear-gradient(160deg,rgba(255,255,255,.55),transparent 45%,rgba(0,0,0,.03)),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:0 1px 1px rgba(60,40,20,.12),0 18px 30px -12px rgba(60,40,20,.35),0 4px 8px -4px rgba(60,40,20,.18)}
+.inv .akd-dark .akd-card{box-shadow:0 1px 1px rgba(0,0,0,.3),0 24px 40px -12px rgba(0,0,0,.7),0 4px 10px -4px rgba(0,0,0,.5)}
+.inv .akd-face{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+.inv .akd-bis{position:absolute;left:0;right:0;top:2.6%;text-align:center;font-family:"Amiri",serif;font-size:clamp(13px,4cqi,16px);line-height:1.2;
+  background:url(assets/foil.jpg) 0 0/200px,var(--gold);background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
+.inv .akd-txt{position:absolute;left:18%;right:18%;top:27%;bottom:9%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.inv .akd-k{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9px;letter-spacing:.36em;text-transform:uppercase;padding-left:.36em;color:var(--gold);line-height:1.6}
+.inv .akd-names{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(36px,11.2cqi,46px);line-height:1;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:14px 0 6px}
+.inv .akd-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.4em;color:var(--gold);margin:4px 0 6px}
+.inv .akd-rule{display:block;width:40px;height:1px;margin:8px 0 12px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.inv .akd-date{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.3em;text-transform:uppercase;padding-left:.3em}
+.inv .akd-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.75;margin-top:3px}
+.inv .akd-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:8px;opacity:.9;max-width:22ch}
+/* one very slow breath of light in the lanterns */
+.inv .akd-lamp circle[r="22"]{animation:akd-glow 5s ease-in-out infinite alternate}
+@keyframes akd-glow{from{opacity:.55}to{opacity:1}}
+
+/* cover */
+.inv .cv-akad{background:var(--ground);overflow:hidden;transition:opacity .5s .95s}
+.inv .akd-cc{position:absolute;left:50%;top:6%;width:84%;max-width:360px;transform:translateX(-50%);transition:transform 1.35s cubic-bezier(.45,0,.2,1),box-shadow 1.35s}
+.inv .akd-foot{position:absolute;left:0;right:0;bottom:5.5%;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .4s}
+.inv .akd-to{text-align:center}
+.inv .akd-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.75}
+.inv .akd-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:26px;line-height:1.3}
+.inv .akd-open{cursor:pointer;padding:13px 38px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:var(--sheet);color:var(--accent);white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-weight:700;font-size:12px;letter-spacing:.28em;text-transform:uppercase;box-shadow:0 8px 18px -8px rgba(60,40,20,.45),inset 0 0 0 3px var(--sheet),inset 0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
+.inv .akd-dark .akd-open{box-shadow:0 10px 22px -8px rgba(0,0,0,.7),inset 0 0 0 3px var(--sheet),inset 0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
+/* opening: the card comes up towards you and the room falls away */
+.inv.opening .akd-cc{transform:translateX(-50%) translateY(3%) scale(1.16)}
+.inv.opening .akd-foot{opacity:0}
+.inv.opening .cv-akad{opacity:0}
+
+/* page */
+.inv .pg-akad{background:var(--ground);padding:30px 0 84px;overflow:hidden}
+.inv .pg-akad > :not(.akd-bg){position:relative;z-index:2}
+.inv .pg-akad .akd-big{width:86%;max-width:360px;aspect-ratio:300/520}
+.inv .pg-akad .akd-txt{top:24%;bottom:8%}
+.inv .pg-akad .akd-names{font-size:clamp(40px,12.4cqi,52px)}
+.inv .pg-akad .akd-k{font-size:9.5px}
+.inv .pg-akad .couple-ph.front{width:42%;margin:0 auto 12px}
+.inv .akd-pills{display:flex;gap:10px;justify-content:center;margin-top:22px}
+.inv .akd-pill{padding:11px 24px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:var(--sheet);color:var(--accent);text-decoration:none;white-space:nowrap;
+  font-family:"Cormorant Garamond",serif;font-weight:700;font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+.inv .akd-pill.ghost{opacity:1!important}
+
+/* skin: ivory cards with a double gold rule and a small arch over each heading */
+.fam-akad .scroller{background:url(assets/linen.jpg) 0 0/300px,var(--ground);background-blend-mode:soft-light}
+.fam-akad.akd-dk .scroller{background:url(assets/velvet.jpg) 0 0/320px,var(--ground);background-blend-mode:soft-light}
+.fam-akad.cardsecs .sec{background:linear-gradient(160deg,rgba(255,255,255,.5),transparent 45%),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);
+  border-radius:2px;padding-top:40px;padding-bottom:38px;box-shadow:0 14px 26px -12px rgba(60,40,20,.35)}
+.fam-akad.akd-dk.cardsecs .sec{box-shadow:0 18px 30px -12px rgba(0,0,0,.65)}
+.fam-akad.cardsecs .sec::before{content:"";position:absolute;inset:7px;pointer-events:none;z-index:0;border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 30%,transparent);outline-offset:-5px}
+.fam-akad .sec > *{position:relative;z-index:1}
+.fam-akad .sec h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-transform:uppercase;letter-spacing:.32em;font-size:14px;color:var(--accent);padding-left:.32em}
+.fam-akad .sec h2::before{content:"";display:block;width:120px;height:30px;margin:0 auto 12px;background:var(--gold);-webkit-mask:var(--akorn) center/contain no-repeat;mask:var(--akorn) center/contain no-repeat}
+.fam-akad .sec,.fam-akad .sec p,.fam-akad .info b{color:var(--ink)}
+.fam-akad .info,.fam-akad .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-akad .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 32%,transparent)!important;padding:14px 6px!important}
+.fam-akad .info > div:last-child{border-bottom:0!important}
+.fam-akad .info span{opacity:1!important;color:color-mix(in srgb,var(--accent) 80%,var(--ink))!important;font-weight:700;font-size:10px;letter-spacing:.2em}
+.fam-akad .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
+.fam-akad .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-akad .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
+.fam-akad .timeline b{color:var(--accent)}
+.fam-akad input,.fam-akad select,.fam-akad textarea{background:rgba(255,255,255,.65);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-akad .seg button{border-radius:999px!important}
+.fam-akad .seg button[aria-pressed="true"],.fam-akad button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-akad .dock{background:color-mix(in srgb,var(--sheet) 95%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-akad .foot{color:var(--pagefg)}
+.fam-akad .giftcard{border:0!important;outline:0!important;box-shadow:none!important;border-radius:14px!important;background:rgba(255,255,255,.5)!important}
+.fam-akad .giftcard::before,.fam-akad .giftcard::after{display:none!important}
+@media (prefers-reduced-motion: reduce){.inv .akd-cc{transition:none}.inv .akd-lamp circle{animation:none}}

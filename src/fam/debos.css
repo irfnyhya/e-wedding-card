@@ -1,0 +1,88 @@
+/* ===== debos ===== */
+.inv .cv-debos,.inv .pg-debos,.fam-debos{--lip:rgba(255,255,255,.42);--pit:rgba(0,0,0,.2);--press:color-mix(in srgb,var(--sheet) 93%,#000)}
+.inv .dbs-dark,.fam-debos.dbs-dark{--lip:rgba(255,255,255,.1);--pit:rgba(0,0,0,.45);--press:color-mix(in srgb,var(--sheet) 88%,#000)}
+/* the board: same stock, a raking light from the upper left */
+.inv .dbs-board{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 100% 70% at 10% 0,color-mix(in srgb,var(--ground) 86%,#fff),transparent 70%),linear-gradient(155deg,var(--ground),color-mix(in srgb,var(--ground) 86%,#000))}
+.inv .dbs-board::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.5}
+/* the card: thick coloured stock with a pale cut edge */
+.inv .dbs-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--accent);border-radius:1.5px;
+  background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),1px 1px 0 color-mix(in srgb,var(--sheet) 82%,#000),2px 2px 0 color-mix(in srgb,var(--sheet) 76%,#000),
+    8px 14px 22px -8px rgba(0,0,0,.32),20px 30px 44px -18px rgba(0,0,0,.26)}
+.inv .dbs-light{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(140deg,rgba(255,255,255,.2),transparent 40%,transparent 60%,rgba(0,0,0,.08))}
+.inv .dbs-card > :not(.dbs-light){position:relative}
+.inv .dbs-dark .dbs-light{background:linear-gradient(140deg,rgba(255,255,255,.07),transparent 40%,transparent 60%,rgba(0,0,0,.12))}
+.inv .dbs-glyph{fill:var(--press);font-family:"Cormorant Garamond",serif;font-variant-numeric:lining-nums}
+.inv .dbs-dot{fill:var(--press)}
+.inv .dbs-big{display:block;width:100%;overflow:visible}
+.inv .dbs-yr{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12px;letter-spacing:.6em;padding-left:.6em;margin-top:2px;text-shadow:0 1px 0 var(--lip),0 -.5px 0 var(--pit)}
+/* small printed type, pressed lightly */
+.inv .dbs-k{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9px;letter-spacing:.4em;padding-left:.4em;text-transform:uppercase;text-shadow:0 1px 0 var(--lip),0 -.5px 0 var(--pit)}
+.inv .dbs-names{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:15px;letter-spacing:.32em;padding-left:.32em;text-transform:uppercase;line-height:1.5;text-shadow:0 1px 0 var(--lip),0 -.5px 0 var(--pit);overflow-wrap:anywhere}
+.inv .dbs-names i{font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;margin:0 .5em 0 .2em;font-size:1.15em}
+.inv .dbs-rule{display:block;width:46px;height:1px;margin:14px 0;background:var(--pit);box-shadow:0 1px 0 var(--lip)}
+.inv .dbs-cv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14.5px;margin-top:6px;color:var(--ink);opacity:.85}
+
+/* cover: the card in a recess pressed into the board */
+.inv .cv-debos{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
+.inv .dbs-well{position:absolute;left:8%;right:8%;top:6%;aspect-ratio:5/6.9;z-index:3;border-radius:3px;
+  box-shadow:inset 3px 4px 7px rgba(0,0,0,.28),inset -1px -1px 0 rgba(255,255,255,.3),0 1px 0 rgba(255,255,255,.25)}
+.inv .dbs-ccard{position:absolute;inset:3.2%;justify-content:center;padding:6% 6%;transition:transform 1.3s cubic-bezier(.5,0,.2,1),opacity .4s .95s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),1px 1px 0 color-mix(in srgb,var(--sheet) 82%,#000),2px 2px 1px rgba(0,0,0,.25),3px 4px 6px rgba(0,0,0,.18)}
+.inv .dbs-ccard .dbs-k{margin-bottom:18px}
+.inv .dbs-foot{position:absolute;left:0;right:0;bottom:6%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .35s}
+.inv .dbs-to{text-align:center}
+.inv .dbs-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
+.inv .dbs-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:23px;line-height:1.4}
+.inv .dbs-open,.inv .dbs-pill{cursor:pointer;padding:13px 38px;border-radius:999px;border:0;white-space:nowrap;text-decoration:none;color:var(--pagefg);background:var(--ground);
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.3),inset -1px -1px 0 rgba(0,0,0,.14),3px 5px 12px -3px rgba(0,0,0,.35),-2px -2px 6px -2px rgba(255,255,255,.25)}
+/* opening: the card lifts out of its recess and slides away to the right */
+@keyframes dbsLift{0%{transform:none}35%{transform:translate(-1%,-2%) scale(1.04)}100%{transform:translate(118%,-4%) rotate(6deg) scale(1.04)}}
+.inv.opening .dbs-ccard{animation:dbsLift 1.3s cubic-bezier(.55,0,.25,1) forwards;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),1px 1px 0 color-mix(in srgb,var(--sheet) 82%,#000),2px 2px 0 color-mix(in srgb,var(--sheet) 76%,#000),14px 22px 30px -8px rgba(0,0,0,.4)}
+.inv.opening .dbs-foot{opacity:0}
+.inv.opening .cv-debos{opacity:0}
+
+/* page */
+.inv .pg-debos{background:var(--ground);padding:34px 0 92px;gap:26px;overflow:hidden}
+.inv .pg-debos > :not(.dbs-board){position:relative;z-index:2}
+.inv .dbs-pcard{width:86%;max-width:350px;padding:12% 7% 11%;min-height:min(126cqi,520px);justify-content:center}
+.inv .dbs-pcard .dbs-names{margin:12px 0 4px;font-size:16px}
+.inv .dbs-pcard .dbs-big{margin-top:6px}
+.inv .dbs-day{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;text-shadow:0 1px 0 var(--lip)}
+.inv .dbs-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:3px;color:var(--ink);opacity:.8}
+.inv .dbs-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;line-height:1.25;margin-top:10px;color:var(--ink)}
+.inv .dbs-bis{font-family:"Amiri",serif;font-size:15px;margin-bottom:8px;color:var(--ink)}
+.inv .dbs-ph{display:none}
+.inv .pg-debos.has-photo .dbs-ph{display:block;width:36%;aspect-ratio:1;border-radius:50%;margin-bottom:16px;padding:5px;
+  box-shadow:inset 2px 3px 5px rgba(0,0,0,.3),inset -1px -1px 0 var(--lip)}
+.inv .dbs-photo{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 30%;display:block}
+.inv .pg-debos .couple-ph.front{display:none}
+.inv .dbs-pill{align-self:center;width:auto!important;flex:0 0 auto}
+
+/* skin: coloured-stock cards, debossed caps headings over a pressed rule */
+.fam-debos .scroller{background:linear-gradient(160deg,color-mix(in srgb,var(--ground) 88%,#fff),var(--ground) 40%,color-mix(in srgb,var(--ground) 88%,#000))}
+.fam-debos .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/260px;mix-blend-mode:multiply;opacity:.45}
+.fam-debos.cardsecs .sec{background:linear-gradient(140deg,rgba(255,255,255,.14),transparent 45%),url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);border-radius:1.5px;
+  padding-top:40px;padding-bottom:36px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),1px 1px 0 color-mix(in srgb,var(--sheet) 82%,#000),2px 2px 0 color-mix(in srgb,var(--sheet) 76%,#000),10px 16px 26px -12px rgba(0,0,0,.36)}
+.fam-debos .sec h2{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:25px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--sheet) 72%,#000);
+  text-shadow:.5px 1px 0 color-mix(in srgb,var(--lip) 70%,transparent),0 -1px .6px var(--pit)}
+.fam-debos.dbs-dark .sec h2{color:color-mix(in srgb,var(--sheet) 70%,#000)}
+.fam-debos .sec h2::after{content:"";display:block;width:46px;height:1px;margin:14px auto 0;background:var(--pit);box-shadow:0 1px 0 var(--lip)}
+.fam-debos .sec,.fam-debos .sec p,.fam-debos .info b{color:var(--ink)}
+.fam-debos .info,.fam-debos .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-debos .info > div{border-bottom:0!important;padding:14px 6px!important;box-shadow:0 1px 0 var(--lip),0 .5px 0 var(--pit)!important}
+.fam-debos .info > div:last-child{box-shadow:none!important}
+.fam-debos .info span{color:var(--accent);letter-spacing:.24em;opacity:.85}
+.fam-debos .count b{color:var(--accent)}
+.fam-debos .ibtn{border-radius:999px;color:var(--accent);background:transparent;border:0;box-shadow:inset 1px 1.5px 3px var(--pit),inset -1px -1px 0 var(--lip)}
+.fam-debos input,.fam-debos select,.fam-debos textarea{background:color-mix(in srgb,var(--sheet) 88%,#fff);color:var(--ink);border-color:transparent;box-shadow:inset 1px 2px 3px var(--pit)}
+.fam-debos.dbs-dark input,.fam-debos.dbs-dark select,.fam-debos.dbs-dark textarea{background:color-mix(in srgb,var(--sheet) 80%,#000)}
+.fam-debos .seg button{border-radius:999px!important;color:var(--ink)}
+.fam-debos .seg button[aria-pressed="true"],.fam-debos button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-debos .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-debos .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv.opening .dbs-ccard{animation:none;opacity:0}}
+.fam-debos .sec .rule{display:none}
+.fam-debos .seg button[aria-pressed="true"],.fam-debos button.submit{font-weight:600}

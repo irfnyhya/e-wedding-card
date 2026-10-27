@@ -1,0 +1,104 @@
+/* ===== kalkir ===== */
+.inv .cv-kalkir,.inv .pg-kalkir,.fam-kalkir{--gl:color-mix(in srgb,var(--gold) 80%,#fff6e0);--gd:color-mix(in srgb,var(--gold) 45%,#2e1c02);--gm:color-mix(in srgb,var(--gold) 72%,#3a2404)}
+.inv .klk-bed{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 85% 60% at 30% 15%,color-mix(in srgb,var(--ground) 84%,#fff),transparent 72%),linear-gradient(165deg,var(--ground),color-mix(in srgb,var(--ground) 85%,#000))}
+.inv .klk-bed::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.45}
+/* gold foil printing on the vellum */
+.inv .klk-gold{background:linear-gradient(115deg,var(--gd),var(--gm) 20%,var(--gold) 30%,var(--gl) 36%,var(--gm) 46%,var(--gd) 62%,var(--gm) 80%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+
+.inv .klk-obj{position:relative}
+/* the cotton card: deckled, thick, with a soft shadow */
+.inv .klk-cotton{position:absolute;inset:0;filter:drop-shadow(0 1px 1px rgba(0,0,0,.16)) drop-shadow(0 14px 16px rgba(20,14,6,.3))}
+.inv .klk-cotton::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(140deg,rgba(255,255,255,.4),transparent 45%,rgba(0,0,0,.04)),url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.inv .klk-under{position:absolute;left:12%;right:12%;bottom:7%;height:17%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);z-index:1}
+.inv .klk-k{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9px;letter-spacing:.36em;padding-left:.36em;text-transform:uppercase;color:var(--accent)}
+.inv .klk-ud{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.3em;margin-top:4px}
+.inv .klk-uv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:2px}
+.inv .klk-under .klk-k,.inv .klk-under .klk-ud{display:none}
+/* the vellum: translucent, frosted, a bright cut edge, the card's print blurred beneath it */
+.inv .klk-vellum{position:absolute;inset:4.5% 5.5%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:17% 8% 0;
+  background:linear-gradient(160deg,rgba(250,252,255,.5),rgba(245,248,252,.26) 50%,rgba(250,252,255,.4));-webkit-backdrop-filter:blur(.9px) brightness(1.04) saturate(.85);backdrop-filter:blur(.9px) brightness(1.04) saturate(.85);
+  box-shadow:inset 0 0 0 .7px rgba(255,255,255,.95),0 0 0 .5px rgba(90,80,60,.16),0 1px 2px rgba(0,0,0,.1),0 8px 16px -6px rgba(0,0,0,.2);transform-origin:50% 0}
+.inv .klk-vk{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:9px;letter-spacing:.38em;padding-left:.38em;text-transform:uppercase}
+.inv .klk-names{font-family:"Mrs Saint Delafield",cursive;font-weight:400;font-size:clamp(46px,15cqi,60px);line-height:.92;margin:16px 0 8px;display:flex;flex-direction:column;align-items:center;padding:0 .2em;overflow-wrap:anywhere}
+.inv .klk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.34em;line-height:1.3;margin:-2px 0}
+.inv .klk-vd{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10.5px;letter-spacing:.34em;padding-left:.34em}
+
+/* the tie: a silk ribbon round the card, a bow, a sprig of pampas under the knot */
+.inv .klk-tie{position:absolute;left:-2.5%;right:-2.5%;top:64%;height:0;z-index:3}
+.inv .klk-rib{position:absolute;left:0;right:0;top:-11px;height:22px;z-index:2;
+  background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 4%,transparent 96%,rgba(0,0,0,.28)),url(assets/silk.jpg) 0 0/120px,
+    linear-gradient(180deg,var(--ribdk) 0%,var(--rib) 18%,var(--riblt) 44%,var(--rib) 66%,var(--ribdk) 100%);background-blend-mode:normal,soft-light,normal;
+  box-shadow:0 2px 3px rgba(0,0,0,.18)}
+.inv .klk-bow{position:absolute;left:10%;width:40%;top:0;transform:translateY(-44%);z-index:3;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.12))}
+.inv .klk-pampas{position:absolute;left:2%;width:31%;bottom:-8px;z-index:1;transform:rotate(-24deg);transform-origin:50% 100%}
+
+/* cover */
+.inv .cv-kalkir{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
+.inv .klk-cobj{position:absolute;left:9%;right:9%;top:6%;aspect-ratio:5/7.3;z-index:3}
+.inv .klk-cobj .klk-tie{transition:transform .8s cubic-bezier(.5,0,.3,1),opacity .5s .25s}
+.inv .klk-cobj .klk-vellum{transition:transform 1.05s cubic-bezier(.45,0,.2,1) .3s,opacity .6s .75s}
+.inv .klk-foot{position:absolute;left:0;right:0;bottom:6%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .35s}
+.inv .klk-to{text-align:center}
+.inv .klk-to small{display:block;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
+.inv .klk-to b{font-family:"Mrs Saint Delafield",cursive;font-weight:400;font-size:36px;line-height:1.15}
+.inv .klk-open,.inv .klk-pill{cursor:pointer;padding:13px 38px;border-radius:999px;border:0;white-space:nowrap;text-decoration:none;color:var(--ink);
+  font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  background:var(--sheet);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 4px var(--sheet),inset 0 0 0 4.6px color-mix(in srgb,var(--gold) 40%,transparent),0 10px 22px -8px rgba(20,14,6,.45)}
+/* opening: the ribbon slips off to the right, then the vellum lifts away */
+.inv.opening .klk-cobj .klk-tie{transform:translateX(70%) rotate(4deg);opacity:0}
+.inv.opening .klk-cobj .klk-vellum{transform:translateY(-62%) rotate(-5deg) scale(1.04);opacity:0}
+.inv.opening .klk-foot{opacity:0}
+.inv.opening .cv-kalkir{opacity:0}
+
+/* page: the cotton card wrapped in a vellum band, still tied */
+.inv .pg-kalkir{background:var(--ground);padding:34px 0 92px;gap:28px;overflow:hidden}
+.inv .pg-kalkir > :not(.klk-bed){position:relative;z-index:2}
+.inv .klk-pobj{width:84%;max-width:340px;aspect-ratio:5/7.3}
+.inv .klk-ptxt{position:absolute;left:9%;right:9%;top:6%;height:46%;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.inv .klk-pobj .klk-names{font-size:clamp(50px,16cqi,64px)}
+.inv .klk-bis{font-family:"Amiri",serif;font-size:15px;color:var(--ink);margin-bottom:6px}
+.inv .klk-band{position:absolute;left:-2%;right:-2%;top:54%;bottom:9%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10% 12% 0;color:var(--ink);
+  background:linear-gradient(170deg,rgba(255,255,255,.66),rgba(255,255,255,.4));-webkit-backdrop-filter:blur(2.4px);backdrop-filter:blur(2.4px);
+  box-shadow:inset 0 0 0 .6px rgba(255,255,255,.9),0 4px 10px -4px rgba(0,0,0,.2)}
+.inv .klk-bd{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.inv .klk-bh{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.8;margin-top:2px}
+.inv .klk-bv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;line-height:1.25;margin-top:8px}
+.inv .klk-ptie{top:58%}
+.inv .klk-ptie .klk-bow{left:5%;width:34%}
+.inv .klk-ptie .klk-pampas{left:auto;right:3%;width:21%;transform:rotate(16deg)}
+.inv .pg-kalkir.has-photo .klk-ptxt{justify-content:flex-start;top:4.5%;height:50%}
+.inv .klk-photo{width:30%;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:50% 30%;display:block;margin:0 auto 8px;flex:none;box-shadow:0 0 0 3px var(--sheet),0 0 0 3.6px color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .pg-kalkir.has-photo .klk-names{font-size:clamp(40px,13cqi,52px);margin:8px 0 0}
+.inv .pg-kalkir .couple-ph.front{display:none}
+.inv .klk-pill{align-self:center;width:auto!important;flex:0 0 auto}
+
+/* skin: cotton cards; a vellum strip across the top of each, a script heading and a length of silk ribbon */
+.fam-kalkir .scroller{background:linear-gradient(170deg,color-mix(in srgb,var(--ground) 90%,#fff),var(--ground) 45%,color-mix(in srgb,var(--ground) 88%,#000))}
+.fam-kalkir .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.4}
+.fam-kalkir.cardsecs .sec{background:linear-gradient(140deg,rgba(255,255,255,.35),transparent 45%),url(assets/paper.jpg) 0 0/230px,var(--sheet);background-blend-mode:normal,multiply,normal;color:var(--ink);border-radius:2px;
+  padding-top:40px;padding-bottom:34px;box-shadow:0 1px 1px rgba(0,0,0,.12),0 14px 24px -10px rgba(20,14,6,.36)}
+.fam-kalkir.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:92px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.3));box-shadow:inset 0 -.6px 0 rgba(255,255,255,.9),0 1px 0 rgba(0,0,0,.05)}
+.fam-kalkir .sec h2{position:relative;font-family:"Mrs Saint Delafield",cursive;font-weight:400;font-size:44px;letter-spacing:0;text-transform:none;line-height:1;color:var(--accent)}
+.fam-kalkir .sec h2::after{content:"";display:block;width:72px;height:7px;margin:12px auto 0;border-radius:1px;
+  background:url(assets/silk.jpg) 0 0/80px,linear-gradient(180deg,var(--ribdk),var(--rib) 25%,var(--riblt) 50%,var(--rib) 75%,var(--ribdk));background-blend-mode:soft-light,normal}
+.fam-kalkir .sec,.fam-kalkir .sec p,.fam-kalkir .info b{color:var(--ink)}
+.fam-kalkir .info,.fam-kalkir .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-kalkir .info > div{border-bottom:1px solid color-mix(in srgb,var(--ribdk) 35%,transparent)!important;padding:14px 6px!important}
+.fam-kalkir .info > div:last-child{border-bottom:0!important}
+.fam-kalkir .info span{color:var(--accent);letter-spacing:.22em}
+.fam-kalkir .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--ribdk) 60%,transparent)}
+.fam-kalkir input,.fam-kalkir select,.fam-kalkir textarea{background:#fff;color:var(--ink);border-color:color-mix(in srgb,var(--ribdk) 45%,transparent)}
+.fam-kalkir .seg button{border-radius:999px!important;color:var(--ink)}
+.fam-kalkir .seg button[aria-pressed="true"],.fam-kalkir button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-kalkir .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-kalkir .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .klk-cobj .klk-tie,.inv .klk-cobj .klk-vellum{transition:opacity .4s}}
+.fam-kalkir .sec .rule{display:none}
+.fam-kalkir .seg button[aria-pressed="true"],.fam-kalkir button.submit{font-weight:600}
+.inv .klk-names{-webkit-text-stroke:.45px color-mix(in srgb,var(--gd) 80%,transparent)}

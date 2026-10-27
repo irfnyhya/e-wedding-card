@@ -1,0 +1,99 @@
+/* ===== baroque (Barok) ===== */
+.inv .cv-baroque,.inv .pg-baroque{background:var(--ground);color:var(--pagefg)}
+/* damask wall, raked by the picture light from above */
+.inv .brq-wall{position:absolute;inset:0;background-size:60px 90px;background-position:50% 0;pointer-events:none;opacity:.75}
+.inv .brq-wall::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/200px;mix-blend-mode:soft-light;opacity:.22}
+.inv .brq-light{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 46% 30% at 50% 16%,rgba(255,226,170,.30),transparent 75%),radial-gradient(ellipse 70% 46% at 50% 30%,rgba(255,214,150,.14),transparent 80%),radial-gradient(ellipse 110% 75% at 50% 32%,transparent 40%,rgba(0,0,0,.66))}
+.inv .brq-pale .brq-light{background:radial-gradient(ellipse 62% 44% at 50% 26%,rgba(255,236,190,.4),transparent 75%),radial-gradient(ellipse 120% 80% at 50% 30%,transparent 50%,rgba(60,40,20,.25))}
+
+.inv .brq-hang{position:relative;display:flex;flex-direction:column;align-items:center;z-index:3}
+.inv .brq-lamp{display:block;width:44%;height:auto;margin-bottom:-2%;position:relative;z-index:2;filter:drop-shadow(0 4px 4px rgba(0,0,0,.5))}
+.inv .brq-silver .brq-lamp,.inv .brq-silver .brq-gilt{filter:grayscale(1) brightness(1.18) contrast(1.05) drop-shadow(0 14px 16px rgba(0,0,0,.45)) drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.inv .brq-frame{position:relative;width:100%}
+.inv .brq-gilt{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 18px 18px rgba(0,0,0,.6)) drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.inv .brq-pale .brq-gilt{filter:drop-shadow(0 16px 16px rgba(60,40,20,.35)) drop-shadow(0 2px 3px rgba(60,40,20,.35))}
+.inv .brq-pale.brq-silver .brq-gilt{filter:grayscale(1) brightness(1.18) contrast(1.05) drop-shadow(0 16px 16px rgba(40,40,50,.35)) drop-shadow(0 2px 3px rgba(40,40,50,.35))}
+/* the cream panel inside, set back behind the moulding */
+.inv .brq-panel{position:absolute;overflow:hidden;color:var(--ink);
+  background:radial-gradient(ellipse 90% 60% at 50% 0,rgba(255,236,196,.55),transparent 70%),url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:normal,multiply,normal;
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.2)}
+.inv .brq-panel::before{content:"";position:absolute;inset:7%;border:.6px solid color-mix(in srgb,var(--gold) 70%,transparent);pointer-events:none}
+.inv .brq-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12% 10%}
+.inv .brq-k{font-family:"Old Standard TT",serif;font-size:8.5px;letter-spacing:.34em;padding-left:.34em;text-transform:uppercase;margin:0;color:var(--ink)}
+.inv .brq-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(28px,8.6cqi,36px);line-height:1.02;margin:10px 0 6px;display:flex;flex-direction:column;align-items:center;color:var(--accent)}
+.inv .brq-names em{font-family:"Old Standard TT",serif;font-style:italic;font-size:.4em;color:var(--gold);margin:1px 0}
+.inv .brq-rule{display:block;width:60px;height:5px;margin:4px 0 9px;background:linear-gradient(var(--gold),var(--gold)) center/100% .6px no-repeat,radial-gradient(circle,var(--gold) 1.6px,transparent 2px) center/6px 6px no-repeat}
+.inv .brq-date{font-family:"Old Standard TT",serif;font-size:10px;letter-spacing:.24em;padding-left:.24em;text-transform:uppercase;margin:0;color:var(--ink)}
+.inv .brq-hj{font-family:"Old Standard TT",serif;font-style:italic;font-size:11.5px;opacity:.8;margin:3px 0 0}
+.inv .brq-ven{font-family:"Old Standard TT",serif;font-style:italic;font-size:12.5px;margin:6px 0 0;line-height:1.25}
+.inv .brq-bis{font-family:"Amiri",serif;font-size:13px;margin:0 0 6px}
+
+/* cover */
+.inv .cv-baroque{overflow:hidden;transition:opacity .5s .95s}
+.inv .brq-hang.cc{position:absolute;left:9%;right:9%;top:8.5%;perspective:1100px}
+.inv .brq-door{width:100%;transform-origin:0 50%;transition:transform 1.35s cubic-bezier(.55,0,.25,1);transform-style:preserve-3d}
+.inv .brq-niche{position:absolute;left:22%;right:22%;top:20%;height:44%;z-index:2;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(255,240,210,.9),rgba(255,214,150,.35) 55%,transparent 80%);transition:opacity 1s .25s}
+.inv .cv-baroque .brq-lamp{transition:opacity .6s}
+.inv .brq-foot{position:absolute;left:0;right:0;bottom:6%;z-index:6;display:flex;flex-direction:column;align-items:center;gap:13px;transition:opacity .35s}
+.inv .brq-to{text-align:center;margin:0;text-shadow:0 1px 10px rgba(0,0,0,.9)}
+.inv .brq-pale .brq-to{text-shadow:0 0 10px var(--sheet)}
+.inv .brq-to small{display:block;font-family:"Old Standard TT",serif;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.88}
+.inv .brq-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px;line-height:1.3}
+.inv .brq-open{cursor:pointer;white-space:nowrap;padding:14px 38px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 85%,transparent);background:color-mix(in srgb,var(--ground) 55%,transparent);backdrop-filter:blur(4px);
+  color:color-mix(in srgb,var(--gold) 65%,#fff);font-family:"Old Standard TT",serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--ground) 40%,transparent),inset 0 0 0 3px color-mix(in srgb,var(--ground) 60%,transparent),inset 0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
+.inv .brq-pale .brq-open{background:var(--sheet);color:var(--accent);box-shadow:0 10px 22px -10px rgba(60,40,20,.5),inset 0 0 0 3px var(--sheet),inset 0 0 0 4px color-mix(in srgb,var(--gold) 45%,transparent)}
+/* opening: the frame swings open on its left side like a cabinet door, light spills from behind */
+.inv.opening .brq-foot,.inv.opening .cv-baroque .brq-lamp{opacity:0}
+.inv.opening .brq-door{transform:rotateY(-104deg)}
+.inv.opening .brq-niche{opacity:1}
+.inv.opening .cv-baroque{opacity:0}
+
+/* page: a little gallery wall */
+.inv .pg-baroque{padding:30px 0 92px;gap:14px;overflow:hidden}
+.inv .pg-baroque > .brq-hang,.inv .pg-baroque > .brq-small,.inv .pg-baroque > .brq-pills{position:relative;z-index:3}
+.inv .pg-baroque > .brq-hang{width:72%;max-width:310px}
+.inv .brq-small{width:52%;max-width:230px}
+.inv .brq-frame.big .brq-in{padding:12% 9%}
+.inv .brq-frame.big .brq-k{font-size:9px;letter-spacing:.26em;padding-left:.26em}
+.inv .brq-frame.big .brq-names{font-size:clamp(32px,10cqi,42px)}
+.inv .brq-frame.land .brq-in{padding:8% 8%}
+.inv .brq-frame.land .brq-panel::before{inset:6%}
+.inv .brq-frame.land .brq-date{font-size:9px;letter-spacing:.16em;padding-left:.16em;line-height:1.5}
+.inv .pg-baroque .couple-ph.front{width:min(46%,130px);margin:0 auto 10px;box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),0 0 0 3px var(--sheet),0 0 0 3.6px color-mix(in srgb,var(--gold) 40%,transparent)}
+.inv .pg-baroque .brq-frame.big:has(.couple-ph) .brq-names{font-size:clamp(25px,7.6cqi,30px);margin:6px 0 0}
+.inv .pg-baroque .brq-frame.big:has(.couple-ph) .brq-in{padding:9% 8%}
+.inv .brq-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.inv .brq-pill{flex:0 0 auto;width:auto!important;padding:12px 28px;border-radius:999px;background:var(--sheet);color:var(--accent);text-decoration:none;font-family:"Old Standard TT",serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  box-shadow:0 10px 22px -8px rgba(0,0,0,.6),inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 3px var(--sheet),inset 0 0 0 3.6px color-mix(in srgb,var(--gold) 40%,transparent)}
+.inv .brq-pill.ghost{background:color-mix(in srgb,var(--ground) 50%,transparent);color:var(--pagefg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 75%,transparent)}
+
+/* skin: cream panels in a gilt moulding on the damask wall */
+.fam-baroque .scroller{background:var(--damask) 50% 0/60px 90px,var(--ground)}
+.fam-baroque .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% 0,rgba(255,226,170,.14),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 40%,transparent 50%,rgba(0,0,0,.35));mix-blend-mode:normal}
+.fam-baroque.brq-pale .scroller::before{background:radial-gradient(ellipse 80% 50% at 50% 0,rgba(255,240,210,.3),transparent 70%)}
+.fam-baroque .sheet{position:relative;z-index:1}
+.fam-baroque.cardsecs .sec{border:7px solid transparent;border-radius:0;color:var(--ink);
+  background:radial-gradient(ellipse 100% 40% at 50% 0,rgba(255,236,196,.45),transparent 70%) padding-box,url(assets/paper.jpg) 0 0/200px padding-box,linear-gradient(var(--sheet),var(--sheet)) padding-box,
+    linear-gradient(180deg,color-mix(in srgb,var(--gold) 40%,#fff),var(--gold) 18%,color-mix(in srgb,var(--gold) 60%,#2a1a04) 50%,var(--gold) 80%,color-mix(in srgb,var(--gold) 45%,#fff)) border-box;
+  background-blend-mode:normal,multiply,normal,normal;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 50%,#000),inset 0 5px 10px rgba(0,0,0,.18),inset 0 0 0 12px transparent,0 0 0 1px color-mix(in srgb,var(--gold) 50%,#000),0 18px 28px -10px rgba(0,0,0,.65)}
+.fam-baroque .sec h2{font-family:"Old Standard TT",serif;font-size:13px;letter-spacing:.34em;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:12px}
+.fam-baroque .sec h2::before,.fam-baroque .sec h2::after{content:"";flex:0 0 26px;height:5px;background:linear-gradient(var(--gold),var(--gold)) 0 0/100% .6px no-repeat,linear-gradient(var(--gold),var(--gold)) 0 100%/100% .6px no-repeat}
+.fam-baroque .sec .rule{display:none}
+.fam-baroque .sec,.fam-baroque .sec p,.fam-baroque .info b{color:var(--ink)}
+.fam-baroque .info,.fam-baroque .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-baroque .info > div{border-bottom:.6px solid color-mix(in srgb,var(--gold) 50%,transparent)!important;padding:13px 6px!important}
+.fam-baroque .info > div:last-child{border-bottom:0!important}
+.fam-baroque .info span{color:var(--accent);opacity:1;font-family:"Old Standard TT",serif}
+.fam-baroque .ibtn{border-radius:999px;color:var(--accent);background:transparent;border-color:color-mix(in srgb,var(--gold) 70%,transparent)}
+.fam-baroque .count b{font-family:"Old Standard TT",serif;color:var(--accent)}
+.fam-baroque .seg button{border-radius:999px!important}
+.fam-baroque .seg button[aria-pressed="true"],.fam-baroque button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
+.fam-baroque .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .brq-door,.inv .brq-niche{transition:none}}
+.fam-baroque .dock{background:color-mix(in srgb,var(--sheet) 96%,transparent);border-top:1px solid color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 -8px 20px -10px rgba(0,0,0,.5)}
+.fam-baroque .dock button{color:var(--ink)}
+.fam-baroque .dock svg{color:var(--accent)}

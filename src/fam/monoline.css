@@ -1,0 +1,79 @@
+/* ===== monoline (Moden) ===== */
+/* same-colour paper: a soft light from above, the paper grain barely there */
+.inv .mln-paper{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 90% 60% at 50% 18%,color-mix(in srgb,var(--ground) 90%,#fff),transparent 75%),var(--ground)}
+.inv .mln-paper::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.35}
+.inv .mln-sheet{position:relative;color:var(--ink);text-align:left;display:flex;flex-direction:column;
+  background:linear-gradient(170deg,color-mix(in srgb,var(--sheet) 92%,#fff),var(--sheet) 60%),var(--sheet);
+  box-shadow:0 .5px 1px rgba(0,0,0,.08),0 2px 4px -2px rgba(0,0,0,.08),0 22px 40px -18px rgba(0,0,0,.28)}
+.inv .mln-sheet::before{content:"";position:absolute;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.4}
+.inv .mln-sheet > *{position:relative}
+.inv .mln-top{display:flex;justify-content:space-between;gap:12px;font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink);opacity:.75}
+.inv .mln-body{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
+/* the ampersand, printed tone-on-tone, very large */
+.inv .mln-amp{position:absolute;left:50%;top:50%;transform:translate(-46%,-54%);font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(220px,74cqi,300px);line-height:1;
+  color:color-mix(in srgb,var(--sheet) 86%,var(--accent));pointer-events:none;user-select:none}
+.inv .mln-names{position:relative;font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(44px,14.2cqi,58px);line-height:1;letter-spacing:-.01em;color:var(--accent);display:flex;flex-direction:column}
+.inv .mln-n1{align-self:flex-start;overflow-wrap:anywhere}
+.inv .mln-n2{align-self:flex-end;margin-top:.5em;overflow-wrap:anywhere;text-align:right}
+.inv .mln-rule{display:block;height:1px;background:var(--accent);opacity:.55;margin:0 0 14px}
+.inv .mln-meta{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.inv .mln-meta p{display:flex;flex-direction:column;gap:3px}
+.inv .mln-meta b{font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.inv .mln-meta p:first-child{flex:none}
+.inv .mln-meta span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.75}
+.inv .mln-mv{text-align:right}
+.inv .mln-meta em{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;line-height:1.2}
+
+/* cover */
+.inv .cv-monoline{background:var(--ground);overflow:hidden;transition:opacity .4s .95s}
+.inv .mln-csheet{position:absolute;left:9%;right:9%;top:6.5%;aspect-ratio:5/7.2;z-index:3;padding:9% 9% 8%;transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .9s .3s,filter 1s .2s}
+.inv .mln-csheet .mln-body{margin:0 -1%}
+.inv .mln-foot{position:absolute;left:0;right:0;bottom:6%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .35s}
+.inv .mln-to{text-align:center}
+.inv .mln-to small{display:block;font-family:"Jost",sans-serif;font-weight:400;font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.75}
+.inv .mln-to b{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:24px;line-height:1.4}
+.inv .mln-open,.inv .mln-pill{cursor:pointer;padding:13px 40px;border-radius:999px;white-space:nowrap;text-decoration:none;color:var(--pagefg);background:transparent;
+  border:1px solid color-mix(in srgb,var(--pagefg) 55%,transparent);font-family:"Jost",sans-serif;font-size:10px;font-weight:500;letter-spacing:.32em;text-transform:uppercase}
+/* opening: the card lifts towards you and dissolves into the paper */
+.inv.opening .mln-csheet{transform:translateY(-3%) scale(1.08);opacity:0;filter:blur(3px)}
+.inv.opening .mln-foot{opacity:0}
+.inv.opening .cv-monoline{opacity:0}
+
+/* page */
+.inv .pg-monoline{background:var(--ground);padding:34px 0 92px;gap:26px;overflow:hidden}
+.inv .pg-monoline > :not(.mln-paper){position:relative;z-index:2}
+.inv .mln-psheet{width:86%;max-width:350px;min-height:min(130cqi,530px);padding:9% 9% 8%}
+.inv .mln-psheet .mln-body{padding:30px 0 34px}
+.inv .mln-k{font-family:"Jost",sans-serif;font-weight:500;font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:22px;position:relative}
+.inv .mln-bis{font-family:"Amiri",serif;font-size:15px;margin-bottom:14px;position:relative}
+.inv .mln-psheet .mln-names{font-size:clamp(48px,15cqi,62px)}
+.inv .mln-ph{display:none}
+.inv .pg-monoline.has-photo .mln-ph{display:block;margin-top:22px}
+.inv .mln-photo{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:50% 35%;display:block;filter:saturate(.85)}
+.inv .pg-monoline.has-photo .mln-amp{font-size:clamp(190px,62cqi,250px)}
+.inv .pg-monoline.has-photo .mln-psheet .mln-body{padding:24px 0 26px}
+.inv .pg-monoline .couple-ph.front{display:none}
+.inv .mln-pill{align-self:center;width:auto!important;flex:0 0 auto}
+
+/* skin: plain cards on the same-colour paper; one fine rule above a light italic heading */
+.fam-monoline .scroller{background:var(--ground)}
+.fam-monoline .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.3}
+.fam-monoline.cardsecs .sec{background:var(--sheet);color:var(--ink);border-radius:0;padding-top:46px;padding-bottom:38px;
+  box-shadow:0 .5px 1px rgba(0,0,0,.07),0 18px 32px -18px rgba(0,0,0,.26)}
+.fam-monoline.cardsecs .sec::before{content:"";position:absolute;left:28px;right:28px;top:26px;height:1px;background:var(--accent);opacity:.4;pointer-events:none}
+.fam-monoline .sec h2{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:34px;letter-spacing:0;text-transform:none;color:var(--accent);line-height:1.1}
+.fam-monoline .sec,.fam-monoline .sec p,.fam-monoline .info b{color:var(--ink)}
+.fam-monoline .info,.fam-monoline .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-monoline .info > div{border-bottom:1px solid color-mix(in srgb,var(--accent) 18%,transparent)!important;padding:14px 4px!important}
+.fam-monoline .info > div:last-child{border-bottom:0!important}
+.fam-monoline .info span{font-family:"Jost",sans-serif;font-weight:500;font-size:9px;color:var(--accent);letter-spacing:.28em;opacity:.8}
+.fam-monoline .count b{font-family:"Cormorant Garamond",serif;font-weight:300;color:var(--accent)}
+.fam-monoline .ibtn{border-radius:999px;color:var(--accent);background:transparent;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.fam-monoline input,.fam-monoline select,.fam-monoline textarea{background:color-mix(in srgb,var(--sheet) 85%,var(--ground));color:var(--ink);border-color:color-mix(in srgb,var(--accent) 25%,transparent)}
+.fam-monoline .seg button{border-radius:999px!important;color:var(--ink)}
+.fam-monoline .seg button[aria-pressed="true"],.fam-monoline button.submit{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important;border-radius:999px}
+.fam-monoline .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-monoline .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .mln-csheet{transition:opacity .4s}}
+.fam-monoline .sec .rule{display:none}
+.fam-monoline .seg button[aria-pressed="true"],.fam-monoline button.submit{font-weight:600}

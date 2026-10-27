@@ -1,0 +1,94 @@
+/* ===== konservatori (Rumah Kaca) ===== */
+.inv .cv-konservatori{background:var(--sheet);overflow:hidden;container-type:inline-size;transition:opacity .5s 1s}
+/* a soft pastel sky that settles into the paper */
+.inv .rkc-sky{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(42% 12% at 24% 14%,rgba(255,255,255,.75),transparent 70%),radial-gradient(36% 9% at 78% 22%,rgba(255,255,255,.6),transparent 70%),
+    linear-gradient(180deg,var(--sky1) 0%,color-mix(in srgb,var(--sky1) 50%,var(--sky2)) 24%,var(--sky2) 44%,var(--sheet) 62%)}
+.inv .rkc-sky::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.75}
+
+/* the glasshouse drawing */
+.inv .rkc-stage{position:absolute;left:3%;right:3%;top:10%;aspect-ratio:300/250}
+.inv .rkc-house{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.inv .rkc-house .ln{fill:none;stroke:var(--line);stroke-width:.9;stroke-linejoin:round;stroke-linecap:round}
+.inv .rkc-house .ln.b{stroke-width:1.5}
+.inv .rkc-house .th{fill:none;stroke:var(--line);stroke-width:.5;opacity:.85}
+.inv .rkc-house .cr{fill:var(--line)}
+.inv .rkc-house .g1{stop-color:var(--glass);stop-opacity:.55}
+.inv .rkc-house .g2{stop-color:var(--glass);stop-opacity:.3}
+.inv .rkc-house .g3{stop-color:#fff;stop-opacity:.7}
+.inv .rkc-house .plants ellipse{fill:var(--line);opacity:.3}
+.inv .rkc-house .trees{fill:var(--lawn);opacity:.7}
+.inv .rkc-house .door{fill:color-mix(in srgb,var(--line) 30%,var(--sheet))}
+.inv .rkc-house .lawn{fill:var(--lawn);opacity:.8}
+.inv .rkc-house .path{fill:color-mix(in srgb,var(--sky1) 50%,var(--sheet));opacity:.9}
+/* the blooms banked round the base */
+.inv .rkc-f{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%) rotate(var(--r,0deg));background-repeat:no-repeat;mix-blend-mode:multiply;z-index:3;
+  -webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent 100%);mask-image:radial-gradient(closest-side,#000 60%,transparent 100%)}
+
+/* type */
+.inv .rkc-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;color:var(--accent);margin:0;text-align:center}
+.inv .rkc-k.top{position:absolute;left:0;right:0;top:5.5%;z-index:3}
+.inv .rkc-names{font-family:"Italianno",cursive;font-weight:400;font-size:clamp(50px,15cqi,62px);line-height:.86;color:var(--accent);margin:8px 0 8px;display:flex;flex-direction:column;align-items:center}
+.inv .rkc-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.36em;color:var(--ink);opacity:.6;line-height:1.2}
+.inv .rkc-names.sm{font-size:clamp(46px,13.6cqi,56px);margin:0 0 6px}
+.inv .rkc-date{font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);margin:0;display:flex;align-items:center;gap:10px;justify-content:center}
+.inv .rkc-date span{font-style:italic;font-weight:500;text-transform:none;letter-spacing:.04em;font-size:14px;color:var(--accent)}
+.inv .rkc-date span:empty{display:none}
+.inv .rkc-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--ink);margin:5px 0 0}
+.inv .rkc-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;color:var(--ink);opacity:.7;margin:4px 0 0}
+.inv .rkc-bis{font-family:"Amiri",serif;font-size:17px;color:var(--accent);margin:0 0 10px}
+
+/* cover */
+.inv .rkc-cbody{position:absolute;left:8%;right:8%;top:56%;bottom:4%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;transition:opacity .45s}
+.inv .rkc-to{margin:16px 0 0;text-align:center;color:var(--ink)}
+.inv .rkc-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
+.inv .rkc-to b{font-family:"Italianno",cursive;font-weight:400;font-size:30px;line-height:1.1;color:var(--accent)}
+.inv .rkc-open{margin-top:auto;border:0;cursor:pointer;padding:13px 34px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  box-shadow:0 8px 16px -8px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.2)}
+.inv .cv-konservatori .rkc-stage{transform-origin:50% 78%;transition:transform 1.45s cubic-bezier(.55,0,.25,1),opacity .6s .85s}
+.inv .cv-konservatori .rkc-house .plants{animation:rkSway 14s ease-in-out infinite alternate}
+@keyframes rkSway{from{transform:translateX(-2px)}to{transform:translateX(2px)}}
+.inv .cv-konservatori .rkc-k.top{transition:opacity .4s}
+/* opening: walk in through the door */
+.inv.opening .cv-konservatori .rkc-stage{transform:scale(7);opacity:0}
+.inv.opening .rkc-cbody,.inv.opening .cv-konservatori .rkc-k.top{opacity:0}
+.inv.opening .cv-konservatori{opacity:0}
+
+/* page: an arched panel with the glasshouse in its crown */
+.inv .pg-konservatori{padding:0;justify-content:flex-start;background:var(--ground);container-type:inline-size}
+.inv .pg-konservatori .rkc-sky{position:fixed;opacity:.9}
+.inv .rkc-arch{position:relative;z-index:1;margin:20px 16px 86px;min-height:640px;border-radius:200px 200px 6px 6px/150px 150px 6px 6px;overflow:hidden;
+  background:linear-gradient(180deg,var(--sky1),var(--sky2) 30%,var(--sheet) 46%);box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 60%,transparent),0 0 0 6px color-mix(in srgb,var(--sheet) 85%,transparent),0 0 0 7px color-mix(in srgb,var(--line) 35%,transparent),0 24px 40px -22px rgba(40,50,45,.45)}
+.inv .rkc-arch::after{content:"";position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/320px;mix-blend-mode:multiply;opacity:.6;pointer-events:none}
+.inv .rkc-stage.sm{position:relative;left:auto;right:auto;top:auto;width:94%;margin:34px auto 0}
+.inv .rkc-body{position:relative;z-index:3;padding:30px 26px 34px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.inv .rkc-panes{display:grid;grid-template-columns:1fr 1fr;width:100%;margin:18px 0 0;border:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+.inv .rkc-panes a{display:flex;flex-direction:column;gap:4px;padding:12px 8px;color:var(--ink);text-decoration:none;min-width:0;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--glass) 40%,transparent),transparent 45%,color-mix(in srgb,#fff 50%,transparent) 50%,transparent 56%)}
+.inv .rkc-panes a + a{border-left:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+.inv .rkc-panes small{font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.inv .rkc-panes b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:13.5px;line-height:1.25}
+.inv .rkc-pill{margin-top:20px;padding:12px 30px;border-radius:999px;background:var(--accent);color:var(--sheet);text-decoration:none;white-space:nowrap;font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+
+/* skin: arch-topped cards with a glazing-bar band */
+.fam-konservatori .scroller{background:linear-gradient(180deg,color-mix(in srgb,var(--sky1) 70%,var(--ground)),var(--ground) 40%)}
+.fam-konservatori.cardsecs .sec{position:relative;color:var(--ink);background:var(--sheet);border-radius:160px 160px 4px 4px/56px 56px 4px 4px;padding-top:62px!important;overflow:hidden;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line) 55%,transparent),0 16px 30px -18px rgba(40,50,45,.45)}
+.fam-konservatori.cardsecs .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:40px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 21px,color-mix(in srgb,var(--line) 45%,transparent) 21px 22px),linear-gradient(180deg,color-mix(in srgb,var(--glass) 75%,transparent),transparent);
+  -webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
+.fam-konservatori .sec h2{font-family:"Italianno",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:44px;line-height:1;color:var(--accent)}
+.fam-konservatori .info,.fam-konservatori .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-konservatori .info > div{border-bottom:1px solid color-mix(in srgb,var(--line) 35%,transparent)!important;padding:12px 6px!important}
+.fam-konservatori .info > div:last-child{border-bottom:0!important}
+.fam-konservatori .info span{color:var(--accent);letter-spacing:.2em}
+.fam-konservatori .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-konservatori .count b{font-family:"Cormorant Garamond",serif;font-weight:500;color:var(--accent)}
+.fam-konservatori .ibtn,.fam-konservatori .seg button{border-radius:999px}
+.fam-konservatori .ibtn{border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent);background:transparent}
+.fam-konservatori .seg button[aria-pressed="true"],.fam-konservatori button.submit{font-weight:700;background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
+.fam-konservatori button.submit{border-radius:999px}
+.fam-konservatori .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-konservatori .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .cv-konservatori .rkc-stage{transition:opacity .6s}.inv .cv-konservatori .rkc-house .plants{animation:none}}
+.fam-konservatori .info span{opacity:.9}
