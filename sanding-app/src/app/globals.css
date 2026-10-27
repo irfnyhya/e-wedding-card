@@ -6555,3 +6555,12 @@ details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
 
 .foot-nav .mob-only{display:none}
 @media (max-width:940px){.foot-nav .mob-only{display:inline-flex}.foot-nav{gap:8px}.foot-nav .btn{padding-inline:18px}}
+
+/* owner admin page */
+.admin-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.admin-stats div{border:1px solid var(--line);background:var(--surface);padding:16px 18px}
+.admin-stats span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.admin-stats b{display:block;margin-top:6px;font-family:var(--f-display);font-size:30px;font-weight:500}
+.admin-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 14px}
+.admin-tools input{flex:1 1 280px;max-width:460px;padding:11px 14px;border:1px solid var(--line);background:var(--surface);font:inherit}
+@media (max-width:720px){.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
