@@ -72,7 +72,7 @@ FAMILY({key:'kerang',name:'Kerang',meaning:'Seashell and pearl',
      <${tag} class="kg-shell" ${attr} aria-label="${L.open}"><svg class="kg-low" viewBox="0 0 300 300">${inside(c,u)}</svg><svg class="kg-lid" viewBox="0 0 300 300">${lid(c,u)}</svg></${tag}>
      <div class="kg-foot"><svg class="kg-str" viewBox="0 0 200 20"><defs>${pearlDef('kz'+u,c)}</defs>${strand(Array.from({length:13},(_,i)=>[28+i*12,8+Math.sin(i/12*PI)*4]),2.6,4.6,'kz'+u)}</svg>
       <p class="kg-d">${esc(fmtDate(o.date,o.lang))}</p>${guest?`<p class="kg-to">${L.dear}<b>${esc(guest)}</b></p>`:`<p class="kg-to"><b>${esc(o.venue)}</b></p>`}
-      <p class="kg-hint">${en?'Touch the shell to open it':'Sentuh kerang untuk membukanya'}</p></div></div>`},
+      <p class="kg-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{const id='sk'+(++gid);
       const swag=Array.from({length:27},(_,k)=>{const t=k/26;return [14+t*332,6+Math.sin(t*PI)*24]});

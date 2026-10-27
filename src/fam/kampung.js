@@ -58,7 +58,7 @@ FAMILY({key:'kampung',name:'Rumah Kampung',meaning:'Village stilt house',
     return `<div class="cover cv-kampung" style="${vars(c)}"><i class="kampung-sky"></i><i class="kampung-bright"></i>
      <${tag} class="kampung-scene" ${attr} aria-label="${L.open}">${layers()}</${tag}><i class="kampung-paper"></i>
      <div class="kampung-head"><p class="kampung-k">${ev(o,L)}</p><p class="kampung-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kampung-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <div class="kampung-foot">${guest?`<p class="kampung-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kampung-hint">${en?'Touch the kampung to enter':'Sentuh kampung untuk masuk'}</p></div></div>`},
+     <div class="kampung-foot">${guest?`<p class="kampung-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kampung-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
   themes:[
     {k:'senja',n:'Senja',desc:'Violet dusk, amber sun, deep green',c:{ground:'#3a2a4c',sheet:'#fbf3e4',ink:'#2b241e',accent:'#22331f',gold:'#f2b45a',pagefg:'#fdf0d8',wood:'#5e3f24'}},

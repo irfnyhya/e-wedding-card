@@ -68,7 +68,7 @@ FAMILY({key:'rama',name:'Rama-rama',meaning:'Butterfly specimen box',
       <div class="rm-guest">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}<i class="rm-tp l"></i></div></div>
       <div class="rm-glass"><i></i></div><i class="rm-mitre"></i>
       <${tag} class="rm-plate" ${attr} aria-label="${L.open}"><span>${esc(a)} &amp; ${esc(b)}</span></${tag}></div>
-     <p class="rm-hint">${en?'Touch the brass plate to slide the glass away':'Sentuh plat tembaga untuk mengalih kaca'}</p></div>`},
+     <p class="rm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);const keys=Object.keys(SP);el.style.setProperty("--wood",c.wood);el.style.setProperty("--woodL",c.woodL);el.style.setProperty("--label",c.label);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<svg class="rm-sk ${i%2?'r':'l'}" viewBox="-60 -50 120 100">${DEFS(c)}<g transform="rotate(${i%2?14:-14})">${bfly(keys[(i*4+1)%keys.length],true)}</g></svg>`);
       const h=s.querySelector('h2');if(h){h.classList.add('rm-lab');h.insertAdjacentHTML('beforeend',`<small>No. ${String(i+1).padStart(2,'0')} &middot; ${esc(SP[keys[(i*4+1)%keys.length]].n)}</small>`)}})},

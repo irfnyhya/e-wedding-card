@@ -67,7 +67,7 @@ FAMILY({key:'istana',name:'Istana',meaning:'Royal Malay palace',
      <${tag} class="is-ban" ${attr} aria-label="${L.open}"><span class="is-cloth"><span class="is-in">
        <span class="is-k">${ev(o,L)}</span>${crest()}<span class="is-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="is-d">${esc(fmtDate(o.date,o.lang))}</span></span></span>
       <span class="is-roll">${tassel('l')}${tassel('m')}${tassel('r')}</span></${tag}>
-     <div class="is-foot">${guest?`<p class="is-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="is-hint">${en?'Touch the banner to raise it':'Sentuh panji untuk menggulungnya'}</p></div></div>`},
+     <div class="is-foot">${guest?`<p class="is-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="is-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.lt)el.classList.add('is-lt');
     $$('.sheet > .sec',el).forEach(s=>s.insertAdjacentHTML('beforeend',`<i class="is-ct l"></i><i class="is-ct r"></i>${tassel('sl')}${tassel('sr')}`));
     $$('.sec h2',el).forEach(h=>{h.classList.add('is-plq')})},

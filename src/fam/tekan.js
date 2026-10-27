@@ -59,7 +59,7 @@ FAMILY({key:'tekan',name:'Bunga Tekan',meaning:'Pressed flowers',
      <div class="tekan-wrap"><div class="tekan-vel"><i class="tekan-foil"></i><p class="tekan-v1">${esc(o.venue)}</p>
       <div class="tekan-v2">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<span>${esc(fmtTime(o.start,o.lang))}</span>`}</div></div>
       ${cord(c)}<${tag} class="tekan-seal" ${attr} aria-label="${L.open}"><img src="assets/seal-${c.seal}.webp" alt=""><span>${esc(i1)}<em>&amp;</em>${esc(i2)}</span></${tag}></div>
-     <p class="tekan-hint">${en?'Touch the seal to slip off the vellum':'Sentuh lilin untuk menanggalkan pembalut'}</p></div>`},
+     <p class="tekan-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="tekan-bg"></i>${sprayS(c,40+i*7,['a','b','c'][i%3],'tekan-sk '+(i%2?'r':'l'))}`);
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend',`<svg class="tekan-hr" viewBox="0 0 200 24">${sprig([10,14],[100,8+(i%3)],[190,14],7,8,c.leaf,c.vein,rng(9+i))}${bloom(100,11,4.5,[c.petal,c.petal2,c.petal3][i%3],c.eye,i*20)}</svg>`)})},

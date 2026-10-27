@@ -62,7 +62,7 @@ FAMILY({key:'teh',name:'Petang Teh',meaning:'Afternoon tea',
        <span class="th-label"><span class="th-lk">${ev(o,L)}</span>${sprig(c,'34%')}<span class="th-ln">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="th-lr"></span><span class="th-ld">${esc(fmtShort(o.date).replace(/\./g,' · '))}</span><span class="th-le">${en?'Est.':'Sejak'} ${esc(y)}</span></span></span>
       <span class="th-lid"><span class="th-knob"></span></span></${tag}>
      <div class="th-cupc">${cup(c,u)}</div><div class="th-spc">${sprig(c)}</div>
-     <p class="th-hint">${en?'Touch the tin to lift the lid':'Sentuh tin untuk membuka tudungnya'}</p></div>`},
+     <p class="th-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--saucer',SAUCER(th.c));el.style.setProperty('--tick',TICK(th.c))},
   themes:[
     {k:'merah',n:'Merah',desc:'Crimson tin on a cream cloth',c:{ground:'#efe6d9',sheet:'#fdf9f1',ink:'#33251f',accent:'#8e2430',gold:'#c49a4c',pagefg:'#33251f',tea:'#7a4320',leaf:'#4f6b3a',bunt:'#e8d9c2',wood:'#6b4a2e'}},

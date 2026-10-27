@@ -57,7 +57,7 @@ FAMILY({key:'merak',name:'Merak',meaning:'Peacock train',
       ${guest?`<p class="mk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
      <div class="mk-train">${fs}</div>
      <${tag} class="mk-brooch" ${attr} aria-label="${L.open}">${brooch(c)}<span>${esc((n1||'A')[0])}<i>&amp;</i>${esc((n2||'A')[0])}</span></${tag}>
-     <p class="mk-hint">${en?'Touch the brooch to open':'Sentuh kerongsang untuk membuka'}</p></div>`},
+     <p class="mk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th),id='s';
     el.style.setProperty('--mk-eye',K.uri(`<svg ${NS} viewBox="-20 -26 40 52"><defs>${defs(c,id)}</defs>${eye(id,c)}</svg>`));
     el.style.setProperty('--mk-plume',K.uri(`<svg ${NS} viewBox="0 0 300 60"><defs>${defs(c,id)}</defs><g transform="translate(300 30) rotate(-90) translate(-30 -300)">${feather(id,c,9)}</g></svg>`));

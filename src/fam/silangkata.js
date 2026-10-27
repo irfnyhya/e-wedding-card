@@ -82,7 +82,7 @@ FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Crossword puzzle',
       <div class="silangkata-bot"><div class="silangkata-coupon"><p class="silangkata-ch">${en?'Entry coupon':'Kupon penyertaan'}</p>
         <p class="silangkata-cl"><span>${en?'Name':'Nama'}</span><b>${guest?esc(guest):'&nbsp;'}</b></p>
         <p class="silangkata-cl"><span>${en?'Reply by':'Jawab sebelum'}</span><b>${esc(o.deadline?fmtDate(o.deadline,o.lang,false):fmtDate(o.date,o.lang,false))}</b></p></div>
-       <p class="silangkata-hint">${en?'Touch the grid to solve':'Sentuh grid untuk menjawab'}</p></div></div>
+       <p class="silangkata-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>
      ${SK_PENCIL(c,++skN)}</div>`},
   skin(el,o,th,L){K.cards(el);el.style.setProperty('--pen',th.c.pen);
     $$('.sec',el).forEach((s,i)=>{s.classList.add('silangkata-sec');const h=$('h2',s);if(!h)return;const t=h.textContent.trim();

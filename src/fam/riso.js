@@ -56,7 +56,7 @@ FAMILY({key:'riso',name:'Risograf',meaning:'Two-colour riso print',
   page(o,th,L){return `<section class="page pg-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-sheet">${layers(o,th,L,'','page')}<i class="rs-grain"></i></div></section>`},
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
     return `<div class="cover cv-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-table"></div>
-    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Tap to open':'Sentuh untuk buka'} &#8594;</span></${tag}></div>`},
+    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Open invitation':'Buka Jemputan'} &#8594;</span></${tag}></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--blend',th.c.blend||'multiply');$$('.sheet > .sec',el).forEach((s,i)=>{s.classList.add(i%2?'rs-odd':'rs-even');const h=$('h2',s);if(h)h.setAttribute('data-t',h.textContent)})},
   themes:[
     {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4',line:'rgba(0,120,191,.35)'}},

@@ -123,7 +123,7 @@ FAMILY({key:'alhambra',name:'Alhambra',meaning:'Nasrid palace arch',
      <div class="al-wall"></div>
      <div class="al-top"><p class="al-k">${ev(o,L)}</p><svg class="al-rl" viewBox="0 0 120 12"><path d="M6 6H48M72 6H114" stroke="${c.gold}" stroke-width=".6"/><path d="${K.star(8,5.4,2.6,60,6)}" fill="none" stroke="${c.gold}" stroke-width=".7"/></svg><p class="al-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="al-portal" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 492" preserveAspectRatio="xMidYMid meet">${portal(c,id,true,namesSvg(n1||'',n2||'',c))}</svg></${tag}>
-     <div class="al-foot">${guest?`<p class="al-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="al-hint">${en?'Touch the lattice to lift it':'Sentuh kekisi untuk mengangkatnya'}</p></div></div>`},
+     <div class="al-foot">${guest?`<p class="al-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="al-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     el.style.setProperty('--al-sebka',K.uri(`<svg ${NS} width="26" height="34" viewBox="0 0 26 34">${sebkaTile({...c,relief:mix(c.gold,c.sheet,.35),shadow:mix(c.sheet,c.ink,.18),gold:c.gold},26,34,false)}</svg>`));
     el.style.setProperty('--al-star',K.uri(`<svg ${NS} viewBox="-10 -10 20 20"><path d="${K.star(8,9,4.6)}" fill="none" stroke="${c.gold}" stroke-width="1"/><circle r="2" fill="${c.paint}"/></svg>`));

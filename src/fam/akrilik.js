@@ -23,7 +23,7 @@ FAMILY({key:'akrilik',name:'Akrilik',meaning:'Acrylic card',
     return `<div class="cover cv-akrilik" style="${vv(th.c)}">${backdrop(th)}
      <${tag} class="ak-btn" ${attr} aria-label="${L.open}"><span class="ak-sh"></span>${panel(o,th,L,false)}
       <span class="ak-sleeve"><span class="ak-sl-in">${guest?`<span class="ak-to"><span>${L.dear}</span><b>${esc(guest)}</b></span>`:`<span class="ak-to"><b>${esc(coverNames(o).join(' & '))}</b></span>`}
-       <span class="ak-sl-rule"></span><span class="ak-hint">${en?'Touch to slide the card out':'Sentuh untuk menarik kad keluar'}</span></span></span></${tag}></div>`},
+       <span class="ak-sl-rule"></span><span class="ak-hint">${en?'Open invitation':'Buka Jemputan'}</span></span></span></${tag}></div>`},
   skin(el,o,th){K.cards(el);['blob1','blob2','inkw'].forEach(k=>el.style.setProperty('--'+k,th.c[k]));$$('.sheet > .sec h2',el).forEach(h=>h.classList.add('ak-mg'))},
   themes:[
     {k:'putih',n:'Putih',desc:'Ivory and blush, white roses',extra:{fl:'white-roses',fl2:'blush-rose',eng:'white-roses'},c:{ground:'#efe6df',sheet:'#fffdfb',ink:'#3a2f2a',accent:'#8a6a3a',gold:'#c9a053',pagefg:'#3a2f2a',blob1:'#f4d9cf',blob2:'#e9e2d2',inkw:'#ffffff'}},

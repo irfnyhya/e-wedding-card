@@ -59,7 +59,7 @@ FAMILY({key:'washi',name:'Washi',meaning:'Japanese paper',
     return `<div class="cover cv-washi" style="--fib:${FIBRE};--sgp:${SEIGAIHA(c.wave)};--wood:${c.wood};--woodD:${c.woodD};--paper:${c.paper}">${panel('l')}${panel('r')}
 
      <${tag} class="ws-seal" ${attr} aria-label="${L.open}">${crest(o,c)}</${tag}>
-     <div class="ws-foot">${guest?`<p class="ws-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ws-hint">${en?'Touch the crest to slide the shoji open':'Sentuh lambang untuk membuka shoji'}</p></div></div>`},
+     <div class="ws-foot">${guest?`<p class="ws-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ws-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c),[a,b]=K.initials(o);el.style.setProperty('--fib',FIBRE);el.style.setProperty('--sgp',SEIGAIHA(c.wave));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin',`<i class="ws-hanko"><b>${esc(a)}</b><b>${esc(b)}</b></i>`))},
   themes:[

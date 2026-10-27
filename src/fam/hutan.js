@@ -75,7 +75,7 @@ FAMILY({key:'hutan',name:'Hutan Tropika',meaning:'Tropical leaves',
      <svg class="ht-side l" viewBox="0 0 260 760" preserveAspectRatio="xMinYMid slice">${leaves(c,COVER_L,uid*7+1)}</svg>
      <svg class="ht-side r" viewBox="0 0 260 760" preserveAspectRatio="xMinYMid slice">${leaves(c,COVER_R,uid*7+4)}</svg>
      <i class="ht-vig"></i><${tag} class="ht-seal" ${attr} aria-label="${L.open}"><span>${mono(o)}</span></${tag}>
-     <p class="ht-hint">${en?'Touch the seal to part the leaves':'Sentuh meterai untuk menyelak dedaun'}</p></div>`},
+     <p class="ht-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',cornerSvg(c,30+i*5,'sk '+(i%2?'r':'l')));
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend','<div class="ht-rule"><i></i><b></b><i></i></div>')})},

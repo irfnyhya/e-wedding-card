@@ -57,7 +57,7 @@ FAMILY({key:'catur',name:'Catur',meaning:'Chess checkmate',
       <i class="catur-sh q"></i><i class="catur-sh k"></i></div>
       <div class="catur-at k">${ctPiece('k',c,u)}</div><div class="catur-at q">${ctPiece('q',c,u)}</div></div>
     <${tag} class="catur-tap" ${attr} aria-label="${L.open}"></${tag}>
-    <div class="catur-foot">${guest?`<p class="catur-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="catur-hint">${en?'Touch the board to begin':'Sentuh papan untuk bermula'}</p></div></div>`},
+    <div class="catur-foot">${guest?`<p class="catur-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="catur-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--chk',ctChecks(c.accent,c.sheet));el.style.setProperty('--chk2',ctChecks(c.gold,'transparent',5));
     const sq=['e4','d5','c6','f3','g2','b7','h1','a8','e2','d7','f6'];
     $$('.sec',el).forEach((s,i)=>{s.classList.add('catur-sec');const h=$('h2',s);if(!h)return;h.insertAdjacentHTML('afterbegin',`<em class="catur-co">${sq[i%sq.length]}</em>`)})},

@@ -67,7 +67,7 @@ FAMILY({key:'quilling',name:'Quilling',meaning:'Rolled paper art',
      <${tag} class="ql-frame" ${attr} aria-label="${L.open}">${heart(c,u)}<span class="ql-in"><b>${esc(n1)}</b><i>&amp;</i><b>${esc(n2)}</b></span></${tag}>
      <p class="ql-date">${esc(fmtDate(o.date,o.lang))}</p>
      ${guest?`<p class="ql-to">${L.dear}</p><p class="ql-guest">${esc(guest)}</p>`:''}
-     <p class="ql-hint">${en?'Touch the heart to open':'Sentuh hati untuk membuka'}</p></div></div></div>`},
+     <p class="ql-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="ql-hb">${coil(c.accent)}</i><span>${h.innerHTML}</span><i class="ql-hb">${coil(c.accent)}</i>`});
     $$('.timeline li',el).forEach(li=>li.insertAdjacentHTML('afterbegin',`<i class="ql-li">${coil(c.gold,5)}</i>`));

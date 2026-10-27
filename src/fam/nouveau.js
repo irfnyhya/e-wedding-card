@@ -103,7 +103,7 @@ FAMILY({key:'nouveau',name:'Nouveau',meaning:'Art Nouveau arch',
       <${tag} class="nv-halo" ${attr} aria-label="${L.open}">${halo(u,th.c)}<span class="nv-names">${esc(n1)}<i>&amp;</i>${esc(n2)}</span></${tag}>
       <div class="nv-mid">${guest?`<p class="nv-to">${L.dear}</p><p class="nv-guest">${esc(guest)}</p>`:`<p class="nv-to">${en?'Together with their families':'Bersama keluarga tercinta'}</p>`}</div>
       <div class="nv-panel"><span class="nv-ev">${ev(o,L)}</span><b>${esc(fmtDate(o.date,o.lang))}</b></div></div>
-     <p class="nv-hint">${en?'Touch the halo to open':'Sentuh lingkaran untuk membuka'}</p></div>`},
+     <p class="nv-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--nvpaper',PAPER(th.c.gold));
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="nv-wl"></i><span>${h.innerHTML}</span><i class="nv-wl r"></i>`})},
   themes:[

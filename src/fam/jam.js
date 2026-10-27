@@ -85,7 +85,7 @@ FAMILY({key:'jam',name:'Jam Saku',meaning:'Pocket watch',
       <span class="jam-lid"><span class="jam-lf">${lidFront(c,id,mono)}</span><span class="jam-lb">${lidBack(c,id,o)}</span></span>
       <span class="jam-hinge"></span></${tag}>
      <div class="jam-foot jam-fade"><p class="jam-date">${esc(fmtDate(o.date,o.lang))} <i>·</i> ${esc(fmtTime(o.start,o.lang))}</p>
-      ${guest?`<p class="jam-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="jam-hint">${en?'Touch the watch to open':'Sentuh jam untuk membuka'}</p></div></div>`},
+      ${guest?`<p class="jam-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="jam-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--jam-links',LINKS(th.c));
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.jam-h',h))h.insertAdjacentHTML('afterbegin',`<i class="jam-h">${ROMN(i+1)}</i>`);
       if(i)s.insertAdjacentHTML('beforebegin','<div class="jam-div" aria-hidden="true"><i></i></div>')})},

@@ -162,7 +162,7 @@ FAMILY({key:'mughal',name:'Mahal',meaning:'Mughal palace',
       ${jharokha(c).replace('class="mughal-jh"','class="mughal-jh l"')}${jharokha(c).replace('class="mughal-jh"','class="mughal-jh r"')}
       <p class="mughal-k">${ev(o,L)}</p><p class="mughal-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="mughal-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="mughal-portal" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 440" preserveAspectRatio="xMidYMid meet">${portal(c,id,true)}</svg></${tag}>
-     <div class="mughal-foot">${guest?`<p class="mughal-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="mughal-hint">${en?'Touch the marble screen to enter':'Sentuh jali marmar untuk masuk'}</p></div></div>`},
+     <div class="mughal-foot">${guest?`<p class="mughal-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="mughal-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th,o.lang==='en');
     el.style.setProperty('--mg-band',K.uri(bandTile(c)));el.style.setProperty('--mg-bandv',K.uri(bandTile(c,1)));el.style.setProperty('--mg-marble',c.marble);
     el.style.setProperty('--mg-ros',K.uri(`<svg ${NS} viewBox="-12 -12 24 24"><defs>${stoneDefs(c,'s')}</defs><circle r="11" fill="${c.marble}" stroke="${c.gold}" stroke-width=".8"/>${rosette(0,0,.95,8,'s',c)}</svg>`));

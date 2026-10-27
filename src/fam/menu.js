@@ -46,7 +46,7 @@ FAMILY({key:'menu',name:'Menu',meaning:'Fine-dining menu',
      <i class="menu-rib"></i>
      <${tag} class="menu-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="menu-foot">${guest?`<p class="menu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="menu-hint">${en?'Touch the menu to open':'Sentuh menu untuk membuka'}</p></div></div>`},
+    <div class="menu-foot">${guest?`<p class="menu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="menu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);el.style.setProperty('--hl',th.c.hl||th.c.accent);
     $$('.sec',el).forEach(s=>{s.classList.add('menu-sec');s.insertAdjacentHTML('afterbegin','<span class="menu-pc tl"></span><span class="menu-pc tr"></span><span class="menu-pc bl"></span><span class="menu-pc br"></span>');
       const h=$('h2',s);if(h)h.innerHTML=`<span>${h.innerHTML}</span>`})},

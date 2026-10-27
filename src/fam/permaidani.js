@@ -88,7 +88,7 @@ FAMILY({key:'permaidani',name:'Permaidani',meaning:'Persian carpet',
       <i class="pm-lk tl">${lk}</i><i class="pm-lk tr">${lk}</i><i class="pm-lk bl">${lk}</i><i class="pm-lk br">${lk}</i>
       <span class="pm-med"><svg viewBox="-4 -8 208 336">${medallion(c,id)}</svg><span class="pm-in"><span class="pm-k">${ev(o,L)}</span><span class="pm-n" style="font-size:${f1(fs)}px">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="pm-d">${esc(fmtShort(o.date))}</span></span></span>`)}</${tag}>
      <i class="pm-roll" style="--pm-bc:${c.border};--pm-fd2:${c.field};--pm-iv:${c.ivory}"></i>
-     <div class="pm-foot">${guest?`<p class="pm-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pm-hint">${en?'Touch the carpet to roll it up':'Sentuh permaidani untuk menggulungnya'}</p></div></div>`},
+     <div class="pm-foot">${guest?`<p class="pm-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);el.setAttribute('style',el.getAttribute('style')+';'+vars(c));
     el.style.setProperty('--pm-pend',K.uri(`<svg ${NS} viewBox="76 -8 48 66">${pendant(c)}</svg>`));
     $$('.sec h2',el).forEach(h=>{h.classList.add('pm-h2');h.insertAdjacentHTML('afterbegin','<i class="pm-hp"></i>')});

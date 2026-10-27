@@ -35,7 +35,7 @@ FAMILY({key:'origami',name:'Origami',meaning:'Folded paper',
      <${tag} class="or-fold" ${attr} aria-label="${L.open}"><span class="or-sq"><span class="or-base">${creases}</span>${flap('t')}${flap('b')}${flap('l')}${flap('r')}<i class="or-tips"></i><i class="or-edge"></i></span>
       <span class="or-seal"><b>${esc(a)}${esc(b)}</b></span></${tag}>
      <div class="or-bird">${crane(c,c.nm||c.accent)}</div><div class="or-foot"><p class="or-date">${esc(fmtDate(o.date,o.lang))}</p>${guest?`<p class="or-to">${L.dear}</p><p class="or-guest">${esc(guest)}</p>`:''}
-      <p class="or-hint">${en?'Touch the fold to open':'Sentuh lipatan untuk membuka'}</p></div></div>`},
+      <p class="or-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--waves',WAVES(th.c.accent,th.c.pat));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="or-hm"></i>'));
     $$('.sec',el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="or-dog"></i>'))},

@@ -85,7 +85,7 @@ FAMILY({key:'bungatelur',name:'Bunga Telur',meaning:'Egg-flower stand',
      <div class="bt-head"><p class="bt-k">${ev(o,L)}</p><p class="bt-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
       <div class="bt-dot"><i></i><b></b><i></i></div><p class="bt-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="bt-arr" ${attr} aria-label="${L.open}">${spray(true)}</${tag}>
-     <div class="bt-foot">${guest?`<p class="bt-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="bt-hint">${en?'Touch the bunga telur to open':'Sentuh bunga telur untuk membuka'}</p></div></div>`},
+     <div class="bt-foot">${guest?`<p class="bt-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="bt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.dk)el.classList.add('bt-dk');
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('afterbegin','<i class="bt-hb"></i>');h.insertAdjacentHTML('beforeend','<i class="bt-hb"></i>')});
     $$('.sec .rule',el).forEach(r=>r.outerHTML='<div class="bt-dot"><i></i><b></b><i></i></div>')},

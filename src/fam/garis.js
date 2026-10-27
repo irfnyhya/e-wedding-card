@@ -53,7 +53,7 @@ FAMILY({key:'garis',name:'Garis Tunggal',meaning:'One continuous line',
      <p class="gr-nm">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
      <p class="gr-d">${esc(fmtDate(o.date,o.lang))}</p><p class="gr-v">${esc(o.venue)}</p>
      ${guest?`<p class="gr-to">${L.dear}<b>${esc(guest)}</b></p>`:''}
-     <p class="gr-hint">${en?'Touch the drawing to finish it':'Sentuh lukisan untuk melengkapkannya'}</p></div></div>`},
+     <p class="gr-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty("--press",th.c.press);$$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend',flourish(i%3+1,180))})},
   themes:[
     {k:'krim',n:'Krim',desc:'Sepia ink on cream cotton',c:{ground:'#e6ddcd',sheet:'#f8f3ea',ink:'#2b2622',accent:'#8a6d4b',gold:'#b8925a',press:'rgba(255,255,255,.75)',pagefg:'#2b2622',line:'rgba(43,38,34,.16)'}},

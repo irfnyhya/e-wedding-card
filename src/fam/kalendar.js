@@ -49,7 +49,7 @@ FAMILY({key:'kalendar',name:'Kalendar',meaning:'Tear-off calendar',
       <div class="kl-head kl-fade"><p class="kl-k">${ev(o,L)}</p><p class="kl-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
       <${tag} class="kl-pad" ${attr} aria-label="${L.open}"><span class="kl-stack"></span>
        ${sheet(o,L,0,'day','s3')}${sheet(o,L,-1,'day','s2')}${sheet(o,L,-2,'title','s1')}<span class="kl-bind"><i></i><i></i></span></${tag}>
-      <div class="kl-foot kl-fade">${guest?`<p class="kl-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kl-hint">${en?'Touch the calendar to turn to our date':'Sentuh kalendar untuk selak ke tarikh kami'}</p></div></div></div>`},
+      <div class="kl-foot kl-fade">${guest?`<p class="kl-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kl-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--bind',th.c.bind);el.style.setProperty('--board',th.c.board);const d=day(o,0),en=o.lang==='en';
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!h.dataset.kl){h.dataset.kl=1;h.insertAdjacentHTML('beforebegin',`<i class="kl-tab" aria-hidden="true"><b>${d?(en?EN:MS)[d.getMonth()].slice(0,3):''}</b><span>${String(i+1).padStart(2,'0')}</span></i>`)}
       s.insertAdjacentHTML('afterbegin','<span class="kl-sbind" aria-hidden="true"></span>')})},

@@ -69,7 +69,7 @@ FAMILY({key:'lentera',name:'Lentera',meaning:'Moroccan lantern',
      <span class="ln-bg l"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id+'l')}</svg></span><span class="ln-bg r"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id+'r')}</svg></span>
      <${tag} class="ln-lamp" ${attr} aria-label="${L.open}"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id)}</svg></${tag}>
      <div class="ln-txt"><p class="ln-k">${ev(o,L)}</p><p class="ln-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ln-d">${esc(fmtDate(o.date,o.lang))}</p>
-      ${guest?`<p class="ln-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ln-hint">${en?'Touch the lantern to light it':'Sentuh lentera untuk menyalakannya'}</p></div></div>`},
+      ${guest?`<p class="ln-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ln-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     const band=`<svg ${NS} width="40" height="18" viewBox="0 0 40 18"><defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.bLight}"/><stop offset=".5" stop-color="${c.gold}"/><stop offset="1" stop-color="${c.bDark}"/></linearGradient></defs><rect width="40" height="18" fill="url(#b)"/><path fill="${c.glowHi}" d="${K.star(8,5.4,2.7,10,9)}${K.star(8,5.4,2.7,30,9)}M20 6.4l2 2.6-2 2.6-2-2.6ZM0 6.4l2 2.6-2 2.6-2-2.6ZM40 6.4l2 2.6-2 2.6-2-2.6Z"/><path d="M0 1H40M0 17H40" stroke="${c.bDark}" stroke-width=".8"/><path d="M0 2.6H40M0 15.4H40" stroke="${c.bLight}" stroke-width=".4"/></svg>`;
     el.style.setProperty('--ln-band',K.uri(band));el.style.setProperty('--ln-glow',c.glow);el.style.setProperty('--ln-light',K.uri(lightTile(c.glow,.95)));

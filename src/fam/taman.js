@@ -77,7 +77,7 @@ FAMILY({key:'taman',name:'Taman',meaning:'English garden',
      <div class="taman-txt"><p class="taman-k">${ev(o,L)}</p><p class="taman-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><p class="taman-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="taman-plq" ${attr} aria-label="${L.open}"><svg viewBox="0 0 60 90"><path d="M30 0V24M30 0L14 30M30 0L46 30" stroke="${c.gold}" stroke-width=".6" stroke-dasharray="1.6 1.2" fill="none"/></svg><span>${esc(a)}<i>&amp;</i>${esc(b)}</span></${tag}>
      <div class="taman-low">${guest?`<p class="taman-to">${L.dear}<b>${esc(guest)}</b></p>`:`<p class="taman-to"><b>${esc(o.venue)}</b></p>`}</div></div>
-     <p class="taman-hint">${en?'Touch the plaque to part the wisteria':'Sentuh plak untuk menyelak wisteria'}</p></div>`},
+     <p class="taman-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);const r=rng(4);
     K.secs(el).forEach((s,i)=>{let w='';for(let k=0;k<4;k++)w+=raceme(10+k*9,0,30+r()*36-k*5,r,c,(r()-.5)*6);
       s.insertAdjacentHTML('afterbegin',`<i class="taman-lat"></i><svg class="taman-sw l" viewBox="0 -4 60 80">${w}</svg><svg class="taman-sw r" viewBox="0 -4 60 80">${w}</svg>`);

@@ -1,6 +1,6 @@
 
-Object.assign(T.ms,{tapSeal:'Sentuh mohor untuk membuka',openDoors:'Buka',openVellum:'Buka Jemputan',dear:'Dengan hormatnya kepada'});
-Object.assign(T.en,{tapSeal:'Tap the seal to open',openDoors:'Open',openVellum:'Open Invitation',dear:'Kindly addressed to'});
+Object.assign(T.ms,{tapSeal:'Buka Jemputan',openDoors:'Buka',openVellum:'Buka Jemputan',dear:'Dengan hormatnya kepada'});
+Object.assign(T.en,{tapSeal:'Open invitation',openDoors:'Open',openVellum:'Open Invitation',dear:'Kindly addressed to'});
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================= sample content (used for gallery previews) ================= */

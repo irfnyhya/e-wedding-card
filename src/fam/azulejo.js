@@ -78,7 +78,7 @@ FAMILY({key:'azulejo',name:'Azulejo',meaning:'Portuguese tiles',
       ${guest?`<span class="az-to">${L.dear}<b>${esc(guest)}</b></span>`:''}</span></${tag}>
      <svg class="az-spr top" viewBox="-10 0 320 200"><defs>${lemonDefs(c,id)}</defs>${sprig(c,id,0)}</svg>
      <svg class="az-spr bot" viewBox="0 0 320 180"><defs>${lemonDefs(c,id+'b')}</defs>${sprig(c,id+'b',1)}</svg>
-     <p class="az-hint">${en?'Touch the panel to open':'Sentuh panel untuk membuka'}</p></div>`},
+     <p class="az-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th),id='s';
     el.style.setProperty('--az-tile',tileUri(c));el.style.setProperty('--az-tbg',c.tbg);el.style.setProperty('--az-ink',c.tink);
     {const I=c.tink,B=c.tbg;el.style.setProperty('--az-corner',K.uri(svg(56,56,`<path d="M0 0H56V3H3V56H0Z" fill="${I}"/><path d="M0 0H22A22 22 0 0 1 0 22Z" fill="${c.tink2}" stroke="${I}" stroke-width="1"/>${[0,1,2,3].map(i=>`<path d="M0 0L${f1(Math.cos((i+.5)/4*Math.PI/2)*20)} ${f1(Math.sin((i+.5)/4*Math.PI/2)*20)}" stroke="${I}" stroke-width=".8"/><path d="M0-1.6C-2.4-3-2.8-6 0-7.6C2.8-6 2.4-3 0-1.6Z" transform="translate(${f1(Math.cos((i+.5)/4*Math.PI/2)*14)} ${f1(Math.sin((i+.5)/4*Math.PI/2)*14)}) rotate(${f1((i+.5)/4*90+90)})" fill="${B}"/>`).join('')}<circle cx="4" cy="4" r="3" fill="${I}"/>

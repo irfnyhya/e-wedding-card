@@ -49,7 +49,7 @@ FAMILY({key:'popup',name:'Pop-up',meaning:'Pop-up card',
      <${tag} class="pp-scene" ${attr} aria-label="${L.open}"><span class="pp-card">
       <span class="pp-floor"></span><span class="pp-back">${backArt(c,id)}</span>
       <span class="pp-l l3">${pavilion(c,id)}</span><span class="pp-l l2">${minarets(c,id)}</span><span class="pp-l l1">${garden(c,id)}</span></span></${tag}>
-     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Touch the card to raise it':'Sentuh kad untuk menegakkannya'}</p></div></div>`},
+     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+pv(th.c)+`;--pp-arch:${ARCHF}`},
   themes:[
     {k:'nila',n:'Nila',desc:'Ivory pavilion on an indigo night',c:{ground:'#e8e1d3',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#2b3266',p2:'#fbf4e4',p3:'#c8a978',p4:'#3f6b55',p5:'#f4dfb0'}},

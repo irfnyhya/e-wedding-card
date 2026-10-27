@@ -148,7 +148,7 @@ FAMILY({key:'santorini',name:'Santorini',meaning:'Aegean village',
      <div class="st-card"><i class="st-paper"></i><${tag} class="st-tap" ${attr} aria-label="${L.open}"><span class="st-scene"><svg viewBox="0 0 390 1520" preserveAspectRatio="xMidYMin slice">${scene(c,id,c.night)}</svg></span></${tag}>
       <i class="st-foil"></i><i class="st-foil in"></i>
       <div class="st-head"><p class="st-k">${ev(o,L)}</p><p class="st-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="st-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-      <div class="st-foot">${guest?`<p class="st-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="st-hint">${en?'Touch the view to see the sea':'Sentuh pemandangan untuk melihat laut'}</p></div></div></div>`},
+      <div class="st-foot">${guest?`<p class="st-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="st-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th),W=[];
     const vig=`<svg ${NS} viewBox="96 60 108 66"><defs><filter id="w"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>__W__${dome(c,W,150,118,40)}</svg>`;
     el.style.setProperty('--st-dome',K.uri(vig.replace('__W__','').replace('</svg>',`<g filter="url(#w)" opacity="${c.wa}" style="mix-blend-mode:${c.dark?'screen':'multiply'}">${W.join('')}</g></svg>`)));

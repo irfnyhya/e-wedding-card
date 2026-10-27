@@ -101,7 +101,7 @@ FAMILY({key:'buruj',name:'Buruj',meaning:'Star chart',
      <div class="brj-head brj-fade"><p class="brj-k">${ev(o,L)}</p><p class="brj-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
      <${tag} class="brj-btn" ${attr} aria-label="${L.open}">${astrolabe(c,id)}</${tag}>
      <div class="brj-foot brj-fade"><p class="brj-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="brj-hj">${esc(o.hijri)}</p>`:''}
-      ${guest?`<p class="brj-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="brj-hint">${en?'Touch the astrolabe to open':'Sentuh astrolab untuk membuka'}</p></div></div>`},
+      ${guest?`<p class="brj-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="brj-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--chart',th.c.chart);el.style.setProperty('--brjn',dark(th.c)?th.c.gold:th.c.accent);el.style.setProperty('--brj-h',CONST_H);el.style.setProperty('--brj-link',LINK);
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.brj-h',h))h.insertAdjacentHTML('beforebegin','<i class="brj-h" aria-hidden="true"></i>');
       s.insertAdjacentHTML('afterbegin',`<i class="brj-no" aria-hidden="true">${String(i+1).padStart(2,'0')} · ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][i%12]}</i>`);

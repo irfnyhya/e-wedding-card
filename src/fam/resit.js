@@ -39,7 +39,7 @@ FAMILY({key:'resit',name:'Resit',meaning:'Thermal receipt',
     <div class="resit-feed"><div class="resit-paper">${rsReceipt(o,th,L,guest,false)}</div><i class="resit-curl"></i></div>
     <div class="resit-pr"><i class="resit-seam"></i><i class="resit-lip"></i><i class="resit-slot"></i><i class="resit-tear"></i><i class="resit-led"></i>
      <span class="resit-plate">${en?'Thermal · 80 mm':'Terma · 80 mm'}</span><i class="resit-grille"></i>
-     <span class="resit-hint">${en?'Press FEED to print':'Tekan FEED untuk mencetak'}</span>
+     <span class="resit-hint">${en?'Open invitation':'Buka Jemputan'}</span>
      <${tag} class="resit-btn" ${attr} aria-label="${L.open}"><span>FEED</span></${tag}></div>
     </div>`},
   skin(el,o){K.cards(el);const d=new Date((o.date||'')+'T00:00:00'),dd=isNaN(d)?'':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;

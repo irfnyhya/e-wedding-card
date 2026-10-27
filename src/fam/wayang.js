@@ -59,7 +59,7 @@ FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play screen',
       <${tag} class="wy-lift" ${attr} aria-label="${L.open}">${gunungan(false)}</${tag}>
       <div class="wy-nm"><p class="wy-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="wy-d">${esc(fmtDate(o.date,o.lang))}</p></div></div>
      <i class="wy-trunkbar"></i>
-     <div class="wy-foot">${guest?`<p class="wy-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wy-hint">${en?'Touch the gunungan to begin':'Sentuh gunungan untuk bermula'}</p></div></div>`},
+     <div class="wy-foot">${guest?`<p class="wy-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wy-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
   themes:[
     {k:'merah',n:'Merah',desc:'Amber screen, red valance, night-dark frame',c:{ground:'#1a0f0a',sheet:'#f7e3b9',ink:'#26140b',accent:'#8c1f1c',gold:'#d9a441',pagefg:'#f3e2c0'}},

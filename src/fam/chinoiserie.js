@@ -86,7 +86,7 @@ FAMILY({key:'chinoiserie',name:'Biru Putih',meaning:'Blue and white',
     return `<div class="cover cv-chinoiserie" style="--damask:${DAMASK(c.damask)}"><div class="ch-wall"></div>
      <div class="ch-head"><p class="ch-k">${ev(o,L)}</p><p class="ch-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="ch-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <div class="ch-hang"><i class="ch-wire"></i><${tag} class="ch-plate" ${attr} aria-label="${L.open}">${plateSvg(p)}<i class="ch-clip a"></i><i class="ch-clip b"></i><i class="ch-clip c"></i></${tag}></div>
-     <div class="ch-foot">${guest?`<p class="ch-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ch-hint">${en?'Touch the plate to lift it':'Sentuh pinggan untuk membuka'}</p></div></div>`},
+     <div class="ch-foot">${guest?`<p class="ch-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ch-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--brush',BRUSH(pal(th.c)));el.style.setProperty('--damask',DAMASK(th.c.damask));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="ch-hs"></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="ch-bb t"></i><i class="ch-bb b"></i>'))},

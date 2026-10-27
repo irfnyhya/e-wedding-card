@@ -56,7 +56,7 @@ FAMILY({key:'kipas',name:'Kipas',meaning:'Folding fan',
      <div class="kipas-head"><p class="kipas-k">${ev(o,L)}</p><p class="kipas-names">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><div class="kipas-rule"><i></i><b></b><i></i></div><p class="kipas-date">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="kipas-to">${L.dear}</p><p class="kipas-guest">${esc(guest)}</p>`:''}</div>
      <${tag} class="kipas-fan" ${attr} aria-label="${L.open}">${fan(c,u,false)}${TASSEL(c)}</${tag}>
-     <p class="kipas-hint">${en?'Touch the fan to open':'Sentuh kipas untuk membuka'}</p></div>`},
+     <p class="kipas-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--kpfan',FANHEAD(th.c))},
   themes:[
     {k:'merah',n:'Merah',desc:'Crimson silk, ivory fan, gold',c:{ground:'#5b1620',sheet:'#fbf5ec',ink:'#2f2224',accent:'#8e2232',gold:'#c9a35a',pagefg:'#f6e8dc',silk:'#fdf8f0',silk2:'#f1e4d2',band:'#ead7c0',lace:'#fffaf2',leaf:'#c9a35a',wood:'#c69a68',woodd:'#7a5434',fl:['blush-rose','jasmine','pink-rose']}},

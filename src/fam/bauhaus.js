@@ -75,7 +75,7 @@ FAMILY({key:'bauhaus',name:'Bauhaus',meaning:'Geometric print poster',
     return `<div class="cover cv-bauhaus" style="--c3:${th.c.c3}"><div class="bh-wall"></div>
     <p class="bh-wtop">${en?'Kindly open':'Sila buka'} <b>&#8212;</b> ${ev(o,L)}</p>
     <${tag} class="bh-poster" ${attr} aria-label="${L.open}"><i class="bh-tape l"></i><i class="bh-tape r"></i>${poster(o,th,L,guest)}<i class="bh-grain"></i></${tag}>
-    <p class="bh-hint"><i></i>${en?'Touch the poster to open':'Sentuh poster untuk membuka'}<i></i></p></div>`},
+    <p class="bh-hint"><i></i>${en?'Open invitation':'Buka Jemputan'}<i></i></p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--c3',th.c.c3);
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(!h)return;s.classList.add('bh-sec');
       h.insertAdjacentHTML('afterbegin',`<i class="bh-tile t-${SH[i%SH.length]}"></i><b class="bh-no">${String(i+1).padStart(2,'0')}</b>`);

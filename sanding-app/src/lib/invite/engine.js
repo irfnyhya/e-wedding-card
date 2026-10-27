@@ -214,8 +214,8 @@ function copyText(text,ok){const done=()=>ok&&ok();try{navigator.clipboard.write
   function fallback(){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}}
 
 
-Object.assign(T.ms,{tapSeal:'Sentuh mohor untuk membuka',openDoors:'Buka',openVellum:'Buka Jemputan',dear:'Dengan hormatnya kepada'});
-Object.assign(T.en,{tapSeal:'Tap the seal to open',openDoors:'Open',openVellum:'Open Invitation',dear:'Kindly addressed to'});
+Object.assign(T.ms,{tapSeal:'Buka Jemputan',openDoors:'Buka',openVellum:'Buka Jemputan',dear:'Dengan hormatnya kepada'});
+Object.assign(T.en,{tapSeal:'Open invitation',openDoors:'Open',openVellum:'Open Invitation',dear:'Kindly addressed to'});
 const REDUCED=typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================= sample content (used for gallery previews) ================= */
@@ -486,7 +486,7 @@ const FAM2={
     <div class="perf"></div><div class="stub">${barcode(n1+n2+o.date)}<div class="seat">${en?'Seat':'Kerusi'}<b>VIP</b></div></div></div></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o);const en=o.lang==='en';
    return `<div class="cover cv-tiket linen">${guest?`<div class="to" style="color:var(--ink)"><span class="caps" style="font-size:10px">${L.dear}</span><b style="display:block;font-family:'Pinyon Script',cursive;font-weight:400;font-size:26px;margin-top:2px">${esc(guest)}</b></div>`:''}
-    <${tag} class="passport velvet" ${attr}><span class="pt foil-text">${en?'Passport':'Pasport'}</span><span class="emblem foil">${PLANE.replace('stroke-dasharray="3 3"','')}</span><span class="pt foil-text" style="font-size:10px">${esc(n1)} &amp; ${esc(n2)}</span><span class="pn foil-text">${en?'One-way to forever':'Sehala ke selamanya'}</span></${tag}><p class="hint" style="color:var(--ink)">${en?'Tap the passport to check in':'Sentuh pasport untuk daftar masuk'}</p></div>`}},
+    <${tag} class="passport velvet" ${attr}><span class="pt foil-text">${en?'Passport':'Pasport'}</span><span class="emblem foil">${PLANE.replace('stroke-dasharray="3 3"','')}</span><span class="pt foil-text" style="font-size:10px">${esc(n1)} &amp; ${esc(n2)}</span><span class="pn foil-text">${en?'One-way to forever':'Sehala ke selamanya'}</span></${tag}><p class="hint" style="color:var(--ink)">${en?'Open invitation':'Buka Jemputan'}</p></div>`}},
  herb:{ms:1100,
   page(o,th,L){const [n1,n2]=coverNames(o),f=th.fl[0];const en=o.lang==='en';const latin={jasmine:'Jasminum sambac',hibiscus:'Hibiscus syriacus',iris:'Iris germanica','forget-me-not':'Myosotis','anemones':'Anemone coronaria','wild-rose':'Rosa canina'}[f]||'';
    return `<section class="page pg-herb linen"><div class="herb-sheet tex">
@@ -512,7 +512,7 @@ const FAM2={
   page(o,th,L){const [n1,n2]=coverNames(o),f=th.fl[0];return `<section class="page pg-baldu velvet"><div class="inset tex">${FL(f,'width:58%;right:-14%;top:-6%;transform:rotate(180deg)')}${FL(f,'width:54%;left:-14%;bottom:-6%')}<div class="fline foil"></div>
     <p class="kicker reveal">${esc(L.ev[o.eventTitle]||L.ev.walimah)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small reveal d3">${esc(o.venue)}</p></div></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o);return `<div class="cover cv-baldu"><div class="folio velvet"><div class="ribbon"></div>${guest?`<div class="to"><span class="caps" style="font-size:10px">${L.dear}</span><b>${esc(guest)}</b></div>`:''}
-    <${tag} class="plate foil" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${o.lang==='en'?'Tap the plate to open':'Sentuh plat untuk membuka'}</p></div></div>`}},
+    <${tag} class="plate foil" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${o.lang==='en'?'Open invitation':'Buka Jemputan'}</p></div></div>`}},
  bingkai:{ms:1000,
   page(o,th,L){const [n1,n2]=coverNames(o);return `<section class="page pg-bingkai linen" style="color:var(--pagefg)">${gframe(th)}<div class="oval-c"></div><div class="mid">
     <p class="kicker reveal" style="color:var(--pageAccent)">${esc(L.ev[o.eventTitle]||L.ev.walimah)}</p><h1 class="names reveal d1" style="color:var(--pageAccent)">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
@@ -525,7 +525,7 @@ FAM2.poskad={ms:1300,
     <div class="pc back reveal d1"><div class="ttl"><span>${en?'Post card':'Poskad'}</span><span>${esc(L.ev[o.eventTitle]||L.ev.walimah)}</span></div>
      <div class="msg">${en?'With love, from':'Dengan kasih,'}<br><span class="names">${esc(n1)} &amp; ${esc(n2)}</span><br>${en?'Please join us on':'Jemputlah hadir pada'} ${esc(fmtDate(o.date,o.lang))}, ${esc(fmtTime(o.start,o.lang))}.</div>
      <div class="addr"><span class="stamp"><span class="in" style="--stampbg:url(${A}flower-${th.stamp}.webp);--stampc:${th.c.accent}">${esc(fmtShort(o.date).slice(-4))}</span></span>${postmark(o,th.c.accent)}<p>${esc(o.venue)}</p><p>${esc((o.address||'').split(',').slice(-2).join(',').trim())}</p><p>${esc(o.hijri||'')}</p></div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-poskad linen">${guest?`<p class="to">${en?'To':'Kepada'} ${esc(guest)}</p>`:''}<${tag} class="pcflip" ${attr} aria-label="${L.open}"><span class="face"><span class="img" style="background-image:url(${A}pc-${th.pc}.jpg)"></span><span class="cap">${esc(th.cap)}</span></span><span class="face bk"></span></${tag}><p class="hint">${en?'Tap the postcard to turn it over':'Sentuh poskad untuk membalikkannya'}</p></div>`}};
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-poskad linen">${guest?`<p class="to">${en?'To':'Kepada'} ${esc(guest)}</p>`:''}<${tag} class="pcflip" ${attr} aria-label="${L.open}"><span class="face"><span class="img" style="background-image:url(${A}pc-${th.pc}.jpg)"></span><span class="cap">${esc(th.cap)}</span></span><span class="face bk"></span></${tag}><p class="hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`}};
 function gframe(th){return `<div class="gframe fmask ${th.foil===false?'':'foil'}" style="--m:url(${A}eng-frame-${th.frame}.webp);--ms:contain;--mr:no-repeat;--mp:center;${th.foil===false?'background:var(--gold)':''}"></div>`}
 THEMES.push(...[
   ['gading','Gading Emas','Gold frame on ivory','a','#f3ecdc','#b08d4a','#3a2c20','#7a5a2a',true],
@@ -577,13 +577,13 @@ Object.assign(FAM2,{
   page(o,th,L){const [n1,n2]=coverNames(o);return `<section class="page pg-tingkap linen" style="--wood:${th.c.wood};--lat:${latticeSq('#000')}"><div class="win reveal"><span class="shut l louvre"></span><span class="shut r louvre"></span><div class="fan"></div><div class="vista" style="height:56%;background-image:url(${A}pc-${th.view}.jpg)"></div><div class="rail"></div></div>
    <div class="plaque"><p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-tingkap linen" style="--wood:${th.c.wood};--lat:${latticeSq('#000')}"><${tag} class="win" ${attr} style="border:0;cursor:pointer;font:inherit;display:block"><span class="fan" style="display:block"></span><span class="vista" style="display:block;height:56%;background-image:url(${A}pc-${th.view}.jpg)"><span class="shut l louvre" style="display:block"><i class="knob"></i></span><span class="shut r louvre" style="display:block"><i class="knob"></i></span></span><span class="rail" style="display:block"></span></${tag}>
-   <div class="plaque">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="small it">${en?'Tap the shutters to open them':'Sentuh daun tingkap untuk membukanya'}</p></div></div>`}},
+   <div class="plaque">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="small it">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}},
  foto:{ms:1200,
   page(o,th,L){const [n1,n2]=coverNames(o),ph=heroPhotoOf(o),v=th.v;const en=o.lang==='en';
    if(v==='majalah')return `<section class="page pg-foto v-majalah"><div class="ph" style="background-image:url(${esc(ph)})"></div><div class="shade"></div><p class="mast reveal">${en?'Wedding':'Kahwin'}</p>
     <div class="txt"><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="issue reveal d2"><span>${esc(fmtShort(o.date))}</span><span>${esc(o.venue)}</span></div></div></section>`;
    return `<section class="page pg-foto v-${v}"><div class="ph" style="background-image:url(${esc(ph)})"></div><div class="shade"></div><div class="txt"><p class="kicker reveal" style="color:${v==='polaroid'?'var(--accent)':'#fff'}">${ev(o,L)}</p><h1 class="names reveal d1 ${v==='emas'?'foil-text':''}">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const ph=heroPhotoOf(o),en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${esc(ph)})"></i></span><span>${en?'Tap to develop':'Sentuh untuk cuci gambar'}</span></${tag}></div>`}},
+  cover(o,th,L,guest,tag,attr){const ph=heroPhotoOf(o),en=o.lang==='en';return `<div class="cover cv-foto">${guest?`<p class="to-line" style="position:absolute;top:8%;left:0;right:0;text-align:center;color:#efe9df">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="pol" ${attr}><span class="dev" style="display:block"><i style="background-image:url(${esc(ph)})"></i></span><span>${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div>`}},
  bahagia:{ms:1200,
   page(o,th,L){const [n1,n2]=coverNames(o),[a,b]=th.fl;return `<section class="page pg-bahagia"><div class="xi-tile foil" style="--xi:${XI}"></div><div class="bh-card tex">${FL(a,'width:56%;left:-14%;top:-6%;transform:rotate(180deg)')}${FL(b,'width:50%;right:-12%;bottom:-6%')}
    <p class="xi ${th.foilXi?'foil-text':''} reveal" style="color:var(--accent)">囍</p><p class="kicker reveal d1">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
@@ -816,12 +816,12 @@ Object.assign(FAM2,{
    <div class="np-photo halftone" style="background-image:url(${esc(ph)})"></div><p class="np-cap">${en?'The venue, as photographed by our correspondent.':'Lokasi majlis, dirakam oleh wartawan kami.'}</p>
    <div class="np-cols"><p>${en?`With gratitude, the families of ${esc(o.hosts)} announce the wedding of ${esc(o.brideFull)} and ${esc(o.groomFull)}. Readers are warmly invited to attend and to bring their prayers.`:`Dengan penuh kesyukuran, keluarga ${esc(o.hosts)} mengumumkan perkahwinan ${esc(o.brideFull)} dengan ${esc(o.groomFull)}. Para pembaca dijemput hadir dan membawa doa restu.`}</p>
     <div><div class="np-box"><b>${en?'The event':'Majlis'}</b><span>${esc(fmtDate(o.date,o.lang))}</span><span>${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}</span><span>${esc(o.venue)}</span></div><div class="np-ad">${en?'NOTICE: Nasi minyak, sirap bandung and good company. Free.':'IKLAN: Nasi minyak, sirap bandung dan kawan-kawan lama. Percuma.'}</div></div></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-akhbar linen"><${tag} class="np-fold tex" ${attr}><span class="np-top" style="display:flex"><span>${guest?`${L.dear} ${esc(guest)}`:(en?'Special edition':'Edisi istimewa')}</span><span>${esc(fmtShort(o.date))}</span></span><span class="np-mast" style="display:block">${en?'The Wedding Times':'Berita Kahwin'}</span><span class="np-head" style="display:block;font-size:24px">${esc(n1)} &amp; ${esc(n2)}</span><span class="caps" style="font-size:10px">${en?'Tap to read the news':'Sentuh untuk baca berita'}</span></${tag}></div>`}},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-akhbar linen"><${tag} class="np-fold tex" ${attr}><span class="np-top" style="display:flex"><span>${guest?`${L.dear} ${esc(guest)}`:(en?'Special edition':'Edisi istimewa')}</span><span>${esc(fmtShort(o.date))}</span></span><span class="np-mast" style="display:block">${en?'The Wedding Times':'Berita Kahwin'}</span><span class="np-head" style="display:block;font-size:24px">${esc(n1)} &amp; ${esc(n2)}</span><span class="caps" style="font-size:10px">${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div>`}},
  vinyl:{ms:1300,
   page(o,th,L){const [n1,n2]=coverNames(o),u=(FAM2.n=(FAM2.n||0)+1),en=o.lang==='en';const tr=(o.schedule||[]).filter(s=>s.label);return `<section class="page pg-vinyl">
    <div class="disc reveal"><div class="lbl"><svg viewBox="0 0 100 100"><defs><path id="vl${u}" d="M50 50m-34 0a34 34 0 1 1 68 0a34 34 0 1 1 -68 0"/></defs><text font-family="Jost, sans-serif" font-size="8" letter-spacing="2.4" fill="${th.c.sheet}"><textPath href="#vl${u}">${esc((n1+' & '+n2).toUpperCase())} · ${esc(fmtShort(o.date))} · </textPath></text><text x="50" y="47" text-anchor="middle" font-family="Abril Fatface, serif" font-size="11" fill="${th.c.sheet}">${en?'Side A':'Sisi A'}</text><text x="50" y="60" text-anchor="middle" font-family="Jost, sans-serif" font-size="5.5" letter-spacing="1.5" fill="${th.c.sheet}">33⅓ RPM</text></svg></div></div>
    <div class="tracks reveal d1"><h3>${esc(n1)} &amp; ${esc(n2)}</h3><ol>${(tr.length?tr:[{time:o.start,label:L.ev[o.eventTitle]}]).map((s,i)=>`<li><span>A${i+1}</span><span>${esc(s.label)}</span><span>${esc(fmtTime(s.time,o.lang))}</span></li>`).join('')}</ol><p class="small" style="text-align:center;margin:10px auto 0">${esc(fmtDate(o.date,o.lang))} · ${esc(o.venue)}</p></div></section>`},
-  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-vinyl"><div class="sleeve-wrap"><div class="disc"><div class="lbl"></div></div><${tag} class="sleeve" ${attr}><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'The wedding album':'Album perkahwinan')}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="caps" style="font-size:10px">${en?'Tap to play':'Sentuh untuk main'}</span></${tag}></div></div>`}},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-vinyl"><div class="sleeve-wrap"><div class="disc"><div class="lbl"></div></div><${tag} class="sleeve" ${attr}><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'The wedding album':'Album perkahwinan')}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="caps" style="font-size:10px">${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div></div>`}},
  buku:{ms:1350,
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<section class="page pg-buku tex"><div class="endp"></div><p class="kicker reveal">${en?'Chapter one':'Bab satu'}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="small it reveal d1">${en?'a love story':'sebuah kisah cinta'}</p><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p><p class="pub caps">${en?'Published by the families of':'Terbitan keluarga'} ${esc(o.hosts.split('&')[0])}</p></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-buku"><${tag} class="bookcov linen" ${attr} style="border:0;cursor:pointer;font:inherit"><span class="fr"></span><span class="ttl foil-text">${en?'Our Story':'Kisah Kita'}</span><span class="foil-text" style="font-family:'Pinyon Script',cursive;font-size:30px">${esc(n1)} &amp; ${esc(n2)}</span>${guest?`<span class="small" style="color:var(--gold)">${L.dear} ${esc(guest)}</span>`:''}<span class="caps" style="font-size:10px;color:var(--gold)">${en?'Open the book':'Buka buku'}</span></${tag}></div>`}},
@@ -840,7 +840,7 @@ Object.assign(FAM2,{
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',ini=o.jawi||`${(n1||'A')[0]}${(n2||'A')[0]}`;return `<section class="page pg-skrol tex"><div class="rod t"></div><div class="scroll-border"></div>${o.bismillah?`<p class="bismillah" style="font-size:22px">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
    <p class="kicker reveal" style="letter-spacing:.3em">${en?'A letter of invitation':'Warkah jemputan'}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><p class="small it reveal d1" style="max-width:28ch">${en?'Their families request the honour of your presence at':'Dengan segala hormatnya dijemput ke'} ${ev(o,L)}</p>
    <p class="caps reveal d2" style="font-size:11px">${esc(fmtDate(o.date,o.lang))}</p><p class="small reveal d2">${esc(o.venue)}</p><div class="khatam-red reveal d3">${esc(ini)}</div><div class="rod b"></div></section>`},
-  cover(o,th,L,guest,tag,attr){return `<div class="cover cv-skrol linen"><${tag} class="rolled" ${attr}><span class="band"></span><span class="seal-m"></span></${tag}><p class="to-line" style="position:absolute;bottom:14%;left:0;right:0;text-align:center;color:var(--pagefg)">${guest?`${L.dear}<b>${esc(guest)}</b>`:`<b>${o.lang==='en'?'Tap the seal':'Sentuh mohor'}</b>`}</p></div>`}},
+  cover(o,th,L,guest,tag,attr){return `<div class="cover cv-skrol linen"><${tag} class="rolled" ${attr}><span class="band"></span><span class="seal-m"></span></${tag}><p class="to-line" style="position:absolute;bottom:14%;left:0;right:0;text-align:center;color:var(--pagefg)">${guest?`${L.dear}<b>${esc(guest)}</b>`:`<b>${o.lang==='en'?'Open invitation':'Buka Jemputan'}</b>`}</p></div>`}},
  gerbang:{ms:1400,
   page(o,th,L){const [n1,n2]=coverNames(o);return `<section class="page pg-gerbang linen"><div class="gcard tex"><span class="gate l">${gateSvg(th.c.metal)}</span><span class="gate r" style="transform:scaleX(-1)">${gateSvg(th.c.metal)}</span>
    <p class="kicker reveal">${ev(o,L)}</p><h1 class="names reveal d1">${esc(n1)}<span class="amp">&amp;</span>${esc(n2)}</h1><div class="rule reveal d2"><i></i></div><p class="caps reveal d2">${esc(fmtDate(o.date,o.lang))}</p><p class="small it reveal d3">${esc(o.venue)}</p></div></section>`},
@@ -953,11 +953,11 @@ Object.assign(FAM2.gerbang,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverName
   <div class="plaque"><span class="pl-k">${ev(o,L)}</span><span class="pl-n">${esc(n1)} &amp; ${esc(n2)}</span></div>
   <span class="gate l">${gateSvg2(m)}</span><span class="gate r"><span style="display:block;height:100%;transform:scaleX(-1)">${gateSvg2(m)}</span></span>
   <${tag} class="knock" ${attr} aria-label="${L.open}"><i></i></${tag}>
-  <p class="g-to">${guest?`${L.dear} <b>${esc(guest)}</b>`:''}<span>${en?'Tap the ring to open the gates':'Sentuh gelang untuk membuka pintu pagar'}</span></p></div>`}});
+  <p class="g-to">${guest?`${L.dear} <b>${esc(guest)}</b>`:''}<span>${en?'Open invitation':'Buka Jemputan'}</span></p></div>`}});
 Object.assign(FAM2.pawagam,{ms:1500,cover(o,th,L,guest,tag,attr){const en=o.lang==='en';const serial=String(fmtShort(o.date)).replace(/\D/g,'').slice(0,6);return `<div class="cover cv-cinema">
   <div class="curtain l"></div><div class="curtain r"></div><div class="valance"></div><div class="spot"></div>
   <${tag} class="tk" ${attr}><span class="tk-main"><span class="tk-row"><span>${en?'Picture house':'Panggung wayang'}</span><span>No. ${serial}</span></span><b class="tk-adm">${en?'ADMIT ONE':'MASUK SEORANG'}</b><span class="tk-film">${en?'A Love Story':'Kisah Cinta'}</span><span class="tk-who">${guest?esc(guest):(en?'Honoured guest':'Tetamu kehormat')}</span><span class="tk-row"><span>${esc(fmtShort(o.date))}</span><span>${esc(fmtTime(o.start,o.lang))}</span><span>${en?'Row':'Baris'} A · ${en?'Seat':'Kerusi'} 1</span></span></span><span class="tk-stub"><span>${en?'Tear':'Koyak'}</span><b>${serial}</b></span></${tag}>
-  <p class="tk-hint">${en?'Tap the ticket to go in':'Sentuh tiket untuk masuk panggung'}</p></div>`}});
+  <p class="tk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`}});
 Object.assign(FAM2.label,{cover(o,th,L,guest,tag,attr){const c=th.c,[n1,n2]=coverNames(o);const sprig=c.ink;return `<div class="cover cv-label linen">
   <svg class="twine" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M50 0 C46 20 54 34 50 58" stroke="#c9ad7a" stroke-width="1.6" fill="none"/><path d="M50 0 C55 18 45 36 50 58" stroke="#b39463" stroke-width="1.2" fill="none"/></svg>
   <${tag} class="hangtag2" ${attr}>${tagSvg(c.sheet,c.accent)}<i class="grommet"></i>${ENG(th.eng||'jasmine','width:46%;left:-8%;top:8%;transform:rotate(-24deg);background:var(--accent);opacity:.85')}
@@ -974,9 +974,9 @@ Object.assign(FAM2.buku,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o
   <span class="bk-label"><span class="ttl foil-text">${en?'Our Story':'Kisah Kita'}</span><span class="foil-text" style="font-family:'Pinyon Script',cursive;font-size:28px">${esc(n1)} &amp; ${esc(n2)}</span></span>
   ${guest?`<span class="small" style="color:var(--gold);position:relative">${L.dear} ${esc(guest)}</span>`:''}<span class="caps" style="font-size:10px;color:var(--gold);position:relative">${en?'Open the book':'Buka buku'}</span><span class="bookmark"></span></${tag}></div>`}});
 Object.assign(FAM2.vinyl,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-vinyl"><div class="sleeve-wrap"><div class="disc"><div class="lbl"></div></div><${tag} class="sleeve sl2" ${attr}><span class="sl-ring"></span><span class="sl-sticker">${en?'Limited<br>edition':'Edisi<br>terhad'}</span>
-  <span class="sl-top">${en?'The wedding album':'Album perkahwinan'} · ${esc(fmtShort(o.date))}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="sl-tracks">${(o.schedule||[]).filter(s=>s.label).slice(0,4).map((s,i)=>`A${i+1} ${esc(s.label)}`).join(' · ')}</span><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'Tap to play':'Sentuh untuk main')}</span></${tag}></div></div>`}});
+  <span class="sl-top">${en?'The wedding album':'Album perkahwinan'} · ${esc(fmtShort(o.date))}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="sl-tracks">${(o.schedule||[]).filter(s=>s.label).slice(0,4).map((s,i)=>`A${i+1} ${esc(s.label)}`).join(' · ')}</span><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'Open invitation':'Buka Jemputan')}</span></${tag}></div></div>`}});
 Object.assign(FAM2.baldu,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-baldu"><div class="folio velvet"><div class="ribbon-h"></div>${guest?`<div class="to">${L.dear}<b>${esc(guest)}</b></div>`:`<div class="to"><b>${esc(n1)} &amp; ${esc(n2)}</b></div>`}
-  <${tag} class="plate2" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${en?'Tap the brass plate to open':'Sentuh plat tembaga untuk membuka'}</p></div></div>`}});
+  <${tag} class="plate2" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 const _decoCover=FAM2.deco.cover;FAM2.deco.cover=(o,th,L,guest,tag,attr)=>{const [n1,n2]=coverNames(o);return _decoCover(o,th,L,guest||`${n1} & ${n2}`,tag,attr).replace('<div class="dial">',`<p class="transom foil-text">${ev(o,L)}</p><div class="dial">`)};
 const _songCover=FAM2.songket.cover;FAM2.songket.cover=(o,th,L,guest,tag,attr)=>{const [n1,n2]=coverNames(o);return _songCover(o,th,L,guest||`${n1} & ${n2}`,tag,attr)};
 
@@ -1025,7 +1025,7 @@ Object.assign(FAM2.gerbang,{ms:1150,
   <div class="g3head"><p class="g3k">${ev(o,L)}</p><p class="g3n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>${guest?`<p class="g3to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
   <div class="g3gate"><i class="g3leaf l"></i><i class="g3leaf r"></i>
   <${tag} class="g3lock" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span></${tag}></div>
-  <p class="g3hint">${en?'Touch the monogram to open':'Sentuh monogram untuk membuka'}</p></div></div>`}});
+  <p class="g3hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 
 
 /* label, front page take two: a board of vintage apothecary labels */
@@ -1069,7 +1069,7 @@ Object.assign(FAM2.jubin,{ms:1200,cover(o,th,L,guest,tag,attr){const [n1,n2]=cov
    <p class="j3-k">${ev(o,L)}</p>
    <${tag} class="j3-med" ${attr} aria-label="${L.open}">${zelligeRosette(c)}<span class="j3-in"><b class="j3-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</b><span class="j3-d">${esc(fmtShort(o.date))}</span></span></${tag}>
    ${guest?`<p class="j3-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}
-   <p class="j3-h">${en?'Touch the medallion to open':'Sentuh medalion untuk membuka'}</p></div></div>`}});
+   <p class="j3-h">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 
 const SKINS={
  sampul:cards,
@@ -1326,7 +1326,7 @@ FAMILY({key:'akrilik',name:'Akrilik',meaning:'Acrylic card',
     return `<div class="cover cv-akrilik" style="${vv(th.c)}">${backdrop(th)}
      <${tag} class="ak-btn" ${attr} aria-label="${L.open}"><span class="ak-sh"></span>${panel(o,th,L,false)}
       <span class="ak-sleeve"><span class="ak-sl-in">${guest?`<span class="ak-to"><span>${L.dear}</span><b>${esc(guest)}</b></span>`:`<span class="ak-to"><b>${esc(coverNames(o).join(' & '))}</b></span>`}
-       <span class="ak-sl-rule"></span><span class="ak-hint">${en?'Touch to slide the card out':'Sentuh untuk menarik kad keluar'}</span></span></span></${tag}></div>`},
+       <span class="ak-sl-rule"></span><span class="ak-hint">${en?'Open invitation':'Buka Jemputan'}</span></span></span></${tag}></div>`},
   skin(el,o,th){K.cards(el);['blob1','blob2','inkw'].forEach(k=>el.style.setProperty('--'+k,th.c[k]));$$('.sheet > .sec h2',el).forEach(h=>h.classList.add('ak-mg'))},
   themes:[
     {k:'putih',n:'Putih',desc:'Ivory and blush, white roses',extra:{fl:'white-roses',fl2:'blush-rose',eng:'white-roses'},c:{ground:'#efe6df',sheet:'#fffdfb',ink:'#3a2f2a',accent:'#8a6a3a',gold:'#c9a053',pagefg:'#3a2f2a',blob1:'#f4d9cf',blob2:'#e9e2d2',inkw:'#ffffff'}},
@@ -1469,7 +1469,7 @@ FAMILY({key:'alhambra',name:'Alhambra',meaning:'Nasrid palace arch',
      <div class="al-wall"></div>
      <div class="al-top"><p class="al-k">${ev(o,L)}</p><svg class="al-rl" viewBox="0 0 120 12"><path d="M6 6H48M72 6H114" stroke="${c.gold}" stroke-width=".6"/><path d="${K.star(8,5.4,2.6,60,6)}" fill="none" stroke="${c.gold}" stroke-width=".7"/></svg><p class="al-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="al-portal" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 492" preserveAspectRatio="xMidYMid meet">${portal(c,id,true,namesSvg(n1||'',n2||'',c))}</svg></${tag}>
-     <div class="al-foot">${guest?`<p class="al-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="al-hint">${en?'Touch the lattice to lift it':'Sentuh kekisi untuk mengangkatnya'}</p></div></div>`},
+     <div class="al-foot">${guest?`<p class="al-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="al-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     el.style.setProperty('--al-sebka',K.uri(`<svg ${NS} width="26" height="34" viewBox="0 0 26 34">${sebkaTile({...c,relief:mix(c.gold,c.sheet,.35),shadow:mix(c.sheet,c.ink,.18),gold:c.gold},26,34,false)}</svg>`));
     el.style.setProperty('--al-star',K.uri(`<svg ${NS} viewBox="-10 -10 20 20"><path d="${K.star(8,9,4.6)}" fill="none" stroke="${c.gold}" stroke-width="1"/><circle r="2" fill="${c.paint}"/></svg>`));
@@ -1574,7 +1574,7 @@ FAMILY({key:'azulejo',name:'Azulejo',meaning:'Portuguese tiles',
       ${guest?`<span class="az-to">${L.dear}<b>${esc(guest)}</b></span>`:''}</span></${tag}>
      <svg class="az-spr top" viewBox="-10 0 320 200"><defs>${lemonDefs(c,id)}</defs>${sprig(c,id,0)}</svg>
      <svg class="az-spr bot" viewBox="0 0 320 180"><defs>${lemonDefs(c,id+'b')}</defs>${sprig(c,id+'b',1)}</svg>
-     <p class="az-hint">${en?'Touch the panel to open':'Sentuh panel untuk membuka'}</p></div>`},
+     <p class="az-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th),id='s';
     el.style.setProperty('--az-tile',tileUri(c));el.style.setProperty('--az-tbg',c.tbg);el.style.setProperty('--az-ink',c.tink);
     {const I=c.tink,B=c.tbg;el.style.setProperty('--az-corner',K.uri(svg(56,56,`<path d="M0 0H56V3H3V56H0Z" fill="${I}"/><path d="M0 0H22A22 22 0 0 1 0 22Z" fill="${c.tink2}" stroke="${I}" stroke-width="1"/>${[0,1,2,3].map(i=>`<path d="M0 0L${f1(Math.cos((i+.5)/4*Math.PI/2)*20)} ${f1(Math.sin((i+.5)/4*Math.PI/2)*20)}" stroke="${I}" stroke-width=".8"/><path d="M0-1.6C-2.4-3-2.8-6 0-7.6C2.8-6 2.4-3 0-1.6Z" transform="translate(${f1(Math.cos((i+.5)/4*Math.PI/2)*14)} ${f1(Math.sin((i+.5)/4*Math.PI/2)*14)}) rotate(${f1((i+.5)/4*90+90)})" fill="${B}"/>`).join('')}<circle cx="4" cy="4" r="3" fill="${I}"/>
@@ -1675,7 +1675,7 @@ FAMILY({key:'bauhaus',name:'Bauhaus',meaning:'Geometric print poster',
     return `<div class="cover cv-bauhaus" style="--c3:${th.c.c3}"><div class="bh-wall"></div>
     <p class="bh-wtop">${en?'Kindly open':'Sila buka'} <b>&#8212;</b> ${ev(o,L)}</p>
     <${tag} class="bh-poster" ${attr} aria-label="${L.open}"><i class="bh-tape l"></i><i class="bh-tape r"></i>${poster(o,th,L,guest)}<i class="bh-grain"></i></${tag}>
-    <p class="bh-hint"><i></i>${en?'Touch the poster to open':'Sentuh poster untuk membuka'}<i></i></p></div>`},
+    <p class="bh-hint"><i></i>${en?'Open invitation':'Buka Jemputan'}<i></i></p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--c3',th.c.c3);
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(!h)return;s.classList.add('bh-sec');
       h.insertAdjacentHTML('afterbegin',`<i class="bh-tile t-${SH[i%SH.length]}"></i><b class="bh-no">${String(i+1).padStart(2,'0')}</b>`);
@@ -1790,7 +1790,7 @@ FAMILY({key:'bulan',name:'Bulan',meaning:'Moon phases',
      <div class="bln-txt bln-fade"><p class="bln-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
       <div class="bln-rule"><i></i>${foil('bln-st',STAR4)}<i></i></div><p class="bln-date">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="bln-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}</div>
-     <p class="bln-hint bln-fade">${en?'Touch the moon to open':'Sentuh bulan untuk membuka'}</p></div>`},
+     <p class="bln-hint bln-fade">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--bln-cres',CRES);el.style.setProperty('--bln-star',STAR4);
     el.style.setProperty('--bln-dust',K.uri(`<svg xmlns="http://www.w3.org/2000/svg" width="260" height="300">${dust(260,300,60,5,th.c,2)}</svg>`));
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.bln-h',h)){h.insertAdjacentHTML('afterbegin','<i class="bln-h"></i>')}
@@ -1889,7 +1889,7 @@ FAMILY({key:'bungaraya',name:'Bunga Raya',meaning:'Hibiscus bloom',
     return `<div class="cover cv-bungaraya" style="--leaves:${LEAVES}"><div class="br-paper"></div><div class="br-fr"></div>
      <div class="br-head"><p class="br-k">${ev(o,L)}</p><p class="br-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="br-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <div class="br-stage"><i class="br-lv"></i>${bloom(c,'big',tag,`${attr} aria-label="${L.open}"`)}</div>
-     <div class="br-foot">${guest?`<p class="br-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="br-hint">${en?'Touch the bloom to open':'Sentuh bunga untuk membuka'}</p></div></div>`},
+     <div class="br-foot">${guest?`<p class="br-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="br-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c);el.style.setProperty('--badge',BADGE(c));el.style.setProperty('--sprig',SPRIG);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="br-bd"><i></i><i></i><i></i></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="br-cs a"></i><i class="br-cs b"></i>'))},
@@ -1996,7 +1996,7 @@ FAMILY({key:'bungatelur',name:'Bunga Telur',meaning:'Egg-flower stand',
      <div class="bt-head"><p class="bt-k">${ev(o,L)}</p><p class="bt-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
       <div class="bt-dot"><i></i><b></b><i></i></div><p class="bt-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="bt-arr" ${attr} aria-label="${L.open}">${spray(true)}</${tag}>
-     <div class="bt-foot">${guest?`<p class="bt-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="bt-hint">${en?'Touch the bunga telur to open':'Sentuh bunga telur untuk membuka'}</p></div></div>`},
+     <div class="bt-foot">${guest?`<p class="bt-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="bt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.dk)el.classList.add('bt-dk');
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('afterbegin','<i class="bt-hb"></i>');h.insertAdjacentHTML('beforeend','<i class="bt-hb"></i>')});
     $$('.sec .rule',el).forEach(r=>r.outerHTML='<div class="bt-dot"><i></i><b></b><i></i></div>')},
@@ -2119,7 +2119,7 @@ FAMILY({key:'buruj',name:'Buruj',meaning:'Star chart',
      <div class="brj-head brj-fade"><p class="brj-k">${ev(o,L)}</p><p class="brj-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
      <${tag} class="brj-btn" ${attr} aria-label="${L.open}">${astrolabe(c,id)}</${tag}>
      <div class="brj-foot brj-fade"><p class="brj-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="brj-hj">${esc(o.hijri)}</p>`:''}
-      ${guest?`<p class="brj-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="brj-hint">${en?'Touch the astrolabe to open':'Sentuh astrolab untuk membuka'}</p></div></div>`},
+      ${guest?`<p class="brj-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="brj-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--chart',th.c.chart);el.style.setProperty('--brjn',dark(th.c)?th.c.gold:th.c.accent);el.style.setProperty('--brj-h',CONST_H);el.style.setProperty('--brj-link',LINK);
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.brj-h',h))h.insertAdjacentHTML('beforebegin','<i class="brj-h" aria-hidden="true"></i>');
       s.insertAdjacentHTML('afterbegin',`<i class="brj-no" aria-hidden="true">${String(i+1).padStart(2,'0')} · ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][i%12]}</i>`);
@@ -2199,7 +2199,7 @@ FAMILY({key:'catur',name:'Catur',meaning:'Chess checkmate',
       <i class="catur-sh q"></i><i class="catur-sh k"></i></div>
       <div class="catur-at k">${ctPiece('k',c,u)}</div><div class="catur-at q">${ctPiece('q',c,u)}</div></div>
     <${tag} class="catur-tap" ${attr} aria-label="${L.open}"></${tag}>
-    <div class="catur-foot">${guest?`<p class="catur-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="catur-hint">${en?'Touch the board to begin':'Sentuh papan untuk bermula'}</p></div></div>`},
+    <div class="catur-foot">${guest?`<p class="catur-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="catur-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--chk',ctChecks(c.accent,c.sheet));el.style.setProperty('--chk2',ctChecks(c.gold,'transparent',5));
     const sq=['e4','d5','c6','f3','g2','b7','h1','a8','e2','d7','f6'];
     $$('.sec',el).forEach((s,i)=>{s.classList.add('catur-sec');const h=$('h2',s);if(!h)return;h.insertAdjacentHTML('afterbegin',`<em class="catur-co">${sq[i%sq.length]}</em>`)})},
@@ -2307,7 +2307,7 @@ FAMILY({key:'chinoiserie',name:'Biru Putih',meaning:'Blue and white',
     return `<div class="cover cv-chinoiserie" style="--damask:${DAMASK(c.damask)}"><div class="ch-wall"></div>
      <div class="ch-head"><p class="ch-k">${ev(o,L)}</p><p class="ch-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="ch-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <div class="ch-hang"><i class="ch-wire"></i><${tag} class="ch-plate" ${attr} aria-label="${L.open}">${plateSvg(p)}<i class="ch-clip a"></i><i class="ch-clip b"></i><i class="ch-clip c"></i></${tag}></div>
-     <div class="ch-foot">${guest?`<p class="ch-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ch-hint">${en?'Touch the plate to lift it':'Sentuh pinggan untuk membuka'}</p></div></div>`},
+     <div class="ch-foot">${guest?`<p class="ch-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ch-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--brush',BRUSH(pal(th.c)));el.style.setProperty('--damask',DAMASK(th.c.damask));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="ch-hs"></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="ch-bb t"></i><i class="ch-bb b"></i>'))},
@@ -2440,7 +2440,7 @@ FAMILY({key:'garis',name:'Garis Tunggal',meaning:'One continuous line',
      <p class="gr-nm">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>
      <p class="gr-d">${esc(fmtDate(o.date,o.lang))}</p><p class="gr-v">${esc(o.venue)}</p>
      ${guest?`<p class="gr-to">${L.dear}<b>${esc(guest)}</b></p>`:''}
-     <p class="gr-hint">${en?'Touch the drawing to finish it':'Sentuh lukisan untuk melengkapkannya'}</p></div></div>`},
+     <p class="gr-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty("--press",th.c.press);$$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend',flourish(i%3+1,180))})},
   themes:[
     {k:'krim',n:'Krim',desc:'Sepia ink on cream cotton',c:{ground:'#e6ddcd',sheet:'#f8f3ea',ink:'#2b2622',accent:'#8a6d4b',gold:'#b8925a',press:'rgba(255,255,255,.75)',pagefg:'#2b2622',line:'rgba(43,38,34,.16)'}},
@@ -2535,7 +2535,7 @@ FAMILY({key:'hutan',name:'Hutan Tropika',meaning:'Tropical leaves',
      <svg class="ht-side l" viewBox="0 0 260 760" preserveAspectRatio="xMinYMid slice">${leaves(c,COVER_L,uid*7+1)}</svg>
      <svg class="ht-side r" viewBox="0 0 260 760" preserveAspectRatio="xMinYMid slice">${leaves(c,COVER_R,uid*7+4)}</svg>
      <i class="ht-vig"></i><${tag} class="ht-seal" ${attr} aria-label="${L.open}"><span>${mono(o)}</span></${tag}>
-     <p class="ht-hint">${en?'Touch the seal to part the leaves':'Sentuh meterai untuk menyelak dedaun'}</p></div>`},
+     <p class="ht-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',cornerSvg(c,30+i*5,'sk '+(i%2?'r':'l')));
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend','<div class="ht-rule"><i></i><b></b><i></i></div>')})},
@@ -2628,7 +2628,7 @@ FAMILY({key:'inai',name:'Malam Berinai',meaning:'Henna night',
      <div class="ih-head"><p class="ih-k">${ev(o,L)}</p><p class="ih-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ih-dt">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="ih-tap" ${attr} aria-label="${L.open}">${medallion(a1+'·'+a2)}</${tag}>
      <i class="ih-conew">${CONE}</i><i class="ih-bowlw">${bowl()}</i>
-     <div class="ih-foot">${guest?`<p class="ih-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ih-hint">${en?'Touch the henna':'Sentuh inai'}</p></div></div>`},
+     <div class="ih-foot">${guest?`<p class="ih-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ih-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.dk)el.classList.add('ih-dk');
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('afterbegin','<i class="ih-hp"></i>');h.insertAdjacentHTML('beforeend','<i class="ih-hp r"></i>')});
     $$('.sec .rule',el).forEach(r=>r.outerHTML='<i class="ih-div"></i>');
@@ -2718,7 +2718,7 @@ FAMILY({key:'istana',name:'Istana',meaning:'Royal Malay palace',
      <${tag} class="is-ban" ${attr} aria-label="${L.open}"><span class="is-cloth"><span class="is-in">
        <span class="is-k">${ev(o,L)}</span>${crest()}<span class="is-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="is-d">${esc(fmtDate(o.date,o.lang))}</span></span></span>
       <span class="is-roll">${tassel('l')}${tassel('m')}${tassel('r')}</span></${tag}>
-     <div class="is-foot">${guest?`<p class="is-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="is-hint">${en?'Touch the banner to raise it':'Sentuh panji untuk menggulungnya'}</p></div></div>`},
+     <div class="is-foot">${guest?`<p class="is-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="is-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.lt)el.classList.add('is-lt');
     $$('.sheet > .sec',el).forEach(s=>s.insertAdjacentHTML('beforeend',`<i class="is-ct l"></i><i class="is-ct r"></i>${tassel('sl')}${tassel('sr')}`));
     $$('.sec h2',el).forEach(h=>{h.classList.add('is-plq')})},
@@ -2845,7 +2845,7 @@ FAMILY({key:'iznik',name:'Iznik',meaning:'Ottoman tile panel',
      <div class="iz-top"><p class="iz-k">${en?'Kindly join us':'Dengan penuh kesyukuran'}</p></div>
      <div class="iz-win"><${tag} class="iz-panel" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 500" preserveAspectRatio="xMidYMax meet">${panel(c,id,n1||'',n2||'',ev(o,L),esc(fmtDate(o.date,o.lang)))}</svg></${tag}></div>
      <div class="iz-sill"><i class="top"></i><i class="front"></i></div>
-     <div class="iz-foot">${guest?`<p class="iz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="iz-hint">${en?'Touch the tiles to open':'Sentuh jubin untuk membuka'}</p></div></div>`},
+     <div class="iz-foot">${guest?`<p class="iz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="iz-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     el.style.setProperty('--iz-bh',K.uri(borderTile(c)));el.style.setProperty('--iz-bv',K.uri(borderTile(c,1)));el.style.setProperty('--iz-bd',c.bd);el.style.setProperty('--iz-tq',c.tq);el.style.setProperty('--iz-joint',c.joint);
     el.style.setProperty('--iz-tulip',K.uri(`<svg ${NS} viewBox="-22 -30 44 34"><path d="M0 2C-8-2-14-4-20-2C-14-8-6-8 0 2Z" fill="${c.green}" stroke="${c.ink}" stroke-width=".5"/><path d="M0 2C8-2 14-4 20-2C14-8 6-8 0 2Z" fill="${c.green}" stroke="${c.ink}" stroke-width=".5"/>${tulip(c,1.1)}</svg>`));
@@ -2955,7 +2955,7 @@ FAMILY({key:'jam',name:'Jam Saku',meaning:'Pocket watch',
       <span class="jam-lid"><span class="jam-lf">${lidFront(c,id,mono)}</span><span class="jam-lb">${lidBack(c,id,o)}</span></span>
       <span class="jam-hinge"></span></${tag}>
      <div class="jam-foot jam-fade"><p class="jam-date">${esc(fmtDate(o.date,o.lang))} <i>·</i> ${esc(fmtTime(o.start,o.lang))}</p>
-      ${guest?`<p class="jam-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="jam-hint">${en?'Touch the watch to open':'Sentuh jam untuk membuka'}</p></div></div>`},
+      ${guest?`<p class="jam-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="jam-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--jam-links',LINKS(th.c));
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.jam-h',h))h.insertAdjacentHTML('afterbegin',`<i class="jam-h">${ROMN(i+1)}</i>`);
       if(i)s.insertAdjacentHTML('beforebegin','<div class="jam-div" aria-hidden="true"><i></i></div>')})},
@@ -3067,7 +3067,7 @@ FAMILY({key:'jianzhi',name:'Potong Kertas',meaning:'Chinese papercut',
      <div class="jz-gate"><p class="jz-k">${ev(o,L)}</p><p class="jz-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="jz-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <i class="jz-l b"><i></i></i><i class="jz-l a"><i></i></i>
      <${tag} class="jz-tap" ${attr} aria-label="${L.open}"></${tag}>
-     <div class="jz-foot">${guest?`<p class="jz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="jz-hint">${en?'Touch the moon gate':'Sentuh pintu bulan'}</p></div></div>`},
+     <div class="jz-foot">${guest?`<p class="jz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="jz-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);PV(th.c).split(';').forEach(kv=>{const [k,v]=kv.split(':');el.style.setProperty(k,v)});el.style.setProperty('--frame',FRAME(th.c.paper||th.c.accent));el.style.setProperty('--rose',ROSE);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="jz-hr"></i>'))},
   themes:[
@@ -3137,7 +3137,7 @@ FAMILY({key:'kalendar',name:'Kalendar',meaning:'Tear-off calendar',
       <div class="kl-head kl-fade"><p class="kl-k">${ev(o,L)}</p><p class="kl-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
       <${tag} class="kl-pad" ${attr} aria-label="${L.open}"><span class="kl-stack"></span>
        ${sheet(o,L,0,'day','s3')}${sheet(o,L,-1,'day','s2')}${sheet(o,L,-2,'title','s1')}<span class="kl-bind"><i></i><i></i></span></${tag}>
-      <div class="kl-foot kl-fade">${guest?`<p class="kl-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kl-hint">${en?'Touch the calendar to turn to our date':'Sentuh kalendar untuk selak ke tarikh kami'}</p></div></div></div>`},
+      <div class="kl-foot kl-fade">${guest?`<p class="kl-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kl-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--bind',th.c.bind);el.style.setProperty('--board',th.c.board);const d=day(o,0),en=o.lang==='en';
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!h.dataset.kl){h.dataset.kl=1;h.insertAdjacentHTML('beforebegin',`<i class="kl-tab" aria-hidden="true"><b>${d?(en?EN:MS)[d.getMonth()].slice(0,3):''}</b><span>${String(i+1).padStart(2,'0')}</span></i>`)}
       s.insertAdjacentHTML('afterbegin','<span class="kl-sbind" aria-hidden="true"></span>')})},
@@ -3217,7 +3217,7 @@ FAMILY({key:'kampung',name:'Rumah Kampung',meaning:'Village stilt house',
     return `<div class="cover cv-kampung" style="${vars(c)}"><i class="kampung-sky"></i><i class="kampung-bright"></i>
      <${tag} class="kampung-scene" ${attr} aria-label="${L.open}">${layers()}</${tag}><i class="kampung-paper"></i>
      <div class="kampung-head"><p class="kampung-k">${ev(o,L)}</p><p class="kampung-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kampung-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-     <div class="kampung-foot">${guest?`<p class="kampung-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kampung-hint">${en?'Touch the kampung to enter':'Sentuh kampung untuk masuk'}</p></div></div>`},
+     <div class="kampung-foot">${guest?`<p class="kampung-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kampung-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
   themes:[
     {k:'senja',n:'Senja',desc:'Violet dusk, amber sun, deep green',c:{ground:'#3a2a4c',sheet:'#fbf3e4',ink:'#2b241e',accent:'#22331f',gold:'#f2b45a',pagefg:'#fdf0d8',wood:'#5e3f24'}},
@@ -3325,7 +3325,7 @@ FAMILY({key:'kaset',name:'Kaset',meaning:'Mixtape cassette',
       <div class="kaset-face back"><i class="kaset-glass"></i></div></div>
      <${tag} class="kaset-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="kaset-bot">${guest?`<p class="kaset-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kaset-hint">${en?'Touch the case to open':'Sentuh kotak kaset untuk membuka'}</p></div></div>`},
+    <div class="kaset-bot">${guest?`<p class="kaset-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kaset-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--strip',ksStrip(c));el.style.setProperty('--pin',ksPin(c.gold));el.style.setProperty('--pen',c.pen);
     const durs=['03:41','04:12','02:58','05:06','03:27','04:45','03:09','04:30','02:51','03:55','04:02'];
     $$('.sec',el).forEach((s,i)=>{s.classList.add('kaset-sec');const h=$('h2',s);if(!h)return;
@@ -3420,7 +3420,7 @@ FAMILY({key:'kerang',name:'Kerang',meaning:'Seashell and pearl',
      <${tag} class="kg-shell" ${attr} aria-label="${L.open}"><svg class="kg-low" viewBox="0 0 300 300">${inside(c,u)}</svg><svg class="kg-lid" viewBox="0 0 300 300">${lid(c,u)}</svg></${tag}>
      <div class="kg-foot"><svg class="kg-str" viewBox="0 0 200 20"><defs>${pearlDef('kz'+u,c)}</defs>${strand(Array.from({length:13},(_,i)=>[28+i*12,8+Math.sin(i/12*PI)*4]),2.6,4.6,'kz'+u)}</svg>
       <p class="kg-d">${esc(fmtDate(o.date,o.lang))}</p>${guest?`<p class="kg-to">${L.dear}<b>${esc(guest)}</b></p>`:`<p class="kg-to"><b>${esc(o.venue)}</b></p>`}
-      <p class="kg-hint">${en?'Touch the shell to open it':'Sentuh kerang untuk membukanya'}</p></div></div>`},
+      <p class="kg-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{const id='sk'+(++gid);
       const swag=Array.from({length:27},(_,k)=>{const t=k/26;return [14+t*332,6+Math.sin(t*PI)*24]});
@@ -3496,7 +3496,7 @@ FAMILY({key:'kering',name:'Bunga Kering',meaning:'Dried boho bouquet',
      <div class="kering-sw"><div class="kering-sleeve"><i class="kering-tex"></i><i class="kering-deb"></i>
       <div class="kering-to">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}</div><svg class="kering-ss" viewBox="-60 -120 120 124" fill="none" stroke="${c.sleeveInk}">${[-38,-18,0,18,38].map((a,i)=>`<g transform="rotate(${a})"><path d="M0 0V${i%2?-80:-104}" stroke-width=".6"/>${Array.from({length:12},(_,k)=>`<path d="M0 ${-50-k*(i%2?2.5:4.4)}l${k%2?4:-4} -5" stroke-width=".45"/>`).join('')}</g>`).join('')}</svg><p class="kering-v">${esc(fmtTime(o.start,o.lang))} &middot; ${esc(o.venue)}</p></div></div>
      <${tag} class="kering-stamp" ${attr} aria-label="${L.open}"><span>${esc(a)}<i>&amp;</i>${esc(b)}</span></${tag}>
-     <p class="kering-hint">${en?'Touch the stamp to draw out the card':'Sentuh setem untuk menarik kad'}</p></div>`},
+     <p class="kering-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="kering-tex"></i>${bunchSvg(c,70+i,'sk',.42)}`);
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend','<div class="kering-rule"><i></i><b></b><i></i></div>')})},
@@ -3589,7 +3589,7 @@ FAMILY({key:'kerongsang',name:'Kerongsang',meaning:'Kebaya brooches',
      <div class="kerongsang-stage"><div class="kerongsang-pan l">${pn}</div><div class="kerongsang-pan r">${pn}</div>
       <div class="kerongsang-head"><p class="kerongsang-k">${ev(o,L)}</p><p class="kerongsang-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kerongsang-d">${esc(fmtDate(o.date,o.lang))}</p></div>
       <${tag} class="kerongsang-set" ${attr} aria-label="${L.open}"><i class="kerongsang-b ibu">${ibu()}</i>${chain(84)}<i class="kerongsang-b anak">${anak()}</i>${chain(72)}<i class="kerongsang-b anak">${anak()}</i></${tag}></div>
-     <div class="kerongsang-foot">${guest?`<p class="kerongsang-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kerongsang-hint">${en?'Touch the kerongsang to open':'Sentuh kerongsang untuk membuka'}</p></div></div>`},
+     <div class="kerongsang-foot">${guest?`<p class="kerongsang-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kerongsang-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c)+';--kr-bul:'+BUL(c);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="kerongsang-hb"></i>'))},
   themes:[
@@ -3666,7 +3666,7 @@ FAMILY({key:'kipas',name:'Kipas',meaning:'Folding fan',
      <div class="kipas-head"><p class="kipas-k">${ev(o,L)}</p><p class="kipas-names">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><div class="kipas-rule"><i></i><b></b><i></i></div><p class="kipas-date">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="kipas-to">${L.dear}</p><p class="kipas-guest">${esc(guest)}</p>`:''}</div>
      <${tag} class="kipas-fan" ${attr} aria-label="${L.open}">${fan(c,u,false)}${TASSEL(c)}</${tag}>
-     <p class="kipas-hint">${en?'Touch the fan to open':'Sentuh kipas untuk membuka'}</p></div>`},
+     <p class="kipas-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--kpfan',FANHEAD(th.c))},
   themes:[
     {k:'merah',n:'Merah',desc:'Crimson silk, ivory fan, gold',c:{ground:'#5b1620',sheet:'#fbf5ec',ink:'#2f2224',accent:'#8e2232',gold:'#c9a35a',pagefg:'#f6e8dc',silk:'#fdf8f0',silk2:'#f1e4d2',band:'#ead7c0',lace:'#fffaf2',leaf:'#c9a35a',wood:'#c69a68',woodd:'#7a5434',fl:['blush-rose','jasmine','pink-rose']}},
@@ -3865,7 +3865,7 @@ FAMILY({key:'kotak',name:'Kotak Hadiah',meaning:'Gift box',
        <span class="kt-txt"><span class="kt-k">${ev(o,L)}</span><span class="kt-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="kt-rule"><i></i><b></b><i></i></span><span class="kt-date">${esc(fmtDate(o.date,o.lang))}</span><span class="kt-ven">${esc(o.venue)}</span></span>
        <span class="kt-rv"></span><span class="kt-rh"></span>
        <span class="kt-bow">${bow(c,id)}</span><span class="kt-string"></span>${TAG(o,L,guest,en)}</span></${tag}>
-     <p class="kt-hint">${en?'Touch the bow to untie it':'Sentuh reben untuk membuka'}</p></div>`},
+     <p class="kt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;[['--rib',c.rib],['--ribhi',c.ribHi],['--riblo',c.ribLo],['--box',c.box]].forEach(([k,v])=>el.style.setProperty(k,v));
     $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h&&!h.dataset.kt){h.dataset.kt=1;h.innerHTML=`<span class="kt-ban"><i class="l"></i><span>${h.innerHTML}</span><i class="r"></i></span>`}})},
   themes:[
@@ -4023,7 +4023,7 @@ FAMILY({key:'kunci',name:'Kunci',meaning:'Room key',
      <div class="kc-head kc-fade"><p class="kc-k">${ev(o,L)}</p><p class="kc-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
      <${tag} class="kc-lock" ${attr} aria-label="${L.open}"><span class="kc-pw">${plate(c,id)}</span>
       <span class="kc-fw">${RING(c)}${fob(o,c,id,en)}</span><span class="kc-kw">${key(c,id)}</span></${tag}>
-     <div class="kc-foot kc-fade">${guest?`<p class="kc-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kc-hint">${en?'Touch the key to unlock':'Sentuh kunci untuk membuka'}</p></div></div>`},
+     <div class="kc-foot kc-fade">${guest?`<p class="kc-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kc-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--hole',th.c.hole);
     $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h&&!h.dataset.kc){h.dataset.kc=1;h.innerHTML=`<span class="kc-tag"><i></i><span>${h.innerHTML}</span></span>`}})},
   themes:[
@@ -4113,7 +4113,7 @@ FAMILY({key:'lentera',name:'Lentera',meaning:'Moroccan lantern',
      <span class="ln-bg l"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id+'l')}</svg></span><span class="ln-bg r"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id+'r')}</svg></span>
      <${tag} class="ln-lamp" ${attr} aria-label="${L.open}"><i class="ln-chain"></i><svg viewBox="0 0 120 300">${lantern(c,id)}</svg></${tag}>
      <div class="ln-txt"><p class="ln-k">${ev(o,L)}</p><p class="ln-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ln-d">${esc(fmtDate(o.date,o.lang))}</p>
-      ${guest?`<p class="ln-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ln-hint">${en?'Touch the lantern to light it':'Sentuh lentera untuk menyalakannya'}</p></div></div>`},
+      ${guest?`<p class="ln-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ln-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     const band=`<svg ${NS} width="40" height="18" viewBox="0 0 40 18"><defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.bLight}"/><stop offset=".5" stop-color="${c.gold}"/><stop offset="1" stop-color="${c.bDark}"/></linearGradient></defs><rect width="40" height="18" fill="url(#b)"/><path fill="${c.glowHi}" d="${K.star(8,5.4,2.7,10,9)}${K.star(8,5.4,2.7,30,9)}M20 6.4l2 2.6-2 2.6-2-2.6ZM0 6.4l2 2.6-2 2.6-2-2.6ZM40 6.4l2 2.6-2 2.6-2-2.6Z"/><path d="M0 1H40M0 17H40" stroke="${c.bDark}" stroke-width=".8"/><path d="M0 2.6H40M0 15.4H40" stroke="${c.bLight}" stroke-width=".4"/></svg>`;
     el.style.setProperty('--ln-band',K.uri(band));el.style.setProperty('--ln-glow',c.glow);el.style.setProperty('--ln-light',K.uri(lightTile(c.glow,.95)));
@@ -4223,7 +4223,7 @@ FAMILY({key:'majalah',name:'Majalah',meaning:'Magazine cover',
       <div class="majalah-face back"><i class="majalah-shade"></i></div></div>
      <${tag} class="majalah-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="majalah-foot">${guest?`<p class="majalah-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="majalah-hint">${en?'Touch the cover to turn the page':'Sentuh muka depan untuk menyelak'}</p></div></div>`},
+    <div class="majalah-foot">${guest?`<p class="majalah-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="majalah-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00');el.style.setProperty('--mast',th.c.mast);el.style.setProperty('--art2',th.c.art2);
     const KK={intro:en?'Opening':'Pembuka',when:en?'Agenda':'Agenda',count:en?'Countdown':'Detik',sched:en?'Programme':'Aturcara',gallery:en?'Gallery':'Galeri',doa:en?'Prayer':'Doa',rsvp:'RSVP',wishes:en?'Notes':'Ucapan',gift:en?'Gifts':'Hadiah',wishlist:en?'Wishlist':'Hajat',contact:en?'Contact':'Hubungi'};
     const mon=isNaN(d)?'':`${(MONTHS[o.lang]||MONTHS.ms)[d.getMonth()]} ${d.getFullYear()}`;
@@ -4294,7 +4294,7 @@ FAMILY({key:'menu',name:'Menu',meaning:'Fine-dining menu',
      <i class="menu-rib"></i>
      <${tag} class="menu-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="menu-foot">${guest?`<p class="menu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="menu-hint">${en?'Touch the menu to open':'Sentuh menu untuk membuka'}</p></div></div>`},
+    <div class="menu-foot">${guest?`<p class="menu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="menu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);el.style.setProperty('--hl',th.c.hl||th.c.accent);
     $$('.sec',el).forEach(s=>{s.classList.add('menu-sec');s.insertAdjacentHTML('afterbegin','<span class="menu-pc tl"></span><span class="menu-pc tr"></span><span class="menu-pc bl"></span><span class="menu-pc br"></span>');
       const h=$('h2',s);if(h)h.innerHTML=`<span>${h.innerHTML}</span>`})},
@@ -4373,7 +4373,7 @@ FAMILY({key:'merak',name:'Merak',meaning:'Peacock train',
       ${guest?`<p class="mk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
      <div class="mk-train">${fs}</div>
      <${tag} class="mk-brooch" ${attr} aria-label="${L.open}">${brooch(c)}<span>${esc((n1||'A')[0])}<i>&amp;</i>${esc((n2||'A')[0])}</span></${tag}>
-     <p class="mk-hint">${en?'Touch the brooch to open':'Sentuh kerongsang untuk membuka'}</p></div>`},
+     <p class="mk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th),id='s';
     el.style.setProperty('--mk-eye',K.uri(`<svg ${NS} viewBox="-20 -26 40 52"><defs>${defs(c,id)}</defs>${eye(id,c)}</svg>`));
     el.style.setProperty('--mk-plume',K.uri(`<svg ${NS} viewBox="0 0 300 60"><defs>${defs(c,id)}</defs><g transform="translate(300 30) rotate(-90) translate(-30 -300)">${feather(id,c,9)}</g></svg>`));
@@ -4461,7 +4461,7 @@ FAMILY({key:'monogram',name:'Monogram',meaning:'Embossed crest',
       <p class="monogram-date">${esc(fmtDate(o.date,o.lang))}</p>
       <div class="monogram-rule"><i></i><b></b><i></i></div>
       ${guest?`<p class="monogram-to">${L.dear}</p><p class="monogram-guest">${esc(guest)}</p>`:`<p class="monogram-to">${esc(o.venue)}</p>`}
-      <p class="monogram-hint">${en?'Press the crest to open':'Tekan lambang untuk membuka'}</p></div></div>`},
+      <p class="monogram-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--mgsprig',SPRIG);el.style.setProperty('--mghi',th.c.hi);el.style.setProperty('--mglo',th.c.lo);
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="monogram-sp"></i><span class="monogram-badge">${h.innerHTML}</span><i class="monogram-sp r"></i>`})},
   themes:[
@@ -4644,7 +4644,7 @@ FAMILY({key:'mughal',name:'Mahal',meaning:'Mughal palace',
       ${jharokha(c).replace('class="mughal-jh"','class="mughal-jh l"')}${jharokha(c).replace('class="mughal-jh"','class="mughal-jh r"')}
       <p class="mughal-k">${ev(o,L)}</p><p class="mughal-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="mughal-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="mughal-portal" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 440" preserveAspectRatio="xMidYMid meet">${portal(c,id,true)}</svg></${tag}>
-     <div class="mughal-foot">${guest?`<p class="mughal-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="mughal-hint">${en?'Touch the marble screen to enter':'Sentuh jali marmar untuk masuk'}</p></div></div>`},
+     <div class="mughal-foot">${guest?`<p class="mughal-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="mughal-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th,o.lang==='en');
     el.style.setProperty('--mg-band',K.uri(bandTile(c)));el.style.setProperty('--mg-bandv',K.uri(bandTile(c,1)));el.style.setProperty('--mg-marble',c.marble);
     el.style.setProperty('--mg-ros',K.uri(`<svg ${NS} viewBox="-12 -12 24 24"><defs>${stoneDefs(c,'s')}</defs><circle r="11" fill="${c.marble}" stroke="${c.gold}" stroke-width=".8"/>${rosette(0,0,.95,8,'s',c)}</svg>`));
@@ -4708,7 +4708,7 @@ FAMILY({key:'muzium',name:'Muzium',meaning:'Gallery painting',
      <${tag} class="muzium-tap" ${attr} aria-label="${L.open}">${mzFrame(c,u,false)}</${tag}>
      ${mzPlacard(o,L,false)}
      <i class="muzium-floor"></i><i class="muzium-post l"></i><i class="muzium-post r"></i><svg class="muzium-rope" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="${c.rope}" stroke-width="7" stroke-linecap="round"/><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="3 4" transform="translate(0 -1.5)"/></svg>
-     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Touch the painting':'Sentuh lukisan'}</p></div></div>`},
+     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),y=isNaN(d)?'':d.getFullYear();
     el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p3',c.p3);
     $$('.sec',el).forEach((s,i)=>{s.classList.add('muzium-sec');const h=$('h2',s);if(!h)return;
@@ -4900,7 +4900,7 @@ FAMILY({key:'nouveau',name:'Nouveau',meaning:'Art Nouveau arch',
       <${tag} class="nv-halo" ${attr} aria-label="${L.open}">${halo(u,th.c)}<span class="nv-names">${esc(n1)}<i>&amp;</i>${esc(n2)}</span></${tag}>
       <div class="nv-mid">${guest?`<p class="nv-to">${L.dear}</p><p class="nv-guest">${esc(guest)}</p>`:`<p class="nv-to">${en?'Together with their families':'Bersama keluarga tercinta'}</p>`}</div>
       <div class="nv-panel"><span class="nv-ev">${ev(o,L)}</span><b>${esc(fmtDate(o.date,o.lang))}</b></div></div>
-     <p class="nv-hint">${en?'Touch the halo to open':'Sentuh lingkaran untuk membuka'}</p></div>`},
+     <p class="nv-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--nvpaper',PAPER(th.c.gold));
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="nv-wl"></i><span>${h.innerHTML}</span><i class="nv-wl r"></i>`})},
   themes:[
@@ -4956,7 +4956,7 @@ FAMILY({key:'origami',name:'Origami',meaning:'Folded paper',
      <${tag} class="or-fold" ${attr} aria-label="${L.open}"><span class="or-sq"><span class="or-base">${creases}</span>${flap('t')}${flap('b')}${flap('l')}${flap('r')}<i class="or-tips"></i><i class="or-edge"></i></span>
       <span class="or-seal"><b>${esc(a)}${esc(b)}</b></span></${tag}>
      <div class="or-bird">${crane(c,c.nm||c.accent)}</div><div class="or-foot"><p class="or-date">${esc(fmtDate(o.date,o.lang))}</p>${guest?`<p class="or-to">${L.dear}</p><p class="or-guest">${esc(guest)}</p>`:''}
-      <p class="or-hint">${en?'Touch the fold to open':'Sentuh lipatan untuk membuka'}</p></div></div>`},
+      <p class="or-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--waves',WAVES(th.c.accent,th.c.pat));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="or-hm"></i>'));
     $$('.sec',el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="or-dog"></i>'))},
@@ -5079,7 +5079,7 @@ FAMILY({key:'pasport',name:'Pasport',meaning:'Passport booklet',
       </div><${tag} class="pasport-tap" ${attr} aria-label="${L.open}"></${tag}>
      </div>
     </div>
-    <div class="pasport-foot">${guest?`<p class="pasport-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pasport-hint">${en?'Touch the passport to open':'Sentuh pasport untuk membuka'}</p></div></div>`},
+    <div class="pasport-foot">${guest?`<p class="pasport-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pasport-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const u=++ppN,c=th.c,dt=ppDate(o);
     el.style.setProperty('--wave',ppWaveTile(c.accent,60,20,.14));el.style.setProperty('--stamp',c.stamp||c.accent);el.style.setProperty('--stamp2',c.stamp2||c.ink);
     el.style.setProperty('--rose',svgUriSq(`<svg ${NS} viewBox="0 0 120 120">${ppRose(60,60,40,7,11,12,.3,c.accent,.1)}${ppRose(60,60,24,4,7,8,.3,c.gold,.22)}</svg>`));
@@ -5190,7 +5190,7 @@ FAMILY({key:'payung',name:'Payung',meaning:'Oil-paper umbrella',
      <div class="pu-head"><p class="pu-k">${ev(o,L)}</p><p class="pu-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pu-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="pu-tap" ${attr} aria-label="${L.open}"><span class="pu-closed">${closedSvg(c)}</span></${tag}>
      ${canopy(c,'open')}
-     <div class="pu-foot">${guest?`<p class="pu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pu-hint">${en?'Touch the umbrella to open it':'Sentuh payung untuk membukanya'}</p></div></div>`},
+     <div class="pu-foot">${guest?`<p class="pu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="pu-hr"></i>'))},
   themes:[
     {k:'merah',n:'Merah',desc:'Red umbrella with plum blossom',c:{ground:'#f3ebde',sheet:'#fcf8f0',ink:'#33241e',accent:'#a6262c',gold:'#b08a48',pagefg:'#33241e',canopy:'#c0303a',canopyL:'#d9524f',canopyD:'#8a1a24',band:'#1f3a5f',flower:'#fbe6dc',flowerC:'#f2c14e'}},
@@ -5388,7 +5388,7 @@ FAMILY({key:'peranakan',name:'Nyonya',meaning:'Peranakan kamcheng',
      <div class="pk-beads"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></div><i class="pk-tl a"></i><i class="pk-tl b"></i><i class="pk-tl c"></i><i class="pk-tl d"></i>
      <div class="pk-head"><p class="pk-k">${ev(o,L)}</p><p class="pk-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pk-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="pk-jar" ${attr} aria-label="${L.open}">${jarSvg(c)}</${tag}>
-     <div class="pk-foot">${guest?`<p class="pk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pk-hint">${en?'Touch the kamcheng to open':'Sentuh kamcheng untuk membuka'}</p></div></div>`},
+     <div class="pk-foot">${guest?`<p class="pk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c);el.style.setProperty('--bead',K.uri(beadSvg(c,0)));el.style.setProperty('--tile',K.uri(tileSvg(c)));
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('beforebegin','<i class="pk-hb"></i>')});
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="pk-tc a"></i><i class="pk-tc b"></i><i class="pk-tc c"></i><i class="pk-tc d"></i>'))},
@@ -5498,7 +5498,7 @@ FAMILY({key:'permaidani',name:'Permaidani',meaning:'Persian carpet',
       <i class="pm-lk tl">${lk}</i><i class="pm-lk tr">${lk}</i><i class="pm-lk bl">${lk}</i><i class="pm-lk br">${lk}</i>
       <span class="pm-med"><svg viewBox="-4 -8 208 336">${medallion(c,id)}</svg><span class="pm-in"><span class="pm-k">${ev(o,L)}</span><span class="pm-n" style="font-size:${f1(fs)}px">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="pm-d">${esc(fmtShort(o.date))}</span></span></span>`)}</${tag}>
      <i class="pm-roll" style="--pm-bc:${c.border};--pm-fd2:${c.field};--pm-iv:${c.ivory}"></i>
-     <div class="pm-foot">${guest?`<p class="pm-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pm-hint">${en?'Touch the carpet to roll it up':'Sentuh permaidani untuk menggulungnya'}</p></div></div>`},
+     <div class="pm-foot">${guest?`<p class="pm-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);el.setAttribute('style',el.getAttribute('style')+';'+vars(c));
     el.style.setProperty('--pm-pend',K.uri(`<svg ${NS} viewBox="76 -8 48 66">${pendant(c)}</svg>`));
     $$('.sec h2',el).forEach(h=>{h.classList.add('pm-h2');h.insertAdjacentHTML('afterbegin','<i class="pm-hp"></i>')});
@@ -5652,7 +5652,7 @@ FAMILY({key:'popup',name:'Pop-up',meaning:'Pop-up card',
      <${tag} class="pp-scene" ${attr} aria-label="${L.open}"><span class="pp-card">
       <span class="pp-floor"></span><span class="pp-back">${backArt(c,id)}</span>
       <span class="pp-l l3">${pavilion(c,id)}</span><span class="pp-l l2">${minarets(c,id)}</span><span class="pp-l l1">${garden(c,id)}</span></span></${tag}>
-     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Touch the card to raise it':'Sentuh kad untuk menegakkannya'}</p></div></div>`},
+     <div class="pp-foot pp-fade">${guest?`<p class="pp-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="pp-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+pv(th.c)+`;--pp-arch:${ARCHF}`},
   themes:[
     {k:'nila',n:'Nila',desc:'Ivory pavilion on an indigo night',c:{ground:'#e8e1d3',sheet:'#fbf7ee',ink:'#232638',accent:'#2b3266',gold:'#c09a4e',pagefg:'#232638',p1:'#2b3266',p2:'#fbf4e4',p3:'#c8a978',p4:'#3f6b55',p5:'#f4dfb0'}},
@@ -5740,7 +5740,7 @@ FAMILY({key:'quilling',name:'Quilling',meaning:'Rolled paper art',
      <${tag} class="ql-frame" ${attr} aria-label="${L.open}">${heart(c,u)}<span class="ql-in"><b>${esc(n1)}</b><i>&amp;</i><b>${esc(n2)}</b></span></${tag}>
      <p class="ql-date">${esc(fmtDate(o.date,o.lang))}</p>
      ${guest?`<p class="ql-to">${L.dear}</p><p class="ql-guest">${esc(guest)}</p>`:''}
-     <p class="ql-hint">${en?'Touch the heart to open':'Sentuh hati untuk membuka'}</p></div></div></div>`},
+     <p class="ql-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="ql-hb">${coil(c.accent)}</i><span>${h.innerHTML}</span><i class="ql-hb">${coil(c.accent)}</i>`});
     $$('.timeline li',el).forEach(li=>li.insertAdjacentHTML('afterbegin',`<i class="ql-li">${coil(c.gold,5)}</i>`));
@@ -5831,7 +5831,7 @@ FAMILY({key:'rama',name:'Rama-rama',meaning:'Butterfly specimen box',
       <div class="rm-guest">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}<i class="rm-tp l"></i></div></div>
       <div class="rm-glass"><i></i></div><i class="rm-mitre"></i>
       <${tag} class="rm-plate" ${attr} aria-label="${L.open}"><span>${esc(a)} &amp; ${esc(b)}</span></${tag}></div>
-     <p class="rm-hint">${en?'Touch the brass plate to slide the glass away':'Sentuh plat tembaga untuk mengalih kaca'}</p></div>`},
+     <p class="rm-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);const keys=Object.keys(SP);el.style.setProperty("--wood",c.wood);el.style.setProperty("--woodL",c.woodL);el.style.setProperty("--label",c.label);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<svg class="rm-sk ${i%2?'r':'l'}" viewBox="-60 -50 120 100">${DEFS(c)}<g transform="rotate(${i%2?14:-14})">${bfly(keys[(i*4+1)%keys.length],true)}</g></svg>`);
       const h=s.querySelector('h2');if(h){h.classList.add('rm-lab');h.insertAdjacentHTML('beforeend',`<small>No. ${String(i+1).padStart(2,'0')} &middot; ${esc(SP[keys[(i*4+1)%keys.length]].n)}</small>`)}})},
@@ -5892,7 +5892,7 @@ FAMILY({key:'resit',name:'Resit',meaning:'Thermal receipt',
     <div class="resit-feed"><div class="resit-paper">${rsReceipt(o,th,L,guest,false)}</div><i class="resit-curl"></i></div>
     <div class="resit-pr"><i class="resit-seam"></i><i class="resit-lip"></i><i class="resit-slot"></i><i class="resit-tear"></i><i class="resit-led"></i>
      <span class="resit-plate">${en?'Thermal · 80 mm':'Terma · 80 mm'}</span><i class="resit-grille"></i>
-     <span class="resit-hint">${en?'Press FEED to print':'Tekan FEED untuk mencetak'}</span>
+     <span class="resit-hint">${en?'Open invitation':'Buka Jemputan'}</span>
      <${tag} class="resit-btn" ${attr} aria-label="${L.open}"><span>FEED</span></${tag}></div>
     </div>`},
   skin(el,o){K.cards(el);const d=new Date((o.date||'')+'T00:00:00'),dd=isNaN(d)?'':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
@@ -5967,7 +5967,7 @@ FAMILY({key:'retro',name:'Retro 70-an',meaning:'Seventies rainbow print',
      <${tag} class="rt-sun" ${attr} aria-label="${L.open}">${sun(c,'rt-sunsvg',`<path id="rs${u}" d="M58 104A42 42 0 0 1 142 104" fill="none"/><text class="rt-k" font-size="11" fill="${c.ink}"><textPath href="#rs${u}" startOffset="50%" text-anchor="middle">${esc(fmtDate(o.date,o.lang).split(',')[0])}</textPath></text>
        <text x="100" y="122" text-anchor="middle" class="rt-d" fill="${c.s2}" font-size="30">${dd}.${mm}</text><text x="100" y="138" text-anchor="middle" class="rt-k" fill="${c.ink}" font-size="9">&#8217;${yy} &#183; ${en?'open':'buka'}</text>`)}</${tag}>
      <p class="rt-ven">${esc(o.venue)}</p></div>
-    <p class="rt-hint">${en?'Tap the sun to open':'Sentuh matahari untuk membuka'}</p></div>`},
+    <p class="rt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;['s1','s2','s3','s4'].forEach(k=>el.style.setProperty('--'+k,c[k]));
     $$('.sheet > .sec',el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="rt-bands ${i%2?'r':''}"><i></i><i></i><i></i><i></i></i>`);const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend','<i class="rt-hsun"></i>')})},
   themes:[
@@ -6044,7 +6044,7 @@ FAMILY({key:'riso',name:'Risograf',meaning:'Two-colour riso print',
   page(o,th,L){return `<section class="page pg-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-sheet">${layers(o,th,L,'','page')}<i class="rs-grain"></i></div></section>`},
   cover(o,th,L,guest,tag,attr){const en=o.lang==='en';
     return `<div class="cover cv-riso" style="--blend:${th.c.blend||'multiply'}"><div class="rs-table"></div>
-    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Tap to open':'Sentuh untuk buka'} &#8594;</span></${tag}></div>`},
+    <${tag} class="rs-paper" ${attr} aria-label="${L.open}">${layers(o,th,L,guest,'cover')}<i class="rs-grain"></i><span class="rs-tab">${en?'Open invitation':'Buka Jemputan'} &#8594;</span></${tag}></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--blend',th.c.blend||'multiply');$$('.sheet > .sec',el).forEach((s,i)=>{s.classList.add(i%2?'rs-odd':'rs-even');const h=$('h2',s);if(h)h.setAttribute('data-t',h.textContent)})},
   themes:[
     {k:'jambu',n:'Jambu Biru',desc:'Fluorescent pink and blue on cream',c:{ground:'#3a3a40',sheet:'#f4efe4',ink:'#0b4f8a',accent:'#ff48b0',gold:'#0078bf',pagefg:'#f4efe4',line:'rgba(0,120,191,.35)'}},
@@ -6134,7 +6134,7 @@ FAMILY({key:'sakura',name:'Sakura',meaning:'Cherry blossom ink',
      <div class="sakura-br">${branchSvg(c,'sakura-cbr')}</div>
      ${pts.map(([x,y,r,rr,dx,dy],i)=>`<i class="sakura-pt" style="left:${x}%;top:${y}%;--r:${r}deg;--rr:${rr};--dx:${dx};--dy:${dy};--dl:${(i*.08).toFixed(2)}s">${petal1(c)}</i>`).join('')}
      <div class="sakura-txt"><p class="sakura-k">${ev(o,L)}</p><p class="sakura-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><i class="sakura-div"></i><p class="sakura-d">${esc(fmtDate(o.date,o.lang))}</p><p class="sakura-vn">${esc(o.venue)}</p></div>
-     <div class="sakura-foot">${guest?`<p class="sakura-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="sakura-seal" ${attr} aria-label="${L.open}">${seal(o,c,'')}</${tag}><p class="sakura-hint">${en?'Touch the seal to open':'Sentuh cop untuk membuka'}</p></div></div>`},
+     <div class="sakura-foot">${guest?`<p class="sakura-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="sakura-seal" ${attr} aria-label="${L.open}">${seal(o,c,'')}</${tag}><p class="sakura-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){el.style.setProperty('--div',DIV(pal(th.c)));el.style.setProperty('--fleck',FLECK);const c=pal(th.c);
     const bl=`<svg viewBox="-16 -16 32 32" ${NS}><defs><radialGradient id="skh" cx="0" cy="0" r="14" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.petalD}"/><stop offset=".45" stop-color="${c.petal}"/><stop offset="1" stop-color="${c.petalL}"/></radialGradient></defs>${blossom(0,0,13,10,c,'skh').replace(/url\(#skh\)/g,'url(#skh)')}</svg>`;
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin',`<i class="sakura-hb">${bl}</i>`));
@@ -6305,7 +6305,7 @@ FAMILY({key:'santorini',name:'Santorini',meaning:'Aegean village',
      <div class="st-card"><i class="st-paper"></i><${tag} class="st-tap" ${attr} aria-label="${L.open}"><span class="st-scene"><svg viewBox="0 0 390 1520" preserveAspectRatio="xMidYMin slice">${scene(c,id,c.night)}</svg></span></${tag}>
       <i class="st-foil"></i><i class="st-foil in"></i>
       <div class="st-head"><p class="st-k">${ev(o,L)}</p><p class="st-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="st-d">${esc(fmtDate(o.date,o.lang))}</p></div>
-      <div class="st-foot">${guest?`<p class="st-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="st-hint">${en?'Touch the view to see the sea':'Sentuh pemandangan untuk melihat laut'}</p></div></div></div>`},
+      <div class="st-foot">${guest?`<p class="st-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="st-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th),W=[];
     const vig=`<svg ${NS} viewBox="96 60 108 66"><defs><filter id="w"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>__W__${dome(c,W,150,118,40)}</svg>`;
     el.style.setProperty('--st-dome',K.uri(vig.replace('__W__','').replace('</svg>',`<g filter="url(#w)" opacity="${c.wa}" style="mix-blend-mode:${c.dark?'screen':'multiply'}">${W.join('')}</g></svg>`)));
@@ -6398,7 +6398,7 @@ FAMILY({key:'sianotip',name:'Sianotip',meaning:'Cyanotype sun print',
       <div class="sn-rule"><i></i><b></b><i></i></div><p class="sn-d">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="sn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
      <${tag} class="sn-sun" ${attr} aria-label="${L.open}">${sun(c)}</${tag}>
-     <p class="sn-hint">${en?'Touch the sun to develop the print':'Sentuh matahari untuk mencetak'}</p>
+     <p class="sn-hint">${en?'Open invitation':'Buka Jemputan'}</p>
      <p class="sn-pencil">${en?'cyanotype':'sianotip'} &middot; ${esc(fmtShort(o.date))}<span>No. 1/1</span></p></div></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);el.style.setProperty('--snP',c.sheet);el.style.setProperty('--snB',c.accent);el.style.setProperty('--snD',c.deep);el.style.setProperty('--deep',c.deep);
     el.style.setProperty('--snMask',K.uri(`<svg ${NS} viewBox="0 0 300 400" preserveAspectRatio="none"><filter id="b" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".02 .2" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter><rect x="10" y="10" width="280" height="380" fill="#fff" filter="url(#b)"/></svg>`));
@@ -6506,7 +6506,7 @@ FAMILY({key:'silangkata',name:'Silang Kata',meaning:'Crossword puzzle',
       <div class="silangkata-bot"><div class="silangkata-coupon"><p class="silangkata-ch">${en?'Entry coupon':'Kupon penyertaan'}</p>
         <p class="silangkata-cl"><span>${en?'Name':'Nama'}</span><b>${guest?esc(guest):'&nbsp;'}</b></p>
         <p class="silangkata-cl"><span>${en?'Reply by':'Jawab sebelum'}</span><b>${esc(o.deadline?fmtDate(o.deadline,o.lang,false):fmtDate(o.date,o.lang,false))}</b></p></div>
-       <p class="silangkata-hint">${en?'Touch the grid to solve':'Sentuh grid untuk menjawab'}</p></div></div>
+       <p class="silangkata-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>
      ${SK_PENCIL(c,++skN)}</div>`},
   skin(el,o,th,L){K.cards(el);el.style.setProperty('--pen',th.c.pen);
     $$('.sec',el).forEach((s,i)=>{s.classList.add('silangkata-sec');const h=$('h2',s);if(!h)return;const t=h.textContent.trim();
@@ -6600,7 +6600,7 @@ FAMILY({key:'sireh',name:'Tepak Sireh',meaning:'Brass betel box',
     return `<div class="cover cv-sireh ${c.lt?'ts-lt':''}" style="--lining:${c.lining||c.accent}"><div class="ts-velvet"></div><i class="ts-spot"></i><i class="ts-frame"></i>
      <div class="ts-head"><p class="ts-k">${ev(o,L)}</p><p class="ts-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ts-d">${esc(fmtDate(o.date,o.lang))}</p>${SPRIG}</div>
      <${tag} class="ts-stage" ${attr} aria-label="${L.open}">${box(true)}</${tag}>
-     <div class="ts-foot">${guest?`<p class="ts-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ts-hint">${en?'Touch the tepak to open its lid':'Sentuh tepak untuk membuka tudungnya'}</p></div></div>`},
+     <div class="ts-foot">${guest?`<p class="ts-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ts-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);if(th.c.lt)el.classList.add('ts-lt');
     $$('.sec h2',el).forEach(h=>{h.classList.add('ts-plq');h.innerHTML=`<span>${h.innerHTML}</span>`})},
   themes:[
@@ -6698,7 +6698,7 @@ FAMILY({key:'taman',name:'Taman',meaning:'English garden',
      <div class="taman-txt"><p class="taman-k">${ev(o,L)}</p><p class="taman-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</p><p class="taman-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="taman-plq" ${attr} aria-label="${L.open}"><svg viewBox="0 0 60 90"><path d="M30 0V24M30 0L14 30M30 0L46 30" stroke="${c.gold}" stroke-width=".6" stroke-dasharray="1.6 1.2" fill="none"/></svg><span>${esc(a)}<i>&amp;</i>${esc(b)}</span></${tag}>
      <div class="taman-low">${guest?`<p class="taman-to">${L.dear}<b>${esc(guest)}</b></p>`:`<p class="taman-to"><b>${esc(o.venue)}</b></p>`}</div></div>
-     <p class="taman-hint">${en?'Touch the plaque to part the wisteria':'Sentuh plak untuk menyelak wisteria'}</p></div>`},
+     <p class="taman-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);const r=rng(4);
     K.secs(el).forEach((s,i)=>{let w='';for(let k=0;k<4;k++)w+=raceme(10+k*9,0,30+r()*36-k*5,r,c,(r()-.5)*6);
       s.insertAdjacentHTML('afterbegin',`<i class="taman-lat"></i><svg class="taman-sw l" viewBox="0 -4 60 80">${w}</svg><svg class="taman-sw r" viewBox="0 -4 60 80">${w}</svg>`);
@@ -6783,7 +6783,7 @@ FAMILY({key:'teh',name:'Petang Teh',meaning:'Afternoon tea',
        <span class="th-label"><span class="th-lk">${ev(o,L)}</span>${sprig(c,'34%')}<span class="th-ln">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="th-lr"></span><span class="th-ld">${esc(fmtShort(o.date).replace(/\./g,' · '))}</span><span class="th-le">${en?'Est.':'Sejak'} ${esc(y)}</span></span></span>
       <span class="th-lid"><span class="th-knob"></span></span></${tag}>
      <div class="th-cupc">${cup(c,u)}</div><div class="th-spc">${sprig(c)}</div>
-     <p class="th-hint">${en?'Touch the tin to lift the lid':'Sentuh tin untuk membuka tudungnya'}</p></div>`},
+     <p class="th-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--saucer',SAUCER(th.c));el.style.setProperty('--tick',TICK(th.c))},
   themes:[
     {k:'merah',n:'Merah',desc:'Crimson tin on a cream cloth',c:{ground:'#efe6d9',sheet:'#fdf9f1',ink:'#33251f',accent:'#8e2430',gold:'#c49a4c',pagefg:'#33251f',tea:'#7a4320',leaf:'#4f6b3a',bunt:'#e8d9c2',wood:'#6b4a2e'}},
@@ -6862,7 +6862,7 @@ FAMILY({key:'tekan',name:'Bunga Tekan',meaning:'Pressed flowers',
      <div class="tekan-wrap"><div class="tekan-vel"><i class="tekan-foil"></i><p class="tekan-v1">${esc(o.venue)}</p>
       <div class="tekan-v2">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<span>${esc(fmtTime(o.start,o.lang))}</span>`}</div></div>
       ${cord(c)}<${tag} class="tekan-seal" ${attr} aria-label="${L.open}"><img src="/assets/seal-${c.seal}.webp" alt=""><span>${esc(i1)}<em>&amp;</em>${esc(i2)}</span></${tag}></div>
-     <p class="tekan-hint">${en?'Touch the seal to slip off the vellum':'Sentuh lilin untuk menanggalkan pembalut'}</p></div>`},
+     <p class="tekan-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="tekan-bg"></i>${sprayS(c,40+i*7,['a','b','c'][i%3],'tekan-sk '+(i%2?'r':'l'))}`);
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend',`<svg class="tekan-hr" viewBox="0 0 200 24">${sprig([10,14],[100,8+(i%3)],[190,14],7,8,c.leaf,c.vein,rng(9+i))}${bloom(100,11,4.5,[c.petal,c.petal2,c.petal3][i%3],c.eye,i*20)}</svg>`)})},
@@ -6966,7 +6966,7 @@ FAMILY({key:'tenun',name:'Pua Kumbu',meaning:'Iban ikat cloth',
       <span class="tn-p bot"><span class="f"></span><span class="b"></span></span>
       <span class="tn-band"><span class="tn-tag"><span class="tn-mono">${esc(i1)}<em>&amp;</em>${esc(i2)}</span></span></span>
      </${tag}>
-     <div class="tn-foot">${guest?`<p class="tn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="tn-hint">${en?'Touch the cloth to unfold it':'Sentuh kain untuk membukanya'}</p></div></div>`},
+     <div class="tn-foot">${guest?`<p class="tn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="tn-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--band',K.uri(bandSvg(pal(th.c))));el.style.setProperty('--emb',EMB);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="tn-h"></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="tn-strip"></i><i class="tn-fr"></i>'))},
@@ -7030,7 +7030,7 @@ FAMILY({key:'warkah',name:'Mohor Emas',meaning:'Sealed love letter',
         <${tag} class="wk-seal" ${attr} aria-label="${L.open}" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${wkMono(o)}</span></${tag}>
         ${wkFl(c.fl2,'width:40%;left:-12%;bottom:-36%;transform:rotate(-100deg)')}${wkFl(c.fl1,'width:50%;left:-24%;bottom:-46%;transform:rotate(-140deg)')}${wkFl(c.fl1,'width:50%;right:-24%;top:-46%;transform:rotate(40deg)')}${wkFl(c.fl2,'width:38%;right:-14%;top:-36%;transform:rotate(80deg)')}
       </div>
-      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Touch the seal to open':'Sentuh mohor untuk buka'}</p></div></div>`},
+      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
@@ -7113,7 +7113,7 @@ FAMILY({key:'washi',name:'Washi',meaning:'Japanese paper',
     return `<div class="cover cv-washi" style="--fib:${FIBRE};--sgp:${SEIGAIHA(c.wave)};--wood:${c.wood};--woodD:${c.woodD};--paper:${c.paper}">${panel('l')}${panel('r')}
 
      <${tag} class="ws-seal" ${attr} aria-label="${L.open}">${crest(o,c)}</${tag}>
-     <div class="ws-foot">${guest?`<p class="ws-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ws-hint">${en?'Touch the crest to slide the shoji open':'Sentuh lambang untuk membuka shoji'}</p></div></div>`},
+     <div class="ws-foot">${guest?`<p class="ws-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ws-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c),[a,b]=K.initials(o);el.style.setProperty('--fib',FIBRE);el.style.setProperty('--sgp',SEIGAIHA(c.wave));
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin',`<i class="ws-hanko"><b>${esc(a)}</b><b>${esc(b)}</b></i>`))},
   themes:[
@@ -7162,7 +7162,7 @@ FAMILY({key:'wau',name:'Wau',meaning:'Moon kite',
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';return `<div class="cover cv-wau"><div class="wau-sky"></div><i class="wau-cloud a"></i><i class="wau-cloud b"></i>
     <div class="wau-head"><p class="kicker">${ev(o,L)}</p><p class="wau-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
     <${tag} class="wau-fly" ${attr} aria-label="${L.open}">${wauSvg(c,++n)}<svg class="wau-str" viewBox="0 0 40 300" preserveAspectRatio="none"><path d="M20 0C32 90 6 180 22 300" fill="none" stroke="${c.sheet}" stroke-width="1" opacity=".75"/></svg></${tag}>
-    <div class="wau-foot">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wau-hint">${en?'Touch the kite to let it fly':'Sentuh wau untuk menerbangkannya'}</p></div></div>`},
+    <div class="wau-foot">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wau-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="wau-h"></i>'))},
   themes:[
     {k:'merah',n:'Merah',desc:'Red wau in a blue dusk',c:{ground:'#1f3a5f',sheet:'#fbf5e8',ink:'#2a2320',accent:'#b3262e',gold:'#d9a43a',pagefg:'#f6eedd'}},
@@ -7241,7 +7241,7 @@ FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play screen',
       <${tag} class="wy-lift" ${attr} aria-label="${L.open}">${gunungan(false)}</${tag}>
       <div class="wy-nm"><p class="wy-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="wy-d">${esc(fmtDate(o.date,o.lang))}</p></div></div>
      <i class="wy-trunkbar"></i>
-     <div class="wy-foot">${guest?`<p class="wy-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wy-hint">${en?'Touch the gunungan to begin':'Sentuh gunungan untuk bermula'}</p></div></div>`},
+     <div class="wy-foot">${guest?`<p class="wy-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wy-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.cssText+=';'+vars(th.c)},
   themes:[
     {k:'merah',n:'Merah',desc:'Amber screen, red valance, night-dark frame',c:{ground:'#1a0f0a',sheet:'#f7e3b9',ink:'#26140b',accent:'#8c1f1c',gold:'#d9a441',pagefg:'#f3e2c0'}},
@@ -7258,6 +7258,11 @@ FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play screen',
 
 
 /* ================= after all families: refresh lookups, load extra fonts, QA hook ================= */
+/* the newest stationery designs lead the gallery and the family lists */
+(()=>{const FIRST=['warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
+  THEMES.sort((a,b)=>rank(a.fam)-rank(b.fam));
+  const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
+  [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
 CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 /* needFont() fonts are loaded by src/app/fonts.ts */

@@ -42,7 +42,7 @@ FAMILY({key:'warkah',name:'Mohor Emas',meaning:'Sealed love letter',
         <${tag} class="wk-seal" ${attr} aria-label="${L.open}" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${wkMono(o)}</span></${tag}>
         ${wkFl(c.fl2,'width:40%;left:-12%;bottom:-36%;transform:rotate(-100deg)')}${wkFl(c.fl1,'width:50%;left:-24%;bottom:-46%;transform:rotate(-140deg)')}${wkFl(c.fl1,'width:50%;right:-24%;top:-46%;transform:rotate(40deg)')}${wkFl(c.fl2,'width:38%;right:-14%;top:-36%;transform:rotate(80deg)')}
       </div>
-      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Touch the seal to open':'Sentuh mohor untuk buka'}</p></div></div>`},
+      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;

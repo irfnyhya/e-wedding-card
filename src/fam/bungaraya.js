@@ -76,7 +76,7 @@ FAMILY({key:'bungaraya',name:'Bunga Raya',meaning:'Hibiscus bloom',
     return `<div class="cover cv-bungaraya" style="--leaves:${LEAVES}"><div class="br-paper"></div><div class="br-fr"></div>
      <div class="br-head"><p class="br-k">${ev(o,L)}</p><p class="br-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="br-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <div class="br-stage"><i class="br-lv"></i>${bloom(c,'big',tag,`${attr} aria-label="${L.open}"`)}</div>
-     <div class="br-foot">${guest?`<p class="br-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="br-hint">${en?'Touch the bloom to open':'Sentuh bunga untuk membuka'}</p></div></div>`},
+     <div class="br-foot">${guest?`<p class="br-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="br-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c);el.style.setProperty('--badge',BADGE(c));el.style.setProperty('--sprig',SPRIG);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="br-bd"><i></i><i></i><i></i></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="br-cs a"></i><i class="br-cs b"></i>'))},

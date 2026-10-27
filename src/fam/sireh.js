@@ -71,7 +71,7 @@ FAMILY({key:'sireh',name:'Tepak Sireh',meaning:'Brass betel box',
     return `<div class="cover cv-sireh ${c.lt?'ts-lt':''}" style="--lining:${c.lining||c.accent}"><div class="ts-velvet"></div><i class="ts-spot"></i><i class="ts-frame"></i>
      <div class="ts-head"><p class="ts-k">${ev(o,L)}</p><p class="ts-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ts-d">${esc(fmtDate(o.date,o.lang))}</p>${SPRIG}</div>
      <${tag} class="ts-stage" ${attr} aria-label="${L.open}">${box(true)}</${tag}>
-     <div class="ts-foot">${guest?`<p class="ts-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ts-hint">${en?'Touch the tepak to open its lid':'Sentuh tepak untuk membuka tudungnya'}</p></div></div>`},
+     <div class="ts-foot">${guest?`<p class="ts-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ts-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);if(th.c.lt)el.classList.add('ts-lt');
     $$('.sec h2',el).forEach(h=>{h.classList.add('ts-plq');h.innerHTML=`<span>${h.innerHTML}</span>`})},
   themes:[

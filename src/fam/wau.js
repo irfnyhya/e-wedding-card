@@ -28,7 +28,7 @@ FAMILY({key:'wau',name:'Wau',meaning:'Moon kite',
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';return `<div class="cover cv-wau"><div class="wau-sky"></div><i class="wau-cloud a"></i><i class="wau-cloud b"></i>
     <div class="wau-head"><p class="kicker">${ev(o,L)}</p><p class="wau-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
     <${tag} class="wau-fly" ${attr} aria-label="${L.open}">${wauSvg(c,++n)}<svg class="wau-str" viewBox="0 0 40 300" preserveAspectRatio="none"><path d="M20 0C32 90 6 180 22 300" fill="none" stroke="${c.sheet}" stroke-width="1" opacity=".75"/></svg></${tag}>
-    <div class="wau-foot">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wau-hint">${en?'Touch the kite to let it fly':'Sentuh wau untuk menerbangkannya'}</p></div></div>`},
+    <div class="wau-foot">${guest?`<p class="to-line">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="wau-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="wau-h"></i>'))},
   themes:[
     {k:'merah',n:'Merah',desc:'Red wau in a blue dusk',c:{ground:'#1f3a5f',sheet:'#fbf5e8',ink:'#2a2320',accent:'#b3262e',gold:'#d9a43a',pagefg:'#f6eedd'}},

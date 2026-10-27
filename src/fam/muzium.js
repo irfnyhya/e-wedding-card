@@ -39,7 +39,7 @@ FAMILY({key:'muzium',name:'Muzium',meaning:'Gallery painting',
      <${tag} class="muzium-tap" ${attr} aria-label="${L.open}">${mzFrame(c,u,false)}</${tag}>
      ${mzPlacard(o,L,false)}
      <i class="muzium-floor"></i><i class="muzium-post l"></i><i class="muzium-post r"></i><svg class="muzium-rope" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="${c.rope}" stroke-width="7" stroke-linecap="round"/><path d="M4 6C80 52 220 52 296 6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="3 4" transform="translate(0 -1.5)"/></svg>
-     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Touch the painting':'Sentuh lukisan'}</p></div></div>`},
+     <div class="muzium-foot">${guest?`<p class="muzium-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="muzium-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c,en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00'),y=isNaN(d)?'':d.getFullYear();
     el.style.setProperty('--p1',c.p1);el.style.setProperty('--p2',c.p2);el.style.setProperty('--p3',c.p3);
     $$('.sec',el).forEach((s,i)=>{s.classList.add('muzium-sec');const h=$('h2',s);if(!h)return;

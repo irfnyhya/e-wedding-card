@@ -92,7 +92,7 @@ FAMILY({key:'bulan',name:'Bulan',meaning:'Moon phases',
      <div class="bln-txt bln-fade"><p class="bln-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
       <div class="bln-rule"><i></i>${foil('bln-st',STAR4)}<i></i></div><p class="bln-date">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="bln-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}</div>
-     <p class="bln-hint bln-fade">${en?'Touch the moon to open':'Sentuh bulan untuk membuka'}</p></div>`},
+     <p class="bln-hint bln-fade">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--bln-cres',CRES);el.style.setProperty('--bln-star',STAR4);
     el.style.setProperty('--bln-dust',K.uri(`<svg xmlns="http://www.w3.org/2000/svg" width="260" height="300">${dust(260,300,60,5,th.c,2)}</svg>`));
     $$('.sheet > .sec',el).forEach((s,i)=>{const h=$('h2',s);if(h&&!$('.bln-h',h)){h.insertAdjacentHTML('afterbegin','<i class="bln-h"></i>')}

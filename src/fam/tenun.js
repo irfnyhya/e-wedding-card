@@ -82,7 +82,7 @@ FAMILY({key:'tenun',name:'Pua Kumbu',meaning:'Iban ikat cloth',
       <span class="tn-p bot"><span class="f"></span><span class="b"></span></span>
       <span class="tn-band"><span class="tn-tag"><span class="tn-mono">${esc(i1)}<em>&amp;</em>${esc(i2)}</span></span></span>
      </${tag}>
-     <div class="tn-foot">${guest?`<p class="tn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="tn-hint">${en?'Touch the cloth to unfold it':'Sentuh kain untuk membukanya'}</p></div></div>`},
+     <div class="tn-foot">${guest?`<p class="tn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="tn-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--band',K.uri(bandSvg(pal(th.c))));el.style.setProperty('--emb',EMB);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="tn-h"></i>'));
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="tn-strip"></i><i class="tn-fr"></i>'))},

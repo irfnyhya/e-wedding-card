@@ -1,5 +1,10 @@
 
 /* ================= after all families: refresh lookups, load extra fonts, QA hook ================= */
+/* the newest stationery designs lead the gallery and the family lists */
+(()=>{const FIRST=['warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
+  THEMES.sort((a,b)=>rank(a.fam)-rank(b.fam));
+  const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
+  [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
 CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?'+[...FAM_FONTS].map(f=>'family='+f).join('&')+'&display=swap';document.head.appendChild(l)}

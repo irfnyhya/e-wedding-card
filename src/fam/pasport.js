@@ -101,7 +101,7 @@ FAMILY({key:'pasport',name:'Pasport',meaning:'Passport booklet',
       </div><${tag} class="pasport-tap" ${attr} aria-label="${L.open}"></${tag}>
      </div>
     </div>
-    <div class="pasport-foot">${guest?`<p class="pasport-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pasport-hint">${en?'Touch the passport to open':'Sentuh pasport untuk membuka'}</p></div></div>`},
+    <div class="pasport-foot">${guest?`<p class="pasport-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pasport-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const u=++ppN,c=th.c,dt=ppDate(o);
     el.style.setProperty('--wave',ppWaveTile(c.accent,60,20,.14));el.style.setProperty('--stamp',c.stamp||c.accent);el.style.setProperty('--stamp2',c.stamp2||c.ink);
     el.style.setProperty('--rose',svgUriSq(`<svg ${NS} viewBox="0 0 120 120">${ppRose(60,60,40,7,11,12,.3,c.accent,.1)}${ppRose(60,60,24,4,7,8,.3,c.gold,.22)}</svg>`));

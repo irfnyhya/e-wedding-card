@@ -70,7 +70,7 @@ FAMILY({key:'sakura',name:'Sakura',meaning:'Cherry blossom ink',
      <div class="sakura-br">${branchSvg(c,'sakura-cbr')}</div>
      ${pts.map(([x,y,r,rr,dx,dy],i)=>`<i class="sakura-pt" style="left:${x}%;top:${y}%;--r:${r}deg;--rr:${rr};--dx:${dx};--dy:${dy};--dl:${(i*.08).toFixed(2)}s">${petal1(c)}</i>`).join('')}
      <div class="sakura-txt"><p class="sakura-k">${ev(o,L)}</p><p class="sakura-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><i class="sakura-div"></i><p class="sakura-d">${esc(fmtDate(o.date,o.lang))}</p><p class="sakura-vn">${esc(o.venue)}</p></div>
-     <div class="sakura-foot">${guest?`<p class="sakura-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="sakura-seal" ${attr} aria-label="${L.open}">${seal(o,c,'')}</${tag}><p class="sakura-hint">${en?'Touch the seal to open':'Sentuh cop untuk membuka'}</p></div></div>`},
+     <div class="sakura-foot">${guest?`<p class="sakura-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<${tag} class="sakura-seal" ${attr} aria-label="${L.open}">${seal(o,c,'')}</${tag}><p class="sakura-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){el.style.setProperty('--div',DIV(pal(th.c)));el.style.setProperty('--fleck',FLECK);const c=pal(th.c);
     const bl=`<svg viewBox="-16 -16 32 32" ${NS}><defs><radialGradient id="skh" cx="0" cy="0" r="14" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.petalD}"/><stop offset=".45" stop-color="${c.petal}"/><stop offset="1" stop-color="${c.petalL}"/></radialGradient></defs>${blossom(0,0,13,10,c,'skh').replace(/url\(#skh\)/g,'url(#skh)')}</svg>`;
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin',`<i class="sakura-hb">${bl}</i>`));

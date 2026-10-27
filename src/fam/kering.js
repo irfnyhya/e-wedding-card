@@ -52,7 +52,7 @@ FAMILY({key:'kering',name:'Bunga Kering',meaning:'Dried boho bouquet',
      <div class="kering-sw"><div class="kering-sleeve"><i class="kering-tex"></i><i class="kering-deb"></i>
       <div class="kering-to">${guest?`<span>${L.dear}</span><b>${esc(guest)}</b>`:`<b>${esc(o.venue)}</b>`}</div><svg class="kering-ss" viewBox="-60 -120 120 124" fill="none" stroke="${c.sleeveInk}">${[-38,-18,0,18,38].map((a,i)=>`<g transform="rotate(${a})"><path d="M0 0V${i%2?-80:-104}" stroke-width=".6"/>${Array.from({length:12},(_,k)=>`<path d="M0 ${-50-k*(i%2?2.5:4.4)}l${k%2?4:-4} -5" stroke-width=".45"/>`).join('')}</g>`).join('')}</svg><p class="kering-v">${esc(fmtTime(o.start,o.lang))} &middot; ${esc(o.venue)}</p></div></div>
      <${tag} class="kering-stamp" ${attr} aria-label="${L.open}"><span>${esc(a)}<i>&amp;</i>${esc(b)}</span></${tag}>
-     <p class="kering-hint">${en?'Touch the stamp to draw out the card':'Sentuh setem untuk menarik kad'}</p></div>`},
+     <p class="kering-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);
     K.secs(el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="kering-tex"></i>${bunchSvg(c,70+i,'sk',.42)}`);
       const h=s.querySelector('h2');if(h)h.insertAdjacentHTML('afterend','<div class="kering-rule"><i></i><b></b><i></i></div>')})},

@@ -94,7 +94,7 @@ FAMILY({key:'peranakan',name:'Nyonya',meaning:'Peranakan kamcheng',
      <div class="pk-beads"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></div><i class="pk-tl a"></i><i class="pk-tl b"></i><i class="pk-tl c"></i><i class="pk-tl d"></i>
      <div class="pk-head"><p class="pk-k">${ev(o,L)}</p><p class="pk-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p><p class="pk-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="pk-jar" ${attr} aria-label="${L.open}">${jarSvg(c)}</${tag}>
-     <div class="pk-foot">${guest?`<p class="pk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pk-hint">${en?'Touch the kamcheng to open':'Sentuh kamcheng untuk membuka'}</p></div></div>`},
+     <div class="pk-foot">${guest?`<p class="pk-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=pal(th.c);el.style.setProperty('--bead',K.uri(beadSvg(c,0)));el.style.setProperty('--tile',K.uri(tileSvg(c)));
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('beforebegin','<i class="pk-hb"></i>')});
     K.secs(el).forEach(s=>s.insertAdjacentHTML('afterbegin','<i class="pk-tc a"></i><i class="pk-tc b"></i><i class="pk-tc c"></i><i class="pk-tc d"></i>'))},

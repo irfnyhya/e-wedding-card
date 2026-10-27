@@ -64,7 +64,7 @@ FAMILY({key:'monogram',name:'Monogram',meaning:'Embossed crest',
       <p class="monogram-date">${esc(fmtDate(o.date,o.lang))}</p>
       <div class="monogram-rule"><i></i><b></b><i></i></div>
       ${guest?`<p class="monogram-to">${L.dear}</p><p class="monogram-guest">${esc(guest)}</p>`:`<p class="monogram-to">${esc(o.venue)}</p>`}
-      <p class="monogram-hint">${en?'Press the crest to open':'Tekan lambang untuk membuka'}</p></div></div>`},
+      <p class="monogram-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--mgsprig',SPRIG);el.style.setProperty('--mghi',th.c.hi);el.style.setProperty('--mglo',th.c.lo);
     $$('.sec h2',el).forEach(h=>{h.innerHTML=`<i class="monogram-sp"></i><span class="monogram-badge">${h.innerHTML}</span><i class="monogram-sp r"></i>`})},
   themes:[

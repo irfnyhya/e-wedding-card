@@ -35,7 +35,7 @@ FAMILY({key:'kotak',name:'Kotak Hadiah',meaning:'Gift box',
        <span class="kt-txt"><span class="kt-k">${ev(o,L)}</span><span class="kt-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</span><span class="kt-rule"><i></i><b></b><i></i></span><span class="kt-date">${esc(fmtDate(o.date,o.lang))}</span><span class="kt-ven">${esc(o.venue)}</span></span>
        <span class="kt-rv"></span><span class="kt-rh"></span>
        <span class="kt-bow">${bow(c,id)}</span><span class="kt-string"></span>${TAG(o,L,guest,en)}</span></${tag}>
-     <p class="kt-hint">${en?'Touch the bow to untie it':'Sentuh reben untuk membuka'}</p></div>`},
+     <p class="kt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;[['--rib',c.rib],['--ribhi',c.ribHi],['--riblo',c.ribLo],['--box',c.box]].forEach(([k,v])=>el.style.setProperty(k,v));
     $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h&&!h.dataset.kt){h.dataset.kt=1;h.innerHTML=`<span class="kt-ban"><i class="l"></i><span>${h.innerHTML}</span><i class="r"></i></span>`}})},
   themes:[

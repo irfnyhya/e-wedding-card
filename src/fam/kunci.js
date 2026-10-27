@@ -65,7 +65,7 @@ FAMILY({key:'kunci',name:'Kunci',meaning:'Room key',
      <div class="kc-head kc-fade"><p class="kc-k">${ev(o,L)}</p><p class="kc-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
      <${tag} class="kc-lock" ${attr} aria-label="${L.open}"><span class="kc-pw">${plate(c,id)}</span>
       <span class="kc-fw">${RING(c)}${fob(o,c,id,en)}</span><span class="kc-kw">${key(c,id)}</span></${tag}>
-     <div class="kc-foot kc-fade">${guest?`<p class="kc-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kc-hint">${en?'Touch the key to unlock':'Sentuh kunci untuk membuka'}</p></div></div>`},
+     <div class="kc-foot kc-fade">${guest?`<p class="kc-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}<p class="kc-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);el.style.setProperty('--hole',th.c.hole);
     $$('.sheet > .sec',el).forEach(s=>{const h=$('h2',s);if(h&&!h.dataset.kc){h.dataset.kc=1;h.innerHTML=`<span class="kc-tag"><i></i><span>${h.innerHTML}</span></span>`}})},
   themes:[

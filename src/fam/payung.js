@@ -85,7 +85,7 @@ FAMILY({key:'payung',name:'Payung',meaning:'Oil-paper umbrella',
      <div class="pu-head"><p class="pu-k">${ev(o,L)}</p><p class="pu-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="pu-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="pu-tap" ${attr} aria-label="${L.open}"><span class="pu-closed">${closedSvg(c)}</span></${tag}>
      ${canopy(c,'open')}
-     <div class="pu-foot">${guest?`<p class="pu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pu-hint">${en?'Touch the umbrella to open it':'Sentuh payung untuk membukanya'}</p></div></div>`},
+     <div class="pu-foot">${guest?`<p class="pu-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="pu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);$$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="pu-hr"></i>'))},
   themes:[
     {k:'merah',n:'Merah',desc:'Red umbrella with plum blossom',c:{ground:'#f3ebde',sheet:'#fcf8f0',ink:'#33241e',accent:'#a6262c',gold:'#b08a48',pagefg:'#33241e',canopy:'#c0303a',canopyL:'#d9524f',canopyD:'#8a1a24',band:'#1f3a5f',flower:'#fbe6dc',flowerC:'#f2c14e'}},

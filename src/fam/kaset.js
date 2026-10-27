@@ -88,7 +88,7 @@ FAMILY({key:'kaset',name:'Kaset',meaning:'Mixtape cassette',
       <div class="kaset-face back"><i class="kaset-glass"></i></div></div>
      <${tag} class="kaset-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="kaset-bot">${guest?`<p class="kaset-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kaset-hint">${en?'Touch the case to open':'Sentuh kotak kaset untuk membuka'}</p></div></div>`},
+    <div class="kaset-bot">${guest?`<p class="kaset-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kaset-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;el.style.setProperty('--strip',ksStrip(c));el.style.setProperty('--pin',ksPin(c.gold));el.style.setProperty('--pen',c.pen);
     const durs=['03:41','04:12','02:58','05:06','03:27','04:45','03:09','04:30','02:51','03:55','04:02'];
     $$('.sec',el).forEach((s,i)=>{s.classList.add('kaset-sec');const h=$('h2',s);if(!h)return;

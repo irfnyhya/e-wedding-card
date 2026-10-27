@@ -71,7 +71,7 @@ FAMILY({key:'kerongsang',name:'Kerongsang',meaning:'Kebaya brooches',
      <div class="kerongsang-stage"><div class="kerongsang-pan l">${pn}</div><div class="kerongsang-pan r">${pn}</div>
       <div class="kerongsang-head"><p class="kerongsang-k">${ev(o,L)}</p><p class="kerongsang-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kerongsang-d">${esc(fmtDate(o.date,o.lang))}</p></div>
       <${tag} class="kerongsang-set" ${attr} aria-label="${L.open}"><i class="kerongsang-b ibu">${ibu()}</i>${chain(84)}<i class="kerongsang-b anak">${anak()}</i>${chain(72)}<i class="kerongsang-b anak">${anak()}</i></${tag}></div>
-     <div class="kerongsang-foot">${guest?`<p class="kerongsang-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kerongsang-hint">${en?'Touch the kerongsang to open':'Sentuh kerongsang untuk membuka'}</p></div></div>`},
+     <div class="kerongsang-foot">${guest?`<p class="kerongsang-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="kerongsang-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c)+';--kr-bul:'+BUL(c);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="kerongsang-hb"></i>'))},
   themes:[

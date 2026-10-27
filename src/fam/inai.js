@@ -71,7 +71,7 @@ FAMILY({key:'inai',name:'Malam Berinai',meaning:'Henna night',
      <div class="ih-head"><p class="ih-k">${ev(o,L)}</p><p class="ih-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="ih-dt">${esc(fmtDate(o.date,o.lang))}</p></div>
      <${tag} class="ih-tap" ${attr} aria-label="${L.open}">${medallion(a1+'·'+a2)}</${tag}>
      <i class="ih-conew">${CONE}</i><i class="ih-bowlw">${bowl()}</i>
-     <div class="ih-foot">${guest?`<p class="ih-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ih-hint">${en?'Touch the henna':'Sentuh inai'}</p></div></div>`},
+     <div class="ih-foot">${guest?`<p class="ih-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="ih-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;el.style.cssText+=';'+vars(c);if(c.dk)el.classList.add('ih-dk');
     $$('.sec h2',el).forEach(h=>{h.insertAdjacentHTML('afterbegin','<i class="ih-hp"></i>');h.insertAdjacentHTML('beforeend','<i class="ih-hp r"></i>')});
     $$('.sec .rule',el).forEach(r=>r.outerHTML='<i class="ih-div"></i>');

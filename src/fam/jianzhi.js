@@ -90,7 +90,7 @@ FAMILY({key:'jianzhi',name:'Potong Kertas',meaning:'Chinese papercut',
      <div class="jz-gate"><p class="jz-k">${ev(o,L)}</p><p class="jz-n">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="jz-d">${esc(fmtDate(o.date,o.lang))}</p></div>
      <i class="jz-l b"><i></i></i><i class="jz-l a"><i></i></i>
      <${tag} class="jz-tap" ${attr} aria-label="${L.open}"></${tag}>
-     <div class="jz-foot">${guest?`<p class="jz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="jz-hint">${en?'Touch the moon gate':'Sentuh pintu bulan'}</p></div></div>`},
+     <div class="jz-foot">${guest?`<p class="jz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="jz-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);PV(th.c).split(';').forEach(kv=>{const [k,v]=kv.split(':');el.style.setProperty(k,v)});el.style.setProperty('--frame',FRAME(th.c.paper||th.c.accent));el.style.setProperty('--rose',ROSE);
     $$('.sec h2',el).forEach(h=>h.insertAdjacentHTML('afterbegin','<i class="jz-hr"></i>'))},
   themes:[

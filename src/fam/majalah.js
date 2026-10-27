@@ -47,7 +47,7 @@ FAMILY({key:'majalah',name:'Majalah',meaning:'Magazine cover',
       <div class="majalah-face back"><i class="majalah-shade"></i></div></div>
      <${tag} class="majalah-tap" ${attr} aria-label="${L.open}"></${tag}>
     </div>
-    <div class="majalah-foot">${guest?`<p class="majalah-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="majalah-hint">${en?'Touch the cover to turn the page':'Sentuh muka depan untuk menyelak'}</p></div></div>`},
+    <div class="majalah-foot">${guest?`<p class="majalah-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="majalah-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th,L){K.cards(el);const en=o.lang==='en',d=new Date((o.date||'')+'T00:00:00');el.style.setProperty('--mast',th.c.mast);el.style.setProperty('--art2',th.c.art2);
     const KK={intro:en?'Opening':'Pembuka',when:en?'Agenda':'Agenda',count:en?'Countdown':'Detik',sched:en?'Programme':'Aturcara',gallery:en?'Gallery':'Galeri',doa:en?'Prayer':'Doa',rsvp:'RSVP',wishes:en?'Notes':'Ucapan',gift:en?'Gifts':'Hadiah',wishlist:en?'Wishlist':'Hajat',contact:en?'Contact':'Hubungi'};
     const mon=isNaN(d)?'':`${(MONTHS[o.lang]||MONTHS.ms)[d.getMonth()]} ${d.getFullYear()}`;

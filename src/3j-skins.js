@@ -27,11 +27,11 @@ Object.assign(FAM2.gerbang,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverName
   <div class="plaque"><span class="pl-k">${ev(o,L)}</span><span class="pl-n">${esc(n1)} &amp; ${esc(n2)}</span></div>
   <span class="gate l">${gateSvg2(m)}</span><span class="gate r"><span style="display:block;height:100%;transform:scaleX(-1)">${gateSvg2(m)}</span></span>
   <${tag} class="knock" ${attr} aria-label="${L.open}"><i></i></${tag}>
-  <p class="g-to">${guest?`${L.dear} <b>${esc(guest)}</b>`:''}<span>${en?'Tap the ring to open the gates':'Sentuh gelang untuk membuka pintu pagar'}</span></p></div>`}});
+  <p class="g-to">${guest?`${L.dear} <b>${esc(guest)}</b>`:''}<span>${en?'Open invitation':'Buka Jemputan'}</span></p></div>`}});
 Object.assign(FAM2.pawagam,{ms:1500,cover(o,th,L,guest,tag,attr){const en=o.lang==='en';const serial=String(fmtShort(o.date)).replace(/\D/g,'').slice(0,6);return `<div class="cover cv-cinema">
   <div class="curtain l"></div><div class="curtain r"></div><div class="valance"></div><div class="spot"></div>
   <${tag} class="tk" ${attr}><span class="tk-main"><span class="tk-row"><span>${en?'Picture house':'Panggung wayang'}</span><span>No. ${serial}</span></span><b class="tk-adm">${en?'ADMIT ONE':'MASUK SEORANG'}</b><span class="tk-film">${en?'A Love Story':'Kisah Cinta'}</span><span class="tk-who">${guest?esc(guest):(en?'Honoured guest':'Tetamu kehormat')}</span><span class="tk-row"><span>${esc(fmtShort(o.date))}</span><span>${esc(fmtTime(o.start,o.lang))}</span><span>${en?'Row':'Baris'} A · ${en?'Seat':'Kerusi'} 1</span></span></span><span class="tk-stub"><span>${en?'Tear':'Koyak'}</span><b>${serial}</b></span></${tag}>
-  <p class="tk-hint">${en?'Tap the ticket to go in':'Sentuh tiket untuk masuk panggung'}</p></div>`}});
+  <p class="tk-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`}});
 Object.assign(FAM2.label,{cover(o,th,L,guest,tag,attr){const c=th.c,[n1,n2]=coverNames(o);const sprig=c.ink;return `<div class="cover cv-label linen">
   <svg class="twine" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M50 0 C46 20 54 34 50 58" stroke="#c9ad7a" stroke-width="1.6" fill="none"/><path d="M50 0 C55 18 45 36 50 58" stroke="#b39463" stroke-width="1.2" fill="none"/></svg>
   <${tag} class="hangtag2" ${attr}>${tagSvg(c.sheet,c.accent)}<i class="grommet"></i>${ENG(th.eng||'jasmine','width:46%;left:-8%;top:8%;transform:rotate(-24deg);background:var(--accent);opacity:.85')}
@@ -48,9 +48,9 @@ Object.assign(FAM2.buku,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o
   <span class="bk-label"><span class="ttl foil-text">${en?'Our Story':'Kisah Kita'}</span><span class="foil-text" style="font-family:'Pinyon Script',cursive;font-size:28px">${esc(n1)} &amp; ${esc(n2)}</span></span>
   ${guest?`<span class="small" style="color:var(--gold);position:relative">${L.dear} ${esc(guest)}</span>`:''}<span class="caps" style="font-size:10px;color:var(--gold);position:relative">${en?'Open the book':'Buka buku'}</span><span class="bookmark"></span></${tag}></div>`}});
 Object.assign(FAM2.vinyl,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-vinyl"><div class="sleeve-wrap"><div class="disc"><div class="lbl"></div></div><${tag} class="sleeve sl2" ${attr}><span class="sl-ring"></span><span class="sl-sticker">${en?'Limited<br>edition':'Edisi<br>terhad'}</span>
-  <span class="sl-top">${en?'The wedding album':'Album perkahwinan'} · ${esc(fmtShort(o.date))}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="sl-tracks">${(o.schedule||[]).filter(s=>s.label).slice(0,4).map((s,i)=>`A${i+1} ${esc(s.label)}`).join(' · ')}</span><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'Tap to play':'Sentuh untuk main')}</span></${tag}></div></div>`}});
+  <span class="sl-top">${en?'The wedding album':'Album perkahwinan'} · ${esc(fmtShort(o.date))}</span><b>${esc(n1)}<br>&amp; ${esc(n2)}</b><span class="sl-tracks">${(o.schedule||[]).filter(s=>s.label).slice(0,4).map((s,i)=>`A${i+1} ${esc(s.label)}`).join(' · ')}</span><span class="caps" style="font-size:10px">${guest?`${L.dear} ${esc(guest)}`:(en?'Open invitation':'Buka Jemputan')}</span></${tag}></div></div>`}});
 Object.assign(FAM2.baldu,{cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-baldu"><div class="folio velvet"><div class="ribbon-h"></div>${guest?`<div class="to">${L.dear}<b>${esc(guest)}</b></div>`:`<div class="to"><b>${esc(n1)} &amp; ${esc(n2)}</b></div>`}
-  <${tag} class="plate2" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${en?'Tap the brass plate to open':'Sentuh plat tembaga untuk membuka'}</p></div></div>`}});
+  <${tag} class="plate2" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}&amp;${esc((n2||'A')[0])}</span></${tag}><p class="hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 const _decoCover=FAM2.deco.cover;FAM2.deco.cover=(o,th,L,guest,tag,attr)=>{const [n1,n2]=coverNames(o);return _decoCover(o,th,L,guest||`${n1} & ${n2}`,tag,attr).replace('<div class="dial">',`<p class="transom foil-text">${ev(o,L)}</p><div class="dial">`)};
 const _songCover=FAM2.songket.cover;FAM2.songket.cover=(o,th,L,guest,tag,attr)=>{const [n1,n2]=coverNames(o);return _songCover(o,th,L,guest||`${n1} & ${n2}`,tag,attr)};
 
@@ -99,7 +99,7 @@ Object.assign(FAM2.gerbang,{ms:1150,
   <div class="g3head"><p class="g3k">${ev(o,L)}</p><p class="g3n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p>${guest?`<p class="g3to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
   <div class="g3gate"><i class="g3leaf l"></i><i class="g3leaf r"></i>
   <${tag} class="g3lock" ${attr} aria-label="${L.open}"><span>${esc((n1||'A')[0])}${esc((n2||'A')[0])}</span></${tag}></div>
-  <p class="g3hint">${en?'Touch the monogram to open':'Sentuh monogram untuk membuka'}</p></div></div>`}});
+  <p class="g3hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 
 
 /* label, front page take two: a board of vintage apothecary labels */
@@ -143,7 +143,7 @@ Object.assign(FAM2.jubin,{ms:1200,cover(o,th,L,guest,tag,attr){const [n1,n2]=cov
    <p class="j3-k">${ev(o,L)}</p>
    <${tag} class="j3-med" ${attr} aria-label="${L.open}">${zelligeRosette(c)}<span class="j3-in"><b class="j3-n">${esc(n1)}<i>&amp;</i>${esc(n2)}</b><span class="j3-d">${esc(fmtShort(o.date))}</span></span></${tag}>
    ${guest?`<p class="j3-to"><span>${L.dear}</span><b>${esc(guest)}</b></p>`:''}
-   <p class="j3-h">${en?'Touch the medallion to open':'Sentuh medalion untuk membuka'}</p></div></div>`}});
+   <p class="j3-h">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`}});
 
 const SKINS={
  sampul:cards,

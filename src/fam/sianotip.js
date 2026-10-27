@@ -65,7 +65,7 @@ FAMILY({key:'sianotip',name:'Sianotip',meaning:'Cyanotype sun print',
       <div class="sn-rule"><i></i><b></b><i></i></div><p class="sn-d">${esc(fmtDate(o.date,o.lang))}</p>
       ${guest?`<p class="sn-to">${L.dear}<b>${esc(guest)}</b></p>`:''}</div>
      <${tag} class="sn-sun" ${attr} aria-label="${L.open}">${sun(c)}</${tag}>
-     <p class="sn-hint">${en?'Touch the sun to develop the print':'Sentuh matahari untuk mencetak'}</p>
+     <p class="sn-hint">${en?'Open invitation':'Buka Jemputan'}</p>
      <p class="sn-pencil">${en?'cyanotype':'sianotip'} &middot; ${esc(fmtShort(o.date))}<span>No. 1/1</span></p></div></div>`},
   skin(el,o,th){const c=th.c;K.cards(el);el.style.setProperty('--snP',c.sheet);el.style.setProperty('--snB',c.accent);el.style.setProperty('--snD',c.deep);el.style.setProperty('--deep',c.deep);
     el.style.setProperty('--snMask',K.uri(`<svg ${NS} viewBox="0 0 300 400" preserveAspectRatio="none"><filter id="b" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".02 .2" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter><rect x="10" y="10" width="280" height="380" fill="#fff" filter="url(#b)"/></svg>`));

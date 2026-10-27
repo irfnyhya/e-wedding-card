@@ -52,7 +52,7 @@ FAMILY({key:'retro',name:'Retro 70-an',meaning:'Seventies rainbow print',
      <${tag} class="rt-sun" ${attr} aria-label="${L.open}">${sun(c,'rt-sunsvg',`<path id="rs${u}" d="M58 104A42 42 0 0 1 142 104" fill="none"/><text class="rt-k" font-size="11" fill="${c.ink}"><textPath href="#rs${u}" startOffset="50%" text-anchor="middle">${esc(fmtDate(o.date,o.lang).split(',')[0])}</textPath></text>
        <text x="100" y="122" text-anchor="middle" class="rt-d" fill="${c.s2}" font-size="30">${dd}.${mm}</text><text x="100" y="138" text-anchor="middle" class="rt-k" fill="${c.ink}" font-size="9">&#8217;${yy} &#183; ${en?'open':'buka'}</text>`)}</${tag}>
      <p class="rt-ven">${esc(o.venue)}</p></div>
-    <p class="rt-hint">${en?'Tap the sun to open':'Sentuh matahari untuk membuka'}</p></div>`},
+    <p class="rt-hint">${en?'Open invitation':'Buka Jemputan'}</p></div>`},
   skin(el,o,th){K.cards(el);const c=th.c;['s1','s2','s3','s4'].forEach(k=>el.style.setProperty('--'+k,c[k]));
     $$('.sheet > .sec',el).forEach((s,i)=>{s.insertAdjacentHTML('afterbegin',`<i class="rt-bands ${i%2?'r':''}"><i></i><i></i><i></i><i></i></i>`);const h=$('h2',s);if(h)h.insertAdjacentHTML('afterend','<i class="rt-hsun"></i>')})},
   themes:[

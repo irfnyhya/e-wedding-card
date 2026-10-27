@@ -105,7 +105,7 @@ FAMILY({key:'iznik',name:'Iznik',meaning:'Ottoman tile panel',
      <div class="iz-top"><p class="iz-k">${en?'Kindly join us':'Dengan penuh kesyukuran'}</p></div>
      <div class="iz-win"><${tag} class="iz-panel" ${attr} aria-label="${L.open}"><svg viewBox="0 0 300 500" preserveAspectRatio="xMidYMax meet">${panel(c,id,n1||'',n2||'',ev(o,L),esc(fmtDate(o.date,o.lang)))}</svg></${tag}></div>
      <div class="iz-sill"><i class="top"></i><i class="front"></i></div>
-     <div class="iz-foot">${guest?`<p class="iz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="iz-hint">${en?'Touch the tiles to open':'Sentuh jubin untuk membuka'}</p></div></div>`},
+     <div class="iz-foot">${guest?`<p class="iz-to">${L.dear}<b>${esc(guest)}</b></p>`:''}<p class="iz-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
   skin(el,o,th){K.cards(el);const c=cols(th);
     el.style.setProperty('--iz-bh',K.uri(borderTile(c)));el.style.setProperty('--iz-bv',K.uri(borderTile(c,1)));el.style.setProperty('--iz-bd',c.bd);el.style.setProperty('--iz-tq',c.tq);el.style.setProperty('--iz-joint',c.joint);
     el.style.setProperty('--iz-tulip',K.uri(`<svg ${NS} viewBox="-22 -30 44 34"><path d="M0 2C-8-2-14-4-20-2C-14-8-6-8 0 2Z" fill="${c.green}" stroke="${c.ink}" stroke-width=".5"/><path d="M0 2C8-2 14-4 20-2C14-8 6-8 0 2Z" fill="${c.green}" stroke="${c.ink}" stroke-width=".5"/>${tulip(c,1.1)}</svg>`));
