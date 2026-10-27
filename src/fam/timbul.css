@@ -1,0 +1,86 @@
+/* ===== timbul ===== */
+/* a pale surface lit from the upper left */
+.inv .tb-ground{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 90% 70% at 18% 8%,color-mix(in srgb,var(--ground) 70%,#fff),transparent 70%),linear-gradient(150deg,var(--ground),color-mix(in srgb,var(--ground) 88%,#000))}
+.inv .tb-ground::after{content:"";position:absolute;inset:0;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.28}
+
+/* the thick cotton card: paper face, a 2px edge, a long soft shadow away from the light */
+.inv .tb-card{position:relative;width:100%;aspect-ratio:300/420;background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;color:var(--accent);border-radius:1.5px;
+  box-shadow:1px 1px 0 color-mix(in srgb,var(--sheet) 88%,#000),2px 2px 0 color-mix(in srgb,var(--sheet) 80%,#000),2.5px 2.5px 1px color-mix(in srgb,var(--shade) 25%,transparent),
+  12px 18px 26px -8px color-mix(in srgb,var(--shade) 32%,transparent),24px 34px 50px -18px color-mix(in srgb,var(--shade) 20%,transparent)}
+.inv .tb-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(128deg,rgba(255,255,255,.32),rgba(255,255,255,0) 42%,rgba(0,0,0,0) 60%,color-mix(in srgb,var(--shade) 8%,transparent))}
+.inv .tb-relief{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* letterpress: one ink, pressed in (a light lip under each stroke) */
+.inv .tb-k,.inv .tb-cn,.inv .tb-cd,.inv .tb-cv,.inv .tb-names,.inv .tb-date,.inv .tb-hj,.inv .tb-ven,.inv .tb-mono,.inv .tb-bis{color:var(--accent);text-shadow:0 .8px 0 rgba(255,255,255,.55),0 -.4px 0 color-mix(in srgb,var(--shade) 30%,transparent)}
+.inv .tb-k{font-family:"Cormorant Garamond",serif;font-size:8.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase}
+
+/* cover */
+.inv .cv-timbul{background:var(--ground);overflow:hidden;transition:opacity .45s 1s}
+.inv .tb-stage{position:absolute;left:8%;right:8%;top:6%;z-index:3;perspective:1100px}
+.inv .tb-stage .tb-card{transform-origin:50% 60%}
+.inv .tb-ctxt{position:absolute;left:24%;right:24%;top:22%;bottom:29%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2}
+.inv .tb-cn{font-family:"Cormorant Garamond",serif;font-weight:500;text-transform:uppercase;letter-spacing:.16em;font-size:clamp(19px,6cqi,24px);line-height:1.12;margin:10px 0 9px;display:flex;flex-direction:column;align-items:center;overflow-wrap:anywhere}
+.inv .tb-cn span,.inv .tb-names span{font-family:"Pinyon Script",cursive;text-transform:none;letter-spacing:0;font-weight:400;font-size:1.25em;line-height:.9;margin:2px 0 0}
+.inv .tb-cd{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:10px;letter-spacing:.3em}
+.inv .tb-cv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12.5px;line-height:1.25;margin-top:9px;max-width:90%}
+.inv .tb-cv::before{content:"";display:block;width:24px;height:1px;margin:0 auto 8px;background:currentColor;opacity:.4}
+.inv .tb-sheen{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;border-radius:inherit;overflow:hidden;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 46%,rgba(255,255,255,.0) 60%) -150% 0/250% 100% no-repeat;mix-blend-mode:soft-light}
+.inv .tb-foot{position:absolute;left:0;right:0;bottom:8%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .4s}
+.inv .tb-to{text-align:center}
+.inv .tb-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+.inv .tb-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:27px;line-height:1.25}
+.inv .tb-open{cursor:pointer;padding:12px 32px;border-radius:999px;font-family:"Cormorant Garamond",serif;font-size:11px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--pagefg);
+  background:var(--sheet);border:0;box-shadow:inset 1px 1px 0 rgba(255,255,255,.7),inset -1px -1px 0 color-mix(in srgb,var(--shade) 14%,transparent),2px 4px 10px -2px color-mix(in srgb,var(--shade) 30%,transparent)}
+/* opening: the card tilts in the light, a sheen crosses it, then it lifts towards you */
+@keyframes tbTilt{0%{transform:none}42%{transform:rotateX(9deg) rotateY(-11deg) rotateZ(-.6deg)}100%{transform:translateY(-3%) scale(1.16)}}
+@keyframes tbSheen{0%{opacity:0;background-position:-150% 0}20%{opacity:1}100%{opacity:0;background-position:150% 0}}
+.inv.opening .tb-stage .tb-card{animation:tbTilt 1.35s cubic-bezier(.45,.05,.25,1) forwards}
+.inv.opening .tb-sheen{animation:tbSheen 1s ease-in-out .1s forwards}
+.inv.opening .tb-foot{opacity:0}
+.inv.opening .cv-timbul{opacity:0}
+
+/* page: the card, larger, with a small cameo for the monogram */
+.inv .pg-timbul{background:var(--ground);color:var(--pagefg);padding:34px 20px 92px;gap:22px;overflow:hidden}
+.inv .pg-timbul > :not(.tb-ground){position:relative;z-index:2}
+.inv .tb-pwrap{width:88%;max-width:350px}
+.inv .tb-pcard{aspect-ratio:300/470}
+.inv .tb-mono{position:absolute;left:34.7%;width:30.6%;top:10.2%;height:23.8%;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;overflow:hidden}
+.inv .tb-mono span{font-family:"Pinyon Script",cursive;font-size:clamp(26px,8.4cqi,34px);line-height:1}
+.inv .tb-mono span i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;margin:0 2px}
+.inv .tb-mono .tb-jw{font-family:"Amiri",serif}
+.inv .tb-mono.has-photo{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.inv .tb-mono .tb-photo{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block}
+.inv .tb-ptxt{position:absolute;left:16%;right:16%;top:40%;bottom:15%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2}
+.inv .tb-bis{font-family:"Amiri",serif;font-size:14px;margin-bottom:8px}
+.inv .tb-names{font-family:"Cormorant Garamond",serif;font-weight:500;text-transform:uppercase;letter-spacing:.16em;font-size:clamp(22px,7cqi,28px);line-height:1.1;margin:10px 0 10px;display:flex;flex-direction:column;align-items:center;overflow-wrap:anywhere}
+.inv .tb-date{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase}
+.inv .tb-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px;margin-top:3px;opacity:.85}
+.inv .tb-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:10px;line-height:1.25}
+.inv .tb-pill{align-self:center;flex:0 0 auto;width:auto!important;padding:12px 32px;border-radius:999px;text-decoration:none;color:var(--pagefg);background:var(--sheet);
+  font-family:"Cormorant Garamond",serif;font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.7),inset -1px -1px 0 color-mix(in srgb,var(--shade) 14%,transparent),2px 4px 10px -2px color-mix(in srgb,var(--shade) 30%,transparent)}
+.inv .pg-timbul .couple-ph.front{display:none}
+
+/* skin: cotton cards with a blind-embossed double rule, letterpressed caps headings over an embossed sprig */
+.fam-timbul .scroller{background:linear-gradient(160deg,color-mix(in srgb,var(--ground) 80%,#fff),var(--ground) 40%,color-mix(in srgb,var(--ground) 92%,#000))}
+.fam-timbul .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/linen.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.25}
+.fam-timbul.cardsecs .sec{background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:1.5px;padding:48px 30px 44px;
+  box-shadow:1px 1px 0 color-mix(in srgb,var(--sheet) 86%,#000),2px 2px 0 color-mix(in srgb,var(--sheet) 80%,#000),10px 16px 26px -10px color-mix(in srgb,var(--shade) 40%,transparent)}
+.fam-timbul.cardsecs .sec::before{content:"";position:absolute;inset:11px;pointer-events:none;border-radius:1px;
+  box-shadow:-.6px -.6px 0 rgba(255,255,255,.85),.7px .7px 0 color-mix(in srgb,var(--shade) 22%,transparent),inset -.6px -.6px 0 rgba(255,255,255,.85),inset .7px .7px 0 color-mix(in srgb,var(--shade) 22%,transparent)}
+.fam-timbul .sec h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:13.5px;letter-spacing:.34em;color:var(--accent);text-shadow:0 .8px 0 rgba(255,255,255,.55)}
+.fam-timbul .sec h2::after{content:"";display:block;width:120px;height:26px;margin:8px auto 0;background:var(--tbsprig) center/contain no-repeat}
+.fam-timbul .sec,.fam-timbul .sec p,.fam-timbul .info b{color:var(--ink)}
+.fam-timbul .info,.fam-timbul .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-timbul .info > div{padding:14px 6px!important;border-bottom:0!important;box-shadow:0 1px 0 rgba(255,255,255,.7),0 .5px 0 color-mix(in srgb,var(--shade) 22%,transparent)!important}
+.fam-timbul .info > div:last-child{box-shadow:none!important}
+.fam-timbul .info span{color:var(--accent);letter-spacing:.24em}
+.fam-timbul .ibtn{color:var(--accent);border:0;border-radius:999px;background:var(--sheet);box-shadow:inset 1px 1px 0 rgba(255,255,255,.7),inset -1px -1px 0 color-mix(in srgb,var(--shade) 18%,transparent),1px 2px 6px -1px color-mix(in srgb,var(--shade) 30%,transparent)}
+.fam-timbul input,.fam-timbul select,.fam-timbul textarea{background:color-mix(in srgb,var(--sheet) 80%,#fff);color:var(--ink);border-color:color-mix(in srgb,var(--shade) 22%,transparent);box-shadow:inset 1px 1px 2px color-mix(in srgb,var(--shade) 14%,transparent)}
+.fam-timbul .seg button[aria-pressed="true"],.fam-timbul button.submit{color:var(--sheet)!important;background:var(--accent)!important;border-color:var(--accent)!important}
+.fam-timbul button.submit,.fam-timbul .seg button{border-radius:999px}
+.fam-timbul .seg{gap:8px;border:0;background:none}
+.fam-timbul .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-timbul .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv.opening .tb-stage .tb-card,.inv.opening .tb-sheen{animation:none}}

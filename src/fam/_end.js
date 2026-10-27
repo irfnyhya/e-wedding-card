@@ -1,7 +1,7 @@
 
 /* ================= after all families: refresh lookups, load extra fonts, QA hook ================= */
 /* the newest stationery designs lead the gallery and the family lists */
-(()=>{const FIRST=['warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
+(()=>{const FIRST=['lili','satin','renda2','lanskap','lengkung','tulle','timbul','tasik','warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
   THEMES.sort((a,b)=>rank(a.fam)-rank(b.fam));
   const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
   [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();

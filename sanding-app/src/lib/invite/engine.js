@@ -4747,6 +4747,203 @@ FAMILY({key:'lakaran',name:'Lakaran',meaning:'Pen-and-ink sketch',
 })()}catch(e){console.error("family lakaran failed",e)}
 
 
+/* ===== family: lanskap ===== */
+try{(()=>{
+/* lanskap: a public-domain landscape painting seen through an ornate cream lace-paper frame with a die-cut scalloped window.
+   The names sit in white script directly on the painting, like a save-the-date from the countryside.
+   Cover: tap "Buka Jemputan", the lace frame lifts off and the painting settles to full bleed.
+   Page: the painting full bleed with a fine cream inset rule, names on it and a small die-cut lace label.
+   Skin: cream paper cards with scalloped die-cut edges over the softened painting. */
+needFont('Italianno');
+// sample a closed outline (array of segment functions t->[x,y]) into evenly spaced points
+function lsOutline(W,H,m){const {x0,y0,x1,y1,r,crest}=m,pts=[],cx=W/2;
+  const line=(ax,ay,bx,by)=>{const n=Math.max(2,Math.ceil(Math.hypot(bx-ax,by-ay)));for(let i=0;i<n;i++){const t=i/n;pts.push([ax+(bx-ax)*t,ay+(by-ay)*t])}};
+  const arc=(ox,oy,a0,a1)=>{const n=Math.ceil(Math.abs(a1-a0)*r);for(let i=0;i<n;i++){const a=a0+(a1-a0)*i/n;pts.push([ox+Math.cos(a)*r,oy+Math.sin(a)*r])}};
+  // top edge with a rococo crest rising into the paper at the centre; bottom mirrored
+  const edge=(y,dir)=>{const w=crest.w,hgt=crest.h,xa=x0+r,xb=x1-r,n=Math.ceil(xb-xa);
+    for(let i=0;i<n;i++){const t=i/n,x=dir>0?xa+(xb-xa)*t:xb-(xb-xa)*t,u=(x-cx)/w;let dy=0;
+      if(Math.abs(u)<1){const k=Math.cos(u*Math.PI/2);dy=hgt*k*k*(1+.35*Math.cos(u*Math.PI*3))/1.35}
+      pts.push([x,y-dir*dy])}};
+  const P=Math.PI;
+  edge(y0,1);arc(x1,y0,P,P/2);line(x1,y0+r,x1,y1-r);arc(x1,y1,3*P/2,P);edge(y1,-1);arc(x0,y1,2*P,3*P/2);line(x0,y1-r,x0,y0+r);arc(x0,y0,P/2,0);
+  return pts}
+// walk the outline at a fixed step; return chords with their inward normals (towards the window)
+function lsChords(pts,step){const L=[0];for(let i=1;i<=pts.length;i++){const a=pts[i-1],b=pts[i%pts.length];L.push(L[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1]))}
+  const tot=L[pts.length],n=Math.round(tot/step),at=s=>{let i=1;while(i<L.length-1&&L[i]<s)i++;const a=pts[i-1],b=pts[i%pts.length],f=(s-L[i-1])/((L[i]-L[i-1])||1);return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]};
+  const out=[];for(let i=0;i<n;i++){const a=at(i*tot/n),b=at((i+1)*tot/n),dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;out.push({a,b,m:[(a[0]+b[0])/2,(a[1]+b[1])/2],n:[-dy/l,dx/l]})}return out}
+const lsF=v=>v.toFixed(1);
+const lsHole=(x,y,r)=>`M${lsF(x-r)} ${lsF(y)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+// the lace paper: mask (where the paper is) + an emboss overlay. W x H is the frame size in px-like units
+function lsLace(W,H,m){const pts=lsOutline(W,H,m),ch=lsChords(pts,13),d=6.5;
+  let win='',holes='',ridge='',ridge2='';
+  ch.forEach((c,i)=>{const [mx,my]=c.m,[nx,ny]=c.n;
+    win+=(i?'':`M${lsF(c.a[0])} ${lsF(c.a[1])}`)+`Q${lsF(mx+nx*d*2)} ${lsF(my+ny*d*2)} ${lsF(c.b[0])} ${lsF(c.b[1])}`;
+    holes+=lsHole(mx+nx*d*.5,my+ny*d*.5,1.5);                      // an eyelet in every scallop
+    holes+=lsHole(c.a[0]-nx*6,c.a[1]-ny*6,.65);                     // a row of pin-pricks behind
+    {const cx=mx-nx*14,cy=my-ny*14,tx=-ny,ty=nx,ry=2.7,rx=1;              // a pierced petal in the band behind every scallop
+      holes+=`M${lsF(cx-nx*ry)} ${lsF(cy-ny*ry)}Q${lsF(cx+tx*rx*2)} ${lsF(cy+ty*rx*2)} ${lsF(cx+nx*ry)} ${lsF(cy+ny*ry)}Q${lsF(cx-tx*rx*2)} ${lsF(cy-ty*rx*2)} ${lsF(cx-nx*ry)} ${lsF(cy-ny*ry)}Z`}
+    if(i%2===0)holes+=lsHole(c.b[0]-nx*21.5,c.b[1]-ny*21.5,1.05);      // and a dot between every other pair
+    ridge+=(i?'L':'M')+lsF(mx-nx*27)+' '+lsF(my-ny*27);ridge2+=(i?'L':'M')+lsF(mx-nx*29.5)+' '+lsF(my-ny*29.5)});
+  win+='Z';ridge+='Z';ridge2+='Z';
+  // a rosette pressed into each concave corner, and one above / below the crest
+  const {x0,y0,x1,y1}=m,ros=(x,y,R)=>{let s='';K.ring(10,R,x,y).forEach(([px,py])=>s+=lsHole(px,py,1.1));return s+lsHole(x,y,2.2)};
+  const mask=`<svg ${NS} viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path fill="#fff" fill-rule="evenodd" d="M0 0H${W}V${H}H0Z${win}${holes}"/></svg>`;
+  const deco=`<svg class="ls-emb" ${NS} viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <path d="${ridge}" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.1" transform="translate(.6 .9)"/>
+    <path d="${ridge}" fill="none" stroke="#000" stroke-opacity=".16" stroke-width=".9"/>
+    <path d="${ridge2}" fill="none" stroke="#000" stroke-opacity=".1" stroke-width=".6"/><path d="${ridge2}" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width=".7" transform="translate(.5 .8)"/>
+    <path d="${win}" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="1" transform="translate(-.4 -.6)"/></svg>`;
+  return {mask,deco}}
+// a small die-cut label: rounded oblong with scalloped edge and eyelets
+function lsLabel(W,H){const pts=[],r=H/2;
+  for(let a=0;a<Math.PI;a+=1/r)pts.push([W-r+Math.sin(a)*r,r-Math.cos(a)*r]);
+  for(let x=W-r;x>r;x--)pts.push([x,H]);
+  for(let a=0;a<Math.PI;a+=1/r)pts.push([r-Math.sin(a)*r,r+Math.cos(a)*r]);
+  for(let x=r;x<W-r;x++)pts.push([x,0]);
+  const ch=lsChords(pts,11),d=5;let p='',holes='';
+  ch.forEach((c,i)=>{const [mx,my]=c.m,[nx,ny]=c.n;p+=(i?'':`M${lsF(c.a[0])} ${lsF(c.a[1])}`)+`Q${lsF(mx-nx*d*2)} ${lsF(my-ny*d*2)} ${lsF(c.b[0])} ${lsF(c.b[1])}`;holes+=lsHole(mx-nx*d*.45,my-ny*d*.45,1.2)});
+  return `<svg ${NS} viewBox="-12 -12 ${W+24} ${H+24}" preserveAspectRatio="none"><path fill="#fff" fill-rule="evenodd" d="${p}Z${holes}"/></svg>`}
+const LS_COVER={x0:38,y0:66,x1:352,y1:694,r:34,crest:{w:84,h:22}};
+let lsCache=null;const lsCoverLace=()=>lsCache||(lsCache=lsLace(390,760,LS_COVER));
+let lsLab=null;const lsLabelUri=()=>lsLab||(lsLab=K.uri(lsLabel(300,96)));
+const lsHush=(c,cls)=>`<div class="ls-hush ${cls}" style="--hb:${c.hb||2}px;--hd:${c.hd||.9}"></div>`;
+const lsPaint=c=>`<div class="ls-paint" style="background-image:url(${A}${c.paint});background-position:${c.pos||'center'};${c.tone?`filter:${c.tone}`:''}"></div>`;
+FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
+  blurb:'A landscape painting framed by cream lace paper with a die-cut scalloped edge, the names written over it in white script. The lace lifts away to open it.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>${lsHush(c,'h-mid')}<i class="ls-inset"></i>
+      <div class="ls-mid">
+        ${o.bismillah?'<p class="ls-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="ls-k kicker reveal">${ev(o,L)}</p>
+        <h1 class="ls-names reveal d1">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="ls-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="ls-hj reveal d2">${esc(o.hijri)}</p>`:''}
+      </div>
+      <div class="ls-labelwrap reveal d3"><a class="ls-label" data-go="when" href="#" style="--lab:${lsLabelUri()}"><small>${o.venue?esc(o.venue):(en?'Event details':'Maklumat Majlis')}</small><b>${en?'Event details':'Maklumat Majlis'}</b></a></div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',lace=lsCoverLace();
+    return `<div class="cover cv-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>
+      ${lsHush(c,'h-top')}${lsHush(c,'h-foot')}<div class="ls-frame"><div class="ls-paper" style="-webkit-mask-image:${K.uri(lace.mask)};mask-image:${K.uri(lace.mask)}"></div>${lace.deco}</div>
+      <div class="ls-txt">
+        <p class="ls-k">${ev(o,L)}</p>
+        <p class="ls-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <p class="ls-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+        ${o.venue?`<p class="ls-ven">${esc(o.venue)}</p>`:''}
+      </div>
+      <div class="ls-foot">${guest?`<p class="ls-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ls-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;
+    el.style.setProperty('--paint',`url(${A}${c.paint})`);el.style.setProperty('--ppos',c.pos||'center');
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'popi',n:'Popi',desc:'Monet’s poppy field in ivory lace',c:{ground:'#5d6b74',sheet:'#fbf7ee',ink:'#33302a',accent:'#7a4a36',gold:'#b2925c',pagefg:'#ffffff',lace:'#f6efe1',paint:'pd-paint-monet-poppies.jpg',pos:'50% 70%',cover:'#c45a3e'}},
+    {k:'teratai',n:'Teratai',desc:'Monet’s water lilies in cream lace',c:{ground:'#53677a',sheet:'#fbf8f0',ink:'#2c3138',accent:'#405a72',gold:'#ad9560',pagefg:'#ffffff',lace:'#f3ecdc',paint:'pd-monet.jpg',pos:'40% 50%',cover:'#6f8fa6'}},
+    {k:'ungu',n:'Ungu',desc:'Monet’s iris garden in pearl lace',c:{hb:4,hd:.82,ground:'#5a5a6e',sheet:'#fbf9f6',ink:'#302d38',accent:'#5e4e7c',gold:'#a8956a',pagefg:'#ffffff',lace:'#f4f0ea',paint:'pd-paint-monet-irises.jpg',pos:'50% 55%',cover:'#8070a6'}},
+    {k:'taman',n:'Taman',desc:'Monet’s orchard at Giverny in blush lace',c:{hb:3,hd:.85,ground:'#6b6a5a',sheet:'#fff9f5',ink:'#3a2c28',accent:'#8e4f4a',gold:'#b8956a',pagefg:'#ffffff',lace:'#f6e8e1',paint:'pd-paint-monet-irises.jpg',pos:'50% 4%',cover:'#c98f86'}},
+    {k:'lumut',n:'Lumut',desc:'Hassam’s water garden in sage lace',c:{hb:4,hd:.74,ground:'#4a5a48',sheet:'#fafaf2',ink:'#2a3027',accent:'#4a6040',gold:'#a6935e',pagefg:'#ffffff',lace:'#e9ead9',paint:'pd-paint-hassam-water.jpg',pos:'50% 50%',cover:'#6f8a5a'}},
+    {k:'gunung',n:'Gunung',desc:'Hokusai’s red Fuji in ivory lace',c:{ground:'#3b5566',sheet:'#fbf7ef',ink:'#2d2a28',accent:'#8c3b2c',gold:'#b0925a',pagefg:'#ffffff',lace:'#f5eee0',paint:'pd-paint-hokusai-fuji.jpg',pos:'50% 50%',cover:'#b5523a'}},
+    {k:'senja',n:'Senja',desc:'The poppy field at dusk in champagne lace',c:{ground:'#5a4a3e',sheet:'#fcf6ea',ink:'#3a2e24',accent:'#7d5230',gold:'#b38d50',pagefg:'#ffffff',lace:'#eedfc4',paint:'pd-paint-monet-poppies.jpg',pos:'50% 35%',tone:'sepia(.35) saturate(1.1) brightness(.88)',cover:'#b98a55'}},
+    {k:'laut',n:'Laut',desc:'The lily pond in misty blue lace',c:{ground:'#475a6e',sheet:'#f8fafb',ink:'#26303a',accent:'#3a5670',gold:'#a3956f',pagefg:'#ffffff',lace:'#e6ebee',paint:'pd-monet.jpg',pos:'75% 30%',tone:'saturate(.8) brightness(.95)',cover:'#5f7d96'}},
+  ]});
+
+})()}catch(e){console.error("family lanskap failed",e)}
+
+
+/* ===== family: lengkung ===== */
+try{(()=>{
+/* lengkung (Lengkung Bunga): a vintage engraved arch, drawn in fine line (beaded and hatched mouldings, a shell crest,
+   C-scrolls, volutes and acanthus feet), standing on aged cream paper and wreathed with Redouté flowers.
+   Dark colourways stand the paper arch in front of a Dutch flower painting instead (public domain, see CREDITS).
+   Cover: tap "Buka Jemputan"; the arch parts down the middle, the two halves slide away and the view steps through.
+   Page: the arch again with the names in rouge script. Skin: arch-topped paper cards with an inner engraved line. */
+needFont('Alex+Brush');
+const LG_L=14,LG_R=286,LG_S=150,LG_B=446,LG_RR=136;
+const lgF=v=>v.toFixed(1);
+// the arch outline at an inset of k units
+const lgArch=k=>`M${LG_L+k} ${LG_B-k}V${LG_S}A${LG_RR-k} ${LG_RR-k} 0 0 1 ${LG_R-k} ${LG_S}V${LG_B-k}`;
+// an inward spiral, for volutes and the ends of C-scrolls
+const lgSpiral=(cx,cy,r,turns,a0,dir)=>{let d='';const N=Math.round(turns*28);
+  for(let i=0;i<=N;i++){const t=i/N,a=a0+dir*t*turns*Math.PI*2,rr=r*(1-t*.82);d+=(i?'L':'M')+lgF(cx+Math.cos(a)*rr)+' '+lgF(cy+Math.sin(a)*rr)}return d};
+// a small engraved leaf: outline and midrib
+const lgLeaf=(x,y,ang,len,w)=>`<path transform="translate(${lgF(x)} ${lgF(y)}) rotate(${ang})" d="M0 0Q${lgF(len*.45)} ${lgF(-w)} ${lgF(len)} 0Q${lgF(len*.45)} ${lgF(w)} 0 0ZM${lgF(len*.08)} 0L${lgF(len*.8)} 0"/>`;
+// one side of the ornament (mirrored for the other)
+function lgSide(){let s='';
+  // C-scroll along the top of the arch, from the crest out to a curl over the shoulder
+  s+=`<path d="M136 6C112 -6 84 -2 64 14C50 25 44 38 47 50"/>`+`<path d="${lgSpiral(55,49,8,1.15,Math.PI,-1)}"/>`;
+  s+=`<path d="M138 12C118 4 96 6 78 18" stroke-width=".45"/>`;
+  [[118,-2,-160,11,3.2],[100,-3,-150,12,3.4],[84,2,-135,11,3.2],[70,10,-120,10,3],[124,1,25,9,2.6],[106,0,30,10,2.8],[89,5,40,9,2.6]].forEach(a=>s+=lgLeaf(...a));
+  // little buds on stems above the scroll
+  s+=`<path d="M96 -4C92 -14 86 -18 80 -18M80 -18m-2.4 0a2.4 2.4 0 1 0 4.8 0a2.4 2.4 0 1 0 -4.8 0" stroke-width=".55"/>`;
+  s+=`<path d="M112 -6C112 -16 108 -22 104 -25M104 -25m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" stroke-width=".55"/>`;
+  // volute at the springing of the arch
+  s+=`<path d="M${LG_L} 214C2 204 -4 186 0 170C3 158 10 150 6 140"/>`+`<path d="${lgSpiral(0,136,7,1.2,0,-1)}"/>`;
+  [[3,186,-200,12,3.2],[0,168,-215,11,3],[8,200,-160,10,2.8]].forEach(a=>s+=lgLeaf(...a));
+  // a hanging bell-flower drop under the volute
+  s+=`<path d="M6 214V236" stroke-width=".45"/><path d="M6 236m-2.6 0a2.6 3.4 0 1 0 5.2 0a2.6 3.4 0 1 0 -5.2 0M6 244m-1.8 0a1.8 2.4 0 1 0 3.6 0a1.8 2.4 0 1 0 -3.6 0M6 250m-1.2 0a1.2 1.6 0 1 0 2.4 0a1.2 1.6 0 1 0 -2.4 0" stroke-width=".5"/>`;
+  // acanthus foot curling out at the base
+  s+=`<path d="M${LG_L} 400C0 408 -8 424 -4 436C-1 444 8 446 12 440"/>`+`<path d="${lgSpiral(5,436,6,1.1,Math.PI*.9,1)}"/>`;
+  [[-4,420,-120,12,3.4],[-2,408,-80,10,3],[6,446,10,10,2.6]].forEach(a=>s+=lgLeaf(...a));
+  // a swag of beads hanging inside the arch top
+  let sw='';for(let i=0;i<=14;i++){const t=i/14,x=90+t*60,y=76+Math.sin(t*Math.PI)*10*(1-t*.2)+t*6;sw+=`<circle cx="${lgF(x)}" cy="${lgF(y)}" r="${(1.25-Math.abs(t-.5)*.6).toFixed(2)}"/>`}
+  s+=`<g fill="currentColor" stroke="none" opacity=".85">${sw}</g>`;
+  return s}
+function lgFrame(){const side=lgSide();
+  // the shell crest: ribs fanned out, a scalloped rim, and a small rosette
+  let ribs='',rim='';const n=13;for(let i=0;i<n;i++){const a=Math.PI*(1.12+i/(n-1)*.76),x=150+Math.cos(a)*30,y=24+Math.sin(a)*30;ribs+=`M150 24L${lgF(x)} ${lgF(y)}`;
+    if(i){const ap=Math.PI*(1.12+(i-1)/(n-1)*.76),am=(a+ap)/2;rim+=`Q${lgF(150+Math.cos(am)*35)} ${lgF(24+Math.sin(am)*35)} ${lgF(x)} ${lgF(y)}`}else rim+=`M${lgF(x)} ${lgF(y)}`}
+  return `<svg class="lg-frame" viewBox="-24 -44 348 506" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="${lgArch(0)}" stroke-width="1.5"/><path d="${lgArch(4)}" stroke-width=".55"/>
+    <path d="${lgArch(8.5)}" stroke-width="1.9" stroke-dasharray="0 4.6"/>
+    <path d="${lgArch(12.5)}" stroke-width=".55"/><path d="${lgArch(16.5)}" stroke-width="5" stroke-dasharray=".32 2.3" opacity=".5"/>
+    <path d="${lgArch(20.5)}" stroke-width="1.1"/><path d="${lgArch(25)}" stroke-width=".45"/>
+    <path d="M-2 ${LG_B}H302M-6 ${LG_B+5}H306M-8 ${LG_B+11}H308" stroke-width=".9"/><path d="M-6 ${LG_B+8}H306" stroke-width="3" stroke-dasharray=".35 1.6" opacity=".7"/>
+    ${side}<g transform="translate(300 0) scale(-1 1)">${side}</g>
+    <path d="${ribs}" stroke-width=".55"/><path d="${rim}" stroke-width=".9"/><path d="M128 26Q150 34 172 26" stroke-width=".9"/>
+    <circle cx="150" cy="24" r="3.4" stroke-width=".7"/><circle cx="150" cy="24" r="1.2" fill="currentColor"/>
+    <path d="M150 34V44M146 40L150 46L154 40" stroke-width=".6"/></svg>`}
+// the arch's paper panel is clipped to the outline at inset 0
+const LG_MASK=K.uri(`<svg ${NS} viewBox="-24 -44 348 506" preserveAspectRatio="none"><path d="${lgArch(0)}Z" fill="#000"/></svg>`);
+const LG_FRAME=lgFrame();
+const lgPanel=()=>`<div class="lg-panel" style="-webkit-mask:${LG_MASK} center/100% 100% no-repeat;mask:${LG_MASK} center/100% 100% no-repeat"></div>${LG_FRAME}`;
+const lgFl=(n,style,cls='')=>n?`<img class="lg-fl ${cls}" src="${A}flower-${n}.webp" alt="" style="${style}">`:'';
+// flowers wreathing the arch on the light colourways (over light paper only)
+const lgWreath=(c,page)=>c.dark?'':page
+  ?lgFl(c.fl2,'width:28%;left:-13%;top:30%;transform:rotate(-24deg) scaleX(-1)','l')+lgFl(c.fl1,'width:36%;left:-17%;bottom:-3%;transform:rotate(-6deg)','l')+lgFl(c.fl3,'width:27%;right:-10%;top:19%;transform:rotate(10deg)','r')+lgFl(c.fl1,'width:34%;right:-16%;bottom:-2%;transform:rotate(8deg) scaleX(-1)','r')
+  :lgFl(c.fl2,'width:30%;left:-6%;bottom:6%;transform:rotate(-30deg);z-index:1','l')+lgFl(c.fl2,'width:28%;right:-5%;bottom:8%;transform:rotate(34deg) scaleX(-1);z-index:1','r')+lgFl(c.fl2,'width:28%;left:-13%;top:30%;transform:rotate(-24deg) scaleX(-1)','l')+lgFl(c.fl1,'width:36%;left:-17%;bottom:-3%;transform:rotate(-6deg)','l')+lgFl(c.fl3,'width:27%;right:-10%;top:19%;transform:rotate(10deg)','r')+lgFl(c.fl1,'width:34%;right:-16%;bottom:-2%;transform:rotate(8deg) scaleX(-1)','r');
+const lgText=(o,L,page)=>{const [n1,n2]=coverNames(o);return `<p class="lg-k${page?' kicker':''}">${ev(o,L)}</p>${page&&o.bismillah?'<p class="lg-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+  <${page?'h1':'p'} class="lg-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</${page?'h1':'p'}>
+  <svg class="lg-rule" viewBox="0 0 120 12" fill="none" stroke="currentColor"><path d="M8 6H46M74 6H112" stroke-width=".6"/><path d="M60 1.5C56 1.5 54 6 50 6C54 6 56 10.5 60 10.5C64 10.5 66 6 70 6C66 6 64 1.5 60 1.5Z" stroke-width=".7"/><circle cx="60" cy="6" r="1.2" fill="currentColor"/></svg>
+  <p class="lg-date">${esc(fmtDate(o.date,o.lang))}</p>${page&&o.hijri?`<p class="lg-hj">${esc(o.hijri)}</p>`:''}${o.venue?`<p class="lg-ven">${esc(o.venue)}</p>`:''}`};
+const lgVars=c=>`--line:${c.line};--panel:${c.panel};${c.paint?`--paint:url(${A}${c.paint});--paintpos:${c.paintpos||'50% 30%'};--paintsize:${c.paintsize||'cover'};`:''}`;
+FAMILY({key:'lengkung',name:'Lengkung Bunga',meaning:'Flowered arch',
+  blurb:'A finely engraved rococo arch on aged cream paper, wreathed with painted roses, the names in rouge script inside. The arch parts down the middle to let guests in.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Alex Brush', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const c=th.c,en=o.lang==='en';
+    return `<section class="page pg-lengkung${c.dark?' lg-dark':''}" style="${lgVars(c)}"><div class="lg-bg"></div>
+      <div class="lg-wrap reveal"><div class="lg-arch">${lgPanel()}<div class="lg-txt">${lgText(o,L,true)}</div></div>${lgWreath(c,true)}</div>
+      <div class="lg-pills reveal d2"><a class="lg-pill" data-go="when" href="#">${en?'Event details':'Butiran Majlis'}</a>${o.x_rsvp?`<a class="lg-pill ghost" data-go="rsvp" href="#">RSVP</a>`:''}</div></section>`},
+  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-lengkung${c.dark?' lg-dark':''}" style="${lgVars(c)}"><div class="lg-bg"></div>
+      <div class="lg-wrap"><div class="lg-arch">
+        <div class="lg-half l">${lgPanel()}</div><div class="lg-half r">${lgPanel()}</div>
+        <div class="lg-txt">${lgText(o,L,false)}</div></div>${lgWreath(c,false)}</div>
+      <div class="lg-foot">${guest?`<p class="lg-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="lg-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;el.classList.toggle('lg-dk',!!c.dark);el.style.setProperty('--line',c.line);el.style.setProperty('--panel',c.panel);
+    const sc=$('.scroller',el);
+    $$('.pg-lengkung [data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'krim',n:'Krim',desc:'Sepia arch, rouge script, painted roses on cream',c:{ground:'#efe4cf',sheet:'#fbf5e8',ink:'#3d2c22',accent:'#9b2f3b',gold:'#a8844e',pagefg:'#3d2c22',line:'#6e4f37',panel:'#f8f0e0',fl1:'cabbage-rose',fl2:'blush-rose',fl3:'wild-rose'}},
+    {k:'jambu',n:'Jambu',desc:'Rose-ink arch on blush paper, pink roses',c:{ground:'#f1dfd6',sheet:'#fdf6f1',ink:'#40292a',accent:'#a63c50',gold:'#b08a64',pagefg:'#40292a',line:'#8a5a58',panel:'#fbf0ea',fl1:'pink-rose',fl2:'blush-rose',fl3:'wild-rose'}},
+    {k:'sage',n:'Sage',desc:'Green-ink arch on pale sage paper, white roses',c:{ground:'#e3e4d3',sheet:'#f8f8ef',ink:'#2f3529',accent:'#8c3a43',gold:'#9c9061',pagefg:'#2f3529',line:'#55624a',panel:'#f4f3e7',fl1:'white-roses',fl2:'wild-rose',fl3:'forget-me-not'}},
+    {k:'gading',n:'Gading',desc:'Brown-ink arch on ivory, red roses',c:{ground:'#ebe2d0',sheet:'#fcf8ef',ink:'#36291f',accent:'#7f1d26',gold:'#a3814a',pagefg:'#36291f',line:'#5a432f',panel:'#f8f2e5',fl1:'red-rose',fl2:'cabbage-rose',fl3:'jasmine'}},
+    {k:'marun',n:'Marun',desc:'Paper arch with gilt lines before a dark red-tulip painting',c:{ground:'#1e1210',sheet:'#f7efdf',ink:'#3a2a22',accent:'#8e2232',gold:'#b08a4c',pagefg:'#f1e6d4',line:'#a07d45',panel:'#f6eedd',dark:'1',paint:'pd-still-3.jpg',paintpos:'50% 18%'}},
+    {k:'hitam',n:'Hitam',desc:'Paper arch with gilt lines before a dark Ruysch bouquet',c:{ground:'#141110',sheet:'#f6efe2',ink:'#352a22',accent:'#8b2b35',gold:'#b08c52',pagefg:'#efe6d6',line:'#a17f48',panel:'#f5eee0',dark:'1',paint:'pd-still-1.jpg',paintpos:'50% 20%'}},
+    {k:'nila',n:'Nila',desc:'Paper arch with gilt lines before a soft blue and pink bouquet',c:{ground:'#11141a',sheet:'#f6f1e6',ink:'#2c2a2c',accent:'#8a3048',gold:'#ab8d58',pagefg:'#ece6dc',line:'#9c7f4c',panel:'#f5efe4',dark:'1',paint:'pd-still-4.jpg',paintpos:'50% 32%',paintsize:'auto 122%'}},
+    {k:'zamrud',n:'Zamrud',desc:'Paper arch with gilt lines before a bright de Heem bouquet',c:{ground:'#121a14',sheet:'#f6f0e2',ink:'#2d2c24',accent:'#8f2a35',gold:'#ad8b50',pagefg:'#ebe7d8',line:'#9e7e46',panel:'#f5eedf',dark:'1',paint:'pd-still-2.jpg',paintpos:'50% 22%'}},
+  ]});
+
+})()}catch(e){console.error("family lengkung failed",e)}
+
+
 /* ===== family: lentera ===== */
 try{(()=>{
 /* lentera: a pierced brass Moroccan lantern hanging on its chain against a dark tadelakt wall.
@@ -4839,6 +5036,64 @@ FAMILY({key:'lentera',name:'Lentera',meaning:'Moroccan lantern',
   ]});
 
 })()}catch(e){console.error("family lentera failed",e)}
+
+
+/* ===== family: lili ===== */
+try{(()=>{
+/* lili: "Lili Malam". A dark, dramatic botanical card. Lilies, roses and tulips cropped from Dutch flower still lifes
+   (Ruysch, de Heem, Mignon, van Huysum; public domain) spill in from the corners of a deep velvet ground; a gold-foil
+   Jawi or Latin monogram and large italic names sit in the calm space between them.
+   Cover: tap "Buka Jemputan" and the flowers part to the sides. Page: the flowers settle at the edges around the names.
+   Skin: velvet cards edged with a fine foil rule, italic headings. The two light colourways use Redouté cut-outs instead. */
+// the paintings' pixel sizes, to crop a point of each into a box
+const LL_IMG={'pd-still-1.jpg':[1000,1289],'pd-still-2.jpg':[1000,1423],'pd-still-3.jpg':[1000,1306],'pd-still-4.jpg':[1000,1257],'pd-bouquet.jpg':[1000,1323]};
+// put painting point (cx,cy) (0-1) at the centre of a box of aspect a (w/h), the painting z times as wide as the box
+const llCrop=(f,cx,cy,z,a)=>{const [iw,ih]=LL_IMG[f],r=z*ih/iw,px=(cx*z-.5)/(z-1)*100,py=(cy*r-.5/a)/(r-1/a)*100;
+  return `background-image:url(${A}${f});background-size:${z*100}% auto;background-position:${px.toFixed(1)}% ${py.toFixed(1)}%;aspect-ratio:${a}`};
+// four corner pieces: [painting, cx, cy, zoom] for dark grounds, or a flower cut-out name for the light ones
+const LL_W={anemones:617,'blush-rose':622,'cabbage-rose':581,'forget-me-not':528,hibiscus:619,iris:566,jasmine:518,lotus:621,'pink-rose':674,'red-rose':622,'white-roses':636,'wild-rose':663};
+const llPieces=c=>['tl','tr','bl','br'].map((k,i)=>{const p=c.art[i];
+  return typeof p==='string'?`<i class="ll-fl ll-cut ${k}" style="background-image:url(${A}flower-${p}.webp);aspect-ratio:${((LL_W[p]||600)/(760*.86)).toFixed(3)}"></i>`
+    :`<i class="ll-fl ll-oil ${k}" style="${llCrop(p[0],p[1],p[2],p[3],k[0]==='t'?.8:.9)}"></i>`}).join('')+'<i class="ll-calm"></i>';
+// the monogram: initials (or the couple's Jawi) inside a double foil hairline ring with a small lily-bud finial top and bottom
+const LL_RING=`<svg class="ll-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46.5"/><circle cx="50" cy="50" r="43" stroke-width=".45"/><path d="M50 1.5c1.6 2 1.6 3.6 0 5.4c-1.6-1.8-1.6-3.4 0-5.4zM50 98.5c1.6-2 1.6-3.6 0-5.4c-1.6 1.8-1.6 3.4 0 5.4z" class="f"/><circle cx="3.5" cy="50" r=".9" class="f"/><circle cx="96.5" cy="50" r=".9" class="f"/></svg>`;
+const llMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="ll-mono">${LL_RING}<span class="ll-ini jw">${esc(j)}</span></span>`;const [a,b]=K.initials(o);return `<span class="ll-mono">${LL_RING}<span class="ll-ini"><b>${esc(a)}</b><i></i><b>${esc(b)}</b></span></span>`};
+const llNames=o=>{const [n1,n2]=coverNames(o);return `<h1 class="ll-names"><span>${esc(n1)}</span><em>${o.lang==='en'?'and':'dan'}</em><span>${esc(n2)}</span></h1>`};
+const S2=[['pd-still-2.jpg',.42,.17,2.1],['pd-still-1.jpg',.6,.36,2.6],['pd-still-3.jpg',.3,.6,2.6],['pd-still-4.jpg',.55,.47,1.9]];
+FAMILY({key:'lili',name:'Lili Malam',meaning:'Night lilies',
+  blurb:'A dark, dramatic card: lilies and roses from old Dutch flower paintings spill in from the corners of a velvet ground, with a gold-foil monogram and large italic names. The flowers part to open it.',
+  fonts:{d:"'Bodoni Moda', serif",s:"'Bodoni Moda', serif",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-lili ${th.c.light?'ll-light':''}"><i class="ll-vel"></i>${llPieces(th.c)}
+    <div class="ll-col">
+      <div class="ll-crest reveal">${llMono(o)}</div>
+      ${o.bismillah?`<p class="ll-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
+      <p class="ll-k kicker reveal d1">${ev(o,L)}</p>
+      <div class="reveal d1">${llNames(o)}</div>
+      <p class="ll-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="ll-hj reveal d2">${esc(o.hijri)}</p>`:''}
+      ${o.venue?`<p class="ll-ven reveal d2">${esc(o.venue)}</p>`:''}
+      <div class="ll-pills reveal d3"><a class="ll-pill" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>${o.x_rsvp?`<a class="ll-pill ghost" data-go="rsvp" href="#">RSVP</a>`:''}</div>
+    </div></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-lili ${th.c.light?'ll-light':''}"><i class="ll-vel"></i>${llPieces(th.c)}
+    <div class="ll-mid">${llMono(o)}<p class="ll-k">${ev(o,L)}</p>${llNames(o)}<p class="ll-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+    <div class="ll-foot">${guest?`<p class="ll-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ll-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('ll-light',!!th.c.light);
+    // a couple photo takes the monogram's place, in a gold-ringed oval
+    const pg=$('.pg-lili',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
+    if(img){const cr=$('.ll-crest',pg);img.className='ll-photo';img.removeAttribute('style');cr.innerHTML='';cr.classList.add('has-photo');cr.appendChild(img);ph.remove()}
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'hitam',n:'Hitam',desc:'White lilies and roses on black velvet',c:{ground:'#0d0b0a',sheet:'#1a1614',ink:'#efe6d6',accent:'#e3c88f',gold:'#c4a05c',pagefg:'#efe6d6',art:S2}},
+    {k:'marun',n:'Marun',desc:'Tulips and poppies on wine velvet',c:{ground:'#2a0c13',sheet:'#3a141d',ink:'#f4e7d6',accent:'#e6c98e',gold:'#c9a35a',pagefg:'#f4e7d6',art:[['pd-still-1.jpg',.4,.3,2.2],['pd-still-2.jpg',.42,.17,2.4],['pd-still-1.jpg',.22,.62,2.6],['pd-still-3.jpg',.45,.48,2]]}},
+    {k:'zamrud',n:'Zamrud',desc:'Lilies and roses on emerald velvet',c:{ground:'#0b1c17',sheet:'#132c25',ink:'#eee9d8',accent:'#e0c68c',gold:'#c6a45e',pagefg:'#eee9d8',art:[['pd-still-2.jpg',.42,.17,2.1],['pd-bouquet.jpg',.5,.2,2.4],['pd-still-2.jpg',.7,.55,2.6],['pd-bouquet.jpg',.45,.48,1.9]]}},
+    {k:'nila',n:'Nila',desc:'Pale roses and lilies on midnight velvet',c:{ground:'#0c1224',sheet:'#161f38',ink:'#ece7dc',accent:'#e2c991',gold:'#c7a560',pagefg:'#ece7dc',art:[['pd-still-2.jpg',.42,.17,2.1],['pd-still-4.jpg',.6,.32,2.4],['pd-bouquet.jpg',.42,.5,2.4],['pd-still-4.jpg',.5,.48,1.9]]}},
+    {k:'ungu',n:'Ungu',desc:'Lilies and pink roses on plum velvet',c:{ground:'#1b0e1f',sheet:'#2a172f',ink:'#f2e8e2',accent:'#e5c894',gold:'#c8a45f',pagefg:'#f2e8e2',art:[['pd-still-2.jpg',.42,.17,2.1],['pd-still-2.jpg',.72,.33,2.6],['pd-still-4.jpg',.4,.4,2.6],['pd-still-2.jpg',.62,.58,2.2]]}},
+    {k:'coklat',n:'Coklat',desc:'Warm tulips and lilies on cocoa velvet',c:{ground:'#1c120c',sheet:'#2b1d14',ink:'#f3e9d7',accent:'#e2c58a',gold:'#c6a25c',pagefg:'#f3e9d7',art:[['pd-still-2.jpg',.3,.22,2.2],['pd-still-3.jpg',.35,.12,2.6],['pd-still-1.jpg',.2,.7,2.6],['pd-still-1.jpg',.42,.42,2]]}},
+    {k:'gading',n:'Gading',desc:'White roses and irises on ivory',c:{ground:'#efe8dc',sheet:'#fbf7f0',ink:'#2e2924',accent:'#6b4e2e',gold:'#b08d50',pagefg:'#2e2924',light:1,art:['white-roses','anemones','wild-rose','blush-rose']}},
+    {k:'jambu',n:'Jambu Kusam',desc:'Blush roses and anemones on dusty rose',c:{ground:'#e8d3cf',sheet:'#f8eeeb',ink:'#3c2628',accent:'#7a3442',gold:'#b08a5a',pagefg:'#3c2628',light:1,art:['blush-rose','anemones','wild-rose','pink-rose']}},
+  ]});
+
+})()}catch(e){console.error("family lili failed",e)}
 
 
 /* ===== family: lukisan ===== */
@@ -6912,6 +7167,102 @@ FAMILY({key:'renda',name:'Sapu Tangan Renda',meaning:'Lace handkerchief',
 })()}catch(e){console.error("family renda failed",e)}
 
 
+/* ===== family: renda2 ===== */
+try{(()=>{
+/* renda2 (Renda Diraja): a layered invitation suite laid flat on a deep velvet ground.
+   An arched, die-cut lace card (SVG scallops with punched eyelets, the paper itself shows through a mask),
+   a coloured envelope with a painted floral liner, a wax seal on a silk tassel and a small vellum details card.
+   Cover: tap "Buka Jemputan"; the envelope and vellum fan out to the sides and the lace card lifts towards you.
+   Page: the same pieces as a flat-lay, each one a link (details, RSVP, location).
+   Skin: lace-edged paper cards on velvet, script headings over a hairline and a punched eyelet row.
+   Classes use cv-rdiraja / pg-rdiraja / rj-* (the older "renda" family already uses *-renda2 names). */
+needFont('Great+Vibes');
+// outline of an arched card (clockwise, y down), resampled into n equal steps
+function rjOutline(W,H,ay,r){const P=[];
+  for(let i=0;i<=400;i++){const t=Math.PI+i/400*Math.PI;P.push([W/2+W/2*Math.cos(t),ay+ay*Math.sin(t)])}
+  for(let i=1;i<=100;i++)P.push([W,ay+(H-r-ay)*i/100]);
+  for(let i=1;i<=40;i++){const t=i/40*Math.PI/2;P.push([W-r+r*Math.cos(t),H-r+r*Math.sin(t)])}
+  for(let i=1;i<=100;i++)P.push([W-r-(W-2*r)*i/100,H]);
+  for(let i=1;i<=40;i++){const t=Math.PI/2+i/40*Math.PI/2;P.push([r+r*Math.cos(t),H-r+r*Math.sin(t)])}
+  for(let i=1;i<=100;i++)P.push([0,H-r-(H-r-ay)*i/100]);
+  const cum=[0];for(let i=1;i<P.length;i++)cum.push(cum[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));
+  const tot=cum[cum.length-1];
+  return step=>{const n=Math.round(tot/step),out=[];let j=0;
+    for(let k=0;k<=n;k++){const s=k/n*tot;while(j<cum.length-2&&cum[j+1]<s)j++;const f=(s-cum[j])/((cum[j+1]-cum[j])||1);
+      out.push([P[j][0]+(P[j+1][0]-P[j][0])*f,P[j][1]+(P[j+1][1]-P[j][1])*f])}return out}}
+const f2=v=>v.toFixed(2);
+const rjHole=(x,y,r)=>`M${f2(x-r)} ${f2(y)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+// the die-cut lace card: returns {mask, line} svg strings in a W x H box (8 units of margin for the scallops)
+function rjLace(W,H,ay){const M=8,res=rjOutline(W,H,ay,10),pts=res(11),n=pts.length-1;
+  const nrm=i=>{const a=pts[i],b=pts[(i+1)%n];const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1;return[dy/L,-dx/L]};
+  let d='',holes='',inner='',dots='';
+  for(let i=0;i<n;i++){const a=pts[i],b=pts[i+1],[nx,ny]=nrm(i),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+    d+=(i?'':`M${f2(a[0])} ${f2(a[1])}`)+`Q${f2(mx+nx*9)} ${f2(my+ny*9)} ${f2(b[0])} ${f2(b[1])}`;
+    holes+=rjHole(mx+nx*1.6,my+ny*1.6,1.45);                          // an eyelet in every scallop
+    holes+=rjHole(a[0]-nx*4.2,a[1]-ny*4.2,.75);                       // a pin-prick between scallops
+    holes+=rjHole(mx-nx*7.6,my-ny*7.6,.95);                           // second, smaller row
+    const ix=mx-nx*12.5,iy=my-ny*12.5;inner+=(i?'L':'M')+f2(ix)+' '+f2(iy);
+    dots+=(i?'L':'M')+f2(mx-nx*16)+' '+f2(my-ny*16)}
+  const vb=`${-M} ${-M} ${W+2*M} ${H+2*M}`;
+  const mask=`<svg ${NS} viewBox="${vb}" preserveAspectRatio="none"><path d="${d}Z${holes}" fill-rule="evenodd" fill="#000"/></svg>`;
+  const line=`<svg class="rj-line" viewBox="${vb}" preserveAspectRatio="none"><path d="${inner}Z" fill="none" stroke="var(--gold)" stroke-width=".7" opacity=".85"/><path d="${dots}Z" fill="none" stroke="var(--accent)" stroke-width=".45" stroke-dasharray=".6 1.8" stroke-linecap="round" opacity=".7"/></svg>`;
+  return {mask:K.uri(mask),line,ar:`${W+2*M}/${H+2*M}`}}
+// a small engraved rule: hairlines and a diamond
+const rjRule=()=>`<svg class="rj-rule" viewBox="0 0 120 10"><path d="M4 5H50M70 5H116" stroke="currentColor" stroke-width=".6"/><path d="M60 1L64 5L60 9L56 5Z" fill="none" stroke="currentColor" stroke-width=".7"/><circle cx="60" cy="5" r="1" fill="currentColor"/><circle cx="52" cy="5" r=".9" fill="currentColor"/><circle cx="68" cy="5" r=".9" fill="currentColor"/></svg>`;
+// a silk tassel on a cord: knot, ridged cap and fine strands
+let rjN=0;
+function rjTassel(){const u=++rjN;let s='';for(let i=0;i<34;i++){const x=21+i*.5+(i%3)*.15,e=x+(x-29.5)*.55;s+=`<path d="M${f2(x)} 44Q${f2(x+(x-29.5)*.1)} 70 ${f2(e)} 96" stroke="url(#rjtg${u})" stroke-width=".7" fill="none" opacity="${(.65+(i%4)*.1).toFixed(2)}"/>`}
+  return `<svg class="rj-tassel" viewBox="0 0 60 100"><defs><linearGradient id="rjtg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--tassel)"/><stop offset="1" stop-color="color-mix(in srgb,var(--tassel) 70%,#000)"/></linearGradient>
+    <linearGradient id="rjtc${u}" x1="0" x2="1"><stop offset="0" stop-color="color-mix(in srgb,var(--tassel) 55%,#000)"/><stop offset=".45" stop-color="color-mix(in srgb,var(--tassel) 70%,#fff)"/><stop offset="1" stop-color="color-mix(in srgb,var(--tassel) 50%,#000)"/></linearGradient></defs>
+    <path d="M30 0C24 10 36 16 30 26" stroke="color-mix(in srgb,var(--tassel) 60%,#000)" stroke-width="2.2" fill="none"/><path d="M30 0C24 10 36 16 30 26" stroke="var(--tassel)" stroke-width="1.2" stroke-dasharray="1.4 1" fill="none"/>
+    <ellipse cx="30" cy="28" rx="4.2" ry="3.6" fill="url(#rjtc${u})"/>${s}
+    <path d="M21.5 33Q30 30 38.5 33L39 44Q30 47 21 44Z" fill="url(#rjtc${u})"/><path d="M21.5 37Q30 39.5 38.6 37M21.3 40.5Q30 43 38.8 40.5" stroke="rgba(0,0,0,.3)" stroke-width=".5" fill="none"/></svg>`}
+const rjMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="rj-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const rjEnv=(cls='')=>`<div class="rj-env ${cls}"><div class="rj-flap"><i></i></div><div class="rj-body"></div></div>`;
+const RJ_COVER=rjLace(200,290,72),RJ_PAGE=rjLace(220,270,70);
+const rjCard=(lace,inner,cls='')=>`<div class="rj-card ${cls}" style="aspect-ratio:${lace.ar}"><div class="rj-paper" style="-webkit-mask:${lace.mask} center/100% 100% no-repeat;mask:${lace.mask} center/100% 100% no-repeat"></div>${lace.line}<div class="rj-in">${inner}</div></div>`;
+FAMILY({key:'renda2',name:'Renda Diraja',meaning:'Royal lace suite',
+  blurb:'A die-cut lace card, a coloured envelope with a painted floral liner, a vellum details card and a wax seal on a silk tassel, laid out on velvet. The envelope fans aside and the lace card lifts to open.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Great Vibes', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<section class="page pg-rdiraja" style="--env:${c.env};--envfg:${c.envfg||c.sheet};--liner:url(${A}${c.liner});--tassel:${c.tassel}"><div class="rj-ground"></div>
+      <div class="rj-lay">
+        <div class="rj-main reveal">${rjCard(RJ_PAGE,`<p class="rj-k kicker">${ev(o,L)}</p><h1 class="rj-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>${rjRule()}<p class="rj-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="rj-hj">${esc(o.hijri)}</p>`:''}`)}</div>
+        <div class="rj-tiles">
+          <a class="rj-t rj-t-env reveal d1" data-go="when" href="#">${rjEnv('mini')}<span class="rj-tl"><small>${en?'Tap for':'Tekan untuk'}</small><b>${en?'Event details':'Butiran Majlis'}</b></span></a>
+          ${o.x_rsvp?`<a class="rj-t rj-t-rsvp reveal d2" data-go="rsvp" href="#"><span class="rj-vel"><small>${en?'Kindly reply':'Sudi hadir?'}</small><b>RSVP</b></span></a>`:''}
+          <a class="rj-t rj-t-loc reveal d3" data-go="loc" href="#"><span class="rj-tag"><b>${en?'Location':'Lokasi'}</b><small>${esc(o.venue)}</small></span><span class="rj-seal sm" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${rjMono(o)}</span></span></a>
+        </div>
+      </div></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c;
+    return `<div class="cover cv-rdiraja${c.light?' rj-light':''}" style="--env:${c.env};--liner:url(${A}${c.liner});--tassel:${c.tassel}"><div class="rj-ground"></div>
+      ${guest?`<p class="rj-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+      <div class="rj-stage">
+        ${rjEnv('big')}
+        <div class="rj-vellum"><p class="rj-vk">${en?'The details':'Butiran'}</p><p class="rj-vd">${esc(fmtDate(o.date,o.lang))}</p><p class="rj-vt">${esc(fmtTime(o.start,o.lang))}</p>${o.venue?`<p class="rj-vv">${esc(o.venue)}</p>`:''}</div>
+        ${rjCard(RJ_COVER,`<p class="rj-k">${ev(o,L)}</p><p class="rj-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>${rjRule()}<p class="rj-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`,'lift')}
+        <div class="rj-sealset">${rjTassel()}<span class="rj-seal" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${rjMono(o)}</span></span></div>
+      </div>
+      <${tag} class="rj-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--env',th.c.env);el.classList.toggle('rj-lightg',!!th.c.light);
+    const sc=$('.scroller',el);
+    $$('.pg-rdiraja [data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'marun',n:'Marun',desc:'Burgundy velvet, ivory lace, gold seal',c:{ground:'#3a0f18',sheet:'#fbf5ea',ink:'#3a2024',accent:'#7a1f2e',gold:'#b8924e',pagefg:'#f3e3d0',env:'#7c1d2c',liner:'pd-still-1.jpg',seal:'emas',tassel:'#c9a25a'}},
+    {k:'delima',n:'Delima',desc:'Wine velvet, blush lace, wine seal',c:{ground:'#2b0b16',sheet:'#fbf1ec',ink:'#3b1d26',accent:'#6b1b36',gold:'#b58e57',pagefg:'#f2dfdc',env:'#5c1430',liner:'pd-still-3.jpg',seal:'merah',tassel:'#7a1a34'}},
+    {k:'zamrud',n:'Zamrud',desc:'Emerald velvet, ivory lace, gold seal',c:{ground:'#0f2a22',sheet:'#fbf7ec',ink:'#22302a',accent:'#245241',gold:'#b8975a',pagefg:'#ecebdc',env:'#1f4d3c',liner:'pd-still-2.jpg',seal:'emas',tassel:'#c4a05e'}},
+    {k:'nila',n:'Nila',desc:'Navy velvet, ivory lace, pearl seal',c:{ground:'#111a33',sheet:'#fbf8f1',ink:'#1f2438',accent:'#22305e',gold:'#b3965f',pagefg:'#e8e6e0',env:'#1f2c57',liner:'pd-still-4.jpg',seal:'gading',tassel:'#d8d0c0'}},
+    {k:'koko',n:'Koko',desc:'Mocha suede, cream lace, gold seal',c:{ground:'#3a2a22',sheet:'#fbf5ec',ink:'#33261f',accent:'#6b4a36',gold:'#b8935a',pagefg:'#f0e4d6',env:'#7b5a46',liner:'pd-still-1.jpg',seal:'emas',tassel:'#c8a46a'}},
+    {k:'jambu',n:'Jambu',desc:'Dusty rose suede, white lace, wine seal',c:{ground:'#b98a8a',sheet:'#fffaf6',ink:'#3e2a2c',accent:'#8a4250',gold:'#b0895a',pagefg:'#fff8f4',env:'#8e4352',liner:'pd-still-4.jpg',seal:'merah',tassel:'#7d2b3b'}},
+    {k:'sage',n:'Sage',desc:'Sage suede, ivory lace, sage seal',c:{ground:'#7d8a73',sheet:'#fbfaf2',ink:'#2c3327',accent:'#4d5e45',gold:'#a8915a',pagefg:'#fbfaf2',env:'#4f6047',liner:'pd-still-2.jpg',seal:'sage',tassel:'#e6dcc4'}},
+    {k:'gading',n:'Gading',desc:'Ivory suede, white lace, gold seal',c:{ground:'#d9cdb9',sheet:'#fffdf8',ink:'#33291f',accent:'#7a5f3e',gold:'#a8894c',pagefg:'#33291f',env:'#efe5d2',liner:'pd-still-4.jpg',seal:'emas',tassel:'#b8955a',light:'1',envfg:'#5b4630'}},
+  ]});
+
+})()}catch(e){console.error("family renda2 failed",e)}
+
+
 /* ===== family: resit ===== */
 try{(()=>{
 /* resit: a letterpress receipt slip from an old receipt book, on cotton paper. Printed in one ink with a red serial number,
@@ -7367,6 +7718,97 @@ FAMILY({key:'santorini',name:'Santorini',meaning:'Aegean village',
   ]});
 
 })()}catch(e){console.error("family santorini failed",e)}
+
+
+/* ===== family: satin ===== */
+try{(()=>{
+/* satin: a heavy cotton invitation card with letterpress type and a wax seal, resting on draped silk satin.
+   The satin is lit procedurally: a stretched noise height-map, blurred, lit by an SVG diffuse + specular light,
+   so the folds catch a real sheen instead of reading as stripes.
+   Cover: a loose fold of satin lies over the foot of the card; tap "Buka Jemputan" and it is drawn away.
+   Page: the card alone on the satin. Skin: cotton cards with debossed headings on the satin. */
+let stN=0;
+// one satin drape. seed and angle change the folds; c holds the theme colours (literal hex, no vars, so it also works as a data URI)
+function satinSvg(c,seed,rot,cls,w=400,h=800){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180)).toFixed(3);
+  return `<svg class="${cls}" ${NS} viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice"><defs>
+  <filter id="stf${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="${c.fx||'0.0016 0.0062'}" numOctaves="2" seed="${seed}"/>
+    <feGaussianBlur stdDeviation="7"/>
+    <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.25 0 0 0 -.1" result="h"/>
+    <feDiffuseLighting in="h" surfaceScale="${c.depth||30}" diffuseConstant="${kd}" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="${el}"/></feDiffuseLighting>
+    <feSpecularLighting in="h" surfaceScale="${c.depth||30}" specularConstant="${c.spec||.9}" specularExponent="${c.sexp||14}" lighting-color="${c.sheen}" result="s"><feDistantLight azimuth="235" elevation="30"/></feSpecularLighting>
+    <feGaussianBlur in="s" stdDeviation="4" result="sb"/>
+    <feGaussianBlur in="d" stdDeviation="3.5" result="db"/>
+    <feComposite in="SourceGraphic" in2="db" operator="arithmetic" k1="1" result="m"/>
+    <feComposite in="m" in2="sb" operator="arithmetic" k2="1" k3="${c.sk||.8}"/>
+    <feComposite in2="SourceAlpha" operator="in"/>
+  </filter>
+  <radialGradient id="stv${u}" cx=".42" cy=".38" r=".85"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${c.vig||.3}"/></radialGradient></defs>
+  <g transform="rotate(${rot} ${w/2} ${h/2})"><rect x="${-w}" y="${-h/2}" width="${w*3}" height="${h*2}" fill="${c.satin}" filter="url(#stf${u})"/></g>
+  <rect width="${w}" height="${h}" fill="url(#stv${u})"/></svg>`}
+// the fold of satin thrown over the foot of the card: same cloth, its own folds, a rolled hem catching the light
+function satinThrow(c){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180)).toFixed(3);
+  const hem='M-10 14C60 6 120 22 190 62S320 124 410 116';
+  return `<svg class="st-throwsvg" ${NS} viewBox="0 0 400 380" preserveAspectRatio="none"><defs>
+  <filter id="stt${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0028 0.008" numOctaves="2" seed="${c.seed+7}"/>
+    <feGaussianBlur stdDeviation="7"/>
+    <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.25 0 0 0 -.1" result="h"/>
+    <feDiffuseLighting in="h" surfaceScale="${c.depth||30}" diffuseConstant="${kd}" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="${el}"/></feDiffuseLighting>
+    <feSpecularLighting in="h" surfaceScale="${c.depth||30}" specularConstant="${c.spec||.9}" specularExponent="${c.sexp||14}" lighting-color="${c.sheen}" result="s"><feDistantLight azimuth="235" elevation="30"/></feSpecularLighting>
+    <feGaussianBlur in="s" stdDeviation="4" result="sb"/>
+    <feGaussianBlur in="d" stdDeviation="3.5" result="db"/>
+    <feComposite in="SourceGraphic" in2="db" operator="arithmetic" k1="1" result="m"/>
+    <feComposite in="m" in2="sb" operator="arithmetic" k2="1" k3="${c.sk||.8}"/>
+    <feComposite in2="SourceAlpha" operator="in"/>
+  </filter>
+  <filter id="stb${u}" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  <clipPath id="stc${u}"><path d="${hem}L410 400L-10 400Z"/></clipPath></defs>
+  <g clip-path="url(#stc${u})"><g transform="rotate(-24 200 190)"><rect x="-300" y="-300" width="1000" height="1000" fill="${c.satin}" filter="url(#stt${u})"/></g>
+    <path d="${hem}" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="22" filter="url(#stb${u})" transform="translate(0 26)"/>
+    <path d="${hem}" fill="none" stroke="${c.sheen}" stroke-opacity="${c.hemlite||.75}" stroke-width="7" filter="url(#stb${u})" transform="translate(0 9)"/></g></svg>`}
+const stMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="st-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const stSeal=(o,c)=>`<i class="st-seal" style="background-image:url(${A}seal-${c.seal}.webp)"><span>${stMono(o)}</span></i>`;
+FAMILY({key:'satin',name:'Satin',meaning:'Card on silk satin',
+  blurb:'A heavy cotton card with letterpress type and a wax seal, resting on softly draped silk satin. A fold of satin is drawn aside to open it.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<section class="page pg-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
+      <div class="st-card st-big reveal"><div class="st-face">
+        ${o.bismillah?'<p class="st-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="st-k kicker">${ev(o,L)}</p>
+        <h1 class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="st-rule"></i>
+        <p class="st-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="st-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="st-ven">${esc(o.venue)}</p>`:''}
+        ${stSeal(o,c)}</div></div>
+      <a class="st-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
+      <div class="st-card st-cc"><div class="st-face">
+        <p class="st-k">${ev(o,L)}</p>
+        <p class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <i class="st-rule"></i>
+        <p class="st-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+        ${stSeal(o,c)}</div></div>
+      <div class="st-throw">${satinThrow(c)}</div>
+      <div class="st-foot">${guest?`<p class="st-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="st-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);const c=th.c;
+    el.style.setProperty('--satinbg',K.uri(satinSvg(c,c.seed+3,c.rot,'',400,900)));
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Cotton card on ivory satin',c:{ground:'#e8dfcf',sheet:'#fcfaf4',ink:'#3a342c',accent:'#6f5a3c',gold:'#b0925a',pagefg:'#3a342c',satin:'#e9e0cf',sheen:'#fffaf0',spec:.55,seal:'emas',seed:11,rot:-28}},
+    {k:'emas',n:'Emas',desc:'Cotton card on champagne satin',c:{ground:'#dcc6a2',sheet:'#fdf9f1',ink:'#3b3023',accent:'#7a5a2e',gold:'#b08a48',pagefg:'#3b3023',satin:'#d9c29c',sheen:'#fff3da',spec:.6,seal:'emas',seed:4,rot:-34}},
+    {k:'jambu',n:'Jambu',desc:'Cotton card on blush satin',c:{ground:'#e8cdc6',sheet:'#fffaf7',ink:'#3d2a2a',accent:'#8e4f58',gold:'#b38f5a',pagefg:'#3d2a2a',satin:'#e5c4bc',sheen:'#fff1ec',spec:.55,seal:'emas',seed:23,rot:-26}},
+    {k:'sage',n:'Sage',desc:'Cotton card on sage satin',c:{ground:'#bcc6b0',sheet:'#fbfbf5',ink:'#2c3227',accent:'#4c5d42',gold:'#a58f58',pagefg:'#262c22',satin:'#b6c1aa',sheen:'#f6fbee',spec:.55,seal:'gading',seed:31,rot:-30}},
+    {k:'biru',n:'Biru',desc:'Cotton card on dusty blue satin',c:{ground:'#a9b8c8',sheet:'#fbfcfc',ink:'#24303d',accent:'#3f5872',gold:'#a8915e',pagefg:'#1f2a36',satin:'#a5b5c6',sheen:'#f1f7ff',spec:.55,seal:'gading',seed:8,rot:-32}},
+    {k:'marun',n:'Marun',desc:'Cotton card on burgundy satin',c:{ground:'#4e1420',sheet:'#fbf6ee',ink:'#3a2024',accent:'#6e1e2c',gold:'#b8935a',pagefg:'#f6e9df',satin:'#6a1b29',sheen:'#ffc9c4',spec:.85,sexp:18,sk:.75,depth:34,vig:.4,hemlite:.5,seal:'emas',seed:17,rot:-30}},
+    {k:'zamrud',n:'Zamrud',desc:'Cotton card on emerald satin',c:{ground:'#0f3428',sheet:'#fbf8ef',ink:'#20302a',accent:'#1f4d3c',gold:'#b5965a',pagefg:'#ecf1e8',satin:'#165140',sheen:'#c9f2de',spec:.85,sexp:18,sk:.75,depth:34,vig:.4,hemlite:.5,seal:'emas',seed:27,rot:-28}},
+    {k:'nila',n:'Nila',desc:'Cotton card on midnight satin',c:{ground:'#121a2f',sheet:'#fbf9f4',ink:'#1e2433',accent:'#27365c',gold:'#b49a62',pagefg:'#e9ecf4',satin:'#1d2a4a',sheen:'#cfdcff',spec:.85,sexp:18,sk:.75,depth:34,vig:.45,hemlite:.5,seal:'gading',seed:5,rot:-34}},
+  ]});
+
+})()}catch(e){console.error("family satin failed",e)}
 
 
 /* ===== family: sianotip ===== */
@@ -7892,6 +8334,76 @@ FAMILY({key:'taman',name:'Taman',meaning:'English garden',
 })()}catch(e){console.error("family taman failed",e)}
 
 
+/* ===== family: tasik ===== */
+try{(()=>{
+/* tasik: a light watercolour card. A lakeside garden painting (Hassam, Monet; public domain) softened into a watercolour
+   vignette that bleeds into the paper, framed down both sides by tall Redouté stems.
+   Cover: the vignette as a soft oval with the names below; tap "Buka Jemputan" and the painting blooms open to fill the screen.
+   Page: the full card: vignette, names, a details row with tiny line icons (each a link) and an RSVP pill.
+   Skin: paper cards with a printed hairline frame and script headings. */
+// watercolour edge: an ellipse pushed around by fractal noise and blurred, with a fainter outer bleed (used as a mask)
+const tsMask=(seed,rx,ry,cy,vh=200)=>{const f=(id,sc,b)=>`<filter id="${id}" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="4" seed="${seed}"/><feDisplacementMap in="SourceGraphic" scale="${sc}" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="${b}"/></filter>`;
+  return svgUriSq(`<svg ${NS} viewBox="0 0 200 ${vh}" preserveAspectRatio="none"><defs>${f('a',18,2.6)}${f('b',30,6)}</defs>
+    <ellipse cx="100" cy="${cy}" rx="${rx+8}" ry="${ry+8}" fill="#fff" fill-opacity=".38" filter="url(#b)"/>
+    <ellipse cx="100" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fff" filter="url(#a)"/><ellipse cx="100" cy="${cy}" rx="${rx*.8}" ry="${ry*.8}" fill="#fff"/></svg>`)};
+const tsVig=(c,cls,mask)=>`<div class="ts-vig ${cls}" style="-webkit-mask-image:${mask};mask-image:${mask}"><i class="ts-art" style="background-image:url(${A}${c.art});background-position:${c.ap}"></i><i class="ts-grain"></i></div>`;
+// a tall stem cut-out; the bottom of each plate holds a pencilled caption, so the box only shows the top 88%
+const TS_W={anemones:617,'blush-rose':622,'cabbage-rose':581,'forget-me-not':528,hibiscus:619,iris:566,jasmine:518,lotus:621,'pink-rose':674,'red-rose':622,'white-roses':636,'wild-rose':663};
+const tsStem=(n,cls)=>`<i class="ts-stem ${cls}" style="background-image:url(${A}flower-${n}.webp);aspect-ratio:${((TS_W[n]||600)/(760*.87)).toFixed(3)}"></i>`;
+const TS_IC={
+  cal:`<svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="1.5"/><path d="M4 9.5h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="12" cy="14.5" r="1.1"/></svg>`,
+  time:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12.5" r="8"/><path d="M12 8v4.6l3 2"/></svg>`,
+  pin:`<svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>`};
+const tsNames=(o,cls)=>{const [n1,n2]=coverNames(o);return `<h1 class="ts-names ${cls||''}"><span>${esc(n1)}</span><i>&amp;</i><span>${esc(n2)}</span></h1>`};
+const tsDay=o=>{if(!o.date)return'';const d=new Date(o.date+'T00:00:00');return isNaN(d)?'':DAYS[o.lang][d.getDay()]};
+FAMILY({key:'tasik',name:'Tasik',meaning:'Lakeside watercolour',
+  blurb:'A light watercolour card: a lakeside garden painting fading softly into the paper, tall painted stems down both sides and the names set in fine serif capitals. The painting blooms open to reveal the card.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const c=th.c,en=o.lang==='en',t=[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ');
+    return `<section class="page pg-tasik"><div class="ts-card">
+      ${tsVig(c,'ts-top reveal',tsMask(11,86,66,80,170))}
+      ${tsStem(c.fl1,'l')}${tsStem(c.fl2,'r')}
+      <div class="ts-body">
+        ${o.bismillah?`<p class="ts-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
+        <p class="ts-k kicker reveal">${ev(o,L)}</p>
+        <div class="reveal d1">${tsNames(o)}</div>
+        <p class="ts-date reveal d2">${esc(fmtDate(o.date,o.lang,false))}</p>${o.hijri?`<p class="ts-hj reveal d2">${esc(o.hijri)}</p>`:''}
+        <div class="ts-row reveal d2">
+          <a href="#" data-go="when">${TS_IC.cal}<small>${esc(tsDay(o))}</small><b>${esc(fmtShort(o.date))}</b></a>
+          <a href="#" data-go="when">${TS_IC.time}<small>${en?'Time':'Masa'}</small><b>${esc(t)}</b></a>
+          <a href="#" data-go="loc">${TS_IC.pin}<small>${en?'Venue':'Tempat'}</small><b>${esc(o.venue)}</b></a>
+        </div>
+        ${o.x_rsvp?`<a class="ts-pill reveal d3" data-go="rsvp" href="#">${en?'Kindly reply':'Sahkan Kehadiran'}</a>`:`<a class="ts-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>`}
+      </div></div></section>`},
+  cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-tasik"><div class="ts-card">
+      ${tsVig(c,'ts-oval',tsMask(5,84,66,85,170))}
+      ${tsStem(c.fl1,'l')}${tsStem(c.fl2,'r')}
+      <div class="ts-cbody"><p class="ts-k">${ev(o,L)}</p>${tsNames(o,'sm')}<p class="ts-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="ts-foot">${guest?`<p class="ts-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ts-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>
+    </div></div>`},
+  skin(el,o,th,L){K.cards(el);
+    // a couple photo takes the painting's place inside the watercolour vignette
+    const pg=$('.pg-tasik',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
+    if(img){const v=$('.ts-top',pg);img.className='ts-photo';img.removeAttribute('style');v.classList.add('has-photo');v.prepend(img);ph.remove()}
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Ivory paper, water garden, iris and lotus',c:{ground:'#e9e3d6',sheet:'#fcfaf4',ink:'#38332c',accent:'#6a5a43',gold:'#b09670',pagefg:'#38332c',art:'pd-paint-hassam-water.jpg',ap:'50% 0%',fl1:'iris',fl2:'lotus'}},
+    {k:'jambu',n:'Jambu',desc:'Blush paper, poppy garden, anemones and roses',c:{ground:'#eedcd6',sheet:'#fdf7f4',ink:'#43302f',accent:'#94545e',gold:'#bf9878',pagefg:'#43302f',art:'pd-paint-monet-poppies.jpg',ap:'50% 75%',fl1:'anemones',fl2:'blush-rose'}},
+    {k:'sage',n:'Sage',desc:'Sage paper, water garden, iris and jasmine',c:{ground:'#dde2d3',sheet:'#f9faf3',ink:'#2e382e',accent:'#506a4a',gold:'#a8956a',pagefg:'#2e382e',art:'pd-paint-monet-irises.jpg',ap:'50% 0%',fl1:'iris',fl2:'white-roses'}},
+    {k:'biru',n:'Biru Kabus',desc:'Mist blue paper, lily pond, iris and forget-me-nots',c:{ground:'#dbe3ea',sheet:'#f8fafb',ink:'#27313c',accent:'#4a6683',gold:'#a99674',pagefg:'#27313c',art:'pd-monet.jpg',ap:'50% 80%',fl1:'iris',fl2:'forget-me-not'}},
+    {k:'ungu',n:'Ungu Lembut',desc:'Lilac paper, Monet’s irises, iris and anemones',c:{ground:'#e3deea',sheet:'#fbf9fd',ink:'#35304a',accent:'#6a5a8c',gold:'#a8957a',pagefg:'#35304a',art:'pd-paint-monet-irises.jpg',ap:'50% 45%',fl1:'iris',fl2:'anemones'}},
+    {k:'pic',n:'Pic',desc:'Peach paper, poppy garden, hibiscus and wild rose',c:{ground:'#f1e0d2',sheet:'#fdf8f2',ink:'#3e2d25',accent:'#a0603f',gold:'#c09a70',pagefg:'#3e2d25',art:'pd-paint-hassam-island.jpg',ap:'50% 20%',fl1:'hibiscus',fl2:'wild-rose'}},
+    {k:'krim',n:'Krim',desc:'Cream paper, poppy field, white roses and jasmine',c:{ground:'#ebe2cd',sheet:'#fdfaf0',ink:'#3a3226',accent:'#7a6240',gold:'#b49863',pagefg:'#3a3226',art:'pd-paint-monet-poppies.jpg',ap:'50% 58%',fl1:'white-roses',fl2:'wild-rose'}},
+    {k:'pudina',n:'Pudina',desc:'Mint paper, lily pond, lotus and forget-me-nots',c:{ground:'#d8e6e0',sheet:'#f6fbf8',ink:'#26372f',accent:'#3d6a5c',gold:'#a59670',pagefg:'#26372f',art:'pd-monet.jpg',ap:'50% 85%',fl1:'lotus',fl2:'forget-me-not'}},
+  ]});
+
+})()}catch(e){console.error("family tasik failed",e)}
+
+
 /* ===== family: teh ===== */
 try{(()=>{
 /* teh: an afternoon-tea flat-lay shot from above. A Ming blue-and-white dish (Met Museum, public domain) used as the
@@ -8302,6 +8814,110 @@ FAMILY({key:'tiket',name:'Tiket',meaning:'Boarding pass',
 })()}catch(e){console.error("family tiket failed",e)}
 
 
+/* ===== family: timbul ===== */
+try{(()=>{
+/* timbul: a thick cotton card, blind-embossed white on white: a raised floral border heavy at two corners and an oval cameo,
+   lit from the upper left so the relief shows only as light and shadow. Names letterpressed in one ink colour.
+   Cover: tap "Buka Jemputan"; the card tilts in the light (a sheen runs across it) and lifts towards you.
+   Page: the same card, larger, with a small cameo for the monogram (or the couple's photo). Skin: cotton cards with a blind-embossed rule. */
+// ---- relief drawing: a greyscale height map (white = high, black = groove), turned into light and shade by a lighting filter
+const tbF=n=>n.toFixed(1);
+const tbLeaf=(x,y,a,l,w)=>`<g transform="translate(${tbF(x)} ${tbF(y)}) rotate(${tbF(a)})"><path d="M0 0C${tbF(l*.3)} ${tbF(-w)} ${tbF(l*.72)} ${tbF(-w*.8)} ${tbF(l)} 0C${tbF(l*.72)} ${tbF(w*.8)} ${tbF(l*.3)} ${tbF(w)} 0 0Z" fill="#e8e8e8"/>
+  <path d="M${tbF(l*.1)} 0L${tbF(l*.86)} 0" stroke="#111" stroke-width=".6"/>${[.3,.5,.68].map(t=>`<path d="M${tbF(l*t)} 0l${tbF(l*.12)} ${tbF(-w*.55)}M${tbF(l*t)} 0l${tbF(l*.12)} ${tbF(w*.55)}" stroke="#555" stroke-width=".35"/>`).join('')}</g>`;
+// a garden rose: two rings of overlapping petals, each outlined by a groove, a tight centre
+const tbRose=(x,y,r,rot=0)=>{let s='';const ring=(n,d,pr,fill,off)=>{for(let i=0;i<n;i++){const a=rot+off+i/n*Math.PI*2;s+=`<circle cx="${tbF(x+Math.cos(a)*d)}" cy="${tbF(y+Math.sin(a)*d)}" r="${tbF(pr)}" fill="${fill}" stroke="#222" stroke-width=".7"/>`}};
+  ring(6,r*.52,r*.5,'#c8c8c8',0);ring(5,r*.3,r*.34,'#e6e6e6',.4);
+  s+=`<circle cx="${tbF(x)}" cy="${tbF(y)}" r="${tbF(r*.24)}" fill="#fff" stroke="#222" stroke-width=".6"/><path d="M${tbF(x-r*.12)} ${tbF(y)}a${tbF(r*.12)} ${tbF(r*.12)} 0 1 1 ${tbF(r*.12)} ${tbF(r*.1)}" fill="none" stroke="#222" stroke-width=".5"/>`;return s};
+// a five-petal blossom
+const tbBloom=(x,y,r,rot=0)=>{let s='';for(let i=0;i<5;i++){const a=rot+i/5*360;s+=`<ellipse cx="${tbF(x)}" cy="${tbF(y-r*.52)}" rx="${tbF(r*.34)}" ry="${tbF(r*.52)}" transform="rotate(${tbF(a)} ${tbF(x)} ${tbF(y)})" fill="#ececec" stroke="#222" stroke-width=".55"/>`}
+  return s+`<circle cx="${tbF(x)}" cy="${tbF(y)}" r="${tbF(r*.2)}" fill="#fff"/>`};
+const tbBud=(x,y,a,l)=>`<g transform="translate(${tbF(x)} ${tbF(y)}) rotate(${tbF(a)})"><path d="M0 0L${tbF(l*.5)} 0" stroke="#fff" stroke-width="1"/><path d="M${tbF(l*.45)} 0C${tbF(l*.6)} ${tbF(-l*.22)} ${tbF(l)} ${tbF(-l*.16)} ${tbF(l)} 0C${tbF(l)} ${tbF(l*.16)} ${tbF(l*.6)} ${tbF(l*.22)} ${tbF(l*.45)} 0Z" fill="#e0e0e0" stroke="#222" stroke-width=".45"/></g>`;
+// the heavy corner garland; local origin is the inside corner, x runs along the top edge, y down the side
+function tbCorner(seed){const R=rng(seed);let s='';
+  s+=`<path d="M12 30C56 14 110 28 176 12" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M30 12C14 56 28 110 12 176" fill="none" stroke="#fff" stroke-width="1.8"/>
+    <path d="M58 30C82 46 96 44 112 58" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M30 58C46 82 44 96 58 112" fill="none" stroke="#fff" stroke-width="1.2"/>`;
+  [[62,20,-30],[78,26,28],[104,22,-24],[128,22,24],[152,16,-18],[166,14,22]].forEach(([x,y,a],i)=>{s+=tbLeaf(x,y,a,15-i*1.4,5.2-i*.5)});
+  [[20,62,120],[26,78,62],[22,104,114],[22,128,66],[16,152,108],[14,166,68]].forEach(([x,y,a],i)=>{s+=tbLeaf(x,y,a,15-i*1.4,5.2-i*.5)});
+  s+=tbLeaf(64,52,35,17,6)+tbLeaf(52,64,55,17,6)+tbLeaf(98,50,40,12,4.2)+tbLeaf(50,98,50,12,4.2)+tbLeaf(112,60,20,10,3.6)+tbLeaf(60,112,70,10,3.6);
+  s+=tbBloom(70,44,7,15)+tbBloom(44,70,7,40);
+  s+=tbRose(36,36,24,.3)+tbRose(92,30,12,1.1)+tbRose(30,92,12,2.2)+tbBloom(116,40,6,0)+tbBloom(40,116,6,20)+tbBloom(140,30,4.5,10)+tbBloom(30,140,4.5,30);
+  s+=tbBud(170,13,-10,11)+tbBud(13,170,100,11)+tbBud(120,58,30,9)+tbBud(58,120,60,9);
+  for(let i=0;i<10;i++){const x=70+R()*80,y=34+R()*12;s+=i%2?`<circle cx="${tbF(y)}" cy="${tbF(x)}" r="1.5" fill="#fff"/>`:`<circle cx="${tbF(x)}" cy="${tbF(y)}" r="1.5" fill="#fff"/>`}
+  return s}
+// the light corner: a single leafy twig
+const tbTwig=()=>`<path d="M8 8C26 22 40 30 62 34" fill="none" stroke="#fff" stroke-width="1.2"/>${tbLeaf(22,18,-40,11,4)+tbLeaf(32,26,60,11,4)+tbLeaf(44,30,-20,10,3.6)+tbLeaf(52,34,50,9,3.2)}${tbBloom(64,35,4.6,8)}`;
+// oval cameo: a raised plateau, a rolled rim, a ring of beads, a small rose crest above and crossed sprigs below
+function tbCameo(cx,cy,rx,ry,crest=true){let s=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#585858"/><ellipse cx="${cx}" cy="${cy}" rx="${rx+3}" ry="${ry+3}" fill="none" stroke="#fff" stroke-width="2.6"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${rx-4}" ry="${ry-4}" fill="none" stroke="#9a9a9a" stroke-width=".6"/>`;
+  const n=Math.round(Math.PI*(rx+ry)/4.6);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;s+=`<circle cx="${tbF(cx+Math.cos(a)*(rx+8.5))}" cy="${tbF(cy+Math.sin(a)*(ry+8.5))}" r="1.25" fill="#fff"/>`}
+  s+=`<ellipse cx="${cx}" cy="${cy}" rx="${rx+13}" ry="${ry+13}" fill="none" stroke="#bdbdbd" stroke-width=".6"/>`;
+  if(crest){const y=cy-ry-13;s+=tbLeaf(cx-6,y+1,200,15,5)+tbLeaf(cx+6,y+1,-20,15,5)+tbLeaf(cx-14,y+5,170,11,3.8)+tbLeaf(cx+14,y+5,10,11,3.8)+tbBloom(cx,y,8,0)}
+  const yb=cy+ry+13;s+=`<path d="M${cx-46} ${yb-14}Q${cx-20} ${yb+6} ${cx+4} ${yb+2}M${cx+46} ${yb-14}Q${cx+20} ${yb+6} ${cx-4} ${yb+2}" fill="none" stroke="#fff" stroke-width="1.2"/>`;
+  [[-40,-9,150],[-30,-3,165],[-20,1,175],[40,-9,30],[30,-3,15],[20,1,5]].forEach(([dx,dy,a],i)=>{s+=tbLeaf(cx+dx,yb+dy,a+(i%2?28:-28),10,3.6)});
+  s+=tbBloom(cx,yb+2,5.5,18);return s}
+function tbRelief(W,H,cam,uid,c,k=1){const m=13;
+  const sh=c.shade.replace('#','').match(/../g).map(h=>parseInt(h,16)/255);
+  const art=`<rect x="${m}" y="${m}" width="${W-2*m}" height="${H-2*m}" fill="none" stroke="#d0d0d0" stroke-width="1"/><rect x="${m+4.5}" y="${m+4.5}" width="${W-2*m-9}" height="${H-2*m-9}" fill="none" stroke="#7a7a7a" stroke-width=".5"/>
+    <g transform="translate(${m+4} ${m+4}) scale(${k})">${tbCorner(uid*3+1)}</g><g transform="translate(${W-m-4} ${H-m-4}) rotate(180) scale(${k})">${tbCorner(uid*3+2)}</g>
+    <g transform="translate(${W-m-4} ${m+4}) rotate(90)">${tbTwig()}</g><g transform="translate(${m+4} ${H-m-4}) rotate(-90)">${tbTwig()}</g>
+    ${tbCameo(cam[0],cam[1],cam[2],cam[3],cam[4]!==false)}`;
+  return `<svg class="tb-relief" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
+    <filter id="tbe${uid}" x="0" y="0" width="${W}" height="${H}" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="h"/>
+      <feGaussianBlur in="h" stdDeviation="1.25" result="hb"/>
+      <feDiffuseLighting in="hb" surfaceScale="2.6" diffuseConstant="1" lighting-color="#fff" result="d"><feDistantLight azimuth="225" elevation="30"/></feDiffuseLighting>
+      <feColorMatrix in="d" result="sh" values="0 0 0 0 ${sh[0].toFixed(3)}  0 0 0 0 ${sh[1].toFixed(3)}  0 0 0 0 ${sh[2].toFixed(3)}  -1.0 0 0 0 .5"/>
+      <feColorMatrix in="d" result="hi" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -.75"/>
+      <feMerge><feMergeNode in="sh"/><feMergeNode in="hi"/></feMerge></filter></defs>
+    <g filter="url(#tbe${uid})">${art}</g></svg>`}
+// a small embossed sprig for section headings (used as a background image)
+function tbSprig(c){const sh=c.shade.replace('#','').match(/../g).map(h=>parseInt(h,16)/255);
+  const art=`<path d="M8 15C40 9 80 9 112 15" fill="none" stroke="#fff" stroke-width="1.1"/>${tbLeaf(30,12,-160,10,3.4)+tbLeaf(38,13,160,10,3.4)+tbLeaf(90,12,-20,10,3.4)+tbLeaf(82,13,20,10,3.4)+tbBloom(60,11.5,6.5,0)+tbBud(18,14,195,8)+tbBud(102,14,-15,8)}`;
+  return `<svg viewBox="0 0 120 26" width="120" height="26" ${NS}><defs><filter id="s" x="0" y="0" width="120" height="26" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+    <feColorMatrix in="SourceGraphic" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"/><feGaussianBlur stdDeviation=".8"/><feDiffuseLighting surfaceScale="2.3" lighting-color="#fff" result="d"><feDistantLight azimuth="225" elevation="30"/></feDiffuseLighting>
+    <feColorMatrix in="d" result="a" values="0 0 0 0 ${sh[0].toFixed(3)}  0 0 0 0 ${sh[1].toFixed(3)}  0 0 0 0 ${sh[2].toFixed(3)}  -1.0 0 0 0 .5"/><feColorMatrix in="d" result="b" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -.75"/>
+    <feMerge><feMergeNode in="a"/><feMergeNode in="b"/></feMerge></filter></defs><g filter="url(#s)">${art}</g></svg>`}
+let tbN=0;
+const tbMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tb-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+FAMILY({key:'timbul',name:'Timbul',meaning:'Blind embossed',
+  blurb:'A thick cotton card blind-embossed white on white: a raised floral border and an oval cameo that show only in the light, the names letterpressed in one ink. The card tilts in the light and lifts.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1450,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',u=++tbN;
+    return `<section class="page pg-timbul" style="--shade:${th.c.shade}"><div class="tb-ground"></div>
+      <div class="tb-pwrap reveal"><div class="tb-card tb-pcard">${tbRelief(300,470,[150,104,46,56],u,th.c,.86)}
+        <div class="tb-mono"><span>${tbMono(o)}</span></div>
+        <div class="tb-ptxt">${o.bismillah?'<p class="tb-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+          <p class="tb-k kicker">${ev(o,L)}</p>
+          <h1 class="tb-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+          <p class="tb-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tb-hj">${esc(o.hijri)}</p>`:''}
+          ${o.venue?`<p class="tb-ven">${esc(o.venue)}</p>`:''}</div></div></div>
+      <a class="tb-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en',u=++tbN;
+    return `<div class="cover cv-timbul" style="--shade:${th.c.shade}"><div class="tb-ground"></div>
+      <div class="tb-stage"><div class="tb-card">${tbRelief(300,420,[150,196,84,112],u,th.c)}<i class="tb-sheen"></i>
+        <div class="tb-ctxt"><p class="tb-k">${ev(o,L)}</p><p class="tb-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+          <p class="tb-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>${o.venue?`<p class="tb-cv">${esc(o.venue)}</p>`:''}</div></div></div>
+      <div class="tb-foot">${guest?`<p class="tb-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="tb-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--tbsprig',K.uri(tbSprig(th.c)));el.style.setProperty('--shade',th.c.shade);
+    // with a couple photo, the photo sits in the cameo instead of the monogram
+    const pg=$('.pg-timbul',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
+    if(img){const mono=$('.tb-mono',pg);img.removeAttribute('style');img.className='tb-photo';mono.classList.add('has-photo');mono.replaceChildren(img);ph.remove()}
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'putih',n:'Putih',desc:'White cotton, black ink',c:{ground:'#e4e2dd',sheet:'#fbfaf7',ink:'#3a3a3c',accent:'#2b2b2f',gold:'#9c9a96',pagefg:'#2b2b2f',shade:'#3c3a38'}},
+    {k:'sage',n:'Sage',desc:'Ivory cotton, sage ink',c:{ground:'#e3dfd3',sheet:'#fbf8ef',ink:'#3d4238',accent:'#55654c',gold:'#a3a68f',pagefg:'#3d4238',shade:'#45402f'}},
+    {k:'marun',n:'Marun',desc:'Cream cotton, burgundy ink',c:{ground:'#e4d9c7',sheet:'#f9f2e5',ink:'#442a2c',accent:'#6e2433',gold:'#b5a089',pagefg:'#442a2c',shade:'#4d3a28'}},
+    {k:'nila',n:'Nila',desc:'Pale grey cotton, navy ink',c:{ground:'#d6d8d9',sheet:'#efefed',ink:'#2b3242',accent:'#23304f',gold:'#9aa0ab',pagefg:'#23304f',shade:'#2e3540'}},
+    {k:'jambu',n:'Jambu',desc:'Blush cotton, rose ink',c:{ground:'#e6d3cc',sheet:'#f8ebe5',ink:'#4a3034',accent:'#984b5a',gold:'#c4a29c',pagefg:'#4a3034',shade:'#5a3a36'}},
+    {k:'zaitun',n:'Zaitun',desc:'Stone cotton, olive ink',c:{ground:'#d9d3c6',sheet:'#efeadf',ink:'#3b3a2a',accent:'#58582c',gold:'#aaa58a',pagefg:'#3b3a2a',shade:'#454030'}},
+    {k:'biru',n:'Biru',desc:'Dusty blue paper, navy ink',c:{ground:'#a9b8c6',sheet:'#c9d5df',ink:'#1f2c3d',accent:'#1d2f4c',gold:'#7f93a8',pagefg:'#1d2f4c',shade:'#24344a'}},
+    {k:'lumut',n:'Lumut',desc:'Sage paper, forest ink',c:{ground:'#a9b39d',sheet:'#cad1bf',ink:'#26301f',accent:'#28361f',gold:'#8a967c',pagefg:'#26301f',shade:'#2b3524'}},
+  ]});
+
+})()}catch(e){console.error("family timbul failed",e)}
+
+
 /* ===== family: tingkap ===== */
 try{(()=>{
 /* tingkap: a carved timber window of a Malay house on a lime-washed wall. The fanlight is pierced awan-larat carving with daylight
@@ -8447,6 +9063,97 @@ FAMILY({key:'tipografi',name:'Tipografi',meaning:'Editorial poster',
   ].map(([k,n,desc,ground,ink,accent,dark])=>({k,n,desc,c:{ground,sheet:ground,ink,accent,gold:accent,pagefg:ink,cover:accent,line:dark?'rgba(255,255,255,.22)':'rgba(30,25,20,.2)',lp:dark?'rgba(0,0,0,.3)':'rgba(255,255,255,.55)'}}))});
 
 })()}catch(e){console.error("family tipografi failed",e)}
+
+
+/* ===== family: tulle ===== */
+try{(()=>{
+/* tulle: a deckled handmade-paper invitation wrapped in a band of sheer tulle, gathered at the front under a gold wax seal
+   with a small sprig of dried baby's breath tucked beneath it.
+   Cover: tap the seal (or "Buka Jemputan"); the seal lifts, the tulle slides down off the card and the card comes forward.
+   Page: the unwrapped card lying on the loose tulle, seal and sprig resting at its corner.
+   Skin: deckled paper cards, each heading set on a soft gathered strip of tulle. */
+needFont('Allura');
+// dried gypsophila: fine forking stems ending in clusters of tiny florets. Drawn in a 100x150 box, base at (50,148).
+function tlBaby(seed,c){const R=rng(seed),st=[],fl=[],bud=[];
+  const P=(x,y)=>`${x.toFixed(1)} ${y.toFixed(1)}`;
+  const floret=(x,y,s)=>{fl.push([x,y,s])};
+  // a pedicel cluster: a few very short stalks with a floret at each end
+  const cluster=(x,y,a,n)=>{for(let i=0;i<n;i++){const aa=a+(R()-.5)*1.9,l=3.5+R()*5,x2=x+Math.cos(aa)*l,y2=y+Math.sin(aa)*l;
+    st.push(`<path d="M${P(x,y)}L${P(x2,y2)}" stroke-width=".28"/>`);(R()<.18?bud:fl).push([x2,y2,.75+R()*.45])}};
+  const branch=(x,y,a,len,depth)=>{const bend=(R()-.5)*.5,x2=x+Math.cos(a)*len,y2=y+Math.sin(a)*len,cx=x+Math.cos(a+bend)*len*.55,cy=y+Math.sin(a+bend)*len*.55;
+    st.push(`<path d="M${P(x,y)}Q${P(cx,cy)} ${P(x2,y2)}" stroke-width="${(.62-depth*.15).toFixed(2)}"/>`);
+    if(depth<2){const k=depth?2:3;for(let i=0;i<k;i++){const t=.45+i*.22+R()*.08,bx=x+(x2-x)*t,by=y+(y2-y)*t,s=i%2?1:-1;
+      branch(bx,by,a+s*(.45+R()*.35),len*(.34+R()*.16),depth+1)}}
+    cluster(x2,y2,a,depth===2?3+Math.floor(R()*2):4+Math.floor(R()*3))};
+  const n=6;for(let i=0;i<n;i++){const a=-Math.PI/2+(-.5+i/(n-1))*.95+(R()-.5)*.12;branch(50+(R()-.5)*2,148,a,62+R()*58,0)}
+  const flo=fl.map(([x,y,s])=>{const r=1.15*s;let p='';for(let k=0;k<5;k++){const q=k/5*Math.PI*2+R();p+=`<circle cx="${(x+Math.cos(q)*r*.62).toFixed(2)}" cy="${(y+Math.sin(q)*r*.62).toFixed(2)}" r="${(r*.62).toFixed(2)}"/>`}
+    return `<g>${p}<circle class="ctr" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(r*.3).toFixed(2)}"/></g>`}).join('');
+  const bd=bud.map(([x,y,s])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(.7*s).toFixed(2)}"/>`).join('');
+  return `<svg class="tl-baby" viewBox="0 0 100 150" ${NS}><g fill="none" stroke="${c.stem}" stroke-linecap="round">${st.join('')}</g>
+    <g class="tl-flo" fill="${c.flo}" stroke="${c.floEdge}" stroke-width=".18">${flo}</g><g fill="${c.bud}">${bd}</g></svg>`}
+// a band of sheer tulle gathered at its middle: the outline pinches in, the folds run into the pinch
+function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
+  const top=`M0 6C62 7 78 ${cy-pin} 100 ${cy-pin}C122 ${cy-pin} 138 7 200 5`,bot=`L200 91C138 90 122 ${cy+pin} 100 ${cy+pin}C78 ${cy+pin} 62 89 0 90Z`;
+  const R=rng(uid*7+3),broad=[],fine=[];
+  // folds: uneven spacing; broad soft light/shade bands plus a few fine creases, all running into the pinch
+  const fold=(t,arr,stroke,w,op)=>{const yl=6+t*84,yr=5+t*86+(R()-.5)*4,yp=cy-pin+t*pin*2+(R()-.5)*1.2,sag=(R()-.5)*6;
+    arr.push(`<path d="M0 ${yl.toFixed(1)}C${(50+sag).toFixed(1)} ${(yl+(yp-yl)*.2).toFixed(1)} ${(78+sag/2).toFixed(1)} ${yp.toFixed(1)} 100 ${yp.toFixed(1)}C${(122-sag/2).toFixed(1)} ${yp.toFixed(1)} ${(150-sag).toFixed(1)} ${(yr+(yp-yr)*.2).toFixed(1)} 200 ${yr.toFixed(1)}" stroke="${stroke}" stroke-width="${w.toFixed(1)}" opacity="${op.toFixed(2)}"/>`)};
+  let t=.03;while(t<.97){const light=R()<.55;fold(t,broad,light?'#fff':'#5a4434',light?5+R()*7:3+R()*5,light?.3+R()*.35:.07+R()*.08);t+=.06+R()*.1}
+  for(let i=0;i<7;i++)fold(.08+R()*.84,fine,R()<.5?'#fff':'#5a4434',.35+R()*.4,R()<.5?.7:.16);
+  const folds=[`<g filter="url(#tlb${uid})">${broad.join('')}</g>`,`<g filter="url(#tlf${uid})">${fine.join('')}</g>`];
+  return `<svg class="tl-tulle" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
+    <clipPath id="tlc${uid}"><path d="${top}${bot}"/></clipPath>
+    <linearGradient id="tlg${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".2" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#fff" stop-opacity=".34"/><stop offset=".8" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".52"/></linearGradient>
+    <linearGradient id="tlh${uid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3c2d23" stop-opacity=".16"/><stop offset=".07" stop-color="#3c2d23" stop-opacity="0"/><stop offset=".93" stop-color="#3c2d23" stop-opacity="0"/><stop offset="1" stop-color="#3c2d23" stop-opacity=".16"/></linearGradient>
+    <radialGradient id="tlp${uid}"><stop offset="0" stop-color="#4a3628" stop-opacity=".16"/><stop offset="1" stop-color="#4a3628" stop-opacity="0"/></radialGradient>
+    <pattern id="tln${uid}" width="2.4" height="2.1" patternUnits="userSpaceOnUse"><path d="M0 1.05L.6 0H1.8L2.4 1.05L1.8 2.1H.6Z" fill="none" stroke="#fff" stroke-width=".2" opacity=".3"/></pattern>
+    <filter id="tlb${uid}" x="-5%" y="-10%" width="110%" height="120%"><feGaussianBlur stdDeviation="2"/></filter><filter id="tlf${uid}" x="-5%" y="-10%" width="110%" height="120%"><feGaussianBlur stdDeviation=".45"/></filter></defs>
+    <g clip-path="url(#tlc${uid})"><rect width="${W}" height="${H}" fill="url(#tlg${uid})"/><rect width="${W}" height="${H}" fill="url(#tln${uid})"/>
+    <g fill="none">${folds.join('')}</g><rect width="${W}" height="${H}" fill="url(#tlh${uid})"/><ellipse cx="100" cy="${cy}" rx="30" ry="${pin+10}" fill="url(#tlp${uid})"/></g>
+    <path d="${top}" fill="none" stroke="#fff" stroke-width=".9" opacity=".85"/><path d="${bot.replace(/^L/,'M').replace(/Z$/,'')}" fill="none" stroke="#fff" stroke-width=".9" opacity=".8"/></svg>`}
+let tlN=0;
+const tlMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tl-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const tlSeal=(o,c,tag,attr,L)=>`<${tag} class="tl-seal" ${attr||''} ${L?`aria-label="${L.open}"`:''} style="--seal:url(${A}seal-${c.seal}.webp)"><span>${tlMono(o)}</span></${tag}>`;
+const tlBabyC=c=>({stem:c.stem||'#8d8a6c',flo:'#fffdf7',floEdge:'rgba(120,108,90,.55)',bud:'#efe6d2'});
+FAMILY({key:'tulle',name:'Tulle',meaning:'Sheer tulle wrap',
+  blurb:'A deckled handmade-paper card wrapped in sheer tulle, tied at the front with a gold wax seal and a sprig of baby’s breath. The seal lifts and the tulle slides away.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Allura', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c,u=++tlN;
+    return `<section class="page pg-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
+      <div class="tl-loose reveal">${tlBand(u,true)}</div>
+      <div class="tl-pwrap reveal d1"><div class="tl-shadow"><div class="tl-paper tl-pcard"><div class="tl-rule"></div>
+        ${o.bismillah?'<p class="tl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="tl-k kicker">${ev(o,L)}</p>
+        <h1 class="tl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="tl-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tl-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="tl-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <div class="tl-rest">${tlBaby(u*13+5,tlBabyC(c))}${tlSeal(o,c,'span','','')}</div></div>
+      <a class="tl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++tlN;
+    return `<div class="cover cv-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
+      <div class="tl-stage">
+        <div class="tl-card"><div class="tl-shadow"><div class="tl-paper"><div class="tl-rule"></div>
+          <p class="tl-k">${ev(o,L)}</p><p class="tl-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+          <p class="tl-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div></div>
+        <div class="tl-band">${tlBand(u,false)}</div>
+        <div class="tl-tie">${tlBaby(u*13+1,tlBabyC(c))}${tlSeal(o,c,tag,attr,L)}</div>
+      </div>
+      <div class="tl-foot">${guest?`<p class="tl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="tl-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('tl-dark',!!th.c.dark);el.style.setProperty('--hi',th.c.hi);el.style.setProperty('--tlband',K.uri(tlBand(900,false)));
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'gading',n:'Gading',desc:'Ivory paper in white tulle on cream silk',c:{ground:'#ebe5da',sheet:'#fffdf7',ink:'#3a342b',accent:'#76664b',gold:'#b39555',pagefg:'#3a342b',seal:'emas',hi:'#fffaf0'}},
+    {k:'jambu',n:'Jambu',desc:'Ivory paper in white tulle on blush silk',c:{ground:'#eedad3',sheet:'#fffaf6',ink:'#3e2d2d',accent:'#955a60',gold:'#b8925a',pagefg:'#3e2d2d',seal:'emas',hi:'#fff4ef'}},
+    {k:'pasir',n:'Pasir',desc:'Cream paper in white tulle on champagne silk',c:{ground:'#e6d8c2',sheet:'#fffaf0',ink:'#3b3226',accent:'#86683f',gold:'#b8975a',pagefg:'#3b3226',seal:'emas',hi:'#fff6e6'}},
+    {k:'sage',n:'Sage',desc:'Ivory paper in white tulle on sage silk',c:{ground:'#dce1d3',sheet:'#fdfcf6',ink:'#2d3129',accent:'#56664c',gold:'#a88f55',pagefg:'#2d3129',seal:'emas',hi:'#f6f8f0',stem:'#7f8a66'}},
+    {k:'biru',n:'Biru',desc:'White paper in white tulle on dusty blue silk',c:{ground:'#d6dee6',sheet:'#fdfdfb',ink:'#26303c',accent:'#4b6080',gold:'#b0925a',pagefg:'#26303c',seal:'emas',hi:'#f4f8fb'}},
+    {k:'ungu',n:'Ungu',desc:'White paper in white tulle on lilac silk',c:{ground:'#e2dbe6',sheet:'#fdfbfd',ink:'#342e3d',accent:'#6c5b84',gold:'#b39660',pagefg:'#342e3d',seal:'emas',hi:'#faf6fc'}},
+    {k:'koko',n:'Koko',desc:'Cream paper in white tulle on mocha silk',c:{ground:'#55433a',sheet:'#fcf7ef',ink:'#3a2c24',accent:'#6f4f3b',gold:'#c4a167',pagefg:'#f4eadd',seal:'emas',hi:'#8a7366',dark:'1'}},
+    {k:'marun',n:'Marun',desc:'Ivory paper in white tulle on wine silk',c:{ground:'#4d1d27',sheet:'#fdf8f3',ink:'#3a2228',accent:'#7a2a3a',gold:'#c6a066',pagefg:'#f6e9e5',seal:'emas',hi:'#83505a',dark:'1'}},
+  ]});
+
+})()}catch(e){console.error("family tulle failed",e)}
 
 
 /* ===== family: ukiran ===== */
@@ -8882,7 +9589,7 @@ FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play puppet',
 
 /* ================= after all families: refresh lookups, load extra fonts, QA hook ================= */
 /* the newest stationery designs lead the gallery and the family lists */
-(()=>{const FIRST=['warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
+(()=>{const FIRST=['lili','satin','renda2','lanskap','lengkung','tulle','timbul','tasik','warkah','kolam','lukisan'].filter(k=>FAMILIES[k]);const rank=k=>{const i=FIRST.indexOf(k);return i<0?FIRST.length:i};
   THEMES.sort((a,b)=>rank(a.fam)-rank(b.fam));
   const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
   [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();

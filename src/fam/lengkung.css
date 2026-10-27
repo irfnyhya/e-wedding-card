@@ -1,0 +1,92 @@
+/* ===== lengkung (Lengkung Bunga) ===== */
+/* aged cream paper: warm fibres, faint crackle and browned edges; dark colourways show a flower painting instead */
+.inv .lg-bg{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 95% 80% at 50% 45%,transparent 50%,rgba(120,80,40,.3) 100%),url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:normal,multiply,normal}
+.inv .lg-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 40%,rgba(255,250,235,.55),transparent 70%)}
+.inv .lg-dark .lg-bg{background:var(--paint) var(--paintpos)/var(--paintsize) no-repeat,var(--ground)}
+.inv .lg-dark .lg-bg::after{background:radial-gradient(ellipse 85% 70% at 50% 42%,rgba(0,0,0,.1),rgba(0,0,0,.6) 100%),linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 60%,rgba(0,0,0,.65));mix-blend-mode:normal;opacity:1}
+
+/* the arch: a paper panel cut to the outline, the engraving drawn over it */
+.inv .lg-wrap{position:absolute;left:50%;top:8%;width:78%;aspect-ratio:348/506;transform:translateX(-50%)}
+.inv .lg-arch{position:absolute;inset:0;z-index:2}
+.inv .lg-panel{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,rgba(255,255,255,.6),transparent 65%),url(assets/paper.jpg) 0 0/260px,var(--panel);background-blend-mode:normal,multiply,normal}
+.inv .lg-frame{position:absolute;inset:0;width:100%;height:100%;overflow:visible;color:var(--line)}
+.inv .lg-half{position:absolute;inset:0;filter:drop-shadow(0 8px 12px rgba(80,50,25,.22)) drop-shadow(0 1px 1px rgba(80,50,25,.15))}
+.inv .lg-dark .lg-half{filter:drop-shadow(0 16px 22px rgba(0,0,0,.6)) drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.inv .lg-half.l{clip-path:inset(-80px 50% -80px -80px)}
+.inv .lg-half.r{clip-path:inset(-80px -80px -80px 50%)}
+.inv .lg-fl{position:absolute;height:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 4px 5px rgba(70,45,25,.22))}
+.inv .lg-txt{position:absolute;left:19%;right:19%;top:26%;bottom:10%;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink)}
+.inv .lg-k{font-family:"Cormorant Garamond",serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;line-height:1.5;opacity:.85}
+.inv .lg-names{font-family:"Alex Brush",cursive;font-weight:400;font-size:clamp(40px,12.6cqi,52px);line-height:.98;color:var(--accent);display:flex;flex-direction:column;align-items:center;margin:12px 0 2px}
+.inv .lg-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.38em;color:var(--gold);margin:2px 0 4px}
+.inv .lg-rule{width:58%;max-width:120px;height:auto;color:var(--line);margin:8px 0 8px}
+.inv .lg-date{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase}
+.inv .lg-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;opacity:.75;margin-top:2px}
+.inv .lg-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:4px;opacity:.9}
+.inv .lg-bis{font-family:"Amiri",serif;font-size:14px;color:var(--line);margin:4px 0 -4px}
+
+/* cover */
+.inv .cv-lengkung{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
+.inv .cv-lengkung .lg-bg{transition:transform 1.45s cubic-bezier(.5,0,.25,1)}
+.inv .cv-lengkung .lg-half{transition:transform 1.3s cubic-bezier(.6,0,.25,1),opacity .5s .85s}
+.inv .cv-lengkung .lg-txt{transition:opacity .35s}
+.inv .cv-lengkung .lg-fl{transition:transform 1.3s cubic-bezier(.6,0,.25,1),opacity .6s .6s}
+.inv .lg-foot{position:absolute;left:0;right:0;bottom:5.5%;z-index:5;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--pagefg);transition:opacity .4s}
+.inv .lg-to{text-align:center}
+.inv .lg-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.8}
+.inv .lg-to b{font-family:"Alex Brush",cursive;font-weight:400;font-size:28px;line-height:1.25}
+.inv .lg-open{cursor:pointer;padding:13px 36px;border-radius:999px;border:1px solid color-mix(in srgb,var(--line) 75%,transparent);background:color-mix(in srgb,var(--panel) 55%,transparent);
+  color:var(--accent);font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;box-shadow:0 6px 14px -8px rgba(80,50,25,.5)}
+.inv .lg-dark .lg-to{text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.inv .lg-dark .lg-open{background:rgba(0,0,0,.38);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 85%,transparent)}
+/* opening: the arch parts down the middle and the view steps through */
+.inv.opening .cv-lengkung .lg-half.l{transform:translateX(-80%) rotate(-2.5deg);opacity:0}
+.inv.opening .cv-lengkung .lg-half.r{transform:translateX(80%) rotate(2.5deg);opacity:0}
+.inv.opening .cv-lengkung .lg-fl.l{transform:translateX(-60%);opacity:0}
+.inv.opening .cv-lengkung .lg-fl.r{transform:translateX(60%);opacity:0}
+.inv.opening .cv-lengkung .lg-bg{transform:scale(1.14)}
+.inv.opening .cv-lengkung .lg-txt,.inv.opening .lg-foot{opacity:0}
+.inv.opening .cv-lengkung{opacity:0}
+
+/* page */
+.inv .pg-lengkung{background:var(--ground);color:var(--pagefg);padding:26px 0 82px;overflow:hidden}
+.inv .pg-lengkung > :not(.lg-bg){position:relative;z-index:2}
+.inv .pg-lengkung .lg-wrap{position:relative;left:auto;top:auto;transform:none;width:80%;max-width:330px}
+.inv .pg-lengkung .lg-txt{top:21%;bottom:9%}
+.inv .pg-lengkung .couple-ph.front{width:36%;margin:0 auto 10px}
+.inv .pg-lengkung .lg-arch{filter:drop-shadow(0 8px 12px rgba(80,50,25,.22))}
+.inv .pg-lengkung.lg-dark .lg-arch{filter:drop-shadow(0 16px 22px rgba(0,0,0,.6))}
+.inv .lg-pills{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.inv .lg-pill{padding:11px 22px;border-radius:999px;border:1px solid color-mix(in srgb,var(--line) 75%,transparent);background:color-mix(in srgb,var(--panel) 70%,transparent);color:var(--accent);text-decoration:none;
+  font-family:"Cormorant Garamond",serif;font-weight:600;font-size:11px;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap}
+.inv .lg-pill.ghost{background:transparent}
+.inv .lg-dark .lg-pill{background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--pagefg);border-color:color-mix(in srgb,var(--gold) 85%,transparent)}
+
+/* skin: arch-topped paper cards with an inner engraved line */
+.fam-lengkung .scroller{background:url(assets/paper.jpg) 0 0/300px,var(--ground);background-blend-mode:multiply}
+.fam-lengkung.lg-dk .scroller{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--ground) 80%,#fff 8%),var(--ground) 70%)}
+.fam-lengkung.cardsecs .sec{background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.55),transparent 60%),url(assets/paper.jpg) 0 0/260px,var(--panel);background-blend-mode:normal,multiply,normal;color:var(--ink);
+  border-radius:50% 50% 6px 6px/120px 120px 6px 6px;padding:64px 28px 44px;box-shadow:0 12px 24px -10px rgba(60,40,20,.4)}
+.fam-lengkung.lg-dk.cardsecs .sec{box-shadow:0 16px 28px -10px rgba(0,0,0,.7)}
+.fam-lengkung.cardsecs .sec::before{content:"";position:absolute;inset:8px;pointer-events:none;z-index:0;border:1px solid color-mix(in srgb,var(--line) 60%,transparent);border-radius:50% 50% 3px 3px/113px 113px 3px 3px}
+.fam-lengkung.cardsecs .sec::after{content:"";position:absolute;inset:13px;pointer-events:none;z-index:0;border:1.5px dotted color-mix(in srgb,var(--line) 50%,transparent);border-radius:50% 50% 2px 2px/108px 108px 2px 2px}
+.fam-lengkung .sec > *{position:relative;z-index:1}
+.fam-lengkung .sec h2{font-family:"Alex Brush",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:40px;line-height:1.1;color:var(--accent)}
+.fam-lengkung .rule{color:var(--line)}
+.fam-lengkung .sec,.fam-lengkung .sec p,.fam-lengkung .info b{color:var(--ink)}
+.fam-lengkung .info,.fam-lengkung .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-lengkung .info > div{border-bottom:1px solid color-mix(in srgb,var(--line) 30%,transparent)!important;padding:14px 6px!important}
+.fam-lengkung .info > div:last-child{border-bottom:0!important}
+.fam-lengkung .info span{color:var(--line)}
+.fam-lengkung .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--line) 55%,transparent);color:var(--accent);background:transparent}
+.fam-lengkung .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-lengkung .count b{font-family:"Cormorant Garamond",serif;color:var(--accent)}
+.fam-lengkung input,.fam-lengkung select,.fam-lengkung textarea{background:rgba(255,255,255,.5);color:var(--ink);border-color:color-mix(in srgb,var(--line) 45%,transparent)}
+.fam-lengkung .seg button,.fam-lengkung button.submit{border-radius:999px}
+.fam-lengkung .seg button[aria-pressed="true"],.fam-lengkung button.submit{background:var(--accent)!important;color:var(--panel)!important;border-color:var(--accent)!important}
+.fam-lengkung .dock{background:color-mix(in srgb,var(--panel) 94%,transparent)}
+.fam-lengkung .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .cv-lengkung .lg-half,.inv .cv-lengkung .lg-bg,.inv .cv-lengkung .lg-fl{transition:none}}
+.fam-lengkung .giftcard{border:0!important;outline:0!important;box-shadow:none!important;border-radius:18px!important;background:rgba(255,255,255,.4)!important}
+.fam-lengkung .giftcard::before,.fam-lengkung .giftcard::after{display:none!important}

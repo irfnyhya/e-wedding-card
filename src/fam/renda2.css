@@ -1,0 +1,131 @@
+/* ===== renda2 (Renda Diraja) ===== */
+/* velvet ground: a soft pool of light, the pile texture and a deep vignette */
+.inv .rj-ground{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 46% 42%,color-mix(in srgb,var(--ground) 82%,#fff 18%),var(--ground) 62%,color-mix(in srgb,var(--ground) 70%,#000) 100%)}
+.inv .rj-ground::after{content:"";position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.6}
+.inv .rj-k{font-family:"Cormorant Garamond",serif;font-size:9px;letter-spacing:.36em;text-transform:uppercase;color:var(--accent);line-height:1.5}
+.inv .rj-rule{display:block;width:62%;max-width:130px;height:auto;color:var(--gold);margin:8px auto 6px}
+
+/* the die-cut lace card: paper shows through an SVG mask (scallops + punched eyelets); a gilt hairline sits on top */
+.inv .rj-card{position:absolute;filter:drop-shadow(0 14px 14px rgba(0,0,0,.42)) drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.inv .rj-paper{position:absolute;inset:0;background:radial-gradient(ellipse at 40% 30%,rgba(255,255,255,.5),transparent 60%),url(assets/paper.jpg) 0 0/240px,var(--sheet);background-blend-mode:normal,multiply,normal}
+.inv .rj-line{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.inv .rj-in{position:absolute;inset:22% 13% 11%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink)}
+.inv .rj-cn,.inv .rj-names{font-family:"Great Vibes",cursive;font-weight:400;color:var(--accent);display:flex;flex-direction:column;align-items:center;line-height:1}
+.inv .rj-cn{font-size:clamp(30px,9.6cqi,40px);margin-top:10px}
+.inv .rj-cn span,.inv .rj-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:3px 0 1px}
+.inv .rj-cd{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.32em;color:var(--ink)}
+
+/* envelope: open flap with a painted liner, the liner also seen inside the pocket */
+.inv .rj-env{position:absolute;aspect-ratio:1.42;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45)) drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.inv .rj-body{position:absolute;inset:0;border-radius:2px;background:linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.05)),var(--liner) 50% 40%/cover}
+.inv .rj-body::after{content:"";position:absolute;inset:0;border-radius:2px;clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%);
+  background:linear-gradient(to top right,transparent 49.4%,rgba(0,0,0,.22) 50%,transparent 60%),linear-gradient(to top left,transparent 49.4%,rgba(255,255,255,.16) 50%,transparent 60%),
+  linear-gradient(180deg,rgba(255,255,255,.1),rgba(0,0,0,.12)),url(assets/linen.jpg) 0 0/170px,var(--env);background-blend-mode:normal,normal,normal,soft-light,normal}
+.inv .rj-flap{position:absolute;left:0;right:0;bottom:calc(100% - 1px);height:58%;clip-path:polygon(0 100%,50% 0,100% 100%);
+  background:linear-gradient(0deg,rgba(0,0,0,.18),rgba(255,255,255,.08)),url(assets/linen.jpg) 0 0/170px,var(--env);background-blend-mode:normal,soft-light,normal}
+.inv .rj-flap i{position:absolute;inset:7% 6.5% 0;clip-path:polygon(0 100%,50% 0,100% 100%);background:linear-gradient(0deg,rgba(0,0,0,.35),transparent 40%),var(--liner) 50% 30%/cover}
+
+/* seal on a silk tassel */
+.inv .rj-seal{position:absolute;inset:0;background:var(--seal) center/contain no-repeat;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 5px 5px rgba(0,0,0,.45))}
+.inv .rj-seal > span{font-family:"Great Vibes",cursive;font-size:clamp(16px,5.4cqi,22px);color:rgba(0,0,0,.36);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.25);line-height:1}
+.inv .rj-seal i{font-style:normal;font-family:"Cormorant Garamond",serif;font-size:.55em;margin:0 1px}
+.inv .rj-seal .rj-jw{font-family:"Amiri",serif;font-size:1em}
+.inv .rj-tassel{position:absolute;left:-14%;top:48%;width:128%;height:auto;transform:rotate(-22deg);transform-origin:50% 0;filter:drop-shadow(2px 6px 4px rgba(0,0,0,.4))}
+
+/* cover */
+.inv .cv-rdiraja{background:var(--ground);overflow:hidden;transition:opacity .45s 1.05s}
+.inv .rj-to{position:absolute;top:4.5%;left:0;right:0;z-index:4;text-align:center;color:var(--pagefg);transition:opacity .4s}
+.inv .rj-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;opacity:.8}
+.inv .rj-to b{font-family:"Great Vibes",cursive;font-weight:400;font-size:27px;line-height:1.3}
+.inv .rj-stage{position:absolute;left:0;right:0;top:15%;height:72%;z-index:2}
+.inv .rj-env.big{right:-7%;top:19%;width:66%;transform:rotate(10deg);transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .8s .3s}
+.inv .rj-card.lift{left:6%;top:2%;width:63%;transform:rotate(-3deg);z-index:3;transition:transform 1.25s cubic-bezier(.45,0,.2,1)}
+.inv .rj-vellum{position:absolute;right:5%;top:63%;width:48%;aspect-ratio:1.3;z-index:4;transform:rotate(6deg);border-radius:2px;padding:9px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);
+  background:linear-gradient(160deg,rgba(255,255,255,.55),rgba(255,255,255,.28)),color-mix(in srgb,var(--sheet) 62%,transparent);-webkit-backdrop-filter:blur(2.5px) brightness(1.15);backdrop-filter:blur(2.5px) brightness(1.15);
+  box-shadow:0 10px 16px -6px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.55),inset 0 0 0 6px transparent,inset 0 0 0 6.6px color-mix(in srgb,var(--gold) 55%,transparent);
+  transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .8s .3s}
+.inv .rj-vk{font-family:"Great Vibes",cursive;font-size:21px;color:var(--accent);line-height:1.1}
+.inv .rj-vd{font-family:"Cormorant Garamond",serif;font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;margin-top:4px}
+.inv .rj-vt,.inv .rj-vv{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;line-height:1.25}
+.inv .rj-vv{opacity:.85}
+.inv .rj-sealset{position:absolute;left:3%;top:59%;width:23%;aspect-ratio:1;z-index:5;transition:transform 1.1s cubic-bezier(.45,0,.2,1),opacity .6s .2s}
+.inv .rj-sealset .rj-seal{animation:rjGlow 6s ease-in-out infinite}
+@keyframes rjGlow{0%,100%{filter:drop-shadow(0 5px 5px rgba(0,0,0,.45))}50%{filter:drop-shadow(0 5px 5px rgba(0,0,0,.45)) drop-shadow(0 0 9px rgba(255,232,190,.4))}}
+.inv .rj-open{position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:6;white-space:nowrap;cursor:pointer;
+  padding:14px 38px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 85%,transparent);background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  color:var(--pagefg);font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;box-shadow:inset 0 0 0 3px rgba(0,0,0,.12);transition:opacity .4s}
+.inv .cv-rdiraja.rj-light .rj-open{background:rgba(255,255,255,.35)}
+/* opening: envelope, vellum and seal fan away; the lace card lifts to the centre */
+.inv.opening .rj-env.big{transform:translate(42%,-8%) rotate(22deg);opacity:0}
+.inv.opening .rj-vellum{transform:translate(36%,46%) rotate(18deg);opacity:0}
+.inv.opening .rj-sealset{transform:translate(-60%,40%) rotate(-25deg);opacity:0}
+.inv.opening .rj-card.lift{transform:translate(20%,12%) rotate(0) scale(1.22)}
+.inv.opening .rj-to,.inv.opening .rj-open{opacity:0}
+.inv.opening .cv-rdiraja{opacity:0}
+
+/* page: the suite as a flat-lay, each piece a link */
+.inv .pg-rdiraja{background:var(--ground);color:var(--pagefg);padding:30px 16px 84px;overflow:hidden}
+.inv .pg-rdiraja .rj-lay{position:relative;z-index:2;width:100%;max-width:390px;display:flex;flex-direction:column;align-items:center}
+.inv .rj-main{width:80%;transform:rotate(-1.4deg);position:relative;z-index:2}
+.inv .rj-main .rj-card{position:relative;width:100%}
+.inv .rj-main .rj-in{inset:16% 13% 12%}
+.inv .rj-main .couple-ph.front{width:30%;margin:0 auto 8px}
+.inv .rj-main .rj-k{font-size:9.5px}
+.inv .rj-names{font-size:clamp(34px,11cqi,46px);margin:6px 0 0}
+.inv .rj-date{font-family:"Cormorant Garamond",serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+.inv .rj-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13.5px;color:var(--ink);opacity:.75;margin-top:2px}
+.inv .rj-tiles{position:relative;width:100%;height:214px;margin-top:-18px}
+.inv .rj-t{position:absolute;display:block;text-decoration:none;cursor:pointer;color:var(--ink)}
+.inv .rj-t small{display:block;font-family:"Cormorant Garamond",serif;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase}
+.inv .rj-t b{display:block;font-family:"Great Vibes",cursive;font-weight:400;font-size:24px;line-height:1.1}
+/* a small envelope, flap open */
+.inv .rj-t-env{left:2%;top:62px;width:50%;transform:rotate(-6deg);z-index:3}
+.inv .rj-t-env .rj-env{position:relative;width:100%}
+.inv .rj-t-env .rj-tl{position:absolute;left:0;right:0;bottom:12%;text-align:center;color:var(--envfg);z-index:2;text-shadow:0 1px 2px color-mix(in srgb,var(--env) 60%,transparent)}
+.inv .rj-t-env .rj-tl b{color:var(--envfg)}
+/* an oval of vellum for RSVP */
+.inv .rj-t-rsvp{right:5%;top:8px;width:32%;transform:rotate(7deg);z-index:3}
+.inv .rj-vel{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:.82;border-radius:50%;text-align:center;
+  background:radial-gradient(ellipse at 40% 30%,rgba(255,255,255,.7),transparent 60%),color-mix(in srgb,var(--sheet) 86%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  box-shadow:0 12px 16px -6px rgba(0,0,0,.45),inset 0 0 0 5px rgba(255,255,255,.3),inset 0 0 0 5.6px color-mix(in srgb,var(--gold) 70%,transparent)}
+.inv .rj-vel b{font-family:"Cormorant Garamond",serif;font-size:22px;letter-spacing:.14em;color:var(--accent);margin-top:2px}
+/* a linen tag with the seal for the location */
+.inv .rj-t-loc{left:47%;top:156px;width:49%;transform:rotate(-3deg);z-index:4}
+.inv .rj-tag{display:block;padding:8px 14px 8px 34px;text-align:left;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.4),transparent),url(assets/paper.jpg) 0 0/200px,var(--sheet);background-blend-mode:normal,multiply,normal;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.inv .rj-tag b{font-size:21px;color:var(--accent)}
+.inv .rj-tag small{text-transform:none;letter-spacing:.03em;font-size:12px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv .rj-t-loc .rj-seal.sm{inset:auto;left:-14px;top:50%;width:44px;height:44px;transform:translateY(-50%)}
+.inv .rj-t-loc .rj-seal.sm > span{font-size:14px}
+
+/* skin: lace-edged paper cards on velvet */
+.fam-renda2 .scroller{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--ground) 85%,#fff 15%),var(--ground) 60%)}
+.fam-renda2 .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/velvet.jpg) 0 0/220px;mix-blend-mode:soft-light;opacity:.5}
+.fam-renda2.cardsecs .sec{background:url(assets/paper.jpg) 0 0/260px,var(--sheet);background-blend-mode:multiply;color:var(--ink);border-radius:0;box-shadow:none;padding:46px 26px;
+  -webkit-mask:radial-gradient(circle at 50% 100%,#000 6.4px,transparent 7px) top left/14px 7px repeat-x,radial-gradient(circle at 50% 0,#000 6.4px,transparent 7px) bottom left/14px 7px repeat-x,linear-gradient(#000,#000) center/100% calc(100% - 13px) no-repeat;
+  mask:radial-gradient(circle at 50% 100%,#000 6.4px,transparent 7px) top left/14px 7px repeat-x,radial-gradient(circle at 50% 0,#000 6.4px,transparent 7px) bottom left/14px 7px repeat-x,linear-gradient(#000,#000) center/100% calc(100% - 13px) no-repeat}
+.fam-renda2.cardsecs .sec::before{content:"";position:absolute;inset:6px 0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,var(--ground) 1.5px,transparent 2px) top left/14px 6px repeat-x,radial-gradient(circle,var(--ground) 1.5px,transparent 2px) bottom left/14px 6px repeat-x}
+.fam-renda2.cardsecs .sec::after{content:"";position:absolute;inset:18px 12px;pointer-events:none;z-index:0;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);
+  outline:1px solid color-mix(in srgb,var(--gold) 28%,transparent);outline-offset:-5px}
+.fam-renda2 .sec > *{position:relative;z-index:1}
+.fam-renda2 .sec h2{font-family:"Great Vibes",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:36px;line-height:1.1;color:var(--accent)}
+.fam-renda2 .sec,.fam-renda2 .sec p,.fam-renda2 .info b{color:var(--ink)}
+.fam-renda2 .info,.fam-renda2 .info > div{border:0!important;background:none!important;box-shadow:none!important}
+.fam-renda2 .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important;padding:14px 6px!important}
+.fam-renda2 .info > div:last-child{border-bottom:0!important}
+.fam-renda2 .info span{color:var(--accent)}
+.fam-renda2 .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--gold) 60%,transparent);color:var(--accent);background:transparent}
+.fam-renda2 .count > div{background:none!important;border:0!important;box-shadow:none!important}
+.fam-renda2 .count b{font-family:"Cormorant Garamond",serif;color:var(--accent)}
+.fam-renda2 input,.fam-renda2 select,.fam-renda2 textarea{background:rgba(255,255,255,.55);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.fam-renda2 .seg button[aria-pressed="true"],.fam-renda2 button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-color:var(--accent)!important}
+.fam-renda2 button.submit,.fam-renda2 .seg button{border-radius:999px}
+.fam-renda2 .rule{color:var(--gold)}
+.fam-renda2 .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent)}
+.fam-renda2 .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .rj-sealset .rj-seal{animation:none}.inv .rj-env.big,.inv .rj-card.lift,.inv .rj-vellum,.inv .rj-sealset{transition:none}}
+.fam-renda2 .giftcard{border:0!important;outline:0!important;box-shadow:none!important;border-radius:18px!important;background:rgba(255,255,255,.45)!important}
+.fam-renda2 .giftcard::before,.fam-renda2 .giftcard::after{display:none!important}
