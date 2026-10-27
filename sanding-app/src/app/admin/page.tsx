@@ -51,7 +51,7 @@ export default async function AdminPage() {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader current="admin" />
       <main className="wrap">
         <div className="page-head" style={{ paddingBottom: 0 }}>
           <p className="eyebrow">Owner only</p>
