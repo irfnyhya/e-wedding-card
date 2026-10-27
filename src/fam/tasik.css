@@ -1,67 +1,67 @@
 /* ===== tasik ===== */
 .inv .cv-tasik,.inv .pg-tasik{background:linear-gradient(color-mix(in srgb,var(--ground) 62%,transparent),color-mix(in srgb,var(--ground) 62%,transparent)),url(assets/linen.jpg) 0 0/260px,var(--ground);background-blend-mode:normal,multiply,normal}
 /* the card: cold-pressed paper with a printed hairline frame */
-.inv .ts-card{position:absolute;inset:4% 6%;background:linear-gradient(color-mix(in srgb,var(--sheet) 58%,transparent),color-mix(in srgb,var(--sheet) 58%,transparent)),url(assets/paper.jpg) 0 0/300px,var(--sheet);background-blend-mode:normal,multiply,normal;border-radius:2px;overflow:hidden;
+.inv .tk2-card{position:absolute;inset:4% 6%;background:linear-gradient(color-mix(in srgb,var(--sheet) 58%,transparent),color-mix(in srgb,var(--sheet) 58%,transparent)),url(assets/paper.jpg) 0 0/300px,var(--sheet);background-blend-mode:normal,multiply,normal;border-radius:2px;overflow:hidden;
   box-shadow:0 1px 1px rgba(60,45,30,.1),0 18px 34px -14px rgba(60,45,30,.4),0 4px 10px -4px rgba(60,45,30,.18)}
-.inv .ts-card::after{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);pointer-events:none;z-index:4}
+.inv .tk2-card::after{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);pointer-events:none;z-index:4}
 /* the watercolour vignette */
-.inv .ts-vig{position:absolute;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;overflow:hidden}
-.inv .ts-art{position:absolute;inset:-4%;background-size:cover;filter:saturate(.78) contrast(.9) brightness(1.07)}
-.inv .ts-grain{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.55}
-.inv .ts-vig::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 55%,color-mix(in srgb,var(--sheet) 55%,transparent));pointer-events:none}
+.inv .tk2-vig{position:absolute;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;overflow:hidden}
+.inv .tk2-art{position:absolute;inset:-4%;background-size:cover;filter:saturate(.78) contrast(.9) brightness(1.07)}
+.inv .tk2-grain{position:absolute;inset:0;background:url(assets/paper.jpg) 0 0/300px;mix-blend-mode:multiply;opacity:.55}
+.inv .tk2-vig::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 55%,color-mix(in srgb,var(--sheet) 55%,transparent));pointer-events:none}
 /* the tall painted stems; multiply drops the plate's white paper halo into the card */
-.inv .ts-stem{position:absolute;z-index:2;background-size:100% auto;background-position:50% 0;background-repeat:no-repeat;mix-blend-mode:multiply;pointer-events:none}
-.inv .ts-stem.l{left:-31%;bottom:-2%;width:76%;transform:rotate(-7deg);transform-origin:50% 100%}
-.inv .ts-stem.r{right:-31%;bottom:-2%;width:76%;transform:rotate(7deg) scaleX(-1);transform-origin:50% 100%}
+.inv .tk2-stem{position:absolute;z-index:2;background-size:100% auto;background-position:50% 0;background-repeat:no-repeat;mix-blend-mode:multiply;pointer-events:none}
+.inv .tk2-stem.l{left:-31%;bottom:-2%;width:76%;transform:rotate(-7deg);transform-origin:50% 100%}
+.inv .tk2-stem.r{right:-31%;bottom:-2%;width:76%;transform:rotate(7deg) scaleX(-1);transform-origin:50% 100%}
 /* type */
-.inv .ts-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;color:var(--accent);margin:0}
-.inv .ts-names{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(27px,8.4cqi,34px);letter-spacing:.14em;line-height:1.06;text-transform:uppercase;color:var(--ink);
+.inv .tk2-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;color:var(--accent);margin:0}
+.inv .tk2-names{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(27px,8.4cqi,34px);letter-spacing:.14em;line-height:1.06;text-transform:uppercase;color:var(--ink);
   display:flex;flex-direction:column;align-items:center;margin:12px 0 10px}
-.inv .ts-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;font-size:.82em;color:var(--gold);line-height:1;margin:0 0 2px}
-.inv .ts-names.sm{font-size:clamp(24px,7.4cqi,30px);margin:10px 0 8px}
-.inv .ts-date{font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin:0}
-.inv .ts-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;color:var(--ink);opacity:.75;margin:4px 0 0}
-.inv .ts-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
+.inv .tk2-names i{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;font-size:.82em;color:var(--gold);line-height:1;margin:0 0 2px}
+.inv .tk2-names.sm{font-size:clamp(24px,7.4cqi,30px);margin:10px 0 8px}
+.inv .tk2-date{font-family:"Cormorant Garamond",serif;font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin:0}
+.inv .tk2-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;color:var(--ink);opacity:.75;margin:4px 0 0}
+.inv .tk2-bis{font-family:"Amiri",serif;font-size:16px;color:var(--accent);margin:0 0 8px}
 
 /* cover */
 .inv .cv-tasik{overflow:hidden;transition:opacity .45s .95s}
-.inv .cv-tasik .ts-card{transition:background-color .6s}
-.inv .ts-oval{left:2%;right:2%;top:3%;height:46%;z-index:1;transition:transform 1.35s cubic-bezier(.45,0,.2,1),filter 1.35s}
-.inv .cv-tasik .ts-art{animation:tsDrift 36s ease-in-out infinite alternate}
+.inv .cv-tasik .tk2-card{transition:background-color .6s}
+.inv .tk2-oval{left:2%;right:2%;top:3%;height:46%;z-index:1;transition:transform 1.35s cubic-bezier(.45,0,.2,1),filter 1.35s}
+.inv .cv-tasik .tk2-art{animation:tsDrift 36s ease-in-out infinite alternate}
 @keyframes tsDrift{from{transform:scale(1.02)}to{transform:scale(1.09) translate(-1.5%,1%)}}
-.inv .ts-cbody{position:absolute;left:18%;right:18%;top:49.5%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .4s}
-.inv .ts-foot{position:absolute;left:0;right:0;bottom:6%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .4s}
-.inv .ts-to{text-align:center;color:var(--ink);margin:0}
-.inv .ts-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
-.inv .ts-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px;color:var(--accent)}
-.inv .ts-open{border:0;cursor:pointer;padding:13px 38px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;
+.inv .tk2-cbody{position:absolute;left:18%;right:18%;top:49.5%;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .4s}
+.inv .tk2-foot{position:absolute;left:0;right:0;bottom:6%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .4s}
+.inv .tk2-to{text-align:center;color:var(--ink);margin:0}
+.inv .tk2-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.75}
+.inv .tk2-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px;color:var(--accent)}
+.inv .tk2-open{border:0;cursor:pointer;padding:13px 38px;border-radius:999px;background:var(--accent);color:var(--sheet);white-space:nowrap;
   font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--accent) 80%,#000),inset 0 0 0 1px rgba(255,255,255,.18)}
-.inv .cv-tasik .ts-stem{transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .9s}
+.inv .cv-tasik .tk2-stem{transition:transform 1.2s cubic-bezier(.45,0,.2,1),opacity .9s}
 /* opening: the painting blooms open over the card, the stems lean away */
-.inv.opening .ts-cbody,.inv.opening .ts-foot{opacity:0}
-.inv.opening .ts-oval{transform:scale(2.6);filter:brightness(1.05)}
-.inv.opening .cv-tasik .ts-stem.l{transform:translateX(-40%) rotate(-16deg);opacity:0}
-.inv.opening .cv-tasik .ts-stem.r{transform:translateX(40%) rotate(16deg) scaleX(-1);opacity:0}
+.inv.opening .tk2-cbody,.inv.opening .tk2-foot{opacity:0}
+.inv.opening .tk2-oval{transform:scale(2.6);filter:brightness(1.05)}
+.inv.opening .cv-tasik .tk2-stem.l{transform:translateX(-40%) rotate(-16deg);opacity:0}
+.inv.opening .cv-tasik .tk2-stem.r{transform:translateX(40%) rotate(16deg) scaleX(-1);opacity:0}
 .inv.opening .cv-tasik{opacity:0}
 
 /* page: the full card */
 .inv .pg-tasik{padding:0;justify-content:flex-start}
-.inv .pg-tasik .ts-card{position:relative;inset:auto;margin:16px 16px 84px;width:calc(100% - 32px);min-height:640px;display:flex;flex-direction:column;align-items:center}
-.inv .ts-top{position:absolute;left:0;right:0;top:0;height:290px;z-index:1}
-.inv .ts-top.has-photo .ts-art{display:none}
-.inv .ts-top .ts-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;border-radius:0;filter:saturate(.9) brightness(1.03)}
-.inv .ts-body{position:relative;z-index:3;margin-top:250px;padding:0 19% 34px;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;box-sizing:border-box}
-.inv .pg-tasik .ts-stem{width:72%}
-.inv .pg-tasik .ts-stem.l{left:-39%;bottom:-1%}
-.inv .pg-tasik .ts-stem.r{right:-39%;bottom:-1%}
+.inv .pg-tasik .tk2-card{position:relative;inset:auto;margin:16px 16px 84px;width:calc(100% - 32px);min-height:640px;display:flex;flex-direction:column;align-items:center}
+.inv .tk2-top{position:absolute;left:0;right:0;top:0;height:290px;z-index:1}
+.inv .tk2-top.has-photo .tk2-art{display:none}
+.inv .tk2-top .tk2-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;border-radius:0;filter:saturate(.9) brightness(1.03)}
+.inv .tk2-body{position:relative;z-index:3;margin-top:250px;padding:0 19% 34px;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;box-sizing:border-box}
+.inv .pg-tasik .tk2-stem{width:72%}
+.inv .pg-tasik .tk2-stem.l{left:-39%;bottom:-1%}
+.inv .pg-tasik .tk2-stem.r{right:-39%;bottom:-1%}
 /* the details row: date, time, place, each a small link with a line icon */
-.inv .ts-row{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;margin:20px 0 4px;border-top:1px solid color-mix(in srgb,var(--gold) 50%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 50%,transparent)}
-.inv .ts-row a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px 11px;color:var(--ink);text-decoration:none;min-width:0}
-.inv .ts-row a + a{border-left:1px solid color-mix(in srgb,var(--gold) 38%,transparent)}
-.inv .ts-row svg{width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
-.inv .ts-row small{font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
-.inv .ts-row b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12.5px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.inv .ts-pill{align-self:center;flex:0 0 auto;width:auto!important;margin-top:20px;padding:12px 32px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);color:var(--accent);text-decoration:none;
+.inv .tk2-row{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;margin:20px 0 4px;border-top:1px solid color-mix(in srgb,var(--gold) 50%,transparent);border-bottom:1px solid color-mix(in srgb,var(--gold) 50%,transparent)}
+.inv .tk2-row a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px 11px;color:var(--ink);text-decoration:none;min-width:0}
+.inv .tk2-row a + a{border-left:1px solid color-mix(in srgb,var(--gold) 38%,transparent)}
+.inv .tk2-row svg{width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
+.inv .tk2-row small{font-family:"Cormorant Garamond",serif;font-size:9.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.inv .tk2-row b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:12.5px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.inv .tk2-pill{align-self:center;flex:0 0 auto;width:auto!important;margin-top:20px;padding:12px 32px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);color:var(--accent);text-decoration:none;
   white-space:nowrap;background:color-mix(in srgb,var(--sheet) 80%,transparent);font-family:"Cormorant Garamond",serif;font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
 
 /* skin: paper cards with a printed hairline frame */
@@ -78,7 +78,7 @@
 .fam-tasik button.submit{border-radius:999px}
 .fam-tasik .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-tasik .foot{color:var(--pagefg)}
-@media (prefers-reduced-motion: reduce){.inv .cv-tasik .ts-art{animation:none}.inv .ts-oval,.inv .cv-tasik .ts-stem{transition:none}}
+@media (prefers-reduced-motion: reduce){.inv .cv-tasik .tk2-art{animation:none}.inv .tk2-oval,.inv .cv-tasik .tk2-stem{transition:none}}
 
-.inv .ts-cbody,.inv .ts-to,.inv .ts-body > p,.inv .ts-names{text-shadow:0 0 6px var(--sheet),0 0 14px var(--sheet),0 0 22px var(--sheet)}
-.inv .ts-row{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--sheet) 82%,transparent) 12%,color-mix(in srgb,var(--sheet) 82%,transparent) 88%,transparent)}
+.inv .tk2-cbody,.inv .tk2-to,.inv .tk2-body > p,.inv .tk2-names{text-shadow:0 0 6px var(--sheet),0 0 14px var(--sheet),0 0 22px var(--sheet)}
+.inv .tk2-row{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--sheet) 82%,transparent) 12%,color-mix(in srgb,var(--sheet) 82%,transparent) 88%,transparent)}

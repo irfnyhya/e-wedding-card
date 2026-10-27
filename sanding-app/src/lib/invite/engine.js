@@ -7749,7 +7749,7 @@ function satinSvg(c,seed,rot,cls,w=400,h=800){const u=++stN,el=c.elev||52,kd=(1/
 // the fold of satin thrown over the foot of the card: same cloth, its own folds, a rolled hem catching the light
 function satinThrow(c){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180)).toFixed(3);
   const hem='M-10 14C60 6 120 22 190 62S320 124 410 116';
-  return `<svg class="st-throwsvg" ${NS} viewBox="0 0 400 380" preserveAspectRatio="none"><defs>
+  return `<svg class="sa-throwsvg" ${NS} viewBox="0 0 400 380" preserveAspectRatio="none"><defs>
   <filter id="stt${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
     <feTurbulence type="fractalNoise" baseFrequency="0.0028 0.008" numOctaves="2" seed="${c.seed+7}"/>
     <feGaussianBlur stdDeviation="7"/>
@@ -7767,32 +7767,32 @@ function satinThrow(c){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180
   <g clip-path="url(#stc${u})"><g transform="rotate(-24 200 190)"><rect x="-300" y="-300" width="1000" height="1000" fill="${c.satin}" filter="url(#stt${u})"/></g>
     <path d="${hem}" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="22" filter="url(#stb${u})" transform="translate(0 26)"/>
     <path d="${hem}" fill="none" stroke="${c.sheen}" stroke-opacity="${c.hemlite||.75}" stroke-width="7" filter="url(#stb${u})" transform="translate(0 9)"/></g></svg>`}
-const stMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="st-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
-const stSeal=(o,c)=>`<i class="st-seal" style="background-image:url(${A}seal-${c.seal}.webp)"><span>${stMono(o)}</span></i>`;
+const stMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="sa-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const stSeal=(o,c)=>`<i class="sa-seal" style="background-image:url(${A}seal-${c.seal}.webp)"><span>${stMono(o)}</span></i>`;
 FAMILY({key:'satin',name:'Satin',meaning:'Card on silk satin',
   blurb:'A heavy cotton card with letterpress type and a wax seal, resting on softly draped silk satin. A fold of satin is drawn aside to open it.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
-      <div class="st-card st-big reveal"><div class="st-face">
-        ${o.bismillah?'<p class="st-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
-        <p class="st-k kicker">${ev(o,L)}</p>
-        <h1 class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
-        <i class="st-rule"></i>
-        <p class="st-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="st-hj">${esc(o.hijri)}</p>`:''}
-        ${o.venue?`<p class="st-ven">${esc(o.venue)}</p>`:''}
+    return `<section class="page pg-satin">${satinSvg(c,c.seed,c.rot,'sa-bed')}<i class="sa-sheen"></i>
+      <div class="sa-card sa-big reveal"><div class="sa-face">
+        ${o.bismillah?'<p class="sa-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="sa-k kicker">${ev(o,L)}</p>
+        <h1 class="sa-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="sa-rule"></i>
+        <p class="sa-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="sa-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="sa-ven">${esc(o.venue)}</p>`:''}
         ${stSeal(o,c)}</div></div>
-      <a class="st-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+      <a class="sa-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<div class="cover cv-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
-      <div class="st-card st-cc"><div class="st-face">
-        <p class="st-k">${ev(o,L)}</p>
-        <p class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
-        <i class="st-rule"></i>
-        <p class="st-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+    return `<div class="cover cv-satin">${satinSvg(c,c.seed,c.rot,'sa-bed')}<i class="sa-sheen"></i>
+      <div class="sa-card sa-cc"><div class="sa-face">
+        <p class="sa-k">${ev(o,L)}</p>
+        <p class="sa-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <i class="sa-rule"></i>
+        <p class="sa-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
         ${stSeal(o,c)}</div></div>
-      <div class="st-throw">${satinThrow(c)}</div>
-      <div class="st-foot">${guest?`<p class="st-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="st-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+      <div class="sa-throw">${satinThrow(c)}</div>
+      <div class="sa-foot">${guest?`<p class="sa-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="sa-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;
     el.style.setProperty('--satinbg',K.uri(satinSvg(c,c.seed+3,c.rot,'',400,900)));
     const sc=$('.scroller',el);
@@ -8346,46 +8346,46 @@ const tsMask=(seed,rx,ry,cy,vh=200)=>{const f=(id,sc,b)=>`<filter id="${id}" x="
   return svgUriSq(`<svg ${NS} viewBox="0 0 200 ${vh}" preserveAspectRatio="none"><defs>${f('a',18,2.6)}${f('b',30,6)}</defs>
     <ellipse cx="100" cy="${cy}" rx="${rx+8}" ry="${ry+8}" fill="#fff" fill-opacity=".38" filter="url(#b)"/>
     <ellipse cx="100" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fff" filter="url(#a)"/><ellipse cx="100" cy="${cy}" rx="${rx*.8}" ry="${ry*.8}" fill="#fff"/></svg>`)};
-const tsVig=(c,cls,mask)=>`<div class="ts-vig ${cls}" style="-webkit-mask-image:${mask};mask-image:${mask}"><i class="ts-art" style="background-image:url(${A}${c.art});background-position:${c.ap}"></i><i class="ts-grain"></i></div>`;
+const tsVig=(c,cls,mask)=>`<div class="tk2-vig ${cls}" style="-webkit-mask-image:${mask};mask-image:${mask}"><i class="tk2-art" style="background-image:url(${A}${c.art});background-position:${c.ap}"></i><i class="tk2-grain"></i></div>`;
 // a tall stem cut-out; the bottom of each plate holds a pencilled caption, so the box only shows the top 88%
 const TS_W={anemones:617,'blush-rose':622,'cabbage-rose':581,'forget-me-not':528,hibiscus:619,iris:566,jasmine:518,lotus:621,'pink-rose':674,'red-rose':622,'white-roses':636,'wild-rose':663};
-const tsStem=(n,cls)=>`<i class="ts-stem ${cls}" style="background-image:url(${A}flower-${n}.webp);aspect-ratio:${((TS_W[n]||600)/(760*.87)).toFixed(3)}"></i>`;
+const tsStem=(n,cls)=>`<i class="tk2-stem ${cls}" style="background-image:url(${A}flower-${n}.webp);aspect-ratio:${((TS_W[n]||600)/(760*.87)).toFixed(3)}"></i>`;
 const TS_IC={
   cal:`<svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="1.5"/><path d="M4 9.5h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="12" cy="14.5" r="1.1"/></svg>`,
   time:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12.5" r="8"/><path d="M12 8v4.6l3 2"/></svg>`,
   pin:`<svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>`};
-const tsNames=(o,cls)=>{const [n1,n2]=coverNames(o);return `<h1 class="ts-names ${cls||''}"><span>${esc(n1)}</span><i>&amp;</i><span>${esc(n2)}</span></h1>`};
+const tsNames=(o,cls)=>{const [n1,n2]=coverNames(o);return `<h1 class="tk2-names ${cls||''}"><span>${esc(n1)}</span><i>&amp;</i><span>${esc(n2)}</span></h1>`};
 const tsDay=o=>{if(!o.date)return'';const d=new Date(o.date+'T00:00:00');return isNaN(d)?'':DAYS[o.lang][d.getDay()]};
 FAMILY({key:'tasik',name:'Tasik',meaning:'Lakeside watercolour',
   blurb:'A light watercolour card: a lakeside garden painting fading softly into the paper, tall painted stems down both sides and the names set in fine serif capitals. The painting blooms open to reveal the card.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
   page(o,th,L){const c=th.c,en=o.lang==='en',t=[fmtTime(o.start,o.lang),fmtTime(o.end,o.lang)].filter(Boolean).join(' – ');
-    return `<section class="page pg-tasik"><div class="ts-card">
-      ${tsVig(c,'ts-top reveal',tsMask(11,86,66,80,170))}
+    return `<section class="page pg-tasik"><div class="tk2-card">
+      ${tsVig(c,'tk2-top reveal',tsMask(11,86,66,80,170))}
       ${tsStem(c.fl1,'l')}${tsStem(c.fl2,'r')}
-      <div class="ts-body">
-        ${o.bismillah?`<p class="ts-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
-        <p class="ts-k kicker reveal">${ev(o,L)}</p>
+      <div class="tk2-body">
+        ${o.bismillah?`<p class="tk2-bis reveal">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`:''}
+        <p class="tk2-k kicker reveal">${ev(o,L)}</p>
         <div class="reveal d1">${tsNames(o)}</div>
-        <p class="ts-date reveal d2">${esc(fmtDate(o.date,o.lang,false))}</p>${o.hijri?`<p class="ts-hj reveal d2">${esc(o.hijri)}</p>`:''}
-        <div class="ts-row reveal d2">
+        <p class="tk2-date reveal d2">${esc(fmtDate(o.date,o.lang,false))}</p>${o.hijri?`<p class="tk2-hj reveal d2">${esc(o.hijri)}</p>`:''}
+        <div class="tk2-row reveal d2">
           <a href="#" data-go="when">${TS_IC.cal}<small>${esc(tsDay(o))}</small><b>${esc(fmtShort(o.date))}</b></a>
           <a href="#" data-go="when">${TS_IC.time}<small>${en?'Time':'Masa'}</small><b>${esc(t)}</b></a>
           <a href="#" data-go="loc">${TS_IC.pin}<small>${en?'Venue':'Tempat'}</small><b>${esc(o.venue)}</b></a>
         </div>
-        ${o.x_rsvp?`<a class="ts-pill reveal d3" data-go="rsvp" href="#">${en?'Kindly reply':'Sahkan Kehadiran'}</a>`:`<a class="ts-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>`}
+        ${o.x_rsvp?`<a class="tk2-pill reveal d3" data-go="rsvp" href="#">${en?'Kindly reply':'Sahkan Kehadiran'}</a>`:`<a class="tk2-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a>`}
       </div></div></section>`},
   cover(o,th,L,guest,tag,attr){const c=th.c,en=o.lang==='en';
-    return `<div class="cover cv-tasik"><div class="ts-card">
-      ${tsVig(c,'ts-oval',tsMask(5,84,66,85,170))}
+    return `<div class="cover cv-tasik"><div class="tk2-card">
+      ${tsVig(c,'tk2-oval',tsMask(5,84,66,85,170))}
       ${tsStem(c.fl1,'l')}${tsStem(c.fl2,'r')}
-      <div class="ts-cbody"><p class="ts-k">${ev(o,L)}</p>${tsNames(o,'sm')}<p class="ts-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
-      <div class="ts-foot">${guest?`<p class="ts-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="ts-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>
+      <div class="tk2-cbody"><p class="tk2-k">${ev(o,L)}</p>${tsNames(o,'sm')}<p class="tk2-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+      <div class="tk2-foot">${guest?`<p class="tk2-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="tk2-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>
     </div></div>`},
   skin(el,o,th,L){K.cards(el);
     // a couple photo takes the painting's place inside the watercolour vignette
     const pg=$('.pg-tasik',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
-    if(img){const v=$('.ts-top',pg);img.className='ts-photo';img.removeAttribute('style');v.classList.add('has-photo');v.prepend(img);ph.remove()}
+    if(img){const v=$('.tk2-top',pg);img.className='tk2-photo';img.removeAttribute('style');v.classList.add('has-photo');v.prepend(img);ph.remove()}
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
       if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
@@ -9089,8 +9089,8 @@ function tlBaby(seed,c){const R=rng(seed),st=[],fl=[],bud=[];
   const flo=fl.map(([x,y,s])=>{const r=1.15*s;let p='';for(let k=0;k<5;k++){const q=k/5*Math.PI*2+R();p+=`<circle cx="${(x+Math.cos(q)*r*.62).toFixed(2)}" cy="${(y+Math.sin(q)*r*.62).toFixed(2)}" r="${(r*.62).toFixed(2)}"/>`}
     return `<g>${p}<circle class="ctr" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(r*.3).toFixed(2)}"/></g>`}).join('');
   const bd=bud.map(([x,y,s])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(.7*s).toFixed(2)}"/>`).join('');
-  return `<svg class="tl-baby" viewBox="0 0 100 150" ${NS}><g fill="none" stroke="${c.stem}" stroke-linecap="round">${st.join('')}</g>
-    <g class="tl-flo" fill="${c.flo}" stroke="${c.floEdge}" stroke-width=".18">${flo}</g><g fill="${c.bud}">${bd}</g></svg>`}
+  return `<svg class="tu-baby" viewBox="0 0 100 150" ${NS}><g fill="none" stroke="${c.stem}" stroke-linecap="round">${st.join('')}</g>
+    <g class="tu-flo" fill="${c.flo}" stroke="${c.floEdge}" stroke-width=".18">${flo}</g><g fill="${c.bud}">${bd}</g></svg>`}
 // a band of sheer tulle gathered at its middle: the outline pinches in, the folds run into the pinch
 function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
   const top=`M0 6C62 7 78 ${cy-pin} 100 ${cy-pin}C122 ${cy-pin} 138 7 200 5`,bot=`L200 91C138 90 122 ${cy+pin} 100 ${cy+pin}C78 ${cy+pin} 62 89 0 90Z`;
@@ -9101,7 +9101,7 @@ function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
   let t=.03;while(t<.97){const light=R()<.55;fold(t,broad,light?'#fff':'#5a4434',light?5+R()*7:3+R()*5,light?.3+R()*.35:.07+R()*.08);t+=.06+R()*.1}
   for(let i=0;i<7;i++)fold(.08+R()*.84,fine,R()<.5?'#fff':'#5a4434',.35+R()*.4,R()<.5?.7:.16);
   const folds=[`<g filter="url(#tlb${uid})">${broad.join('')}</g>`,`<g filter="url(#tlf${uid})">${fine.join('')}</g>`];
-  return `<svg class="tl-tulle" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
+  return `<svg class="tu-tulle" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
     <clipPath id="tlc${uid}"><path d="${top}${bot}"/></clipPath>
     <linearGradient id="tlg${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".2" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#fff" stop-opacity=".34"/><stop offset=".8" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".52"/></linearGradient>
     <linearGradient id="tlh${uid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3c2d23" stop-opacity=".16"/><stop offset=".07" stop-color="#3c2d23" stop-opacity="0"/><stop offset=".93" stop-color="#3c2d23" stop-opacity="0"/><stop offset="1" stop-color="#3c2d23" stop-opacity=".16"/></linearGradient>
@@ -9112,34 +9112,34 @@ function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
     <g fill="none">${folds.join('')}</g><rect width="${W}" height="${H}" fill="url(#tlh${uid})"/><ellipse cx="100" cy="${cy}" rx="30" ry="${pin+10}" fill="url(#tlp${uid})"/></g>
     <path d="${top}" fill="none" stroke="#fff" stroke-width=".9" opacity=".85"/><path d="${bot.replace(/^L/,'M').replace(/Z$/,'')}" fill="none" stroke="#fff" stroke-width=".9" opacity=".8"/></svg>`}
 let tlN=0;
-const tlMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tl-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
-const tlSeal=(o,c,tag,attr,L)=>`<${tag} class="tl-seal" ${attr||''} ${L?`aria-label="${L.open}"`:''} style="--seal:url(${A}seal-${c.seal}.webp)"><span>${tlMono(o)}</span></${tag}>`;
+const tlMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tu-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const tlSeal=(o,c,tag,attr,L)=>`<${tag} class="tu-seal" ${attr||''} ${L?`aria-label="${L.open}"`:''} style="--seal:url(${A}seal-${c.seal}.webp)"><span>${tlMono(o)}</span></${tag}>`;
 const tlBabyC=c=>({stem:c.stem||'#8d8a6c',flo:'#fffdf7',floEdge:'rgba(120,108,90,.55)',bud:'#efe6d2'});
 FAMILY({key:'tulle',name:'Tulle',meaning:'Sheer tulle wrap',
   blurb:'A deckled handmade-paper card wrapped in sheer tulle, tied at the front with a gold wax seal and a sprig of baby’s breath. The seal lifts and the tulle slides away.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Allura', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c,u=++tlN;
-    return `<section class="page pg-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
-      <div class="tl-loose reveal">${tlBand(u,true)}</div>
-      <div class="tl-pwrap reveal d1"><div class="tl-shadow"><div class="tl-paper tl-pcard"><div class="tl-rule"></div>
-        ${o.bismillah?'<p class="tl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
-        <p class="tl-k kicker">${ev(o,L)}</p>
-        <h1 class="tl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
-        <p class="tl-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tl-hj">${esc(o.hijri)}</p>`:''}
-        ${o.venue?`<p class="tl-ven">${esc(o.venue)}</p>`:''}</div></div>
-        <div class="tl-rest">${tlBaby(u*13+5,tlBabyC(c))}${tlSeal(o,c,'span','','')}</div></div>
-      <a class="tl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+    return `<section class="page pg-tulle${c.dark?' tu-dark':''}" style="--hi:${c.hi}"><div class="tu-ground"></div>
+      <div class="tu-loose reveal">${tlBand(u,true)}</div>
+      <div class="tu-pwrap reveal d1"><div class="tu-shadow"><div class="tu-paper tu-pcard"><div class="tu-rule"></div>
+        ${o.bismillah?'<p class="tu-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="tu-k kicker">${ev(o,L)}</p>
+        <h1 class="tu-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="tu-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tu-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="tu-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <div class="tu-rest">${tlBaby(u*13+5,tlBabyC(c))}${tlSeal(o,c,'span','','')}</div></div>
+      <a class="tu-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++tlN;
-    return `<div class="cover cv-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
-      <div class="tl-stage">
-        <div class="tl-card"><div class="tl-shadow"><div class="tl-paper"><div class="tl-rule"></div>
-          <p class="tl-k">${ev(o,L)}</p><p class="tl-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
-          <p class="tl-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div></div>
-        <div class="tl-band">${tlBand(u,false)}</div>
-        <div class="tl-tie">${tlBaby(u*13+1,tlBabyC(c))}${tlSeal(o,c,tag,attr,L)}</div>
+    return `<div class="cover cv-tulle${c.dark?' tu-dark':''}" style="--hi:${c.hi}"><div class="tu-ground"></div>
+      <div class="tu-stage">
+        <div class="tu-card"><div class="tu-shadow"><div class="tu-paper"><div class="tu-rule"></div>
+          <p class="tu-k">${ev(o,L)}</p><p class="tu-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+          <p class="tu-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div></div>
+        <div class="tu-band">${tlBand(u,false)}</div>
+        <div class="tu-tie">${tlBaby(u*13+1,tlBabyC(c))}${tlSeal(o,c,tag,attr,L)}</div>
       </div>
-      <div class="tl-foot">${guest?`<p class="tl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="tl-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);el.classList.toggle('tl-dark',!!th.c.dark);el.style.setProperty('--hi',th.c.hi);el.style.setProperty('--tlband',K.uri(tlBand(900,false)));
+      <div class="tu-foot">${guest?`<p class="tu-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="tu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('tu-dark',!!th.c.dark);el.style.setProperty('--hi',th.c.hi);el.style.setProperty('--tlband',K.uri(tlBand(900,false)));
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[

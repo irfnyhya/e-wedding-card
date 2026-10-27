@@ -25,7 +25,7 @@ function satinSvg(c,seed,rot,cls,w=400,h=800){const u=++stN,el=c.elev||52,kd=(1/
 // the fold of satin thrown over the foot of the card: same cloth, its own folds, a rolled hem catching the light
 function satinThrow(c){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180)).toFixed(3);
   const hem='M-10 14C60 6 120 22 190 62S320 124 410 116';
-  return `<svg class="st-throwsvg" ${NS} viewBox="0 0 400 380" preserveAspectRatio="none"><defs>
+  return `<svg class="sa-throwsvg" ${NS} viewBox="0 0 400 380" preserveAspectRatio="none"><defs>
   <filter id="stt${u}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
     <feTurbulence type="fractalNoise" baseFrequency="0.0028 0.008" numOctaves="2" seed="${c.seed+7}"/>
     <feGaussianBlur stdDeviation="7"/>
@@ -43,32 +43,32 @@ function satinThrow(c){const u=++stN,el=c.elev||52,kd=(1/Math.sin(el*Math.PI/180
   <g clip-path="url(#stc${u})"><g transform="rotate(-24 200 190)"><rect x="-300" y="-300" width="1000" height="1000" fill="${c.satin}" filter="url(#stt${u})"/></g>
     <path d="${hem}" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="22" filter="url(#stb${u})" transform="translate(0 26)"/>
     <path d="${hem}" fill="none" stroke="${c.sheen}" stroke-opacity="${c.hemlite||.75}" stroke-width="7" filter="url(#stb${u})" transform="translate(0 9)"/></g></svg>`}
-const stMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="st-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
-const stSeal=(o,c)=>`<i class="st-seal" style="background-image:url(${A}seal-${c.seal}.webp)"><span>${stMono(o)}</span></i>`;
+const stMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="sa-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const stSeal=(o,c)=>`<i class="sa-seal" style="background-image:url(${A}seal-${c.seal}.webp)"><span>${stMono(o)}</span></i>`;
 FAMILY({key:'satin',name:'Satin',meaning:'Card on silk satin',
   blurb:'A heavy cotton card with letterpress type and a wax seal, resting on softly draped silk satin. A fold of satin is drawn aside to open it.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<section class="page pg-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
-      <div class="st-card st-big reveal"><div class="st-face">
-        ${o.bismillah?'<p class="st-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
-        <p class="st-k kicker">${ev(o,L)}</p>
-        <h1 class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
-        <i class="st-rule"></i>
-        <p class="st-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="st-hj">${esc(o.hijri)}</p>`:''}
-        ${o.venue?`<p class="st-ven">${esc(o.venue)}</p>`:''}
+    return `<section class="page pg-satin">${satinSvg(c,c.seed,c.rot,'sa-bed')}<i class="sa-sheen"></i>
+      <div class="sa-card sa-big reveal"><div class="sa-face">
+        ${o.bismillah?'<p class="sa-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="sa-k kicker">${ev(o,L)}</p>
+        <h1 class="sa-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <i class="sa-rule"></i>
+        <p class="sa-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="sa-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="sa-ven">${esc(o.venue)}</p>`:''}
         ${stSeal(o,c)}</div></div>
-      <a class="st-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+      <a class="sa-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
-    return `<div class="cover cv-satin">${satinSvg(c,c.seed,c.rot,'st-bed')}<i class="st-sheen"></i>
-      <div class="st-card st-cc"><div class="st-face">
-        <p class="st-k">${ev(o,L)}</p>
-        <p class="st-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
-        <i class="st-rule"></i>
-        <p class="st-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
+    return `<div class="cover cv-satin">${satinSvg(c,c.seed,c.rot,'sa-bed')}<i class="sa-sheen"></i>
+      <div class="sa-card sa-cc"><div class="sa-face">
+        <p class="sa-k">${ev(o,L)}</p>
+        <p class="sa-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <i class="sa-rule"></i>
+        <p class="sa-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
         ${stSeal(o,c)}</div></div>
-      <div class="st-throw">${satinThrow(c)}</div>
-      <div class="st-foot">${guest?`<p class="st-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="st-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+      <div class="sa-throw">${satinThrow(c)}</div>
+      <div class="sa-foot">${guest?`<p class="sa-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="sa-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
   skin(el,o,th,L){K.cards(el);const c=th.c;
     el.style.setProperty('--satinbg',K.uri(satinSvg(c,c.seed+3,c.rot,'',400,900)));
     const sc=$('.scroller',el);

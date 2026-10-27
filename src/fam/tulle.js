@@ -20,8 +20,8 @@ function tlBaby(seed,c){const R=rng(seed),st=[],fl=[],bud=[];
   const flo=fl.map(([x,y,s])=>{const r=1.15*s;let p='';for(let k=0;k<5;k++){const q=k/5*Math.PI*2+R();p+=`<circle cx="${(x+Math.cos(q)*r*.62).toFixed(2)}" cy="${(y+Math.sin(q)*r*.62).toFixed(2)}" r="${(r*.62).toFixed(2)}"/>`}
     return `<g>${p}<circle class="ctr" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(r*.3).toFixed(2)}"/></g>`}).join('');
   const bd=bud.map(([x,y,s])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(.7*s).toFixed(2)}"/>`).join('');
-  return `<svg class="tl-baby" viewBox="0 0 100 150" ${NS}><g fill="none" stroke="${c.stem}" stroke-linecap="round">${st.join('')}</g>
-    <g class="tl-flo" fill="${c.flo}" stroke="${c.floEdge}" stroke-width=".18">${flo}</g><g fill="${c.bud}">${bd}</g></svg>`}
+  return `<svg class="tu-baby" viewBox="0 0 100 150" ${NS}><g fill="none" stroke="${c.stem}" stroke-linecap="round">${st.join('')}</g>
+    <g class="tu-flo" fill="${c.flo}" stroke="${c.floEdge}" stroke-width=".18">${flo}</g><g fill="${c.bud}">${bd}</g></svg>`}
 // a band of sheer tulle gathered at its middle: the outline pinches in, the folds run into the pinch
 function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
   const top=`M0 6C62 7 78 ${cy-pin} 100 ${cy-pin}C122 ${cy-pin} 138 7 200 5`,bot=`L200 91C138 90 122 ${cy+pin} 100 ${cy+pin}C78 ${cy+pin} 62 89 0 90Z`;
@@ -32,7 +32,7 @@ function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
   let t=.03;while(t<.97){const light=R()<.55;fold(t,broad,light?'#fff':'#5a4434',light?5+R()*7:3+R()*5,light?.3+R()*.35:.07+R()*.08);t+=.06+R()*.1}
   for(let i=0;i<7;i++)fold(.08+R()*.84,fine,R()<.5?'#fff':'#5a4434',.35+R()*.4,R()<.5?.7:.16);
   const folds=[`<g filter="url(#tlb${uid})">${broad.join('')}</g>`,`<g filter="url(#tlf${uid})">${fine.join('')}</g>`];
-  return `<svg class="tl-tulle" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
+  return `<svg class="tu-tulle" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" ${NS}><defs>
     <clipPath id="tlc${uid}"><path d="${top}${bot}"/></clipPath>
     <linearGradient id="tlg${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".2" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#fff" stop-opacity=".34"/><stop offset=".8" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".52"/></linearGradient>
     <linearGradient id="tlh${uid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3c2d23" stop-opacity=".16"/><stop offset=".07" stop-color="#3c2d23" stop-opacity="0"/><stop offset=".93" stop-color="#3c2d23" stop-opacity="0"/><stop offset="1" stop-color="#3c2d23" stop-opacity=".16"/></linearGradient>
@@ -43,34 +43,34 @@ function tlBand(uid,loose){const W=200,H=96,cy=48,pin=loose?20:10;
     <g fill="none">${folds.join('')}</g><rect width="${W}" height="${H}" fill="url(#tlh${uid})"/><ellipse cx="100" cy="${cy}" rx="30" ry="${pin+10}" fill="url(#tlp${uid})"/></g>
     <path d="${top}" fill="none" stroke="#fff" stroke-width=".9" opacity=".85"/><path d="${bot.replace(/^L/,'M').replace(/Z$/,'')}" fill="none" stroke="#fff" stroke-width=".9" opacity=".8"/></svg>`}
 let tlN=0;
-const tlMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tl-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
-const tlSeal=(o,c,tag,attr,L)=>`<${tag} class="tl-seal" ${attr||''} ${L?`aria-label="${L.open}"`:''} style="--seal:url(${A}seal-${c.seal}.webp)"><span>${tlMono(o)}</span></${tag}>`;
+const tlMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="tu-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+const tlSeal=(o,c,tag,attr,L)=>`<${tag} class="tu-seal" ${attr||''} ${L?`aria-label="${L.open}"`:''} style="--seal:url(${A}seal-${c.seal}.webp)"><span>${tlMono(o)}</span></${tag}>`;
 const tlBabyC=c=>({stem:c.stem||'#8d8a6c',flo:'#fffdf7',floEdge:'rgba(120,108,90,.55)',bud:'#efe6d2'});
 FAMILY({key:'tulle',name:'Tulle',meaning:'Sheer tulle wrap',
   blurb:'A deckled handmade-paper card wrapped in sheer tulle, tied at the front with a gold wax seal and a sprig of baby’s breath. The seal lifts and the tulle slides away.',
   fonts:{d:"'Cormorant Garamond', serif",s:"'Allura', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
   page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en',c=th.c,u=++tlN;
-    return `<section class="page pg-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
-      <div class="tl-loose reveal">${tlBand(u,true)}</div>
-      <div class="tl-pwrap reveal d1"><div class="tl-shadow"><div class="tl-paper tl-pcard"><div class="tl-rule"></div>
-        ${o.bismillah?'<p class="tl-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
-        <p class="tl-k kicker">${ev(o,L)}</p>
-        <h1 class="tl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
-        <p class="tl-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tl-hj">${esc(o.hijri)}</p>`:''}
-        ${o.venue?`<p class="tl-ven">${esc(o.venue)}</p>`:''}</div></div>
-        <div class="tl-rest">${tlBaby(u*13+5,tlBabyC(c))}${tlSeal(o,c,'span','','')}</div></div>
-      <a class="tl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+    return `<section class="page pg-tulle${c.dark?' tu-dark':''}" style="--hi:${c.hi}"><div class="tu-ground"></div>
+      <div class="tu-loose reveal">${tlBand(u,true)}</div>
+      <div class="tu-pwrap reveal d1"><div class="tu-shadow"><div class="tu-paper tu-pcard"><div class="tu-rule"></div>
+        ${o.bismillah?'<p class="tu-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}
+        <p class="tu-k kicker">${ev(o,L)}</p>
+        <h1 class="tu-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="tu-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="tu-hj">${esc(o.hijri)}</p>`:''}
+        ${o.venue?`<p class="tu-ven">${esc(o.venue)}</p>`:''}</div></div>
+        <div class="tu-rest">${tlBaby(u*13+5,tlBabyC(c))}${tlSeal(o,c,'span','','')}</div></div>
+      <a class="tu-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',u=++tlN;
-    return `<div class="cover cv-tulle${c.dark?' tl-dark':''}" style="--hi:${c.hi}"><div class="tl-ground"></div>
-      <div class="tl-stage">
-        <div class="tl-card"><div class="tl-shadow"><div class="tl-paper"><div class="tl-rule"></div>
-          <p class="tl-k">${ev(o,L)}</p><p class="tl-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
-          <p class="tl-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div></div>
-        <div class="tl-band">${tlBand(u,false)}</div>
-        <div class="tl-tie">${tlBaby(u*13+1,tlBabyC(c))}${tlSeal(o,c,tag,attr,L)}</div>
+    return `<div class="cover cv-tulle${c.dark?' tu-dark':''}" style="--hi:${c.hi}"><div class="tu-ground"></div>
+      <div class="tu-stage">
+        <div class="tu-card"><div class="tu-shadow"><div class="tu-paper"><div class="tu-rule"></div>
+          <p class="tu-k">${ev(o,L)}</p><p class="tu-cn">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+          <p class="tu-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div></div></div>
+        <div class="tu-band">${tlBand(u,false)}</div>
+        <div class="tu-tie">${tlBaby(u*13+1,tlBabyC(c))}${tlSeal(o,c,tag,attr,L)}</div>
       </div>
-      <div class="tl-foot">${guest?`<p class="tl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="tl-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
-  skin(el,o,th,L){K.cards(el);el.classList.toggle('tl-dark',!!th.c.dark);el.style.setProperty('--hi',th.c.hi);el.style.setProperty('--tlband',K.uri(tlBand(900,false)));
+      <div class="tu-foot">${guest?`<p class="tu-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="tu-hint">${en?'Open invitation':'Buka Jemputan'}</p></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.classList.toggle('tu-dark',!!th.c.dark);el.style.setProperty('--hi',th.c.hi);el.style.setProperty('--tlband',K.uri(tlBand(900,false)));
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
