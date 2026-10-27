@@ -63,3 +63,11 @@
 .fam-lukisan .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lukisan .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .lk-stage,.inv .lk-paint{transition:none}}
+
+/* page with a couple photo: the photo fills the oval, names sit below the frame */
+.inv .lk-velvet.has-photo .lk-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;z-index:1;display:block;border-radius:0}
+.inv .lk-velvet.has-photo::after{z-index:2;mix-blend-mode:normal;opacity:1;background:radial-gradient(ellipse at 50% 45%,transparent 62%,rgba(0,0,0,.45) 100%)}
+.inv .lk-velvet.has-photo .lk-in{display:none}
+.inv .pg-lukisan .lk-under{display:flex;flex-direction:column;align-items:center;margin-top:4px}
+.inv .pg-lukisan .lk-under .lk-names{font-size:clamp(34px,11cqi,46px);flex-direction:row;flex-wrap:wrap;justify-content:center;column-gap:.25em;line-height:1.1}
+.inv .pg-lukisan .lk-under .lk-names span{margin:0;align-self:center}

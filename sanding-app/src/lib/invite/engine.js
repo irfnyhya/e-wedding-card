@@ -4863,7 +4863,12 @@ FAMILY({key:'lukisan',name:'Bingkai Emas',meaning:'Gilded frame',
     <p class="lk-k lk-top">${ev(o,L)}</p>
     <div class="lk-stage">${lkFrame(o,L,`${lkNames(o)}<p class="lk-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`)}</div>
     <div class="lk-foot">${guest?`<p class="lk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="lk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
-  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);const sc=$('.scroller',el);
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);
+    // with a couple photo, the photo fills the oval and the names move below the frame
+    const pg=$('.pg-lukisan',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
+    if(img){const vel=$('.lk-velvet',pg),nm=$('.lk-names',pg),fr=nm&&nm.closest('.reveal');
+      img.className='lk-photo';img.removeAttribute('style');vel.classList.add('has-photo');vel.prepend(img);ph.remove();
+      if(fr){const out=document.createElement('div');out.className='lk-under reveal d2';$$('.lk-bis,.lk-names',pg).forEach(x=>out.appendChild(x));fr.after(out)}}const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
     {k:'marun',n:'Marun',desc:'Gilt frame on maroon velvet',c:{ground:'#2a0f15',sheet:'#3a161e',ink:'#f3e7d3',accent:'#e2c58a',gold:'#c9a35a',pagefg:'#f3e7d3',vel:'#5a1a26'}},

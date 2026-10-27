@@ -5733,6 +5733,14 @@ tr:last-child td{border-bottom:0}
 .fam-lukisan .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lukisan .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .lk-stage,.inv .lk-paint{transition:none}}
+
+/* page with a couple photo: the photo fills the oval, names sit below the frame */
+.inv .lk-velvet.has-photo .lk-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;z-index:1;display:block;border-radius:0}
+.inv .lk-velvet.has-photo::after{z-index:2;mix-blend-mode:normal;opacity:1;background:radial-gradient(ellipse at 50% 45%,transparent 62%,rgba(0,0,0,.45) 100%)}
+.inv .lk-velvet.has-photo .lk-in{display:none}
+.inv .pg-lukisan .lk-under{display:flex;flex-direction:column;align-items:center;margin-top:4px}
+.inv .pg-lukisan .lk-under .lk-names{font-size:clamp(34px,11cqi,46px);flex-direction:row;flex-wrap:wrap;justify-content:center;column-gap:.25em;line-height:1.1}
+.inv .pg-lukisan .lk-under .lk-names span{margin:0;align-self:center}
 /* ===== majalah ===== */
 .inv .cv-majalah{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
 .inv .majalah-floor{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 42%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 62%,color-mix(in srgb,var(--ground) 80%,#000))}
@@ -14505,7 +14513,12 @@ FAMILY({key:'lukisan',name:'Bingkai Emas',meaning:'Gilded frame',
     <p class="lk-k lk-top">${ev(o,L)}</p>
     <div class="lk-stage">${lkFrame(o,L,`${lkNames(o)}<p class="lk-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`)}</div>
     <div class="lk-foot">${guest?`<p class="lk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="lk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
-  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);const sc=$('.scroller',el);
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);
+    // with a couple photo, the photo fills the oval and the names move below the frame
+    const pg=$('.pg-lukisan',el),ph=pg&&$('.couple-ph.front',pg),img=ph&&$('img',ph);
+    if(img){const vel=$('.lk-velvet',pg),nm=$('.lk-names',pg),fr=nm&&nm.closest('.reveal');
+      img.className='lk-photo';img.removeAttribute('style');vel.classList.add('has-photo');vel.prepend(img);ph.remove();
+      if(fr){const out=document.createElement('div');out.className='lk-under reveal d2';$$('.lk-bis,.lk-names',pg).forEach(x=>out.appendChild(x));fr.after(out)}}const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
     {k:'marun',n:'Marun',desc:'Gilt frame on maroon velvet',c:{ground:'#2a0f15',sheet:'#3a161e',ink:'#f3e7d3',accent:'#e2c58a',gold:'#c9a35a',pagefg:'#f3e7d3',vel:'#5a1a26'}},
