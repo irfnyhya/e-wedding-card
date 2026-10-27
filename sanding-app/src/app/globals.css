@@ -363,7 +363,8 @@ tr:last-child td{border-bottom:0}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
 
 /* ===== Invitation: four families (sampul, mihrab, ukiran, catair). Each design commits to one look, colours come from --c-* per design. ===== */
-.inv{position:absolute;inset:0;overflow:hidden;background:var(--ground);color:var(--ink);font-family:var(--b);container-type:inline-size;-webkit-font-smoothing:antialiased}
+.inv{position:absolute;inset:0;overflow:hidden;background:var(--ground);color:var(--ink);font-family:var(--b);container-type:inline-size;-webkit-font-smoothing:antialiased;contain:paint;isolation:isolate}
+/* contain:paint makes the card the containing block for any position:fixed layer inside it (texture overlays, sheets), so nothing escapes the phone preview */
 .inv *{box-sizing:border-box}
 .inv .scroller{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
 .inv .tex{position:relative;isolation:isolate}
