@@ -84,12 +84,12 @@ const T={
  ms:{ev:{walimah:'Walimatul Urus',kahwin:'Majlis Perkahwinan',bertandang:'Majlis Bertandang',resepsi:'Majlis Resepsi'},open:'Buka Jemputan',to:'Kepada',
   salam:'Assalamualaikum W.B.T. & Salam Sejahtera',
   intro:(h,side)=>side==='couple'?`Dengan penuh kesyukuran ke hadrat Ilahi, kami dengan segala hormatnya menjemput Dato' | Datin | Tuan | Puan | Encik | Cik serta seisi keluarga ke majlis perkahwinan kami`:`Dengan penuh kesyukuran ke hadrat Ilahi, kami<br><b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>dengan segala hormatnya menjemput Dato' | Datin | Tuan | Puan | Encik | Cik serta seisi keluarga ke majlis perkahwinan ${side==='bride'?'puteri':'putera'} kesayangan kami`,
-  with:'dengan pasangannya',when:'Tarikh & Masa',date:'Tarikh',time:'Masa',venue:'Tempat',loc:'Lokasi',dress:'Kod pakaian',count:'Menghitung Hari',units:['Hari','Jam','Minit','Saat'],done:'Majlis telah berlangsung. Terima kasih atas doa anda.',
+  with:'dengan pasangannya',when:'Tarikh & Masa',date:'Tarikh',time:'Masa',venue:'Tempat',loc:'Lokasi',dress:'Kod pakaian',count:'Menghitung Hari',units:['Hari','Jam','Minit','Saat'],done:'Majlis sudah selesai. Terima kasih atas doa dan kehadiran anda.',
   sched:'Aturcara Majlis',gallery:'Galeri',doaT:'Doa',doa:'Ya Allah, berkatilah majlis ini. Kurniakanlah kebahagiaan dan rahmat-Mu kepada kedua mempelai, satukanlah hati mereka dalam kasih sayang, dan jadikanlah mereka pasangan yang sakinah, mawaddah wa rahmah.',
-  rsvp:'Kehadiran',rsvpSub:d=>`Mohon sahkan kehadiran anda sebelum ${d}.`,name:'Nama',phone:'No. telefon',yes:'Hadir',no:'Tidak hadir',pax:'Bilangan orang',send:'Hantar',
-  thanks:n=>`Terima kasih, ${n}. Maklum balas anda telah direkodkan.`,closed:'Tempoh RSVP telah tamat.',
-  wishes:'Ucapan',wishPh:'Tulis ucapan dan doa anda',sendWish:'Hantar ucapan',noWish:'Jadilah yang pertama menghantar ucapan.',
-  gift:'Salam Kaut',giftSub:'Kehadiran dan doa anda adalah hadiah yang paling bermakna. Bagi yang ingin menghulurkan sumbangan:',copy:'Salin',copied:'Disalin',
+  rsvp:'Kehadiran',rsvpSub:d=>`Mohon maklumkan kehadiran sebelum ${d}.`,name:'Nama',phone:'No. telefon',yes:'Hadir',no:'Tidak hadir',pax:'Bilangan orang',send:'Hantar',
+  thanks:n=>`Terima kasih, ${n}! Jawapan anda sudah kami terima.`,closed:'Tempoh RSVP telah tamat.',
+  wishes:'Ucapan',wishPh:'Tulis ucapan & doa untuk pengantin',sendWish:'Hantar ucapan',noWish:'Belum ada ucapan lagi. Tinggalkan doa anda yang pertama.',
+  gift:'Salam Kaut',giftSub:'Doa dan kehadiran anda sudah cukup bermakna buat kami. Bagi yang ingin memberi sumbangan, boleh salurkan di sini:',copy:'Salin',copied:'Disalin',
   contact:'Hubungi',dock:['Kalendar','Lokasi','RSVP','Hadiah','Hubungi'],addCal:'Simpan ke Google Calendar',maps:'Google Maps',waze:'Waze',
   previewNote:'Pratonton sahaja. RSVP akan direkodkan apabila kad diterbitkan.',made:'Kad digital oleh Sanding',
   ampm:(h)=>h<12?'pagi':h<14?'tengah hari':h<19?'petang':'malam'},
@@ -124,8 +124,8 @@ const TRAD_COPY={
    intro:(h,side)=>side==='couple'?'Dengan restu Yang Maha Kuasa dan keluarga, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan restu Yang Maha Kuasa, kami')},
   en:{salam:'With the blessings of the Almighty',doaT:'Blessings',doa:'May this sacred union be blessed with love, prosperity and lasting happiness.',
    intro:(h,side)=>side==='couple'?'With the blessings of the Almighty and our elders, we invite you and your family to celebrate our wedding':invHost(h,side,false,'With the blessings of the Almighty and our elders,')}},
- general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga kasih sayang kalian kekal mekar selamanya.',
-   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput anda serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+ general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga cinta kalian terus mekar, hari demi hari.',
+   intro:(h,side)=>side==='couple'?'Dengan sukacitanya, kami menjemput anda sekeluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan sukacitanya, kami')},
   en:{salam:'Warm greetings',doaT:'A Wish',doa:'May your love grow with every year you share.',
    intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}}};
 /* the copy a card uses: the language, adjusted for its wedding tradition */
@@ -3682,6 +3682,54 @@ FAMILY({key:'kipas',name:'Kipas',meaning:'Folding fan',
 })()}catch(e){console.error("family kipas failed",e)}
 
 
+/* ===== family: kolam ===== */
+try{(()=>{
+/* kolam: Monet's water-lily pond (public domain, 1906) with a blush envelope standing open on it; a lace doily card waits inside.
+   Cover: tap "Buka Jemputan", the envelope sinks away and the lace card rises and grows to fill the screen.
+   Page: the lace card over the pond. Skin: lace-edged cards floating over the painting. */
+// a doily: rectangle with scalloped edges and an eyelet in every scallop, holes cut with evenodd
+function kolamLace(w,h,n,c,uid){const d=6,r=1.5;let p='',holes='';
+  const side=(ax,ay,bx,by,k)=>{const nx=(by-ay),ny=-(bx-ax),L=Math.hypot(nx,ny),ox=nx/L,oy=ny/L;let s='';
+    for(let i=0;i<k;i++){const t0=i/k,t1=(i+1)/k,tm=(t0+t1)/2,X=t=>ax+(bx-ax)*t,Y=t=>ay+(by-ay)*t;
+      s+=`Q${(X(tm)+ox*d*1.9).toFixed(2)} ${(Y(tm)+oy*d*1.9).toFixed(2)} ${X(t1).toFixed(2)} ${Y(t1).toFixed(2)}`;
+      const hx=X(tm)+ox*d*.42,hy=Y(tm)+oy*d*.42;holes+=`M${(hx-r).toFixed(2)} ${hy.toFixed(2)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`}return s};
+  const kx=n,ky=Math.round(n*h/w);
+  p=`M${d} ${d}`+side(d,d,w-d,d,kx)+side(w-d,d,w-d,h-d,ky)+side(w-d,h-d,d,h-d,kx)+side(d,h-d,d,d,ky)+'Z';
+  // a second ring of tiny holes just inside the edge
+  let ring='';const g=11,s0=d+7;for(let x=s0;x<=w-s0+.1;x+=(w-2*s0)/Math.round((w-2*s0)/g)){ring+=`M${(x-.8).toFixed(2)} ${s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${(x-.8).toFixed(2)} ${h-s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
+  for(let y=s0;y<=h-s0+.1;y+=(h-2*s0)/Math.round((h-2*s0)/g)){ring+=`M${s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${w-s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
+  return `<svg class="kl-lace" viewBox="-4 -4 ${w+8} ${h+8}" preserveAspectRatio="none"><defs><filter id="kn${uid}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
+    <path d="${p}${holes}${ring}" style="fill:${c.lace}" fill-rule="evenodd"/><path d="${p}" fill="#000" filter="url(#kn${uid})" opacity=".8"/>
+    <rect x="${d+12}" y="${d+12}" width="${w-2*d-24}" height="${h-2*d-24}" fill="none" style="stroke:${c.accent}" stroke-width=".5" stroke-dasharray="1.6 1.6" opacity=".55"/></svg>`}
+let kn=0;
+const klCard=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="kl-doily${big?' big':''}">${kolamLace(200,big?280:190,big?15:13,{lace:'var(--sheet)',accent:'var(--accent)'},++kn)}
+  <div class="kl-txt"><p class="kl-k kicker">${ev(o,L)}</p><p class="kl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kl-date">${esc(fmtDate(o.date,o.lang))}</p>${big&&o.venue?`<p class="kl-ven">${esc(o.venue)}</p>`:''}</div></div>`};
+FAMILY({key:'kolam',name:'Kolam',meaning:'Lily pond',
+  blurb:'A blush envelope standing open on Monet’s water-lily pond, with a lace doily card inside that rises out when guests open it.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
+    <div class="reveal">${klCard(o,L,true)}</div>
+    <a class="kl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
+    ${guest?`<p class="kl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+    <div class="kl-stage"><div class="kl-env kl-rear"><div class="kl-flap"></div><div class="kl-back"></div></div><div class="kl-in">${klCard(o,L,false)}</div><div class="kl-env kl-front"><div class="kl-pocket"></div><i class="kl-pearl"></i></div></div>
+    <${tag} class="kl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'jambu',n:'Jambu',desc:'Blush envelope on the lily pond',c:{ground:'#9fb3c9',sheet:'#fffaf5',ink:'#3b2c33',accent:'#8c4f63',gold:'#b89a6a',pagefg:'#ffffff',env:'#e7c3c6'}},
+    {k:'lavender',n:'Lavender',desc:'Lilac envelope on the lily pond',c:{ground:'#a3acc8',sheet:'#fdfbff',ink:'#33304a',accent:'#6d5c93',gold:'#a99872',pagefg:'#ffffff',env:'#cbbfe0'}},
+    {k:'sage',n:'Sage',desc:'Sage envelope on the lily pond',c:{ground:'#9db3a9',sheet:'#fbfcf7',ink:'#2d352e',accent:'#56704f',gold:'#a8955f',pagefg:'#ffffff',env:'#b7c7ad'}},
+    {k:'biru',n:'Biru',desc:'Powder blue envelope on the lily pond',c:{ground:'#93a9c4',sheet:'#fbfdff',ink:'#26324a',accent:'#3f5f8c',gold:'#b49a62',pagefg:'#ffffff',env:'#b9cde3'}},
+    {k:'pic',n:'Pic',desc:'Peach envelope on the lily pond',c:{ground:'#a8b4c4',sheet:'#fffaf4',ink:'#3a2c26',accent:'#a5604a',gold:'#bf9a62',pagefg:'#ffffff',env:'#f0cdb6'}},
+    {k:'gading',n:'Gading',desc:'Ivory envelope on the lily pond',c:{ground:'#a9b6c4',sheet:'#ffffff',ink:'#2f2b28',accent:'#6e5a3e',gold:'#b29a6a',pagefg:'#ffffff',env:'#f3ece0'}},
+    {k:'marun',n:'Marun',desc:'Wine envelope on the lily pond',c:{ground:'#7e8fa8',sheet:'#fffaf6',ink:'#341d24',accent:'#7a2638',gold:'#b8955e',pagefg:'#ffffff',env:'#8e3b4b'}},
+    {k:'zamrud',n:'Zamrud',desc:'Deep green envelope on the lily pond',c:{ground:'#7f998f',sheet:'#fbfcf6',ink:'#22301f',accent:'#2f5a3a',gold:'#b49a5e',pagefg:'#ffffff',env:'#3f6b4b'}},
+  ]});
+
+})()}catch(e){console.error("family kolam failed",e)}
+
+
 /* ===== family: komik ===== */
 try{(()=>{
 /* komik: an inked comic-book page. Panels with brush borders, Ben-Day dots, caption boxes and sound-effect lettering;
@@ -4084,6 +4132,44 @@ FAMILY({key:'lentera',name:'Lentera',meaning:'Moroccan lantern',
   ]});
 
 })()}catch(e){console.error("family lentera failed",e)}
+
+
+/* ===== family: lukisan ===== */
+try{(()=>{
+/* lukisan: a carved, gilded oval frame (Met Museum, public domain) hung over a Jan van Huysum flower painting (public domain).
+   The names sit on velvet inside the frame.
+   Cover: tap "Buka Jemputan" and the view moves into the frame until the velvet fills the screen.
+   Page: the painting fades into velvet, with the frame and names below it. Skin: velvet cards edged with fine gold rules. */
+// the frame image is 885x1004; its opening is an ellipse at (50.2%, 58.7%) sized 65.8% x 76.5%
+const LK_OVAL='left:17.3%;top:20.4%;width:65.8%;height:76.5%';
+const lkFrame=(o,L,inner,cls='')=>`<div class="lk-frame ${cls}"><div class="lk-velvet" style="${LK_OVAL}"><div class="lk-in">${inner}</div></div><img class="lk-gilt" src="${A}pd-frame.webp" alt=""></div>`;
+const lkNames=o=>{const [n1,n2]=coverNames(o);return `<p class="lk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>`};
+FAMILY({key:'lukisan',name:'Bingkai Emas',meaning:'Gilded frame',
+  blurb:'A carved gilt oval frame hung over a Dutch flower painting, the names set on velvet inside it. Guests step into the frame to open the card.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-lukisan"><div class="lk-band"></div><div class="lk-vel"></div>
+    <p class="lk-k kicker reveal">${ev(o,L)}</p>
+    <div class="reveal d1" style="width:82%;max-width:330px">${lkFrame(o,L,`${o.bismillah?'<p class="lk-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}${lkNames(o)}`)}</div>
+    <p class="lk-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="lk-ven reveal d2">${esc(o.venue)}</p>`:''}
+    <a class="lk-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-lukisan"><div class="lk-paint"></div><div class="lk-shade"></div>
+    <p class="lk-k lk-top">${ev(o,L)}</p>
+    <div class="lk-stage">${lkFrame(o,L,`${lkNames(o)}<p class="lk-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`)}</div>
+    <div class="lk-foot">${guest?`<p class="lk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="lk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'marun',n:'Marun',desc:'Gilt frame on maroon velvet',c:{ground:'#2a0f15',sheet:'#3a161e',ink:'#f3e7d3',accent:'#e2c58a',gold:'#c9a35a',pagefg:'#f3e7d3',vel:'#5a1a26'}},
+    {k:'hitam',n:'Hitam',desc:'Gilt frame on black velvet',c:{ground:'#0f0d0c',sheet:'#1d1a18',ink:'#efe6d6',accent:'#dcc08a',gold:'#c4a05c',pagefg:'#efe6d6',vel:'#24201d'}},
+    {k:'zamrud',n:'Zamrud',desc:'Gilt frame on emerald velvet',c:{ground:'#0d1f19',sheet:'#16302a',ink:'#efe9d8',accent:'#dfc48c',gold:'#c6a45e',pagefg:'#efe9d8',vel:'#1d4a3c'}},
+    {k:'nila',n:'Nila',desc:'Gilt frame on midnight blue velvet',c:{ground:'#0e1426',sheet:'#18213a',ink:'#ece6da',accent:'#e0c78f',gold:'#c7a560',pagefg:'#ece6da',vel:'#22305a'}},
+    {k:'ungu',n:'Ungu',desc:'Gilt frame on plum velvet',c:{ground:'#1c0f1f',sheet:'#2b1830',ink:'#f1e7e0',accent:'#e3c690',gold:'#c8a45f',pagefg:'#f1e7e0',vel:'#46224d'}},
+    {k:'koko',n:'Koko',desc:'Gilt frame on cocoa velvet',c:{ground:'#1d130d',sheet:'#2c1e15',ink:'#f2e8d6',accent:'#e0c48a',gold:'#c6a25c',pagefg:'#f2e8d6',vel:'#4a3022'}},
+    {k:'perak',n:'Perak',desc:'Silver frame on navy velvet',c:{ground:'#0f1522',sheet:'#1a2234',ink:'#eef0f4',accent:'#dfe3ea',gold:'#b9c0cc',pagefg:'#eef0f4',vel:'#26324c',silver:'1'}},
+    {k:'kelabu',n:'Kelabu',desc:'Silver frame on charcoal velvet',c:{ground:'#141516',sheet:'#212325',ink:'#eeeeec',accent:'#e2e2de',gold:'#b8bbbe',pagefg:'#eeeeec',vel:'#33373b',silver:'1'}},
+  ]});
+
+})()}catch(e){console.error("family lukisan failed",e)}
 
 
 /* ===== family: majalah ===== */
@@ -6896,6 +6982,72 @@ FAMILY({key:'tenun',name:'Pua Kumbu',meaning:'Iban ikat cloth',
   ]});
 
 })()}catch(e){console.error("family tenun failed",e)}
+
+
+/* ===== family: warkah ===== */
+try{(()=>{
+/* warkah: a linen envelope with a lace-edged flap and a gold wax seal, lying on draped satin with Redouté roses.
+   Cover: touch the seal, the flap lifts and the letter slides up out of the envelope.
+   Page: the letter, a lace label and a gilt RSVP tag laid out like a stationery flat-lay; each piece is a link.
+   Skin: deckled paper cards on satin, script headings over a fine gold rule. */
+// lace edging along the flap's two edges: scallops with eyelets, drawn in the flap's own 0-100 box
+function warkahLace(c){const n=11,pts=[];
+  const edge=(x0,y0,x1,y1)=>{let d='';for(let i=0;i<n;i++){const t0=i/n,t1=(i+1)/n,tm=(t0+t1)/2;
+    const P=t=>[x0+(x1-x0)*t,y0+(y1-y0)*t];const [ax,ay]=P(t0),[bx,by]=P(t1),[mx,my]=P(tm);
+    // outward normal (below the edge)
+    const nx=-(y1-y0),ny=(x1-x0),L=Math.hypot(nx,ny),ox=nx/L*3.2,oy=ny/L*3.2;
+    d+=(i?'':`M${ax.toFixed(2)} ${ay.toFixed(2)}`)+`Q${(mx+ox*1.6).toFixed(2)} ${(my+oy*1.6).toFixed(2)} ${bx.toFixed(2)} ${by.toFixed(2)}`;
+    pts.push([mx+ox*.62,my+oy*.62])}return d};
+  const a=edge(0,0,50,62),b=edge(50,62,100,0);
+  return `<svg class="wk-lace" viewBox="0 -2 100 72" preserveAspectRatio="none"><path d="M0 0L50 62L100 0" fill="none" stroke="${c.lace}" stroke-width="4.6" stroke-linejoin="round"/><path d="${a}" fill="none" stroke="${c.lace}" stroke-width="1.5"/><path d="${b}" fill="none" stroke="${c.lace}" stroke-width="1.5"/>
+    ${pts.map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".55" fill="${c.lace}"/>`).join('')}
+    <path d="M1.6 1L50 59.2L98.4 1" fill="none" stroke="${c.accent}" stroke-width=".35" stroke-dasharray=".9 .9" opacity=".8"/></svg>`}
+const wkFl=(n,style)=>`<img class="wk-fl" src="${A}flower-${n}.webp" alt="" style="${style}">`;
+const wkMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="wk-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+FAMILY({key:'warkah',name:'Mohor Emas',meaning:'Sealed love letter',
+  blurb:'A linen envelope with a lace-edged flap and a gold wax seal, resting on satin with painted roses. Touch the seal and the letter slides out.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1650,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-warkah" style="--lace:${th.c.lace}"><div class="wk-satin"></div>
+      ${wkFl(th.c.fl1,'width:50%;left:-18%;top:-6%;transform:rotate(160deg)')}
+      <div class="wk-letter reveal"><div class="wk-in">
+        <p class="wk-k kicker">${ev(o,L)}</p><h1 class="wk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="wk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="wk-hj">${esc(o.hijri)}</p>`:''}</div></div>
+      <div class="wk-tiles">
+        <a class="wk-tile wk-label reveal d1" data-go="when" href="#"><small>${en?'Tap for':'Tekan untuk'}</small><b>${en?'Event details':'Butiran Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="wk-tile wk-rsvp reveal d2" data-go="rsvp" href="#"><small>${en?'Kindly reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+        <a class="wk-tile wk-loc reveal d3" data-go="loc" href="#"><b>${en?'Location':'Lokasi'}</b><small>${esc(o.venue)}</small></a>
+      </div>
+      ${wkFl(th.c.fl2,'width:46%;right:-16%;bottom:6%;transform:rotate(-30deg)')}</section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-warkah" style="--lace:${c.lace}"><div class="wk-satin"></div>
+      <div class="wk-top"><p class="wk-k">${ev(o,L)}</p><p class="wk-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="wk-env">
+        <div class="wk-back"></div>
+        <div class="wk-card"><p class="wk-k">${ev(o,L)}</p><p class="wk-cn">${esc(n1)}<br><span>&amp;</span> ${esc(n2)}</p><p class="wk-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+        <div class="wk-pocket"></div>
+        <div class="wk-flap"><div class="wk-flapface"></div>${warkahLace(c)}</div>
+        <${tag} class="wk-seal" ${attr} aria-label="${L.open}" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${wkMono(o)}</span></${tag}>
+        ${wkFl(c.fl2,'width:40%;left:-12%;bottom:-36%;transform:rotate(-100deg)')}${wkFl(c.fl1,'width:50%;left:-24%;bottom:-46%;transform:rotate(-140deg)')}${wkFl(c.fl1,'width:50%;right:-24%;top:-46%;transform:rotate(40deg)')}${wkFl(c.fl2,'width:38%;right:-14%;top:-36%;transform:rotate(80deg)')}
+      </div>
+      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Touch the seal to open':'Sentuh mohor untuk buka'}</p></div></div>`},
+  skin(el,o,th,L){K.cards(el);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'zamrud',n:'Zamrud',desc:'Green linen, gold seal, ivory satin',c:{ground:'#ece4d6',sheet:'#fbf7ef',ink:'#2b2a24',accent:'#2f4a2c',gold:'#b08a3e',pagefg:'#2b2a24',lace:'#f6f1e6',seal:'emas',fl1:'cabbage-rose',fl2:'blush-rose',env:'#33502f'}},
+    {k:'marun',n:'Marun',desc:'Maroon linen, gold seal, champagne satin',c:{ground:'#eadbcb',sheet:'#fcf7ef',ink:'#33221f',accent:'#6e1f2a',gold:'#b38b45',pagefg:'#33221f',lace:'#f8efe3',seal:'emas',fl1:'cabbage-rose',fl2:'anemones',env:'#6a1f29'}},
+    {k:'nila',n:'Nila',desc:'Navy linen, ivory seal, pearl satin',c:{ground:'#e6e6e2',sheet:'#fbfaf6',ink:'#1f2433',accent:'#1f2f55',gold:'#a9884a',pagefg:'#1f2433',lace:'#f4f2ec',seal:'gading',fl1:'anemones',fl2:'wild-rose',env:'#22345c'}},
+    {k:'jambu',n:'Jambu',desc:'Dusty pink linen, gold seal, blush satin',c:{ground:'#f1e1dc',sheet:'#fffaf6',ink:'#3a2a2a',accent:'#9c5a62',gold:'#b5904f',pagefg:'#3a2a2a',lace:'#fffaf5',seal:'emas',fl1:'blush-rose',fl2:'wild-rose',env:'#c99096'}},
+    {k:'sage',n:'Sage',desc:'Sage linen, ivory seal, cream satin',c:{ground:'#ebe7dc',sheet:'#fbf9f2',ink:'#2c3027',accent:'#56664c',gold:'#a88d4d',pagefg:'#2c3027',lace:'#f8f6ee',seal:'gading',fl1:'wild-rose',fl2:'blush-rose',env:'#8b9a7c'}},
+    {k:'gading',n:'Gading',desc:'Ivory linen, sage seal, white satin',c:{ground:'#e9e6df',sheet:'#fffdf8',ink:'#2d2a25',accent:'#6b5a3e',gold:'#a8894c',pagefg:'#2d2a25',lace:'#ffffff',seal:'sage',fl1:'blush-rose',fl2:'cabbage-rose',env:'#efe6d3'}},
+    {k:'biru',n:'Biru',desc:'Powder blue linen, gold seal, pearl satin',c:{ground:'#e4e8ea',sheet:'#fbfcfb',ink:'#24303a',accent:'#4d6a86',gold:'#b08f50',pagefg:'#24303a',lace:'#f6f8f8',seal:'emas',fl1:'wild-rose',fl2:'anemones',env:'#93abc2'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta linen, red seal, sand satin',c:{ground:'#ece0d2',sheet:'#fcf6ee',ink:'#33261f',accent:'#9a4b2f',gold:'#b08a4a',pagefg:'#33261f',lace:'#faf3ea',seal:'merah',fl1:'cabbage-rose',fl2:'wild-rose',env:'#a6573a'}},
+  ]});
+
+})()}catch(e){console.error("family warkah failed",e)}
 
 
 /* ===== family: washi ===== */

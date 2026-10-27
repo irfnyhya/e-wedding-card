@@ -1,0 +1,99 @@
+/* ===== warkah ===== */
+/* satin: soft diagonal folds over the ground, silk weave on top */
+.inv .wk-satin{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .wk-satin::before{content:"";position:absolute;inset:-20%;filter:blur(16px);
+  background:linear-gradient(118deg,transparent 8%,rgba(255,255,255,.75) 15%,transparent 23%,rgba(70,50,30,.16) 31%,transparent 38%,rgba(255,255,255,.6) 47%,transparent 54%,rgba(70,50,30,.2) 63%,transparent 70%,rgba(255,255,255,.55) 79%,transparent 86%,rgba(70,50,30,.14) 93%),
+  linear-gradient(64deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 52%,rgba(70,50,30,.1) 66%,transparent 76%)}
+.inv .wk-satin::after{content:"";position:absolute;inset:0;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.45}
+.inv .wk-fl{position:absolute;height:auto;pointer-events:none;z-index:6;filter:drop-shadow(0 6px 8px rgba(40,30,20,.28))}
+.inv .wk-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.38em;text-transform:uppercase}
+
+/* cover */
+.inv .cv-warkah{background:transparent;overflow:hidden;transition:opacity .45s 1.25s}
+.inv .wk-top{position:absolute;top:9%;left:0;right:0;text-align:center;z-index:2;color:var(--ink);transition:opacity .4s}
+.inv .wk-top .wk-k{color:var(--accent)}
+.inv .wk-n{font-family:"Pinyon Script",cursive;font-size:clamp(34px,11cqi,46px);line-height:1.15;margin-top:8px;color:var(--ink)}
+.inv .wk-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .wk-env{position:absolute;left:7%;right:7%;top:33%;aspect-ratio:1.45;z-index:3;perspective:900px}
+.inv .wk-env > div{position:absolute;inset:0}
+.inv .wk-env .wk-fl{z-index:-1}
+.inv .wk-back{background:color-mix(in srgb,var(--env) 72%,#000);border-radius:3px;box-shadow:0 22px 34px -10px rgba(40,28,18,.45),0 3px 8px rgba(40,28,18,.25)}
+.inv .wk-env .wk-card{inset:5% 6% 4%!important;z-index:2;background:var(--sheet) url(assets/paper.jpg) 0 0/240px;background-blend-mode:multiply;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:9%;text-align:center;color:var(--ink);transition:transform .8s cubic-bezier(.3,.1,.2,1) .75s}
+.inv .wk-card .wk-k{color:var(--accent);font-size:8.5px}
+.inv .wk-cn{font-family:"Pinyon Script",cursive;font-size:clamp(22px,7cqi,30px);line-height:1.05;margin-top:6px}
+.inv .wk-cn span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.55em;color:var(--gold)}
+.inv .wk-cd{font-family:"Cormorant Garamond",serif;letter-spacing:.3em;font-size:10px;margin-top:6px;color:var(--accent)}
+/* the front pocket: everything but the top V, with the two side folds catching light */
+.inv .wk-pocket{z-index:3;clip-path:polygon(0 0,50% 57%,100% 0,100% 100%,0 100%);border-radius:3px;
+  background:linear-gradient(to top right,transparent 49.6%,rgba(0,0,0,.14) 50%,transparent 58%),linear-gradient(to top left,transparent 49.6%,rgba(255,255,255,.12) 50%,transparent 58%),
+  linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.1)),url(assets/linen.jpg) 0 0/180px,var(--env);background-blend-mode:normal,normal,normal,soft-light,normal}
+.inv .wk-env .wk-flap{bottom:auto!important;height:62%;z-index:4;transform-origin:50% 0;transform-style:preserve-3d;
+  transition:transform .65s cubic-bezier(.4,0,.2,1) .25s,z-index 0s .55s;filter:drop-shadow(0 4px 4px rgba(0,0,0,.28))}
+.inv .wk-flapface{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.06) 70%),url(assets/linen.jpg) 0 0/180px,var(--env);background-blend-mode:normal,soft-light,normal}
+.inv .wk-lace{position:absolute;left:0;top:-1%;width:100%;height:116%;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.inv .wk-seal{position:absolute;left:50%;top:62%;width:25%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:7;border:0;padding:0;cursor:pointer;
+  background:var(--seal) center/contain no-repeat;filter:drop-shadow(0 5px 6px rgba(30,20,10,.4));display:flex;align-items:center;justify-content:center;transition:opacity .35s,transform .45s;animation:wkGlow 5s ease-in-out infinite}
+.inv .wk-seal span{font-family:"Pinyon Script",cursive;font-size:clamp(17px,6cqi,24px);color:rgba(0,0,0,.36);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.25);line-height:1}
+.inv .wk-seal span i{font-style:normal;font-family:"Cormorant Garamond",serif;font-size:.55em;margin:0 1px}
+.inv .wk-seal .wk-jw{font-family:"Amiri",serif;font-size:1em}
+@keyframes wkGlow{0%,100%{filter:drop-shadow(0 5px 6px rgba(30,20,10,.4))}50%{filter:drop-shadow(0 5px 6px rgba(30,20,10,.4)) drop-shadow(0 0 10px rgba(255,236,190,.55))}}
+.inv .wk-foot{position:absolute;left:0;right:0;bottom:7%;z-index:2;text-align:center;color:var(--ink);display:flex;flex-direction:column;gap:12px;transition:opacity .4s}
+.inv .wk-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .wk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px}
+.inv .wk-hint{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75}
+/* opening: seal lifts away, flap swings up behind the letter, the letter slides out */
+.inv.opening .wk-seal{opacity:0;transform:translate(-50%,-70%) scale(.9);animation:none}
+.inv.opening .wk-env .wk-flap{transform:rotateX(178deg);z-index:1}
+.inv.opening .wk-env .wk-card{transform:translateY(-58%)}
+.inv.opening .wk-top,.inv.opening .wk-foot{opacity:0}
+.inv.opening .cv-warkah{opacity:0}
+
+/* page: the stationery flat-lay */
+.inv .pg-warkah{background:var(--ground);color:var(--ink);padding:44px 20px 78px;gap:0;justify-content:center;overflow:hidden}
+.inv .pg-warkah > :not(.wk-satin){position:relative;z-index:2}
+.inv .pg-warkah .wk-fl{position:absolute;z-index:1}
+.inv .wk-letter{width:86%;max-width:340px;transform:rotate(-1.6deg);background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;padding:9px;filter:drop-shadow(0 10px 14px rgba(40,28,18,.3))}
+.inv .wk-letter .wk-in{border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 45%,transparent);outline-offset:-5px;padding:20px 14px 18px;text-align:center}
+.inv .wk-letter .wk-k{color:var(--accent)}
+.inv .wk-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(40px,12.5cqi,52px);line-height:1;margin:8px 0 8px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .wk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:2px 0}
+.inv .wk-date{font-family:"Cormorant Garamond",serif;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.inv .wk-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:4px;opacity:.75}
+.inv .wk-tiles{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;width:90%;max-width:350px;margin-top:-16px}
+.inv .wk-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:var(--ink);font-family:"Cormorant Garamond",serif;cursor:pointer}
+.inv .wk-tile small{font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.75}
+.inv .wk-tile b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:24px;line-height:1.1;color:var(--accent)}
+/* a lace label */
+.inv .wk-label{aspect-ratio:1.5;transform:rotate(4deg) translateY(8px);margin-right:-10px;padding:14px;
+  background:radial-gradient(circle at 50% 50%,var(--lace) 2.1px,transparent 2.6px) 0 0/9px 9px,var(--lace);
+  -webkit-mask:radial-gradient(circle 7px at 50% 0,transparent 5px,#000 5.5px) 0 0/14px 100% repeat-x,linear-gradient(#000,#000);
+  filter:drop-shadow(0 6px 8px rgba(40,28,18,.28))}
+.inv .wk-label::before{content:"";position:absolute;inset:11px;background:var(--sheet);border:1px dashed color-mix(in srgb,var(--accent) 45%,transparent)}
+.inv .wk-label > *{position:relative}
+/* an oval RSVP tag in a gilt rim */
+.inv .wk-rsvp{aspect-ratio:.86;border-radius:50%;transform:rotate(-5deg);margin-left:-6px;z-index:2;
+  background:radial-gradient(ellipse closest-side,var(--sheet) 82%,transparent 83%),url(assets/foil.jpg) 0 0/180px,var(--gold);background-blend-mode:normal,overlay,normal;
+  box-shadow:0 10px 16px -4px rgba(40,28,18,.35),inset 0 0 0 1px rgba(255,255,255,.4)}
+.inv .wk-rsvp b{font-family:"Cormorant Garamond",serif;font-size:24px;letter-spacing:.08em;color:var(--ink)}
+/* a small linen tag for the location */
+.inv .wk-loc{grid-column:1 / -1;justify-self:center;width:64%;padding:8px 16px 8px 28px;margin-top:-14px;transform:rotate(-1.5deg);color:var(--sheet);
+  background:url(assets/linen.jpg) 0 0/160px,var(--env);background-blend-mode:soft-light;clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%);filter:drop-shadow(0 6px 8px rgba(40,28,18,.3))}
+.inv .wk-loc b{color:var(--sheet);font-size:20px}
+.inv .wk-loc small{text-transform:none;letter-spacing:.04em;font-size:12px;font-style:italic;opacity:.9}
+
+/* skin: deckled paper cards on the satin */
+.fam-warkah .scroller{background:var(--ground)}
+.fam-warkah .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.35}
+.fam-warkah.cardsecs .sec{background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;box-shadow:0 10px 18px -6px rgba(40,28,18,.25);border-radius:2px;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.fam-warkah .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent)}
+.fam-warkah .info,.fam-warkah .info > div{border:0!important;background:none!important}
+.fam-warkah .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
+.fam-warkah .info > div:last-child{border-bottom:0!important}
+.fam-warkah .info span{color:var(--accent)}
+.fam-warkah .ibtn{border-color:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:999px}
+.fam-warkah .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(6px)}
+@media (prefers-reduced-motion: reduce){.inv .wk-seal{animation:none}.inv .wk-env .wk-card,.inv .wk-env .wk-flap{transition:none}}

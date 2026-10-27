@@ -3970,6 +3970,70 @@ tr:last-child td{border-bottom:0}
 .fam-kipas .sec h2::before{content:"";width:84px;height:47px;background:var(--kpfan) center/contain no-repeat;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
 .fam-kipas .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .kipas-fan,.inv .kipas-rib,.inv .cv-kipas{transition:none}}
+/* ===== kolam ===== */
+.inv .kl-paint{position:absolute;inset:-4%;background:url(assets/pd-monet.jpg) center/cover;animation:klDrift 40s ease-in-out infinite alternate}
+.inv .kl-veil{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,transparent 40%,rgba(20,30,50,.28)),linear-gradient(180deg,rgba(255,255,255,.08),transparent 40%,rgba(20,30,50,.18))}
+@keyframes klDrift{from{transform:scale(1.04) translate(0,0)}to{transform:scale(1.1) translate(-2%,1.5%)}}
+/* the lace doily card */
+.inv .kl-doily{position:relative;width:100%;aspect-ratio:200/190;filter:drop-shadow(0 8px 12px rgba(20,25,40,.3))}
+.inv .kl-doily.big{aspect-ratio:200/280}
+.inv .kl-doily.big .kl-txt{inset:11% 12%}
+.inv .kl-lace{position:absolute;inset:-2%;width:104%;height:104%}
+.inv .kl-txt{position:absolute;inset:16% 13%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink)}
+.inv .kl-k{font-family:"Cormorant Garamond",serif;font-size:9px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent)}
+.inv .kl-names{font-family:"Pinyon Script",cursive;font-size:clamp(26px,8.6cqi,36px);line-height:1;margin:8px 0;display:flex;flex-direction:column;align-items:center}
+.inv .kl-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;color:var(--gold);margin:2px 0}
+.inv .kl-date{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.inv .kl-doily.big .kl-k{font-size:10.5px}
+.inv .kl-doily.big .kl-names{font-size:clamp(42px,13cqi,54px);margin:14px 0}
+.inv .kl-doily.big .kl-date{font-size:12px}
+.inv .kl-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;margin-top:8px}
+
+/* cover */
+.inv .cv-kolam{background:var(--ground);overflow:hidden;transition:opacity .4s 1.1s}
+.inv .kl-to{position:absolute;top:11%;left:0;right:0;text-align:center;color:var(--pagefg);z-index:2;text-shadow:0 1px 12px rgba(10,20,40,.55);transition:opacity .4s}
+.inv .kl-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase}
+.inv .kl-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:30px}
+.inv .kl-stage{position:absolute;left:10%;right:10%;top:40%;aspect-ratio:1.42;z-index:3}
+.inv .kl-env{position:absolute;inset:0;transition:transform .8s cubic-bezier(.5,0,.75,0) .35s}
+.inv .kl-rear{z-index:1}.inv .kl-front{z-index:3;pointer-events:none}
+.inv .kl-env > *{position:absolute}
+.inv .kl-back{inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.05)),url(assets/paper.jpg) 0 0/200px,var(--env);background-blend-mode:normal,multiply,normal;border-radius:2px}
+/* the open flap standing up behind, with a scalloped edge */
+.inv .kl-flap{left:0;right:0;bottom:99%;height:56%;background:url(assets/paper.jpg) 0 0/200px,var(--env);background-blend-mode:multiply;clip-path:polygon(0 100%,50% 0,100% 100%);filter:brightness(.94)}
+.inv .kl-in{position:absolute;left:7%;right:7%;bottom:12%;z-index:2}
+.inv .kl-pocket{inset:0;z-index:3;clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);border-radius:2px;
+  background:linear-gradient(to top right,transparent 49.5%,rgba(0,0,0,.09) 50%,transparent 60%),linear-gradient(to top left,transparent 49.5%,rgba(255,255,255,.18) 50%,transparent 60%),url(assets/paper.jpg) 0 0/200px,var(--env);background-blend-mode:normal,normal,multiply,normal;
+  box-shadow:0 18px 30px -12px rgba(10,20,40,.5)}
+.inv .kl-rear::after{content:"";position:absolute;inset:0;z-index:-1;box-shadow:0 26px 40px -14px rgba(10,20,40,.55);border-radius:2px}
+.inv .kl-pearl{left:50%;top:52%;width:5.5%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-55%);z-index:4;
+  background:radial-gradient(circle at 34% 30%,#fff 0 12%,#f3eee8 30%,#d9cfc6 62%,#b7aba2 100%);box-shadow:0 2px 3px rgba(0,0,0,.35)}
+.inv .kl-open{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);z-index:4;border:0;cursor:pointer;padding:15px 44px;border-radius:999px;background:rgba(255,255,255,.94);color:var(--accent);
+  font-family:"Cormorant Garamond",serif;font-size:13px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 8px 22px rgba(10,20,40,.3);white-space:nowrap;transition:opacity .35s}
+/* opening: the envelope sinks away, the lace card rises and grows */
+.inv.opening .kl-open,.inv.opening .kl-to{opacity:0}
+.inv.opening .kl-env{transform:translateY(120cqh)}
+.inv .kl-in{transition:transform 1s cubic-bezier(.3,.1,.2,1) .05s}
+.inv.opening .kl-in{transform:translateY(-62%) scale(1.3)}
+.inv.opening .cv-kolam{opacity:0}
+
+/* page */
+.inv .pg-kolam{background:var(--ground);padding:46px 34px 92px;gap:22px;overflow:hidden}
+.inv .pg-kolam > .reveal{position:relative;z-index:2;width:100%;max-width:330px}
+.inv .pg-kolam .kl-pill{position:relative;z-index:2;align-self:center;width:auto!important;flex:0 0 auto;padding:13px 38px;border-radius:999px;background:rgba(255,255,255,.94);color:var(--accent);text-decoration:none;
+  font-family:"Cormorant Garamond",serif;font-size:12.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 8px 22px rgba(10,20,40,.28)}
+
+/* skin: lace-edged cards floating over the pond */
+.fam-kolam .scroller{background:url(assets/pd-monet.jpg) center/cover fixed,var(--ground)}
+.fam-kolam.cardsecs .sec{background:color-mix(in srgb,var(--sheet) 93%,transparent);border-radius:4px;box-shadow:0 0 0 6px color-mix(in srgb,var(--sheet) 55%,transparent),0 14px 30px -8px rgba(10,20,40,.45);backdrop-filter:blur(3px)}
+.fam-kolam .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent)}
+.fam-kolam .info,.fam-kolam .info > div{border:0!important;background:none!important}
+.fam-kolam .info > div{border-bottom:1px dashed color-mix(in srgb,var(--accent) 35%,transparent)!important;padding:13px 6px!important}
+.fam-kolam .info > div:last-child{border-bottom:0!important}
+.fam-kolam .ibtn{border-radius:999px;border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.fam-kolam .dock{background:rgba(255,255,255,.9);backdrop-filter:blur(8px)}
+.fam-kolam .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion: reduce){.inv .kl-paint{animation:none}.inv .kl-env,.inv .kl-in{transition:none}}
 /* ===== komik ===== */
 .inv .cv-komik{background:transparent;overflow:hidden;perspective:1700px}
 .inv .km-desk{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 40%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground));transition:opacity .5s .7s}
@@ -4315,6 +4379,71 @@ tr:last-child td{border-bottom:0}
 .fam-lentera .info,.fam-lentera .info > div,.fam-lentera .timeline li,.fam-lentera .ibtn,.fam-lentera .giftcard{border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
 .fam-lentera .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .ln-lamp{animation:none}.inv .ln-stars,.inv .ln-lit,.inv .cv-lentera{transition:none}}
+/* ===== lukisan ===== */
+.inv .lk-frame{position:relative;width:100%;aspect-ratio:885/1004}
+.inv .lk-gilt{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 14px 16px rgba(0,0,0,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.lk-silver .lk-gilt,.inv.lk-silver .lk-gilt{filter:grayscale(1) brightness(1.25) contrast(1.08) drop-shadow(0 14px 16px rgba(0,0,0,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.inv .lk-velvet{position:absolute;border-radius:50%;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--vel) 82%,#fff) 0%,var(--vel) 45%,color-mix(in srgb,var(--vel) 55%,#000) 100%);box-shadow:inset 0 0 26px rgba(0,0,0,.65)}
+.inv .lk-velvet::after{content:"";position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/200px;mix-blend-mode:soft-light;opacity:.55}
+.inv .lk-in{position:absolute;inset:8% 10%;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+/* gold foil text */
+.inv .lk-names,.inv .lk-k,.inv .lk-d,.inv .lk-bis{background:url(assets/foil.jpg) 0 0/180px,linear-gradient(180deg,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent) 45%,var(--gold));background-blend-mode:overlay;-webkit-background-clip:text;background-clip:text;color:transparent}
+.inv .lk-names{font-family:"Pinyon Script",cursive;font-size:clamp(30px,10cqi,42px);line-height:1;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.inv .lk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.45em;margin:4px 0}
+.inv .lk-d{font-family:"Cinzel",serif;font-size:10px;letter-spacing:.28em;margin-top:12px}
+.inv .lk-bis{font-family:"Amiri",serif;font-size:15px;margin-bottom:10px}
+.inv .lk-k{font-family:"Cinzel",serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase}
+
+/* cover */
+.inv .cv-lukisan{background:var(--ground);overflow:hidden;transition:opacity .45s .95s}
+.inv .lk-paint{position:absolute;inset:-3%;background:url(assets/pd-bouquet.jpg) 50% 30%/cover;transition:transform 1.3s cubic-bezier(.55,0,.3,1),filter 1.2s}
+.inv .lk-shade{position:absolute;inset:0;background:radial-gradient(ellipse 75% 55% at 50% 48%,transparent 35%,rgba(0,0,0,.55)),linear-gradient(180deg,rgba(0,0,0,.35),transparent 25%,transparent 70%,rgba(0,0,0,.6))}
+.inv .lk-top{position:absolute;top:8%;left:0;right:0;text-align:center;z-index:2;transition:opacity .35s}
+.inv .lk-stage{position:absolute;left:12%;right:12%;top:15%;z-index:3;transform-origin:50% 61%;transition:transform 1.3s cubic-bezier(.55,0,.3,1)}
+.inv .lk-stage .lk-in{transition:opacity .35s}
+.inv .lk-foot{position:absolute;left:0;right:0;bottom:7%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:16px;color:var(--pagefg);transition:opacity .35s}
+.inv .lk-to{text-align:center;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.inv .lk-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
+.inv .lk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:28px}
+.inv .lk-open{border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);background:rgba(0,0,0,.35);backdrop-filter:blur(4px);color:var(--accent);cursor:pointer;
+  padding:14px 40px;border-radius:999px;font-family:"Cinzel",serif;font-size:11.5px;letter-spacing:.3em;text-transform:uppercase;box-shadow:0 0 0 4px rgba(0,0,0,.18),inset 0 0 0 3px rgba(0,0,0,.25)}
+/* opening: move into the frame until its velvet fills the screen */
+.inv.opening .lk-top,.inv.opening .lk-foot,.inv.opening .lk-stage .lk-in{opacity:0}
+.inv.opening .lk-stage{transform:scale(3.4)}
+.inv.opening .lk-paint{transform:scale(1.5);filter:brightness(.4) blur(2px)}
+.inv.opening .cv-lukisan{opacity:0}
+
+/* page */
+.inv .pg-lukisan{background:var(--ground);color:var(--pagefg);padding:40px 26px 92px;gap:12px;overflow:hidden}
+.inv .pg-lukisan > :not(.lk-band):not(.lk-vel){position:relative;z-index:2}
+.inv .lk-band{position:absolute;left:0;right:0;top:0;height:58%;background:url(assets/pd-bouquet.jpg) 50% 34%/cover;
+  -webkit-mask:linear-gradient(180deg,#000 30%,transparent);mask:linear-gradient(180deg,#000 30%,transparent);opacity:.9}
+.inv .lk-vel{position:absolute;inset:0;background:url(assets/velvet.jpg) 0 0/200px;mix-blend-mode:soft-light;opacity:.35;pointer-events:none}
+.inv .pg-lukisan .lk-names{font-size:clamp(30px,9.5cqi,40px)}
+.inv .lk-date{font-family:"Cinzel",serif;font-size:12px;letter-spacing:.24em;color:var(--accent);margin-top:6px}
+.inv .lk-ven{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:var(--pagefg);opacity:.9}
+.inv .lk-pill{align-self:center;flex:0 0 auto;width:auto!important;margin-top:10px;padding:12px 34px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);color:var(--accent);text-decoration:none;
+  font-family:"Cinzel",serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase}
+
+/* skin: velvet cards edged with fine gold rules */
+.fam-lukisan .scroller{background:var(--ground)}
+.fam-lukisan .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/velvet.jpg) 0 0/200px;mix-blend-mode:soft-light;opacity:.3}
+.fam-lukisan.cardsecs .sec{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--vel) 75%,#fff 4%),var(--sheet) 70%);color:var(--ink);border-radius:2px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 70%,transparent),inset 0 0 0 5px var(--sheet),inset 0 0 0 6px color-mix(in srgb,var(--gold) 40%,transparent),0 14px 26px -8px rgba(0,0,0,.6)}
+.fam-lukisan .sec h2{font-family:"Cinzel",serif;letter-spacing:.2em;font-size:18px;color:var(--accent)}
+.fam-lukisan .sec,.fam-lukisan .sec p,.fam-lukisan .info b{color:var(--ink)}
+.fam-lukisan .info,.fam-lukisan .info > div{border:0!important;background:none!important}
+.fam-lukisan .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 30%,transparent)!important;padding:13px 6px!important}
+.fam-lukisan .info > div:last-child{border-bottom:0!important}
+.fam-lukisan .info span{color:var(--accent)}
+.fam-lukisan .ibtn{color:var(--accent);border-color:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:999px;background:transparent}
+.fam-lukisan input,.fam-lukisan select,.fam-lukisan textarea{background:rgba(255,255,255,.06);color:var(--ink);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.fam-lukisan input,.fam-lukisan select,.fam-lukisan textarea{border-bottom:1px solid color-mix(in srgb,var(--gold) 60%,transparent)!important}
+.fam-lukisan .seg button[aria-pressed="true"],.fam-lukisan button.submit{color:var(--ground)!important;background:var(--accent)!important}
+.fam-lukisan .dock{background:color-mix(in srgb,var(--ground) 92%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
+.fam-lukisan .foot{color:var(--pagefg)}
+@media (prefers-reduced-motion: reduce){.inv .lk-stage,.inv .lk-paint{transition:none}}
 /* ===== majalah ===== */
 .inv .cv-majalah{background:var(--ground);overflow:hidden;transition:opacity .45s 1.1s}
 .inv .majalah-floor{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 42%,color-mix(in srgb,var(--ground) 86%,#fff),var(--ground) 62%,color-mix(in srgb,var(--ground) 80%,#000))}
@@ -6521,6 +6650,105 @@ tr:last-child td{border-bottom:0}
 .fam-tenun .submit,.fam-tenun .seg button[aria-pressed="true"]{background:var(--accent)}
 .fam-tenun .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .tn-p,.inv .tn-band,.inv .cv-tenun{transition:none}}
+/* ===== warkah ===== */
+/* satin: soft diagonal folds over the ground, silk weave on top */
+.inv .wk-satin{position:absolute;inset:0;background:var(--ground);overflow:hidden}
+.inv .wk-satin::before{content:"";position:absolute;inset:-20%;filter:blur(16px);
+  background:linear-gradient(118deg,transparent 8%,rgba(255,255,255,.75) 15%,transparent 23%,rgba(70,50,30,.16) 31%,transparent 38%,rgba(255,255,255,.6) 47%,transparent 54%,rgba(70,50,30,.2) 63%,transparent 70%,rgba(255,255,255,.55) 79%,transparent 86%,rgba(70,50,30,.14) 93%),
+  linear-gradient(64deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 52%,rgba(70,50,30,.1) 66%,transparent 76%)}
+.inv .wk-satin::after{content:"";position:absolute;inset:0;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.45}
+.inv .wk-fl{position:absolute;height:auto;pointer-events:none;z-index:6;filter:drop-shadow(0 6px 8px rgba(40,30,20,.28))}
+.inv .wk-k{font-family:"Cormorant Garamond",serif;font-size:10.5px;letter-spacing:.38em;text-transform:uppercase}
+
+/* cover */
+.inv .cv-warkah{background:transparent;overflow:hidden;transition:opacity .45s 1.25s}
+.inv .wk-top{position:absolute;top:9%;left:0;right:0;text-align:center;z-index:2;color:var(--ink);transition:opacity .4s}
+.inv .wk-top .wk-k{color:var(--accent)}
+.inv .wk-n{font-family:"Pinyon Script",cursive;font-size:clamp(34px,11cqi,46px);line-height:1.15;margin-top:8px;color:var(--ink)}
+.inv .wk-n span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.5em;color:var(--gold)}
+.inv .wk-env{position:absolute;left:7%;right:7%;top:33%;aspect-ratio:1.45;z-index:3;perspective:900px}
+.inv .wk-env > div{position:absolute;inset:0}
+.inv .wk-env .wk-fl{z-index:-1}
+.inv .wk-back{background:color-mix(in srgb,var(--env) 72%,#000);border-radius:3px;box-shadow:0 22px 34px -10px rgba(40,28,18,.45),0 3px 8px rgba(40,28,18,.25)}
+.inv .wk-env .wk-card{inset:5% 6% 4%!important;z-index:2;background:var(--sheet) url(assets/paper.jpg) 0 0/240px;background-blend-mode:multiply;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:9%;text-align:center;color:var(--ink);transition:transform .8s cubic-bezier(.3,.1,.2,1) .75s}
+.inv .wk-card .wk-k{color:var(--accent);font-size:8.5px}
+.inv .wk-cn{font-family:"Pinyon Script",cursive;font-size:clamp(22px,7cqi,30px);line-height:1.05;margin-top:6px}
+.inv .wk-cn span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.55em;color:var(--gold)}
+.inv .wk-cd{font-family:"Cormorant Garamond",serif;letter-spacing:.3em;font-size:10px;margin-top:6px;color:var(--accent)}
+/* the front pocket: everything but the top V, with the two side folds catching light */
+.inv .wk-pocket{z-index:3;clip-path:polygon(0 0,50% 57%,100% 0,100% 100%,0 100%);border-radius:3px;
+  background:linear-gradient(to top right,transparent 49.6%,rgba(0,0,0,.14) 50%,transparent 58%),linear-gradient(to top left,transparent 49.6%,rgba(255,255,255,.12) 50%,transparent 58%),
+  linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.1)),url(assets/linen.jpg) 0 0/180px,var(--env);background-blend-mode:normal,normal,normal,soft-light,normal}
+.inv .wk-env .wk-flap{bottom:auto!important;height:62%;z-index:4;transform-origin:50% 0;transform-style:preserve-3d;
+  transition:transform .65s cubic-bezier(.4,0,.2,1) .25s,z-index 0s .55s;filter:drop-shadow(0 4px 4px rgba(0,0,0,.28))}
+.inv .wk-flapface{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.06) 70%),url(assets/linen.jpg) 0 0/180px,var(--env);background-blend-mode:normal,soft-light,normal}
+.inv .wk-lace{position:absolute;left:0;top:-1%;width:100%;height:116%;overflow:visible;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.inv .wk-seal{position:absolute;left:50%;top:62%;width:25%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:7;border:0;padding:0;cursor:pointer;
+  background:var(--seal) center/contain no-repeat;filter:drop-shadow(0 5px 6px rgba(30,20,10,.4));display:flex;align-items:center;justify-content:center;transition:opacity .35s,transform .45s;animation:wkGlow 5s ease-in-out infinite}
+.inv .wk-seal span{font-family:"Pinyon Script",cursive;font-size:clamp(17px,6cqi,24px);color:rgba(0,0,0,.36);text-shadow:0 1px 0 rgba(255,255,255,.35),0 -1px 0 rgba(0,0,0,.25);line-height:1}
+.inv .wk-seal span i{font-style:normal;font-family:"Cormorant Garamond",serif;font-size:.55em;margin:0 1px}
+.inv .wk-seal .wk-jw{font-family:"Amiri",serif;font-size:1em}
+@keyframes wkGlow{0%,100%{filter:drop-shadow(0 5px 6px rgba(30,20,10,.4))}50%{filter:drop-shadow(0 5px 6px rgba(30,20,10,.4)) drop-shadow(0 0 10px rgba(255,236,190,.55))}}
+.inv .wk-foot{position:absolute;left:0;right:0;bottom:7%;z-index:2;text-align:center;color:var(--ink);display:flex;flex-direction:column;gap:12px;transition:opacity .4s}
+.inv .wk-to small{display:block;font-family:"Cormorant Garamond",serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.75}
+.inv .wk-to b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:26px}
+.inv .wk-hint{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;opacity:.75}
+/* opening: seal lifts away, flap swings up behind the letter, the letter slides out */
+.inv.opening .wk-seal{opacity:0;transform:translate(-50%,-70%) scale(.9);animation:none}
+.inv.opening .wk-env .wk-flap{transform:rotateX(178deg);z-index:1}
+.inv.opening .wk-env .wk-card{transform:translateY(-58%)}
+.inv.opening .wk-top,.inv.opening .wk-foot{opacity:0}
+.inv.opening .cv-warkah{opacity:0}
+
+/* page: the stationery flat-lay */
+.inv .pg-warkah{background:var(--ground);color:var(--ink);padding:44px 20px 78px;gap:0;justify-content:center;overflow:hidden}
+.inv .pg-warkah > :not(.wk-satin){position:relative;z-index:2}
+.inv .pg-warkah .wk-fl{position:absolute;z-index:1}
+.inv .wk-letter{width:86%;max-width:340px;transform:rotate(-1.6deg);background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat;padding:9px;filter:drop-shadow(0 10px 14px rgba(40,28,18,.3))}
+.inv .wk-letter .wk-in{border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 45%,transparent);outline-offset:-5px;padding:20px 14px 18px;text-align:center}
+.inv .wk-letter .wk-k{color:var(--accent)}
+.inv .wk-names{font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(40px,12.5cqi,52px);line-height:1;margin:8px 0 8px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.inv .wk-names span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;color:var(--gold);margin:2px 0}
+.inv .wk-date{font-family:"Cormorant Garamond",serif;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+.inv .wk-hj{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;margin-top:4px;opacity:.75}
+.inv .wk-tiles{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;width:90%;max-width:350px;margin-top:-16px}
+.inv .wk-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:var(--ink);font-family:"Cormorant Garamond",serif;cursor:pointer}
+.inv .wk-tile small{font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.75}
+.inv .wk-tile b{font-family:"Pinyon Script",cursive;font-weight:400;font-size:24px;line-height:1.1;color:var(--accent)}
+/* a lace label */
+.inv .wk-label{aspect-ratio:1.5;transform:rotate(4deg) translateY(8px);margin-right:-10px;padding:14px;
+  background:radial-gradient(circle at 50% 50%,var(--lace) 2.1px,transparent 2.6px) 0 0/9px 9px,var(--lace);
+  -webkit-mask:radial-gradient(circle 7px at 50% 0,transparent 5px,#000 5.5px) 0 0/14px 100% repeat-x,linear-gradient(#000,#000);
+  filter:drop-shadow(0 6px 8px rgba(40,28,18,.28))}
+.inv .wk-label::before{content:"";position:absolute;inset:11px;background:var(--sheet);border:1px dashed color-mix(in srgb,var(--accent) 45%,transparent)}
+.inv .wk-label > *{position:relative}
+/* an oval RSVP tag in a gilt rim */
+.inv .wk-rsvp{aspect-ratio:.86;border-radius:50%;transform:rotate(-5deg);margin-left:-6px;z-index:2;
+  background:radial-gradient(ellipse closest-side,var(--sheet) 82%,transparent 83%),url(assets/foil.jpg) 0 0/180px,var(--gold);background-blend-mode:normal,overlay,normal;
+  box-shadow:0 10px 16px -4px rgba(40,28,18,.35),inset 0 0 0 1px rgba(255,255,255,.4)}
+.inv .wk-rsvp b{font-family:"Cormorant Garamond",serif;font-size:24px;letter-spacing:.08em;color:var(--ink)}
+/* a small linen tag for the location */
+.inv .wk-loc{grid-column:1 / -1;justify-self:center;width:64%;padding:8px 16px 8px 28px;margin-top:-14px;transform:rotate(-1.5deg);color:var(--sheet);
+  background:url(assets/linen.jpg) 0 0/160px,var(--env);background-blend-mode:soft-light;clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%);filter:drop-shadow(0 6px 8px rgba(40,28,18,.3))}
+.inv .wk-loc b{color:var(--sheet);font-size:20px}
+.inv .wk-loc small{text-transform:none;letter-spacing:.04em;font-size:12px;font-style:italic;opacity:.9}
+
+/* skin: deckled paper cards on the satin */
+.fam-warkah .scroller{background:var(--ground)}
+.fam-warkah .scroller::before{content:"";position:fixed;inset:0;pointer-events:none;background:url(assets/silk.jpg) 0 0/260px;mix-blend-mode:soft-light;opacity:.35}
+.fam-warkah.cardsecs .sec{background:var(--sheet) url(assets/paper.jpg) 0 0/260px;background-blend-mode:multiply;box-shadow:0 10px 18px -6px rgba(40,28,18,.25);border-radius:2px;
+  -webkit-mask:url(assets/deckle.png) center/100% 100% no-repeat;mask:url(assets/deckle.png) center/100% 100% no-repeat}
+.fam-warkah .sec h2{font-family:"Pinyon Script",cursive;font-weight:400;text-transform:none;letter-spacing:0;font-size:34px;color:var(--accent)}
+.fam-warkah .info,.fam-warkah .info > div{border:0!important;background:none!important}
+.fam-warkah .info > div{border-bottom:1px solid color-mix(in srgb,var(--gold) 38%,transparent)!important;padding:14px 6px!important}
+.fam-warkah .info > div:last-child{border-bottom:0!important}
+.fam-warkah .info span{color:var(--accent)}
+.fam-warkah .ibtn{border-color:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:999px}
+.fam-warkah .dock{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(6px)}
+@media (prefers-reduced-motion: reduce){.inv .wk-seal{animation:none}.inv .wk-env .wk-card,.inv .wk-env .wk-flap{transition:none}}
 /* ===== washi (shoji) ===== */
 .inv .cv-washi{background:transparent;overflow:hidden;transition:opacity .4s 1.05s}
 .inv .ws-pan{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;background:var(--paper);transition:transform 1.25s cubic-bezier(.6,0,.25,1);box-shadow:0 0 18px rgba(0,0,0,.25)}
@@ -6781,12 +7009,12 @@ const T={
  ms:{ev:{walimah:'Walimatul Urus',kahwin:'Majlis Perkahwinan',bertandang:'Majlis Bertandang',resepsi:'Majlis Resepsi'},open:'Buka Jemputan',to:'Kepada',
   salam:'Assalamualaikum W.B.T. & Salam Sejahtera',
   intro:(h,side)=>side==='couple'?`Dengan penuh kesyukuran ke hadrat Ilahi, kami dengan segala hormatnya menjemput Dato' | Datin | Tuan | Puan | Encik | Cik serta seisi keluarga ke majlis perkahwinan kami`:`Dengan penuh kesyukuran ke hadrat Ilahi, kami<br><b class="person" style="display:block;margin:10px 0;font-size:17px">${h}</b>dengan segala hormatnya menjemput Dato' | Datin | Tuan | Puan | Encik | Cik serta seisi keluarga ke majlis perkahwinan ${side==='bride'?'puteri':'putera'} kesayangan kami`,
-  with:'dengan pasangannya',when:'Tarikh & Masa',date:'Tarikh',time:'Masa',venue:'Tempat',loc:'Lokasi',dress:'Kod pakaian',count:'Menghitung Hari',units:['Hari','Jam','Minit','Saat'],done:'Majlis telah berlangsung. Terima kasih atas doa anda.',
+  with:'dengan pasangannya',when:'Tarikh & Masa',date:'Tarikh',time:'Masa',venue:'Tempat',loc:'Lokasi',dress:'Kod pakaian',count:'Menghitung Hari',units:['Hari','Jam','Minit','Saat'],done:'Majlis sudah selesai. Terima kasih atas doa dan kehadiran anda.',
   sched:'Aturcara Majlis',gallery:'Galeri',doaT:'Doa',doa:'Ya Allah, berkatilah majlis ini. Kurniakanlah kebahagiaan dan rahmat-Mu kepada kedua mempelai, satukanlah hati mereka dalam kasih sayang, dan jadikanlah mereka pasangan yang sakinah, mawaddah wa rahmah.',
-  rsvp:'Kehadiran',rsvpSub:d=>`Mohon sahkan kehadiran anda sebelum ${d}.`,name:'Nama',phone:'No. telefon',yes:'Hadir',no:'Tidak hadir',pax:'Bilangan orang',send:'Hantar',
-  thanks:n=>`Terima kasih, ${n}. Maklum balas anda telah direkodkan.`,closed:'Tempoh RSVP telah tamat.',
-  wishes:'Ucapan',wishPh:'Tulis ucapan dan doa anda',sendWish:'Hantar ucapan',noWish:'Jadilah yang pertama menghantar ucapan.',
-  gift:'Salam Kaut',giftSub:'Kehadiran dan doa anda adalah hadiah yang paling bermakna. Bagi yang ingin menghulurkan sumbangan:',copy:'Salin',copied:'Disalin',
+  rsvp:'Kehadiran',rsvpSub:d=>`Mohon maklumkan kehadiran sebelum ${d}.`,name:'Nama',phone:'No. telefon',yes:'Hadir',no:'Tidak hadir',pax:'Bilangan orang',send:'Hantar',
+  thanks:n=>`Terima kasih, ${n}! Jawapan anda sudah kami terima.`,closed:'Tempoh RSVP telah tamat.',
+  wishes:'Ucapan',wishPh:'Tulis ucapan & doa untuk pengantin',sendWish:'Hantar ucapan',noWish:'Belum ada ucapan lagi. Tinggalkan doa anda yang pertama.',
+  gift:'Salam Kaut',giftSub:'Doa dan kehadiran anda sudah cukup bermakna buat kami. Bagi yang ingin memberi sumbangan, boleh salurkan di sini:',copy:'Salin',copied:'Disalin',
   contact:'Hubungi',dock:['Kalendar','Lokasi','RSVP','Hadiah','Hubungi'],addCal:'Simpan ke Google Calendar',maps:'Google Maps',waze:'Waze',
   previewNote:'Pratonton sahaja. RSVP akan direkodkan apabila kad diterbitkan.',made:'Kad digital oleh Sanding',
   ampm:(h)=>h<12?'pagi':h<14?'tengah hari':h<19?'petang':'malam'},
@@ -6821,8 +7049,8 @@ const TRAD_COPY={
    intro:(h,side)=>side==='couple'?'Dengan restu Yang Maha Kuasa dan keluarga, kami menjemput Tuan | Puan | Encik | Cik serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan restu Yang Maha Kuasa, kami')},
   en:{salam:'With the blessings of the Almighty',doaT:'Blessings',doa:'May this sacred union be blessed with love, prosperity and lasting happiness.',
    intro:(h,side)=>side==='couple'?'With the blessings of the Almighty and our elders, we invite you and your family to celebrate our wedding':invHost(h,side,false,'With the blessings of the Almighty and our elders,')}},
- general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga kasih sayang kalian kekal mekar selamanya.',
-   intro:(h,side)=>side==='couple'?'Dengan penuh kegembiraan, kami menjemput anda serta keluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan penuh kegembiraan, kami')},
+ general:{ms:{salam:'Salam sejahtera',doaT:'Ucapan Restu',doa:'Semoga cinta kalian terus mekar, hari demi hari.',
+   intro:(h,side)=>side==='couple'?'Dengan sukacitanya, kami menjemput anda sekeluarga ke majlis perkahwinan kami':invHost(h,side,true,'Dengan sukacitanya, kami')},
   en:{salam:'Warm greetings',doaT:'A Wish',doa:'May your love grow with every year you share.',
    intro:(h,side)=>side==='couple'?'With great joy, we invite you and your family to celebrate our wedding':invHost(h,side,false,'Together with their families,')}}};
 /* the copy a card uses: the language, adjusted for its wedding tradition */
@@ -10357,6 +10585,53 @@ FAMILY({key:'kipas',name:'Kipas',meaning:'Folding fan',
 
 })()}catch(e){console.error("family kipas failed",e)}
 
+/* ===== family: kolam ===== */
+try{(()=>{
+/* kolam: Monet's water-lily pond (public domain, 1906) with a blush envelope standing open on it; a lace doily card waits inside.
+   Cover: tap "Buka Jemputan", the envelope sinks away and the lace card rises and grows to fill the screen.
+   Page: the lace card over the pond. Skin: lace-edged cards floating over the painting. */
+// a doily: rectangle with scalloped edges and an eyelet in every scallop, holes cut with evenodd
+function kolamLace(w,h,n,c,uid){const d=6,r=1.5;let p='',holes='';
+  const side=(ax,ay,bx,by,k)=>{const nx=(by-ay),ny=-(bx-ax),L=Math.hypot(nx,ny),ox=nx/L,oy=ny/L;let s='';
+    for(let i=0;i<k;i++){const t0=i/k,t1=(i+1)/k,tm=(t0+t1)/2,X=t=>ax+(bx-ax)*t,Y=t=>ay+(by-ay)*t;
+      s+=`Q${(X(tm)+ox*d*1.9).toFixed(2)} ${(Y(tm)+oy*d*1.9).toFixed(2)} ${X(t1).toFixed(2)} ${Y(t1).toFixed(2)}`;
+      const hx=X(tm)+ox*d*.42,hy=Y(tm)+oy*d*.42;holes+=`M${(hx-r).toFixed(2)} ${hy.toFixed(2)}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`}return s};
+  const kx=n,ky=Math.round(n*h/w);
+  p=`M${d} ${d}`+side(d,d,w-d,d,kx)+side(w-d,d,w-d,h-d,ky)+side(w-d,h-d,d,h-d,kx)+side(d,h-d,d,d,ky)+'Z';
+  // a second ring of tiny holes just inside the edge
+  let ring='';const g=11,s0=d+7;for(let x=s0;x<=w-s0+.1;x+=(w-2*s0)/Math.round((w-2*s0)/g)){ring+=`M${(x-.8).toFixed(2)} ${s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${(x-.8).toFixed(2)} ${h-s0}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
+  for(let y=s0;y<=h-s0+.1;y+=(h-2*s0)/Math.round((h-2*s0)/g)){ring+=`M${s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0ZM${w-s0-.8} ${y.toFixed(2)}a.8 .8 0 1 0 1.6 0a.8 .8 0 1 0 -1.6 0Z`}
+  return `<svg class="kl-lace" viewBox="-4 -4 ${w+8} ${h+8}" preserveAspectRatio="none"><defs><filter id="kn${uid}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="${uid}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
+    <path d="${p}${holes}${ring}" style="fill:${c.lace}" fill-rule="evenodd"/><path d="${p}" fill="#000" filter="url(#kn${uid})" opacity=".8"/>
+    <rect x="${d+12}" y="${d+12}" width="${w-2*d-24}" height="${h-2*d-24}" fill="none" style="stroke:${c.accent}" stroke-width=".5" stroke-dasharray="1.6 1.6" opacity=".55"/></svg>`}
+let kn=0;
+const klCard=(o,L,big)=>{const [n1,n2]=coverNames(o);return `<div class="kl-doily${big?' big':''}">${kolamLace(200,big?280:190,big?15:13,{lace:'var(--sheet)',accent:'var(--accent)'},++kn)}
+  <div class="kl-txt"><p class="kl-k kicker">${ev(o,L)}</p><p class="kl-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p><p class="kl-date">${esc(fmtDate(o.date,o.lang))}</p>${big&&o.venue?`<p class="kl-ven">${esc(o.venue)}</p>`:''}</div></div>`};
+FAMILY({key:'kolam',name:'Kolam',meaning:'Lily pond',
+  blurb:'A blush envelope standing open on Monet’s water-lily pond, with a lace doily card inside that rises out when guests open it.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1500,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
+    <div class="reveal">${klCard(o,L,true)}</div>
+    <a class="kl-pill reveal d2" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-kolam"><div class="kl-paint"></div><div class="kl-veil"></div>
+    ${guest?`<p class="kl-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}
+    <div class="kl-stage"><div class="kl-env kl-rear"><div class="kl-flap"></div><div class="kl-back"></div></div><div class="kl-in">${klCard(o,L,false)}</div><div class="kl-env kl-front"><div class="kl-pocket"></div><i class="kl-pearl"></i></div></div>
+    <${tag} class="kl-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div>`},
+  skin(el,o,th,L){K.cards(el);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'jambu',n:'Jambu',desc:'Blush envelope on the lily pond',c:{ground:'#9fb3c9',sheet:'#fffaf5',ink:'#3b2c33',accent:'#8c4f63',gold:'#b89a6a',pagefg:'#ffffff',env:'#e7c3c6'}},
+    {k:'lavender',n:'Lavender',desc:'Lilac envelope on the lily pond',c:{ground:'#a3acc8',sheet:'#fdfbff',ink:'#33304a',accent:'#6d5c93',gold:'#a99872',pagefg:'#ffffff',env:'#cbbfe0'}},
+    {k:'sage',n:'Sage',desc:'Sage envelope on the lily pond',c:{ground:'#9db3a9',sheet:'#fbfcf7',ink:'#2d352e',accent:'#56704f',gold:'#a8955f',pagefg:'#ffffff',env:'#b7c7ad'}},
+    {k:'biru',n:'Biru',desc:'Powder blue envelope on the lily pond',c:{ground:'#93a9c4',sheet:'#fbfdff',ink:'#26324a',accent:'#3f5f8c',gold:'#b49a62',pagefg:'#ffffff',env:'#b9cde3'}},
+    {k:'pic',n:'Pic',desc:'Peach envelope on the lily pond',c:{ground:'#a8b4c4',sheet:'#fffaf4',ink:'#3a2c26',accent:'#a5604a',gold:'#bf9a62',pagefg:'#ffffff',env:'#f0cdb6'}},
+    {k:'gading',n:'Gading',desc:'Ivory envelope on the lily pond',c:{ground:'#a9b6c4',sheet:'#ffffff',ink:'#2f2b28',accent:'#6e5a3e',gold:'#b29a6a',pagefg:'#ffffff',env:'#f3ece0'}},
+    {k:'marun',n:'Marun',desc:'Wine envelope on the lily pond',c:{ground:'#7e8fa8',sheet:'#fffaf6',ink:'#341d24',accent:'#7a2638',gold:'#b8955e',pagefg:'#ffffff',env:'#8e3b4b'}},
+    {k:'zamrud',n:'Zamrud',desc:'Deep green envelope on the lily pond',c:{ground:'#7f998f',sheet:'#fbfcf6',ink:'#22301f',accent:'#2f5a3a',gold:'#b49a5e',pagefg:'#ffffff',env:'#3f6b4b'}},
+  ]});
+
+})()}catch(e){console.error("family kolam failed",e)}
+
 /* ===== family: komik ===== */
 try{(()=>{
 /* komik: an inked comic-book page. Panels with brush borders, Ben-Day dots, caption boxes and sound-effect lettering;
@@ -10755,6 +11030,43 @@ FAMILY({key:'lentera',name:'Lentera',meaning:'Moroccan lantern',
   ]});
 
 })()}catch(e){console.error("family lentera failed",e)}
+
+/* ===== family: lukisan ===== */
+try{(()=>{
+/* lukisan: a carved, gilded oval frame (Met Museum, public domain) hung over a Jan van Huysum flower painting (public domain).
+   The names sit on velvet inside the frame.
+   Cover: tap "Buka Jemputan" and the view moves into the frame until the velvet fills the screen.
+   Page: the painting fades into velvet, with the frame and names below it. Skin: velvet cards edged with fine gold rules. */
+// the frame image is 885x1004; its opening is an ellipse at (50.2%, 58.7%) sized 65.8% x 76.5%
+const LK_OVAL='left:17.3%;top:20.4%;width:65.8%;height:76.5%';
+const lkFrame=(o,L,inner,cls='')=>`<div class="lk-frame ${cls}"><div class="lk-velvet" style="${LK_OVAL}"><div class="lk-in">${inner}</div></div><img class="lk-gilt" src="${A}pd-frame.webp" alt=""></div>`;
+const lkNames=o=>{const [n1,n2]=coverNames(o);return `<p class="lk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>`};
+FAMILY({key:'lukisan',name:'Bingkai Emas',meaning:'Gilded frame',
+  blurb:'A carved gilt oval frame hung over a Dutch flower painting, the names set on velvet inside it. Guests step into the frame to open the card.',
+  fonts:{d:"'Cinzel', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  page(o,th,L){const en=o.lang==='en';return `<section class="page pg-lukisan"><div class="lk-band"></div><div class="lk-vel"></div>
+    <p class="lk-k kicker reveal">${ev(o,L)}</p>
+    <div class="reveal d1" style="width:82%;max-width:330px">${lkFrame(o,L,`${o.bismillah?'<p class="lk-bis">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>':''}${lkNames(o)}`)}</div>
+    <p class="lk-date reveal d2">${esc(fmtDate(o.date,o.lang))}</p>${o.venue?`<p class="lk-ven reveal d2">${esc(o.venue)}</p>`:''}
+    <a class="lk-pill reveal d3" data-go="when" href="#">${en?'Event details':'Maklumat Majlis'}</a></section>`},
+  cover(o,th,L,guest,tag,attr){const en=o.lang==='en';return `<div class="cover cv-lukisan"><div class="lk-paint"></div><div class="lk-shade"></div>
+    <p class="lk-k lk-top">${ev(o,L)}</p>
+    <div class="lk-stage">${lkFrame(o,L,`${lkNames(o)}<p class="lk-d">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>`)}</div>
+    <div class="lk-foot">${guest?`<p class="lk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<${tag} class="lk-open" ${attr}>${en?'Open invitation':'Buka Jemputan'}</${tag}></div></div>`},
+  skin(el,o,th,L){K.cards(el);el.style.setProperty('--vel',th.c.vel);el.classList.toggle('lk-silver',!!th.c.silver);const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'marun',n:'Marun',desc:'Gilt frame on maroon velvet',c:{ground:'#2a0f15',sheet:'#3a161e',ink:'#f3e7d3',accent:'#e2c58a',gold:'#c9a35a',pagefg:'#f3e7d3',vel:'#5a1a26'}},
+    {k:'hitam',n:'Hitam',desc:'Gilt frame on black velvet',c:{ground:'#0f0d0c',sheet:'#1d1a18',ink:'#efe6d6',accent:'#dcc08a',gold:'#c4a05c',pagefg:'#efe6d6',vel:'#24201d'}},
+    {k:'zamrud',n:'Zamrud',desc:'Gilt frame on emerald velvet',c:{ground:'#0d1f19',sheet:'#16302a',ink:'#efe9d8',accent:'#dfc48c',gold:'#c6a45e',pagefg:'#efe9d8',vel:'#1d4a3c'}},
+    {k:'nila',n:'Nila',desc:'Gilt frame on midnight blue velvet',c:{ground:'#0e1426',sheet:'#18213a',ink:'#ece6da',accent:'#e0c78f',gold:'#c7a560',pagefg:'#ece6da',vel:'#22305a'}},
+    {k:'ungu',n:'Ungu',desc:'Gilt frame on plum velvet',c:{ground:'#1c0f1f',sheet:'#2b1830',ink:'#f1e7e0',accent:'#e3c690',gold:'#c8a45f',pagefg:'#f1e7e0',vel:'#46224d'}},
+    {k:'koko',n:'Koko',desc:'Gilt frame on cocoa velvet',c:{ground:'#1d130d',sheet:'#2c1e15',ink:'#f2e8d6',accent:'#e0c48a',gold:'#c6a25c',pagefg:'#f2e8d6',vel:'#4a3022'}},
+    {k:'perak',n:'Perak',desc:'Silver frame on navy velvet',c:{ground:'#0f1522',sheet:'#1a2234',ink:'#eef0f4',accent:'#dfe3ea',gold:'#b9c0cc',pagefg:'#eef0f4',vel:'#26324c',silver:'1'}},
+    {k:'kelabu',n:'Kelabu',desc:'Silver frame on charcoal velvet',c:{ground:'#141516',sheet:'#212325',ink:'#eeeeec',accent:'#e2e2de',gold:'#b8bbbe',pagefg:'#eeeeec',vel:'#33373b',silver:'1'}},
+  ]});
+
+})()}catch(e){console.error("family lukisan failed",e)}
 
 /* ===== family: majalah ===== */
 try{(()=>{
@@ -13537,6 +13849,71 @@ FAMILY({key:'tenun',name:'Pua Kumbu',meaning:'Iban ikat cloth',
   ]});
 
 })()}catch(e){console.error("family tenun failed",e)}
+
+/* ===== family: warkah ===== */
+try{(()=>{
+/* warkah: a linen envelope with a lace-edged flap and a gold wax seal, lying on draped satin with Redouté roses.
+   Cover: touch the seal, the flap lifts and the letter slides up out of the envelope.
+   Page: the letter, a lace label and a gilt RSVP tag laid out like a stationery flat-lay; each piece is a link.
+   Skin: deckled paper cards on satin, script headings over a fine gold rule. */
+// lace edging along the flap's two edges: scallops with eyelets, drawn in the flap's own 0-100 box
+function warkahLace(c){const n=11,pts=[];
+  const edge=(x0,y0,x1,y1)=>{let d='';for(let i=0;i<n;i++){const t0=i/n,t1=(i+1)/n,tm=(t0+t1)/2;
+    const P=t=>[x0+(x1-x0)*t,y0+(y1-y0)*t];const [ax,ay]=P(t0),[bx,by]=P(t1),[mx,my]=P(tm);
+    // outward normal (below the edge)
+    const nx=-(y1-y0),ny=(x1-x0),L=Math.hypot(nx,ny),ox=nx/L*3.2,oy=ny/L*3.2;
+    d+=(i?'':`M${ax.toFixed(2)} ${ay.toFixed(2)}`)+`Q${(mx+ox*1.6).toFixed(2)} ${(my+oy*1.6).toFixed(2)} ${bx.toFixed(2)} ${by.toFixed(2)}`;
+    pts.push([mx+ox*.62,my+oy*.62])}return d};
+  const a=edge(0,0,50,62),b=edge(50,62,100,0);
+  return `<svg class="wk-lace" viewBox="0 -2 100 72" preserveAspectRatio="none"><path d="M0 0L50 62L100 0" fill="none" stroke="${c.lace}" stroke-width="4.6" stroke-linejoin="round"/><path d="${a}" fill="none" stroke="${c.lace}" stroke-width="1.5"/><path d="${b}" fill="none" stroke="${c.lace}" stroke-width="1.5"/>
+    ${pts.map(([x,y])=>`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".55" fill="${c.lace}"/>`).join('')}
+    <path d="M1.6 1L50 59.2L98.4 1" fill="none" stroke="${c.accent}" stroke-width=".35" stroke-dasharray=".9 .9" opacity=".8"/></svg>`}
+const wkFl=(n,style)=>`<img class="wk-fl" src="${A}flower-${n}.webp" alt="" style="${style}">`;
+const wkMono=o=>{const j=String(o.jawi||'').trim();if(j)return `<span class="wk-jw">${esc(j)}</span>`;const [a,b]=K.initials(o);return `${esc(a)}<i>&amp;</i>${esc(b)}`};
+FAMILY({key:'warkah',name:'Mohor Emas',meaning:'Sealed love letter',
+  blurb:'A linen envelope with a lace-edged flap and a gold wax seal, resting on satin with painted roses. Touch the seal and the letter slides out.',
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Pinyon Script', cursive",b:"'Cormorant Garamond', serif"},ms:1650,
+  page(o,th,L){const [n1,n2]=coverNames(o),en=o.lang==='en';
+    return `<section class="page pg-warkah" style="--lace:${th.c.lace}"><div class="wk-satin"></div>
+      ${wkFl(th.c.fl1,'width:50%;left:-18%;top:-6%;transform:rotate(160deg)')}
+      <div class="wk-letter reveal"><div class="wk-in">
+        <p class="wk-k kicker">${ev(o,L)}</p><h1 class="wk-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</h1>
+        <p class="wk-date">${esc(fmtDate(o.date,o.lang))}</p>${o.hijri?`<p class="wk-hj">${esc(o.hijri)}</p>`:''}</div></div>
+      <div class="wk-tiles">
+        <a class="wk-tile wk-label reveal d1" data-go="when" href="#"><small>${en?'Tap for':'Tekan untuk'}</small><b>${en?'Event details':'Butiran Majlis'}</b></a>
+        ${o.x_rsvp?`<a class="wk-tile wk-rsvp reveal d2" data-go="rsvp" href="#"><small>${en?'Kindly reply':'Sudi hadir?'}</small><b>RSVP</b></a>`:''}
+        <a class="wk-tile wk-loc reveal d3" data-go="loc" href="#"><b>${en?'Location':'Lokasi'}</b><small>${esc(o.venue)}</small></a>
+      </div>
+      ${wkFl(th.c.fl2,'width:46%;right:-16%;bottom:6%;transform:rotate(-30deg)')}</section>`},
+  cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
+    return `<div class="cover cv-warkah" style="--lace:${c.lace}"><div class="wk-satin"></div>
+      <div class="wk-top"><p class="wk-k">${ev(o,L)}</p><p class="wk-n">${esc(n1)} <span>&amp;</span> ${esc(n2)}</p></div>
+      <div class="wk-env">
+        <div class="wk-back"></div>
+        <div class="wk-card"><p class="wk-k">${ev(o,L)}</p><p class="wk-cn">${esc(n1)}<br><span>&amp;</span> ${esc(n2)}</p><p class="wk-cd">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p></div>
+        <div class="wk-pocket"></div>
+        <div class="wk-flap"><div class="wk-flapface"></div>${warkahLace(c)}</div>
+        <${tag} class="wk-seal" ${attr} aria-label="${L.open}" style="--seal:url(${A}seal-${c.seal}.webp)"><span>${wkMono(o)}</span></${tag}>
+        ${wkFl(c.fl2,'width:40%;left:-12%;bottom:-36%;transform:rotate(-100deg)')}${wkFl(c.fl1,'width:50%;left:-24%;bottom:-46%;transform:rotate(-140deg)')}${wkFl(c.fl1,'width:50%;right:-24%;top:-46%;transform:rotate(40deg)')}${wkFl(c.fl2,'width:38%;right:-14%;top:-36%;transform:rotate(80deg)')}
+      </div>
+      <div class="wk-foot">${guest?`<p class="wk-to"><small>${L.dear}</small><b>${esc(guest)}</b></p>`:''}<p class="wk-hint">${en?'Touch the seal to open':'Sentuh mohor untuk buka'}</p></div></div>`},
+  skin(el,o,th,L){K.cards(el);
+    const sc=$('.scroller',el);
+    $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const k=a.dataset.go;
+      if(k==='loc'){$('[data-dock="loc"]',el)?.click();return}
+      const s=$(`[data-s="${k}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
+  themes:[
+    {k:'zamrud',n:'Zamrud',desc:'Green linen, gold seal, ivory satin',c:{ground:'#ece4d6',sheet:'#fbf7ef',ink:'#2b2a24',accent:'#2f4a2c',gold:'#b08a3e',pagefg:'#2b2a24',lace:'#f6f1e6',seal:'emas',fl1:'cabbage-rose',fl2:'blush-rose',env:'#33502f'}},
+    {k:'marun',n:'Marun',desc:'Maroon linen, gold seal, champagne satin',c:{ground:'#eadbcb',sheet:'#fcf7ef',ink:'#33221f',accent:'#6e1f2a',gold:'#b38b45',pagefg:'#33221f',lace:'#f8efe3',seal:'emas',fl1:'cabbage-rose',fl2:'anemones',env:'#6a1f29'}},
+    {k:'nila',n:'Nila',desc:'Navy linen, ivory seal, pearl satin',c:{ground:'#e6e6e2',sheet:'#fbfaf6',ink:'#1f2433',accent:'#1f2f55',gold:'#a9884a',pagefg:'#1f2433',lace:'#f4f2ec',seal:'gading',fl1:'anemones',fl2:'wild-rose',env:'#22345c'}},
+    {k:'jambu',n:'Jambu',desc:'Dusty pink linen, gold seal, blush satin',c:{ground:'#f1e1dc',sheet:'#fffaf6',ink:'#3a2a2a',accent:'#9c5a62',gold:'#b5904f',pagefg:'#3a2a2a',lace:'#fffaf5',seal:'emas',fl1:'blush-rose',fl2:'wild-rose',env:'#c99096'}},
+    {k:'sage',n:'Sage',desc:'Sage linen, ivory seal, cream satin',c:{ground:'#ebe7dc',sheet:'#fbf9f2',ink:'#2c3027',accent:'#56664c',gold:'#a88d4d',pagefg:'#2c3027',lace:'#f8f6ee',seal:'gading',fl1:'wild-rose',fl2:'blush-rose',env:'#8b9a7c'}},
+    {k:'gading',n:'Gading',desc:'Ivory linen, sage seal, white satin',c:{ground:'#e9e6df',sheet:'#fffdf8',ink:'#2d2a25',accent:'#6b5a3e',gold:'#a8894c',pagefg:'#2d2a25',lace:'#ffffff',seal:'sage',fl1:'blush-rose',fl2:'cabbage-rose',env:'#efe6d3'}},
+    {k:'biru',n:'Biru',desc:'Powder blue linen, gold seal, pearl satin',c:{ground:'#e4e8ea',sheet:'#fbfcfb',ink:'#24303a',accent:'#4d6a86',gold:'#b08f50',pagefg:'#24303a',lace:'#f6f8f8',seal:'emas',fl1:'wild-rose',fl2:'anemones',env:'#93abc2'}},
+    {k:'terakota',n:'Terakota',desc:'Terracotta linen, red seal, sand satin',c:{ground:'#ece0d2',sheet:'#fcf6ee',ink:'#33261f',accent:'#9a4b2f',gold:'#b08a4a',pagefg:'#33261f',lace:'#faf3ea',seal:'merah',fl1:'cabbage-rose',fl2:'wild-rose',env:'#a6573a'}},
+  ]});
+
+})()}catch(e){console.error("family warkah failed",e)}
 
 /* ===== family: washi ===== */
 try{(()=>{
