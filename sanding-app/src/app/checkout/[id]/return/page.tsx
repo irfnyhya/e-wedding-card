@@ -61,6 +61,7 @@ export default async function ReturnPage({ params, searchParams }: PageProps<'/c
           <a className="btn btn-ghost" href={wa} target="_blank" rel="noopener">Share on WhatsApp</a>
           <Link className="btn btn-ghost" href={`/dashboard?card=${id}`}>Go to dashboard</Link>
         </div>
+        <p className="muted" style={{ fontSize: 14 }}>RSVPs, ucapan, guest links and check-in all live in your dashboard. <Link href="/guide" style={{ color: 'var(--accent)' }}>Read the guide</Link>{process.env.RESEND_API_KEY ? <>; we&apos;ve emailed you the main steps too</> : null}.</p>
       </div></main>
     </>
   );

@@ -1,7 +1,9 @@
 import 'server-only';
 import { createHash } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { after } from 'next/server';
 import { SITE_URL } from '@/lib/card';
+import { sendWelcome } from '@/lib/email';
 
 // Payment gateway adapter. PAYMENT_PROVIDER=toyyibpay talks to ToyyibPay (dev.toyyibpay.com in sandbox);
 // PAYMENT_PROVIDER=mock serves a local stand-in page so the full flow runs without gateway credentials.
@@ -86,7 +88,7 @@ export function toyyibCallbackHashOk(p: Record<string, string>) {
 /** Verifies with the gateway, then publishes or upgrades the order. Safe to call repeatedly. */
 export async function settle(billCode: string): Promise<'paid' | 'pending' | 'unknown'> {
   const admin = supabaseAdmin();
-  const { data: pay } = await admin.from('payments').select('id, status, amount_cents').eq('bill_code', billCode).single();
+  const { data: pay } = await admin.from('payments').select('id, order_id, status, amount_cents').eq('bill_code', billCode).single();
   if (!pay) return 'unknown';
   if (pay.status === 'paid') return 'paid';
   const r = await checkBill(billCode);
@@ -95,7 +97,11 @@ export async function settle(billCode: string): Promise<'paid' | 'pending' | 'un
     console.error('payment amount mismatch', billCode, r.amountCents, pay.amount_cents);
     return 'pending';
   }
-  await admin.rpc('finalize_payment', { p_payment: pay.id, p_ref: r.ref || billCode, p_raw: (r.raw ?? null) as object });
+  const { data: before } = await admin.from('orders').select('published_at').eq('id', pay.order_id).single();
+  const { data: won } = await admin.rpc('finalize_payment', { p_payment: pay.id, p_ref: r.ref || billCode, p_raw: (r.raw ?? null) as object });
+  // finalize_payment returns true to exactly one caller, so the callback and the return page never both email;
+  // upgrades (the card was already published) don't repeat it
+  if (won === true && !before?.published_at) after(() => sendWelcome(pay.order_id).catch((e) => console.error('welcome email', e)));
   return 'paid';
 }
 
