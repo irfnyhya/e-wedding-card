@@ -14,7 +14,7 @@ export default function DesignsPage() {
         <div className="page-head" style={{ paddingBottom: 0 }}>
           <p className="eyebrow">Design gallery</p>
           <h1 style={{ marginTop: 10 }}>The collection</h1>
-          <p className="muted" style={{ marginTop: 10, maxWidth: '60ch' }}>{FAMILY_COUNT} families and {THEMES.length} designs. Filter by family or by colour. Every design includes every feature. Tap a design to open it with sample details.</p>
+          <p className="muted" style={{ marginTop: 10, maxWidth: '60ch' }}>{FAMILY_COUNT} designs and thousands of choices. Filter by design or by colour. Every design includes every feature. Tap a design to open it with sample details.</p>
         </div>
         <DesignGallery />
       </main>

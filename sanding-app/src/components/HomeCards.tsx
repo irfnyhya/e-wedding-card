@@ -53,7 +53,7 @@ export function Families() {
         );
       })}
       {open && <InviteOverlay card={{ ...SAMPLE, template: open }} closeLabel="← Back" onClose={() => setOpen(null)} />}
-      <div className="fam-more"><a className="btn btn-primary" href="/designs">See all {families().length} designs →</a><span className="muted">{THEMES.length} colourways in the full collection</span></div>
+      <div className="fam-more"><a className="btn btn-primary" href="/designs">See all {families().length} designs →</a><span className="muted">Thousands of choices in the full collection</span></div>
     </div>
   );
 }

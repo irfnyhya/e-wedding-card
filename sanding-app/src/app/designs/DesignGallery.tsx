@@ -52,7 +52,7 @@ export default function DesignGallery() {
         {TONES.map(([k, l]) => <button key={k} type="button" className="chip" aria-pressed={k === tone} onClick={() => setTone(k)}>
           {k !== 'all' && <i style={{ width: 10, height: 10, borderRadius: '50%', display: 'inline-block', background: TONE_DOT[k], border: '1px solid var(--line)' }} />}{l}</button>)}
       </div>
-      <p className="muted" style={{ marginTop: 14, fontSize: 13 }}>{shown} of {THEMES.length} designs</p>
+      <p className="muted" style={{ marginTop: 14, fontSize: 13 }}>{shown === THEMES.length ? 'Thousands of choices' : `${shown} choices`}</p>
       <div className="design-grid" style={{ marginTop: 28 }}>
         {families().filter(([k]) => THEMES.some((t) => t.fam === k && pick(t))).map(([k, f]) => (
           <section className="fam-block" key={k}>

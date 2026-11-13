@@ -1,6 +1,6 @@
 // Card content shape, packages and the rules both the editor and the server agree on.
 // The server is the source of truth: prices, package gating and content sanitising all run here.
-import { EFFECTS, LEGACY, THEMES } from '@/lib/invite/engine';
+import { EFFECTS, FAMILIES, LEGACY, THEMES } from '@/lib/invite/engine';
 import { sanitizeEvents, type EventItem } from '@/lib/events';
 
 export type { EventItem };
@@ -43,10 +43,12 @@ export const EVENT_TITLES = ['walimah', 'kahwin', 'bertandang', 'resepsi', 'tuna
 export const SECTION_KEYS = ['when', 'count', 'sched', 'gallery', 'doa', 'rsvp', 'wishes', 'gift', 'wishlist', 'contact'];
 /** Own-design front page add-on, on top of the package price. */
 export const ADDON_OWN = 10;
+/** Families are what the site calls designs; each has several colourways (the "thousands of choices"). */
+export const DESIGN_COUNT = Object.keys(FAMILIES).filter((k) => THEMES.some((t) => t.fam === k)).length;
 export type PackageId = 'asas' | 'premium' | 'diraja';
 
 export const PKGS: { id: PackageId; name: string; price: number; days: number; feats: string[] }[] = [
-  { id: 'asas', name: 'Asas', price: 19, days: 365, feats: [`Any of the ${THEMES.length} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Background music or your own YouTube song', 'Card opens counted in your dashboard', 'Online for 1 year, edit any time'] },
+  { id: 'asas', name: 'Asas', price: 19, days: 365, feats: [`Any of the ${DESIGN_COUNT} designs, each with its own opening`, 'Bahasa Melayu or English', 'Waze, Google Maps & livestream link', 'Countdown, Google, Apple & Outlook calendar', 'RSVP with pax limit, deadline and notes', 'Petal, gold dust or jasmine effect', 'Background music or your own YouTube song', 'Card opens counted in your dashboard', 'Online for 1 year, edit any time'] },
   { id: 'premium', name: 'Permata', price: 39, days: 365, feats: ['Everything in Asas', 'Ucapan wall with moderation', 'Personal guest links with names', 'Swipe gallery, up to 6 photos', 'Salam kaut: 3 accounts & DuitNow QR', 'Gift wishlist with reservations', 'Live attendance count on the card', 'Contacts with call & WhatsApp'] },
   { id: 'diraja', name: 'Diraja', price: 69, days: 365, feats: ['Everything in Permata', 'Guest e-pass with QR check-in on the day', 'WhatsApp reminders to every guest', 'Custom accent colour', 'Guest list CSV export'] },
 ];

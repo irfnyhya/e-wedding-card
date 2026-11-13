@@ -4,7 +4,6 @@ import { Demo, Families, HeroTable } from '@/components/HomeCards';
 import { PKGS } from '@/lib/card';
 import { FAMILIES, THEMES } from '@/lib/invite/engine';
 
-const DESIGNS = THEMES.length;
 const FAMILY_COUNT = Object.keys(FAMILIES).filter((k) => THEMES.some((t) => t.fam === k)).length;
 
 const DEFS: [string, string][] = [
@@ -27,7 +26,7 @@ export default function Home() {
           <div className="hero-copy">
             <p className="eyebrow">Koleksi 2026 · Kad kahwin digital</p>
             <h1>Invitations your guests <em>open</em>, not scroll&nbsp;past.</h1>
-            <p className="lead">{DESIGNS} designs in {FAMILY_COUNT} families, on real paper, silk and velvet, with flowers from Redouté&apos;s botanical plates. Guests break a wax seal, open carved doors, unwrap songket or turn over an old postcard of Malaya. Then they RSVP, leave an ucapan and find the venue on the same card.</p>
+            <p className="lead">{FAMILY_COUNT} designs and thousands of choices, on real paper, silk and velvet, with flowers from Redouté&apos;s botanical plates. Guests break a wax seal, open carved doors, unwrap songket or turn over an old postcard of Malaya. Then they RSVP, leave an ucapan and find the venue on the same card.</p>
             <div className="ctas"><Link className="btn btn-primary" href="/create?fresh=1">Create your card</Link><Link className="btn btn-link" href="/designs">See the collection &rarr;</Link></div>
             <p className="fine">From RM{Math.min(...PKGS.map((p) => p.price))} &middot; Bahasa Melayu or English &middot; ready in five minutes</p>
           </div>
@@ -36,7 +35,7 @@ export default function Home() {
 
         <section className="band">
           <div className="wrap">
-            <div className="band-head"><div><p className="eyebrow">The collection</p><h2>{FAMILY_COUNT} families, each opens its own way</h2></div><p>Pick a family for how the card opens, then one of its colourways. Every design includes RSVP, ucapan, directions and music.</p></div>
+            <div className="band-head"><div><p className="eyebrow">The collection</p><h2>{FAMILY_COUNT} designs, each opens its own way</h2></div><p>Pick a design for how the card opens, then one of its colourways. Every design includes RSVP, ucapan, directions and music.</p></div>
             <Families />
           </div>
         </section>
