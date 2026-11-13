@@ -13907,3 +13907,7 @@ details.more-opts>summary .muted{font-family:var(--f-body);font-size:12px}
 .dash-help{font-size:13px;color:var(--muted);margin-top:8px}.dash-help a{color:var(--accent)}
 @media (max-width:860px){.g-grid{grid-template-columns:1fr;gap:8px}.g-toc{position:static}.g-toc ol{columns:2;column-gap:16px}}
 @media (max-width:520px){.g-sec{grid-template-columns:1fr;gap:0}.g-n{font-size:30px;margin-bottom:4px}.g-kpis{grid-template-columns:1fr}.g-toc ol{columns:1}}
+/* logo: wordmark image in the masthead and footer */
+.brand .wm-logo{display:block;height:32px;width:auto}
+.wm-logo-foot{display:block;height:54px;width:auto}
+@media (max-width:720px){.brand .wm-logo{height:25px}}

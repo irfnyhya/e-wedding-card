@@ -12,7 +12,7 @@ export default async function SiteHeader({ current }: { current?: 'designs' | 'd
           <Link href="/designs" aria-current={current === 'designs' ? 'page' : undefined}>Collection</Link>
           <Link href="/#pricing" className="hide-sm">Prices</Link>
         </nav>
-        <Link className="brand" href="/" aria-label="Sanding home"><span className="wm">Sanding</span><span className="tag-line">kad kahwin digital</span></Link>
+        <Link className="brand" href="/" aria-label="Sanding home"><img className="wm-logo" src="/brand/sanding-wordmark.svg" alt="Sanding" width={638} height={226} /><span className="tag-line">kad kahwin digital</span></Link>
         <nav className="nav nav-r" aria-label="Account">
           {isAdmin(user?.email) && <Link href="/admin" aria-current={current === 'admin' ? 'page' : undefined}>Admin</Link>}
           <Link href="/dashboard" aria-current={current === 'dashboard' ? 'page' : undefined}>My cards</Link>

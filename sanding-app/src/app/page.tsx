@@ -82,7 +82,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <footer className="site-foot"><div className="wrap"><span className="wm-small">Sanding</span><span>Questions? <a href="https://wa.me/60184090065?text=Hi%20Sanding%2C%20saya%20ada%20soalan%20tentang%20kad%20kahwin%20digital." target="_blank" rel="noopener">WhatsApp 018-409 0065</a> (Irfan Hakimi). Botanical plates courtesy of the Cleveland Museum of Art and Wikimedia Commons; Malaya postcards c.1906–1930. All public domain. <Link href="/contoh">See a sample card</Link></span></div></footer>
+        <footer className="site-foot"><div className="wrap"><img className="wm-logo-foot" src="/brand/sanding-wordmark-tagline.svg" alt="Sanding, kad kahwin digital" width={638} height={265} /><span>Questions? <a href="https://wa.me/60184090065?text=Hi%20Sanding%2C%20saya%20ada%20soalan%20tentang%20kad%20kahwin%20digital." target="_blank" rel="noopener">WhatsApp 018-409 0065</a> (Irfan Hakimi). Botanical plates courtesy of the Cleveland Museum of Art and Wikimedia Commons; Malaya postcards c.1906–1930. All public domain. <Link href="/contoh">See a sample card</Link></span></div></footer>
       </main>
     </>
   );
