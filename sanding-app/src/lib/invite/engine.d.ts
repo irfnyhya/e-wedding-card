@@ -3,7 +3,7 @@ import type { Card } from '../card';
 
 /** Family ids come from the generated engine; keep this open so new families need no type change. */
 export type FamilyId = string;
-export type Family = { name: string; meaning: string; blurb: string; f: { d: string; s: string; b: string } };
+export type Family = { name: string; meaning: string; blurb: string; f: { d: string; s: string; b: string }; custom?: { font?: number; mono?: number; mid?: number } };
 export type Theme = {
   id: string; fam: FamilyId; name: string; desc: string; seal?: string; fl?: string[]; eng?: string[]; emb?: string;
   c: Record<string, string>;
@@ -67,6 +67,9 @@ export function calUrl(o: Partial<Card>): string;
 export const mapsUrl: (o: Partial<Card>) => string;
 export const wazeUrl: (o: Partial<Card>) => string;
 export const coverNames: (o: Partial<Card>) => [string, string];
+export const groomFirst: (o: Partial<Card>) => boolean;
+/** key -> [label, css font-family, size relative to the design's script] */
+export const NAME_FONTS: Record<string, [string, string, number]>;
 export const waNum: (p: string) => string;
 export const Music: {
   tracks: Record<string, { label: string }>;

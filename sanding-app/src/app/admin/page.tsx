@@ -8,7 +8,7 @@ import Admin, { type AdminOrder, type AdminPayment } from './Admin';
 export const metadata = { title: 'Admin', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
-type Content = { brideShort?: string; groomShort?: string; side?: string; date?: string; template?: string; venue?: string };
+type Content = { brideShort?: string; groomShort?: string; side?: string; nameOrder?: string; date?: string; template?: string; venue?: string };
 
 export default async function AdminPage() {
   const { user } = await currentUser();
@@ -36,7 +36,8 @@ export default async function AdminPage() {
 
   const rows: AdminOrder[] = (orders || []).map((o) => {
     const c = (o.content || {}) as Content;
-    const names = c.side === 'groom' ? [c.groomShort, c.brideShort] : [c.brideShort, c.groomShort];
+    const groomFirst = c.side === 'couple' ? c.nameOrder === 'groom' : c.side === 'groom';
+    const names = groomFirst ? [c.groomShort, c.brideShort] : [c.brideShort, c.groomShort];
     return {
       id: o.id, slug: o.slug, status: o.status, package: o.package, paidCents: o.paid_cents,
       names: names.filter(Boolean).join(' & ') || '(no names)', date: c.date || '', venue: c.venue || '', template: c.template || '',

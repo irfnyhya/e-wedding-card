@@ -515,6 +515,12 @@ tr:last-child td{border-bottom:0}
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-bismillah" name="bismillah" checked><span></span></label><div class="body"><div class="top"><b>Show Bismillah and doa</b></div><p class="muted" style="font-size:13px">Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-useAccent" name="useAccent"><span></span></label><div class="body"><div class="top"><b>Custom accent colour</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Match the card to your wedding colours.</p><input type="color" id="f-accent" name="accent" value="#c08a2e" style="width:64px;height:36px;border:1px solid var(--line);border-radius:8px;background:none"></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Effect</b><span class="tag">Asas</span></div><p class="muted" style="font-size:13px">A light layer that drifts over the card. Kept slow and sparse so it never fights the design.</p><div style="display:flex;gap:8px;flex-wrap:wrap" id="fx-pick"></div></div></div>
+            <div class="toggle-row" id="cover-opts" hidden><span class="switch-sp"></span><div class="body"><div class="top"><b>Cover</b><span class="tag">Asas</span></div><p class="muted" style="font-size:13px">Change the font of your names, put your monogram on the opening, or move the wording to the middle. The monogram uses the initials from the Couple step.</p>
+              <div class="fieldset">
+                <div class="field" data-cu="font"><label for="f-nameFont">Font for your names</label><select id="f-nameFont" name="nameFont"></select></div>
+                <div class="field" data-cu="mono"><label for="f-coverShow">On the cover</label><select id="f-coverShow" name="coverShow"><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>
+                <div class="field" data-cu="mid"><label for="f-coverPos">Wording position</label><select id="f-coverPos" name="coverPos"><option value="">As designed</option><option value="mid">Centre</option></select></div>
+              </div></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Use your own design</b><span class="tag brass">+RM10</span></div><p class="muted" style="font-size:13px">Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p><div class="uploads" id="own-upload"></div></div></div>
             </div>
           </div>
@@ -536,7 +542,8 @@ tr:last-child td{border-bottom:0}
             <div class="section-title"><h3>Hosts</h3></div>
             <div class="fieldset">
               <div class="field full"><label for="f-hosts">Host names (usually the parents)</label><input type="text" id="f-hosts" name="hosts"><span class="hint">Shown in the invitation: "Dengan penuh kesyukuran, kami …"</span></div>
-              <div class="field"><label for="f-side">Whose majlis is this?</label><select id="f-side" name="side"><option value="bride">Bride's family</option><option value="groom">Groom's family</option><option value="couple">The couple</option></select></div>
+              <div class="field"><label for="f-side">Whose majlis is this?</label><select id="f-side" name="side"><option value="bride">Bride's family</option><option value="groom">Groom's family</option><option value="couple">The couple</option></select><span class="hint">Pick “The couple” for a combined majlis.</span></div>
+              <div class="field" id="no-field" hidden><label for="f-nameOrder">Whose name first?</label><select id="f-nameOrder" name="nameOrder"><option value="bride">Bride first</option><option value="groom">Groom first</option></select><span class="hint">On the cover and inside the card.</span></div>
               <div class="field"><label for="f-eventTitle">Event title</label><select id="f-eventTitle" name="eventTitle"><option value="walimah">Walimatul Urus</option><option value="kahwin">Majlis Perkahwinan</option><option value="bertandang">Majlis Bertandang</option><option value="resepsi">Majlis Resepsi</option><option value="tunang">Majlis Pertunangan</option><option value="nikah">Majlis Akad Nikah</option></select></div>
             </div>
           </div>
@@ -2093,6 +2100,7 @@ tr:last-child td{border-bottom:0}
 /* safety net: once a card has opened, no cover may stay on top of the page */
 .inv.opened > .cover{opacity:0!important;pointer-events:none!important;transition:opacity .5s!important}
 .inv .fx{position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none}
+.inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
 .inv .live-box{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px;padding-top:14px;border-top:1px dotted var(--line);width:100%;max-width:320px}
@@ -7288,6 +7296,18 @@ tr:last-child td{border-bottom:0}
 .fam-lanskap .seg button[aria-pressed="true"],.fam-lanskap button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
 .fam-lanskap .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lanskap .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+/* per-card options: name font, monogram on the cover, wording centred */
+.inv.nf .ls-names{font-family:var(--nf);font-size:calc(clamp(58px,18cqi,74px)*var(--nfs))}
+.inv.nf .pg-lanskap .ls-names{font-size:calc(clamp(64px,20cqi,82px)*var(--nfs))}
+.inv .ls-mono{width:clamp(96px,30cqi,120px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
+  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--nfs,1));line-height:1;color:#fffdf8;
+  border:1px solid rgba(255,253,248,.85);box-shadow:0 0 0 5px rgba(255,253,248,0),0 0 0 6px rgba(255,253,248,.5),0 4px 22px rgba(20,15,10,.25);background:rgba(20,15,10,.08)}
+.inv .ls-mono i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:0 .12em;align-self:center}
+.inv .ls-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,"Italianno"),serif;font-size:.62em;white-space:nowrap}
+.inv .ls-txt.mono-only .ls-mono{width:clamp(140px,44cqi,176px);font-size:calc(clamp(66px,20cqi,82px)*var(--nfs,1));margin:16px 0 20px}
+.inv .ls-txt.mono-only .ls-k{order:-1;margin-bottom:22px}
+.inv.cv-mid .ls-txt{top:10%;bottom:27%;justify-content:center}
+.inv.cv-mid .cv-lanskap .ls-hush.h-top{top:20%}
 @media (prefers-reduced-motion: reduce){.inv .ls-frame,.inv .cv-lanskap .ls-paint,.inv .ls-txt{transition:none}}
 /* ===== lengkung (Lengkung Bunga) ===== */
 /* aged cream paper: warm fibres, faint crackle and browned edges; dark colourways show a flower painting instead */
@@ -14089,7 +14109,17 @@ function calUrl(o){const s=new Date(`${o.date}T${o.start||'11:00'}:00+08:00`),e=
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')}`)}&dates=${f(s)}/${f(e)}&location=${encodeURIComponent(o.venue+', '+o.address)}`}
 const mapsUrl=o=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}`;
 const wazeUrl=o=>`https://waze.com/ul?q=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}&navigate=yes`;
-const coverNames=o=>o.side==='groom'?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+const groomFirst=o=>o.side==='couple'?o.nameOrder==='groom':o.side==='groom'; // nameOrder only applies to a combined majlis
+const coverNames=o=>groomFirst(o)?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+/* per-card cover options, for families that opt in with FAMILY({custom:{font,mono,mid}}):
+   nameFont (a key below), coverShow ''|'mono'|'both', coverPos ''|'mid'. Every font here is already loaded by some family.
+   [label, css family, size relative to the design's own script] */
+const NAME_FONTS={greatvibes:['Great Vibes',"'Great Vibes',cursive",.74],pinyon:['Pinyon Script',"'Pinyon Script',cursive",.6],parisienne:['Parisienne',"'Parisienne',cursive",.7],
+  allura:['Allura',"'Allura',cursive",.84],alexbrush:['Alex Brush',"'Alex Brush',cursive",.78],playfair:['Playfair Display',"'Playfair Display',serif",.52],
+  cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",.6],cinzel:['Cinzel',"'Cinzel',serif",.42]};
+// the couple's monogram as HTML: their own initials (o.jawi, any script) or the first letters of the cover names
+const monoHTML=o=>{const own=String(o.jawi||'').trim();if(own)return `<span class="mono-own" dir="auto">${esc(own)}</span>`;
+  const [a,b]=coverNames(o);return `${esc(((a||'A').trim()[0]||'A').toUpperCase())}<i>&amp;</i>${esc(((b||'A').trim()[0]||'A').toUpperCase())}`};
 const waNum=p=>{let d=String(p||'').replace(/\D/g,'');if(d.startsWith('0'))d='6'+d;return d};
 
 /* ================= music (original tracks synthesised in the browser) ================= */
@@ -14239,10 +14269,13 @@ function renderInvite(host,o,opts={}){
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
+  const cu=fam.custom||{},nfo=cu.font&&NAME_FONTS[o.nameFont];
+  if(nfo){el.classList.add('nf');el.style.setProperty('--nf',nfo[1]);el.style.setProperty('--nfs',nfo[2])}
+  if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 
-  const p1=o.side==='groom'?o.groomFull:o.brideFull,p2=o.side==='groom'?o.brideFull:o.groomFull;
+  const p1=groomFirst(o)?o.groomFull:o.brideFull,p2=groomFirst(o)?o.brideFull:o.groomFull;
   const deadline=o.deadline?fmtDate(o.deadline,o.lang,false):'';
   const rsvpClosed=o.deadline&&new Date(o.deadline+'T23:59:59+08:00')<new Date();
   const photos=(o.photos||[]).filter(Boolean);
@@ -14759,7 +14792,7 @@ Object.assign(FAM2,{
    <div class="np-line"><span>${esc((o.address||'').split(',').slice(-2,-1)[0]||'Malaysia')}</span><span>${esc(fmtDate(o.date,o.lang))}</span></div>
    <h1 class="np-head">${esc(n1)} &amp; ${esc(n2)} ${en?'to wed':'akan bernikah'}<em>${en?'Families announce the happy news':'Dua keluarga umumkan berita gembira'}</em></h1>
    <div class="np-photo halftone" style="background-image:url(${ph})"></div><p class="np-cap">${en?'The venue, as photographed by our correspondent.':'Lokasi majlis, dirakam oleh wartawan kami.'}</p>
-   <div class="np-cols"><p>${en?`With gratitude, the families of ${esc(o.hosts)} announce the wedding of ${esc(o.brideFull)} and ${esc(o.groomFull)}. Readers are warmly invited to attend and to bring their prayers.`:`Dengan penuh kesyukuran, keluarga ${esc(o.hosts)} mengumumkan perkahwinan ${esc(o.brideFull)} dengan ${esc(o.groomFull)}. Para pembaca dijemput hadir dan membawa doa restu.`}</p>
+   <div class="np-cols"><p>${en?`With gratitude, the families of ${esc(o.hosts)} announce the wedding of ${esc(groomFirst(o)?o.groomFull:o.brideFull)} and ${esc(groomFirst(o)?o.brideFull:o.groomFull)}. Readers are warmly invited to attend and to bring their prayers.`:`Dengan penuh kesyukuran, keluarga ${esc(o.hosts)} mengumumkan perkahwinan ${esc(groomFirst(o)?o.groomFull:o.brideFull)} dengan ${esc(groomFirst(o)?o.brideFull:o.groomFull)}. Para pembaca dijemput hadir dan membawa doa restu.`}</p>
     <div><div class="np-box"><b>${en?'The event':'Majlis'}</b><span>${esc(fmtDate(o.date,o.lang))}</span><span>${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}</span><span>${esc(o.venue)}</span></div><div class="np-ad">${en?'NOTICE: Nasi minyak, sirap bandung and good company. Free.':'IKLAN: Nasi minyak, sirap bandung dan kawan-kawan lama. Percuma.'}</div></div></div></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-akhbar linen"><${tag} class="np-fold tex" ${attr}><span class="np-top" style="display:flex"><span>${guest?`${L.dear} ${esc(guest)}`:(en?'Special edition':'Edisi istimewa')}</span><span>${esc(fmtShort(o.date))}</span></span><span class="np-mast" style="display:block">${en?'The Wedding Times':'Berita Kahwin'}</span><span class="np-head" style="display:block;font-size:24px">${esc(n1)} &amp; ${esc(n2)}</span><span class="caps" style="font-size:10px">${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div>`}},
  vinyl:{ms:1300,
@@ -15251,7 +15284,7 @@ function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" va
 function FAMILY(f){
   // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
   if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
-  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts};
+  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts,custom:f.custom||{}};
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;
   f.themes.forEach(t=>{const th=T2(`${f.key}-${t.k}`,f.key,t.n,t.desc||`${t.n} ${f.meaning.toLowerCase()}`,{cover:t.c.accent,...t.c},t.extra||{});THEMES.push(th);THEME[th.id]=th});
@@ -19753,7 +19786,7 @@ const lsHush=(c,cls)=>`<div class="ls-hush ${cls}" style="--hb:${c.hb||2}px;--hd
 const lsPaint=c=>`<div class="ls-paint" style="background-image:url(${A}${c.paint});background-position:${c.pos||'center'};${c.tone?`filter:${c.tone}`:''}"></div>`;
 FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   blurb:'A landscape painting framed by cream lace paper with a die-cut scalloped edge, the names written over it in white script. The lace lifts away to open it.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{font:1,mono:1,mid:1},
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
     return `<section class="page pg-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>${lsHush(c,'h-mid')}<i class="ls-inset"></i>
       <div class="ls-mid">
@@ -19766,9 +19799,10 @@ FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',lace=lsCoverLace();
     return `<div class="cover cv-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>
       ${lsHush(c,'h-top')}${lsHush(c,'h-foot')}<div class="ls-frame"><div class="ls-paper" style="-webkit-mask-image:${K.uri(lace.mask)};mask-image:${K.uri(lace.mask)}"></div>${lace.deco}</div>
-      <div class="ls-txt">
+      <div class="ls-txt${o.coverShow==='mono'?' mono-only':''}">
+        ${o.coverShow?`<p class="ls-mono" aria-hidden="${o.coverShow==='both'}">${monoHTML(o)}</p>`:''}
         <p class="ls-k">${ev(o,L)}</p>
-        <p class="ls-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <p class="ls-names${o.coverShow==='mono'?' sr-only':''}">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
         <p class="ls-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
         ${o.venue?`<p class="ls-ven">${esc(o.venue)}</p>`:''}
       </div>
@@ -25770,7 +25804,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',nameOrder:'',nameFont:'',coverShow:'',coverPos:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -25780,7 +25814,7 @@ function initEditor(){
   fillForm();setTab(tab);paintPreview(true);
 }
 function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.name)continue;const v=draft[el.name];if(el.type==='checkbox')el.checked=!!v;else if(v!=null)el.value=v}
-  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
+  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();renderCoverOpts();renderSide();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
 function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
@@ -25794,8 +25828,8 @@ $('#pv-full').onclick=$('#mobile-preview').onclick=()=>{invReturn='create';openI
 // design picker: one real mini card per design; tapping it opens that design's colours underneath
 let openFam=null;
 function miniFor(tpl,fam){const d=document.createElement('div');d.className='mini';d.innerHTML='<div class="scale"></div>';
-  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
-function pickDesign(id){draft.template=id;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
+  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,nameOrder:draft.nameOrder,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
+function pickDesign(id){draft.template=id;renderTplPick();renderCoverOpts();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
 function renderTplPick(){const box=$('#tpl-pick'),cur=themeOf(draft.template);if(openFam===null)openFam=cur.fam;box.className='fam-pick';box.innerHTML='';
   $('#tpl-current').textContent=cur.desc;
   Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k),mine=cur.fam===k,shown=mine?cur:list[0];
@@ -25876,7 +25910,8 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
 function renderWording(){const d=defaultCopy(draft);
   $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}
 $('#txt-reset').onclick=()=>{['txtSalam','txtIntro','txtDoaT','txtDoa'].forEach(k=>{draft[k]='';$('#f-'+k).value=''});changed()};
-['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(renderTradition)));
+['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(()=>{renderTradition();renderSide()})));
+function renderSide(){$('#no-field').hidden=draft.side!=='couple';$('#f-nameOrder').value=draft.nameOrder==='groom'?'groom':'bride'}
 /* content step: show / hide / rename sections, the couple's own sections */
 function renderContent(){const L=copyFor(draft),hide=new Set(draft.hideSecs||[]),tt=draft.secTitles||{};
   $('#sec-rows').innerHTML=CARD_SECTIONS.map(([k,f])=>`<label class="sec-row"><input type="checkbox" data-sk="${k}" ${hide.has(k)?'':'checked'}><input type="text" data-st="${k}" value="${esc(tt[k]||'')}" placeholder="${esc(plainOf(f(L)||''))}" maxlength="60" aria-label="Heading"></label>`).join('');
@@ -25898,6 +25933,10 @@ function renderWl(){const box=$('#wl-rows');box.innerHTML=draft.wishlist.map((w,
   $$('input',box).forEach(x=>x.oninput=e=>{e.stopPropagation();draft.wishlist[x.dataset.i][x.dataset.k]=x.value;changed()});
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.wishlist.splice(+b.dataset.del,1);renderWl();changed()})}
 $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name:'',price:'',link:''});if(!draft.x_wishlist){draft.x_wishlist=true;$('#x-wishlist').checked=true}renderWl();changed();$$('#wl-rows input[data-k=name]').pop()?.focus()}};
+function renderCoverOpts(){const cu=FAMILIES[themeOf(draft.template).fam]?.custom||{},box=$('#cover-opts');box.hidden=!(cu.font||cu.mono||cu.mid);
+  $$('[data-cu]',box).forEach(f=>f.hidden=!cu[f.dataset.cu]);
+  const sel=$('#f-nameFont');if(!sel.options.length)sel.innerHTML=`<option value="">The design's own</option>`+Object.entries(NAME_FONTS).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('');
+  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||''}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
@@ -25908,7 +25947,7 @@ $('#ed-prev').onclick=()=>{setTab(Math.max(0,tab-1));window.scrollTo({top:0})};
 $('#ed-next').onclick=()=>{if(tab<5){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
 function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
   const extras=[['x_rsvp','RSVP'],['x_counter','Attendance count'],['x_epass','E-pass'],['x_wishes','Ucapan'],['x_music','Music'],['x_gallery','Gallery'],['x_gift','Salam kaut'],['x_wishlist','Wishlist'],['x_contacts','Contacts'],['x_guestlinks','Guest links']].filter(([k])=>o[k]).map(([,l])=>l).concat(o.effect&&o.effect!=='none'?[EFFECTS[o.effect].label]:[],o.livestream?['Livestream']:[],o.ownDesign?['Own design (+RM10)']:[]).join(', ')||'None';
-  $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',`${o.brideShort||'—'} & ${o.groomShort||'—'}`],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
+  $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',coverNames(o).map(n=>n||'—').join(' & ')],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
   $('#pkg-name').textContent=p.name;
   const paidPkg=editingId?ORDERS.find(x=>x.id===editingId)?.package:null;
   if(editingId&&rank(pk.id)<=rank(paidPkg)){$('#pkg-price').textContent='Paid';$('#pkg-why').textContent=`Your ${PKG[paidPkg].name} package covers these changes.`;$('#pkg-name').textContent=PKG[paidPkg].name;$('#ed-next').textContent='Save changes'}

@@ -83,10 +83,13 @@ function renderInvite(host,o,opts={}){
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
+  const cu=fam.custom||{},nfo=cu.font&&NAME_FONTS[o.nameFont];
+  if(nfo){el.classList.add('nf');el.style.setProperty('--nf',nfo[1]);el.style.setProperty('--nfs',nfo[2])}
+  if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 
-  const p1=o.side==='groom'?o.groomFull:o.brideFull,p2=o.side==='groom'?o.brideFull:o.groomFull;
+  const p1=groomFirst(o)?o.groomFull:o.brideFull,p2=groomFirst(o)?o.brideFull:o.groomFull;
   const deadline=o.deadline?fmtDate(o.deadline,o.lang,false):'';
   const rsvpClosed=o.deadline&&new Date(o.deadline+'T23:59:59+08:00')<new Date();
   const photos=(o.photos||[]).filter(Boolean);

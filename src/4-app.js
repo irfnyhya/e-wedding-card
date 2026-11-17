@@ -138,7 +138,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',nameOrder:'',nameFont:'',coverShow:'',coverPos:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -148,7 +148,7 @@ function initEditor(){
   fillForm();setTab(tab);paintPreview(true);
 }
 function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.name)continue;const v=draft[el.name];if(el.type==='checkbox')el.checked=!!v;else if(v!=null)el.value=v}
-  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();syncDisabled()}
+  renderTplPick();renderSched();renderContacts();renderUploads();renderMusicPick();renderTradition();renderContent();renderGifts();renderWl();renderFx();renderCoverOpts();renderSide();syncDisabled()}
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
 function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
@@ -162,8 +162,8 @@ $('#pv-full').onclick=$('#mobile-preview').onclick=()=>{invReturn='create';openI
 // design picker: one real mini card per design; tapping it opens that design's colours underneath
 let openFam=null;
 function miniFor(tpl,fam){const d=document.createElement('div');d.className='mini';d.innerHTML='<div class="scale"></div>';
-  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
-function pickDesign(id){draft.template=id;renderTplPick();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
+  d.__paint=()=>{renderInvite($('.scale',d),{...SAMPLE,brideShort:draft.brideShort,groomShort:draft.groomShort,side:draft.side,nameOrder:draft.nameOrder,lang:draft.lang,template:tpl},{mode:'thumb',face:fam==='sampul'?'cover':'page'});d.__paint=null};lazyIO.observe(d);thumbRO.observe(d);return d}
+function pickDesign(id){draft.template=id;renderTplPick();renderCoverOpts();Music.stop();clearTimeout(pvT);renderInvite($('#ed-preview'),draft,{mode:'preview'});changed()}
 function renderTplPick(){const box=$('#tpl-pick'),cur=themeOf(draft.template);if(openFam===null)openFam=cur.fam;box.className='fam-pick';box.innerHTML='';
   $('#tpl-current').textContent=cur.desc;
   Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).forEach(([k,f])=>{const list=THEMES.filter(t=>t.fam===k),mine=cur.fam===k,shown=mine?cur:list[0];
@@ -244,7 +244,8 @@ function renderTradition(){const tr=draft.tradition||'malay',ms=draft.monoScript
 function renderWording(){const d=defaultCopy(draft);
   $('#f-txtSalam').placeholder=d.salam;$('#f-txtIntro').placeholder=plainOf(d.intro('{hosts}',draft.side));$('#f-txtDoaT').placeholder=plainOf(d.doaT);$('#f-txtDoa').placeholder=plainOf(d.doa)}
 $('#txt-reset').onclick=()=>{['txtSalam','txtIntro','txtDoaT','txtDoa'].forEach(k=>{draft[k]='';$('#f-'+k).value=''});changed()};
-['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(renderTradition)));
+['f-lang','f-side'].forEach(id=>$('#'+id).addEventListener('change',()=>setTimeout(()=>{renderTradition();renderSide()})));
+function renderSide(){$('#no-field').hidden=draft.side!=='couple';$('#f-nameOrder').value=draft.nameOrder==='groom'?'groom':'bride'}
 /* content step: show / hide / rename sections, the couple's own sections */
 function renderContent(){const L=copyFor(draft),hide=new Set(draft.hideSecs||[]),tt=draft.secTitles||{};
   $('#sec-rows').innerHTML=CARD_SECTIONS.map(([k,f])=>`<label class="sec-row"><input type="checkbox" data-sk="${k}" ${hide.has(k)?'':'checked'}><input type="text" data-st="${k}" value="${esc(tt[k]||'')}" placeholder="${esc(plainOf(f(L)||''))}" maxlength="60" aria-label="Heading"></label>`).join('');
@@ -266,6 +267,10 @@ function renderWl(){const box=$('#wl-rows');box.innerHTML=draft.wishlist.map((w,
   $$('input',box).forEach(x=>x.oninput=e=>{e.stopPropagation();draft.wishlist[x.dataset.i][x.dataset.k]=x.value;changed()});
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.wishlist.splice(+b.dataset.del,1);renderWl();changed()})}
 $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name:'',price:'',link:''});if(!draft.x_wishlist){draft.x_wishlist=true;$('#x-wishlist').checked=true}renderWl();changed();$$('#wl-rows input[data-k=name]').pop()?.focus()}};
+function renderCoverOpts(){const cu=FAMILIES[themeOf(draft.template).fam]?.custom||{},box=$('#cover-opts');box.hidden=!(cu.font||cu.mono||cu.mid);
+  $$('[data-cu]',box).forEach(f=>f.hidden=!cu[f.dataset.cu]);
+  const sel=$('#f-nameFont');if(!sel.options.length)sel.innerHTML=`<option value="">The design's own</option>`+Object.entries(NAME_FONTS).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('');
+  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||''}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
@@ -276,7 +281,7 @@ $('#ed-prev').onclick=()=>{setTab(Math.max(0,tab-1));window.scrollTo({top:0})};
 $('#ed-next').onclick=()=>{if(tab<5){setTab(tab+1);window.scrollTo({top:0});return}proceed()};
 function renderReview(){const o=draft,L=T[o.lang],pk=needPkg(o),p=PKG[pk.id];
   const extras=[['x_rsvp','RSVP'],['x_counter','Attendance count'],['x_epass','E-pass'],['x_wishes','Ucapan'],['x_music','Music'],['x_gallery','Gallery'],['x_gift','Salam kaut'],['x_wishlist','Wishlist'],['x_contacts','Contacts'],['x_guestlinks','Guest links']].filter(([k])=>o[k]).map(([,l])=>l).concat(o.effect&&o.effect!=='none'?[EFFECTS[o.effect].label]:[],o.livestream?['Livestream']:[],o.ownDesign?['Own design (+RM10)']:[]).join(', ')||'None';
-  $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',`${o.brideShort||'—'} & ${o.groomShort||'—'}`],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
+  $('#review-dl').innerHTML=[['Design',themeOf(o.template).name],['Couple',coverNames(o).map(n=>n||'—').join(' & ')],['Event',L.ev[o.eventTitle]],['Date',fmtDate(o.date,o.lang)||'—'],['Time',`${fmtTime(o.start,o.lang)} – ${fmtTime(o.end,o.lang)}`],['Venue',o.venue||'—'],['Language',o.lang==='en'?'English':'Bahasa Melayu'],['Extras',extras]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
   $('#pkg-name').textContent=p.name;
   const paidPkg=editingId?ORDERS.find(x=>x.id===editingId)?.package:null;
   if(editingId&&rank(pk.id)<=rank(paidPkg)){$('#pkg-price').textContent='Paid';$('#pkg-why').textContent=`Your ${PKG[paidPkg].name} package covers these changes.`;$('#pkg-name').textContent=PKG[paidPkg].name;$('#ed-next').textContent='Save changes'}

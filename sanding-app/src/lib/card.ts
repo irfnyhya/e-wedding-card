@@ -1,6 +1,6 @@
 // Card content shape, packages and the rules both the editor and the server agree on.
 // The server is the source of truth: prices, package gating and content sanitising all run here.
-import { EFFECTS, FAMILIES, LEGACY, THEMES } from '@/lib/invite/engine';
+import { EFFECTS, FAMILIES, LEGACY, NAME_FONTS, THEMES } from '@/lib/invite/engine';
 import { sanitizeEvents, type EventItem } from '@/lib/events';
 
 export type { EventItem };
@@ -13,6 +13,10 @@ export type Card = {
   template: string; lang: 'ms' | 'en'; jawi: string; bismillah: boolean; useAccent: boolean; accent: string;
   brideFull: string; brideShort: string; groomFull: string; groomShort: string;
   hosts: string; side: 'bride' | 'groom' | 'couple'; eventTitle: (typeof EVENT_TITLES)[number];
+  /** Whose name comes first; only used when side is 'couple' (the family sides put their own child first). */
+  nameOrder: 'bride' | 'groom';
+  /** Cover options for designs that support them: name font key, monogram on the cover, wording centred. */
+  nameFont: string; coverShow: '' | 'both' | 'mono'; coverPos: '' | 'mid';
   date: string; hijri: string; start: string; end: string; venue: string; address: string; dress: string; livestream: string;
   /** More sessions after the main one, each with its own date, time and venue (Maps/Waze). */
   events: EventItem[];
@@ -144,6 +148,10 @@ export function sanitizeCard(input: unknown): Card {
     groomFull: str(o.groomFull, 120), groomShort: str(o.groomShort, 40),
     hosts: str(o.hosts, 200),
     side: oneOf(o.side, ['bride', 'groom', 'couple'] as const, 'bride'),
+    nameOrder: oneOf(o.nameOrder, ['bride', 'groom'] as const, 'bride'),
+    nameFont: oneOf(o.nameFont, ['', ...Object.keys(NAME_FONTS)], ''),
+    coverShow: oneOf(o.coverShow, ['', 'both', 'mono'] as const, ''),
+    coverPos: oneOf(o.coverPos, ['', 'mid'] as const, ''),
     eventTitle: oneOf(o.eventTitle, EVENT_TITLES, 'walimah'),
     date: isoDate(o.date), hijri: str(o.hijri, 60), start: hhmm(o.start), end: hhmm(o.end),
     venue: str(o.venue, 120), address: str(o.address, 300), dress: str(o.dress, 80), livestream: linkUrl(o.livestream),

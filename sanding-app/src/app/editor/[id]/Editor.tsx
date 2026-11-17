@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, PHOTO_DESIGNS, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, NAME_FONTS, PHOTO_DESIGNS, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -193,7 +193,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   const list = THEMES.filter((t) => t.fam === k);
                   const cur = themeOf(c.template), mine = cur.fam === k, shown = mine ? cur : list[0];
                   const face = k === 'sampul' ? 'cover' : 'page';
-                  const names = { brideShort: c.brideShort, groomShort: c.groomShort, side: c.side, lang: c.lang };
+                  const names = { brideShort: c.brideShort, groomShort: c.groomShort, side: c.side, nameOrder: c.nameOrder, lang: c.lang };
                   return [
                     <button key={k} type="button" className="fam-tile" aria-pressed={mine} aria-expanded={openFam === k}
                       onClick={() => { setOpenFam((o) => (o === k ? null : k)); if (!mine) set('template', list[0].id); }}>
@@ -222,6 +222,13 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                 <input type="color" aria-label="Accent colour" value={c.accent} onChange={(e) => set('accent', e.target.value)} style={{ width: 64, height: 36, border: '1px solid var(--line)', borderRadius: 8, background: 'none', ...dim(c.useAccent) }} /></div></div>
               <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Effect</b>{tag('Asas')}</div><p className="muted" style={{ fontSize: 13 }}>A light layer that drifts over the card. Kept slow and sparse so it never fights the design.</p>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>{Object.entries(EFFECTS).map(([k, f]) => <button key={k} type="button" className="chip" aria-pressed={(c.effect || 'none') === k} onClick={() => set('effect', k)}>{f.label}</button>)}</div></div></div>
+              {(() => { const cu = FAMILIES[themeOf(c.template).fam]?.custom || {}; if (!cu.font && !cu.mono && !cu.mid) return null; return (
+              <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Cover</b>{tag('Asas')}</div><p className="muted" style={{ fontSize: 13 }}>Change the font of your names, put your monogram on the opening, or move the wording to the middle. The monogram uses the initials from the Couple step.</p>
+                <div className="fieldset">
+                  {!!cu.font && <div className="field"><label htmlFor="f-nf">Font for your names</label><select id="f-nf" value={c.nameFont} onChange={(e) => set('nameFont', e.target.value)}><option value="">The design&apos;s own</option>{Object.entries(NAME_FONTS).map(([k, [l, css]]) => <option key={k} value={k} style={{ fontFamily: css }}>{l}</option>)}</select></div>}
+                  {!!cu.mono && <div className="field"><label htmlFor="f-cs">On the cover</label><select id="f-cs" value={c.coverShow} onChange={(e) => set('coverShow', e.target.value as Card['coverShow'])}><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>}
+                  {!!cu.mid && <div className="field"><label htmlFor="f-cp">Wording position</label><select id="f-cp" value={c.coverPos} onChange={(e) => set('coverPos', e.target.value as Card['coverPos'])}><option value="">As designed</option><option value="mid">Centre</option></select></div>}
+                </div></div></div>); })()}
               <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Use your own design</b><span className="tag brass">+RM{ADDON_OWN}</span></div><p className="muted" style={{ fontSize: 13 }}>Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p>
                 <div className="uploads">
                   {c.ownDesign ? <div className="ph tall"><img src={c.ownDesign} alt="Your design" /><button type="button" aria-label="Remove your design" onClick={() => removeMedia(c.ownDesign, 'own')}>✕</button></div>
@@ -255,7 +262,8 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
               <div className="section-title"><h3>Hosts</h3></div>
               <div className="fieldset">
                 <div className="field full"><label htmlFor="f-hosts">Host names (usually the parents)</label><input type="text" id="f-hosts" value={c.hosts} maxLength={200} onChange={(e) => set('hosts', e.target.value)} /><span className="hint">Shown in the invitation: &ldquo;Dengan penuh kesyukuran, kami …&rdquo;</span></div>
-                <div className="field"><label htmlFor="f-side">Whose majlis is this?</label><select id="f-side" value={c.side} onChange={(e) => set('side', e.target.value as Card['side'])}><option value="bride">Bride&apos;s family</option><option value="groom">Groom&apos;s family</option><option value="couple">The couple</option></select></div>
+                <div className="field"><label htmlFor="f-side">Whose majlis is this?</label><select id="f-side" value={c.side} onChange={(e) => set('side', e.target.value as Card['side'])}><option value="bride">Bride&apos;s family</option><option value="groom">Groom&apos;s family</option><option value="couple">The couple</option></select><span className="hint">Pick “The couple” for a combined majlis.</span></div>
+                {c.side === 'couple' && <div className="field"><label htmlFor="f-no">Whose name first?</label><select id="f-no" value={c.nameOrder} onChange={(e) => set('nameOrder', e.target.value as Card['nameOrder'])}><option value="bride">Bride first</option><option value="groom">Groom first</option></select><span className="hint">On the cover and inside the card.</span></div>}
                 <div className="field"><label htmlFor="f-ev">Event title</label><select id="f-ev" value={c.eventTitle} onChange={(e) => set('eventTitle', e.target.value as Card['eventTitle'])}>{evOpts.map((k) => <option key={k} value={k}>{T.ms.ev[k]}{c.lang === 'en' ? ` · ${T.en.ev[k]}` : ''}</option>)}</select></div>
               </div>
             </div>}

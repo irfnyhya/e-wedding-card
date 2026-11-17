@@ -7,7 +7,7 @@ function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" va
 function FAMILY(f){
   // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
   if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
-  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts};
+  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts,custom:f.custom||{}};
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;
   f.themes.forEach(t=>{const th=T2(`${f.key}-${t.k}`,f.key,t.n,t.desc||`${t.n} ${f.meaning.toLowerCase()}`,{cover:t.c.accent,...t.c},t.extra||{});THEMES.push(th);THEME[th.id]=th});

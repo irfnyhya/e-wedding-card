@@ -46,6 +46,12 @@
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-bismillah" name="bismillah" checked><span></span></label><div class="body"><div class="top"><b>Show Bismillah and doa</b></div><p class="muted" style="font-size:13px">Adds the Bismillah at the top of the card and a short doa section near the end.</p></div></div>
             <div class="toggle-row"><label class="switch"><input type="checkbox" id="f-useAccent" name="useAccent"><span></span></label><div class="body"><div class="top"><b>Custom accent colour</b><span class="tag brass">Diraja</span></div><p class="muted" style="font-size:13px">Match the card to your wedding colours.</p><input type="color" id="f-accent" name="accent" value="#c08a2e" style="width:64px;height:36px;border:1px solid var(--line);border-radius:8px;background:none"></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Effect</b><span class="tag">Asas</span></div><p class="muted" style="font-size:13px">A light layer that drifts over the card. Kept slow and sparse so it never fights the design.</p><div style="display:flex;gap:8px;flex-wrap:wrap" id="fx-pick"></div></div></div>
+            <div class="toggle-row" id="cover-opts" hidden><span class="switch-sp"></span><div class="body"><div class="top"><b>Cover</b><span class="tag">Asas</span></div><p class="muted" style="font-size:13px">Change the font of your names, put your monogram on the opening, or move the wording to the middle. The monogram uses the initials from the Couple step.</p>
+              <div class="fieldset">
+                <div class="field" data-cu="font"><label for="f-nameFont">Font for your names</label><select id="f-nameFont" name="nameFont"></select></div>
+                <div class="field" data-cu="mono"><label for="f-coverShow">On the cover</label><select id="f-coverShow" name="coverShow"><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>
+                <div class="field" data-cu="mid"><label for="f-coverPos">Wording position</label><select id="f-coverPos" name="coverPos"><option value="">As designed</option><option value="mid">Centre</option></select></div>
+              </div></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Use your own design</b><span class="tag brass">+RM10</span></div><p class="muted" style="font-size:13px">Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p><div class="uploads" id="own-upload"></div></div></div>
             </div>
           </div>
@@ -67,7 +73,8 @@
             <div class="section-title"><h3>Hosts</h3></div>
             <div class="fieldset">
               <div class="field full"><label for="f-hosts">Host names (usually the parents)</label><input type="text" id="f-hosts" name="hosts"><span class="hint">Shown in the invitation: "Dengan penuh kesyukuran, kami …"</span></div>
-              <div class="field"><label for="f-side">Whose majlis is this?</label><select id="f-side" name="side"><option value="bride">Bride's family</option><option value="groom">Groom's family</option><option value="couple">The couple</option></select></div>
+              <div class="field"><label for="f-side">Whose majlis is this?</label><select id="f-side" name="side"><option value="bride">Bride's family</option><option value="groom">Groom's family</option><option value="couple">The couple</option></select><span class="hint">Pick “The couple” for a combined majlis.</span></div>
+              <div class="field" id="no-field" hidden><label for="f-nameOrder">Whose name first?</label><select id="f-nameOrder" name="nameOrder"><option value="bride">Bride first</option><option value="groom">Groom first</option></select><span class="hint">On the cover and inside the card.</span></div>
               <div class="field"><label for="f-eventTitle">Event title</label><select id="f-eventTitle" name="eventTitle"><option value="walimah">Walimatul Urus</option><option value="kahwin">Majlis Perkahwinan</option><option value="bertandang">Majlis Bertandang</option><option value="resepsi">Majlis Resepsi</option><option value="tunang">Majlis Pertunangan</option><option value="nikah">Majlis Akad Nikah</option></select></div>
             </div>
           </div>

@@ -68,7 +68,17 @@ function calUrl(o){const s=new Date(`${o.date}T${o.start||'11:00'}:00+08:00`),e=
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')}`)}&dates=${f(s)}/${f(e)}&location=${encodeURIComponent(o.venue+', '+o.address)}`}
 const mapsUrl=o=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}`;
 const wazeUrl=o=>`https://waze.com/ul?q=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}&navigate=yes`;
-const coverNames=o=>o.side==='groom'?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+const groomFirst=o=>o.side==='couple'?o.nameOrder==='groom':o.side==='groom'; // nameOrder only applies to a combined majlis
+const coverNames=o=>groomFirst(o)?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+/* per-card cover options, for families that opt in with FAMILY({custom:{font,mono,mid}}):
+   nameFont (a key below), coverShow ''|'mono'|'both', coverPos ''|'mid'. Every font here is already loaded by some family.
+   [label, css family, size relative to the design's own script] */
+const NAME_FONTS={greatvibes:['Great Vibes',"'Great Vibes',cursive",.74],pinyon:['Pinyon Script',"'Pinyon Script',cursive",.6],parisienne:['Parisienne',"'Parisienne',cursive",.7],
+  allura:['Allura',"'Allura',cursive",.84],alexbrush:['Alex Brush',"'Alex Brush',cursive",.78],playfair:['Playfair Display',"'Playfair Display',serif",.52],
+  cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",.6],cinzel:['Cinzel',"'Cinzel',serif",.42]};
+// the couple's monogram as HTML: their own initials (o.jawi, any script) or the first letters of the cover names
+const monoHTML=o=>{const own=String(o.jawi||'').trim();if(own)return `<span class="mono-own" dir="auto">${esc(own)}</span>`;
+  const [a,b]=coverNames(o);return `${esc(((a||'A').trim()[0]||'A').toUpperCase())}<i>&amp;</i>${esc(((b||'A').trim()[0]||'A').toUpperCase())}`};
 const waNum=p=>{let d=String(p||'').replace(/\D/g,'');if(d.startsWith('0'))d='6'+d;return d};
 
 /* ================= music (original tracks synthesised in the browser) ================= */

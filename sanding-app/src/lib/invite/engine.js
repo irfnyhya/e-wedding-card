@@ -147,7 +147,17 @@ function calUrl(o){const s=new Date(`${o.date}T${o.start||'11:00'}:00+08:00`),e=
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${T[o.lang].ev[o.eventTitle]} ${coverNames(o).join(' & ')}`)}&dates=${f(s)}/${f(e)}&location=${encodeURIComponent(o.venue+', '+o.address)}`}
 const mapsUrl=o=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}`;
 const wazeUrl=o=>`https://waze.com/ul?q=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}&navigate=yes`;
-const coverNames=o=>o.side==='groom'?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+const groomFirst=o=>o.side==='couple'?o.nameOrder==='groom':o.side==='groom'; // nameOrder only applies to a combined majlis
+const coverNames=o=>groomFirst(o)?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
+/* per-card cover options, for families that opt in with FAMILY({custom:{font,mono,mid}}):
+   nameFont (a key below), coverShow ''|'mono'|'both', coverPos ''|'mid'. Every font here is already loaded by some family.
+   [label, css family, size relative to the design's own script] */
+const NAME_FONTS={greatvibes:['Great Vibes',"'Great Vibes',cursive",.74],pinyon:['Pinyon Script',"'Pinyon Script',cursive",.6],parisienne:['Parisienne',"'Parisienne',cursive",.7],
+  allura:['Allura',"'Allura',cursive",.84],alexbrush:['Alex Brush',"'Alex Brush',cursive",.78],playfair:['Playfair Display',"'Playfair Display',serif",.52],
+  cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",.6],cinzel:['Cinzel',"'Cinzel',serif",.42]};
+// the couple's monogram as HTML: their own initials (o.jawi, any script) or the first letters of the cover names
+const monoHTML=o=>{const own=String(o.jawi||'').trim();if(own)return `<span class="mono-own" dir="auto">${esc(own)}</span>`;
+  const [a,b]=coverNames(o);return `${esc(((a||'A').trim()[0]||'A').toUpperCase())}<i>&amp;</i>${esc(((b||'A').trim()[0]||'A').toUpperCase())}`};
 const waNum=p=>{let d=String(p||'').replace(/\D/g,'');if(d.startsWith('0'))d='6'+d;return d};
 
 /* ================= music (original tracks synthesised in the browser) ================= */
@@ -298,10 +308,13 @@ function renderInvite(host,o,opts={}){
   const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
+  const cu=fam.custom||{},nfo=cu.font&&NAME_FONTS[o.nameFont];
+  if(nfo){el.classList.add('nf');el.style.setProperty('--nf',nfo[1]);el.style.setProperty('--nfs',nfo[2])}
+  if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 
-  const p1=o.side==='groom'?o.groomFull:o.brideFull,p2=o.side==='groom'?o.brideFull:o.groomFull;
+  const p1=groomFirst(o)?o.groomFull:o.brideFull,p2=groomFirst(o)?o.brideFull:o.groomFull;
   const deadline=o.deadline?fmtDate(o.deadline,o.lang,false):'';
   const rsvpClosed=o.deadline&&new Date(o.deadline+'T23:59:59+08:00')<new Date();
   const photos=(o.photos||[]).filter(Boolean);
@@ -816,7 +829,7 @@ Object.assign(FAM2,{
    <div class="np-line"><span>${esc((o.address||'').split(',').slice(-2,-1)[0]||'Malaysia')}</span><span>${esc(fmtDate(o.date,o.lang))}</span></div>
    <h1 class="np-head">${esc(n1)} &amp; ${esc(n2)} ${en?'to wed':'akan bernikah'}<em>${en?'Families announce the happy news':'Dua keluarga umumkan berita gembira'}</em></h1>
    <div class="np-photo halftone" style="background-image:url(${esc(ph)})"></div><p class="np-cap">${en?'The venue, as photographed by our correspondent.':'Lokasi majlis, dirakam oleh wartawan kami.'}</p>
-   <div class="np-cols"><p>${en?`With gratitude, the families of ${esc(o.hosts)} announce the wedding of ${esc(o.brideFull)} and ${esc(o.groomFull)}. Readers are warmly invited to attend and to bring their prayers.`:`Dengan penuh kesyukuran, keluarga ${esc(o.hosts)} mengumumkan perkahwinan ${esc(o.brideFull)} dengan ${esc(o.groomFull)}. Para pembaca dijemput hadir dan membawa doa restu.`}</p>
+   <div class="np-cols"><p>${en?`With gratitude, the families of ${esc(o.hosts)} announce the wedding of ${esc(groomFirst(o)?o.groomFull:o.brideFull)} and ${esc(groomFirst(o)?o.brideFull:o.groomFull)}. Readers are warmly invited to attend and to bring their prayers.`:`Dengan penuh kesyukuran, keluarga ${esc(o.hosts)} mengumumkan perkahwinan ${esc(groomFirst(o)?o.groomFull:o.brideFull)} dengan ${esc(groomFirst(o)?o.brideFull:o.groomFull)}. Para pembaca dijemput hadir dan membawa doa restu.`}</p>
     <div><div class="np-box"><b>${en?'The event':'Majlis'}</b><span>${esc(fmtDate(o.date,o.lang))}</span><span>${esc(fmtTime(o.start,o.lang))} – ${esc(fmtTime(o.end,o.lang))}</span><span>${esc(o.venue)}</span></div><div class="np-ad">${en?'NOTICE: Nasi minyak, sirap bandung and good company. Free.':'IKLAN: Nasi minyak, sirap bandung dan kawan-kawan lama. Percuma.'}</div></div></div></section>`},
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),en=o.lang==='en';return `<div class="cover cv-akhbar linen"><${tag} class="np-fold tex" ${attr}><span class="np-top" style="display:flex"><span>${guest?`${L.dear} ${esc(guest)}`:(en?'Special edition':'Edisi istimewa')}</span><span>${esc(fmtShort(o.date))}</span></span><span class="np-mast" style="display:block">${en?'The Wedding Times':'Berita Kahwin'}</span><span class="np-head" style="display:block;font-size:24px">${esc(n1)} &amp; ${esc(n2)}</span><span class="caps" style="font-size:10px">${en?'Open invitation':'Buka Jemputan'}</span></${tag}></div>`}},
  vinyl:{ms:1300,
@@ -1305,7 +1318,7 @@ function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" va
 function FAMILY(f){
   // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
   if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
-  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts};
+  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts,custom:f.custom||{}};
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;
   f.themes.forEach(t=>{const th=T2(`${f.key}-${t.k}`,f.key,t.n,t.desc||`${t.n} ${f.meaning.toLowerCase()}`,{cover:t.c.accent,...t.c},t.extra||{});THEMES.push(th);THEME[th.id]=th});
@@ -5866,7 +5879,7 @@ const lsHush=(c,cls)=>`<div class="ls-hush ${cls}" style="--hb:${c.hb||2}px;--hd
 const lsPaint=c=>`<div class="ls-paint" style="background-image:url(${A}${c.paint});background-position:${c.pos||'center'};${c.tone?`filter:${c.tone}`:''}"></div>`;
 FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   blurb:'A landscape painting framed by cream lace paper with a die-cut scalloped edge, the names written over it in white script. The lace lifts away to open it.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{font:1,mono:1,mid:1},
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
     return `<section class="page pg-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>${lsHush(c,'h-mid')}<i class="ls-inset"></i>
       <div class="ls-mid">
@@ -5879,9 +5892,10 @@ FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   cover(o,th,L,guest,tag,attr){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en',lace=lsCoverLace();
     return `<div class="cover cv-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>
       ${lsHush(c,'h-top')}${lsHush(c,'h-foot')}<div class="ls-frame"><div class="ls-paper" style="-webkit-mask-image:${K.uri(lace.mask)};mask-image:${K.uri(lace.mask)}"></div>${lace.deco}</div>
-      <div class="ls-txt">
+      <div class="ls-txt${o.coverShow==='mono'?' mono-only':''}">
+        ${o.coverShow?`<p class="ls-mono" aria-hidden="${o.coverShow==='both'}">${monoHTML(o)}</p>`:''}
         <p class="ls-k">${ev(o,L)}</p>
-        <p class="ls-names">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
+        <p class="ls-names${o.coverShow==='mono'?' sr-only':''}">${esc(n1)}<span>&amp;</span>${esc(n2)}</p>
         <p class="ls-date">${esc(fmtShort(o.date)).replace(/\./g,' · ')}</p>
         ${o.venue?`<p class="ls-ven">${esc(o.venue)}</p>`:''}
       </div>
@@ -11798,4 +11812,4 @@ CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.f
 /* needFont() fonts are loaded by src/app/fonts.ts */
 
 
-export {ALL_EVENTS,PHOTO_DESIGNS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
+export {ALL_EVENTS,PHOTO_DESIGNS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,groomFirst,NAME_FONTS,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
