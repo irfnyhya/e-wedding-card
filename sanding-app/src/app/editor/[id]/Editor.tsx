@@ -355,6 +355,9 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                 </div></div></div>
               <div className="toggle-row"><Toggle label="Salam kaut" checked={c.x_gift} onChange={(v) => set('x_gift', v)} /><div className="body"><div className="top"><b>Salam kaut (money gift)</b>{tag('Permata')}</div>
                 <div className="fieldset" style={dim(c.x_gift)}>
+                  <div className="field full"><label htmlFor="f-giftmsg">Wording above the accounts (optional)</label>
+                    <textarea id="f-giftmsg" rows={3} maxLength={300} value={c.giftMsg || ''} placeholder={T[c.lang === 'en' ? 'en' : 'ms'].giftSub} onChange={(e) => set('giftMsg', e.target.value)} />
+                    <span className="hint">Leave empty to use the default wording shown here.</span></div>
                   <div className="field full"><span className="lbl">Accounts (up to 3)</span>
                     <div className="rows">
                       {c.gifts.map((g, i) => (

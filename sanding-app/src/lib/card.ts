@@ -21,7 +21,7 @@ export type Card = {
   x_wishes: boolean; x_music: boolean; music: string; ytMusic: string; ytStart: string;
   x_gallery: boolean; photos: string[];
   /** gifts[0] is mirrored into bank/accName/accNo for older renderers. */
-  x_gift: boolean; gifts: GiftAccount[]; bank: string; accName: string; accNo: string; qr: string;
+  x_gift: boolean; giftMsg: string; gifts: GiftAccount[]; bank: string; accName: string; accNo: string; qr: string;
   x_wishlist: boolean; wishlist: WishItem[];
   x_contacts: boolean; contacts: Contact[];
   x_guestlinks: boolean;
@@ -153,7 +153,7 @@ export function sanitizeCard(input: unknown): Card {
     x_counter: bool(o.x_counter), x_epass: bool(o.x_epass), x_side: bool(o.x_side),
     x_wishes: bool(o.x_wishes), x_music: bool(o.x_music), music: oneOf(o.music, MUSIC_IDS, 'sax'), ytMusic: ytLink(o.ytMusic), ytStart: str(o.ytStart, 8).replace(/[^\d:ms]/g, ''),
     x_gallery: bool(o.x_gallery), photos: arr(o.photos).map(mediaUrl).filter(Boolean).slice(0, 6),
-    x_gift: bool(o.x_gift), gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '', qr: mediaUrl(o.qr),
+    x_gift: bool(o.x_gift), giftMsg: str(o.giftMsg, 300).trim(), gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '', qr: mediaUrl(o.qr),
     x_wishlist: bool(o.x_wishlist),
     wishlist: arr(o.wishlist).slice(0, 12).map((w: Record<string, unknown>) => ({ name: str(w?.name, 80), price: str(w?.price, 20), link: linkUrl(w?.link) })),
     x_contacts: bool(o.x_contacts),
