@@ -172,11 +172,12 @@ function renderInvite(host,o,opts={}){
         <label for="r-phone-${uid}">${L.phone}</label><input id="r-phone-${uid}" name="phone" type="tel" maxlength="20" required>
         <div class="seg" role="group"><button type="button" data-att="yes" aria-pressed="true">${L.yes}</button><button type="button" data-att="no" aria-pressed="false">${L.no}</button></div>
         <div data-paxwrap><label for="r-pax-${uid}">${L.pax}</label><select id="r-pax-${uid}" name="pax">${Array.from({length:maxPax},(_,i)=>`<option>${i+1}</option>`).join('')}</select></div>
+        ${o.x_side&&L.side?`<label for="r-side-${uid}">${L.side}</label><select id="r-side-${uid}" name="side" required><option value="" disabled selected>${L.sidePick}</option><option value="groom">${L.sideGroom}</option><option value="bride">${L.sideBride}</option></select>`:''}
         ${L.note?`<label for="r-note-${uid}">${L.note}</label><input id="r-note-${uid}" name="note" maxlength="120" placeholder="${L.notePh}">`:''}
         <button class="submit">${L.send}</button><p class="note" data-rsvpnote hidden></p></form>`;
       const f=$('form',rsvpBox);let att='yes';
       $$('[data-att]',f).forEach(b=>b.addEventListener('click',()=>{att=b.dataset.att;$$('[data-att]',f).forEach(x=>x.setAttribute('aria-pressed',x===b));$('[data-paxwrap]',f).hidden=att==='no'}));
-      f.addEventListener('submit',async e=>{e.preventDefault();const note=$('[data-rsvpnote]',f);const fd=new FormData(f);const data={name:fd.get('name').trim(),phone:fd.get('phone').trim(),attending:att==='yes',pax:att==='yes'?+fd.get('pax'):0,note:String(fd.get('note')||'').trim(),guestLink:opts.guest||'',at:Date.now()};
+      f.addEventListener('submit',async e=>{e.preventDefault();const note=$('[data-rsvpnote]',f);const fd=new FormData(f);const data={name:fd.get('name').trim(),phone:fd.get('phone').trim(),attending:att==='yes',pax:att==='yes'?+fd.get('pax'):0,note:String(fd.get('note')||'').trim(),side:String(fd.get('side')||''),guestLink:opts.guest||'',at:Date.now()};
         if(!opts.onRsvp){note.hidden=false;note.textContent=L.previewNote;return}
         const btn=$('.submit',f);btn.disabled=true;
         try{const pass=await opts.onRsvp(data);rsvpBox.innerHTML=`<p class="note">${L.thanks(esc(data.name))}</p>`;if(data.attending)showPass(pass)}catch(err){btn.disabled=false;note.hidden=false;note.textContent=err.message||'Could not save.'}});

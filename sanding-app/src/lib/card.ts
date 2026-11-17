@@ -17,7 +17,7 @@ export type Card = {
   /** More sessions after the main one, each with its own date, time and venue (Maps/Waze). */
   events: EventItem[];
   schedule: ScheduleItem[];
-  x_rsvp: boolean; maxPax: number; deadline: string; x_counter: boolean; x_epass: boolean;
+  x_rsvp: boolean; maxPax: number; deadline: string; x_counter: boolean; x_epass: boolean; x_side: boolean;
   x_wishes: boolean; x_music: boolean; music: string; ytMusic: string; ytStart: string;
   x_gallery: boolean; photos: string[];
   /** gifts[0] is mirrored into bank/accName/accNo for older renderers. */
@@ -150,7 +150,7 @@ export function sanitizeCard(input: unknown): Card {
     events: sanitizeEvents(o.events),
     schedule: arr(o.schedule).slice(0, 12).map((s: Record<string, unknown>) => ({ time: hhmm(s?.time), label: str(s?.label, 80) })),
     x_rsvp: bool(o.x_rsvp), maxPax: Math.max(1, Math.min(20, Math.round(Number(o.maxPax) || 1))), deadline: isoDate(o.deadline),
-    x_counter: bool(o.x_counter), x_epass: bool(o.x_epass),
+    x_counter: bool(o.x_counter), x_epass: bool(o.x_epass), x_side: bool(o.x_side),
     x_wishes: bool(o.x_wishes), x_music: bool(o.x_music), music: oneOf(o.music, MUSIC_IDS, 'sax'), ytMusic: ytLink(o.ytMusic), ytStart: str(o.ytStart, 8).replace(/[^\d:ms]/g, ''),
     x_gallery: bool(o.x_gallery), photos: arr(o.photos).map(mediaUrl).filter(Boolean).slice(0, 6),
     x_gift: bool(o.x_gift), gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '', qr: mediaUrl(o.qr),

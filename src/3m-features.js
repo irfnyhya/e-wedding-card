@@ -6,10 +6,10 @@
 Object.assign(T.ms.ev,{tunang:'Majlis Pertunangan',nikah:'Majlis Akad Nikah'});
 Object.assign(T.en.ev,{tunang:'The Engagement of',nikah:'The Solemnisation of'});
 Object.assign(T.ms,{wl:'Senarai Hadiah',wlSub:'Jika ingin memberi hadiah, tempah satu supaya tiada hadiah yang sama.',reserve:'Tempah',reserved:'Sudah ditempah',yours:'Tempahan anda',cancel:'Batal',shop:'Lihat kedai',yourName:'Nama anda',confirm:'Sahkan',
-  call:'Telefon',appleCal:'Apple / Outlook',live:'Tonton siaran langsung',liveSub:'Tidak dapat hadir? Saksikan majlis secara langsung.',going:'Hadir',notGoing:'Tidak hadir',note:'Nota (pilihan)',notePh:'Contoh: kerusi roda, vegetarian',
+  call:'Telefon',appleCal:'Apple / Outlook',live:'Tonton siaran langsung',liveSub:'Tidak dapat hadir? Saksikan majlis secara langsung.',going:'Hadir',notGoing:'Tidak hadir',note:'Nota (pilihan)',notePh:'Contoh: kerusi roda, vegetarian',side:'Anda dari pihak?',sidePick:'Sila pilih',sideGroom:'Pihak lelaki',sideBride:'Pihak perempuan',
   pass:'Pas Tetamu',passSub:'Tunjukkan kod ini di kaunter penyambut tetamu.',paxN:n=>`${n} orang`,code:'Kod',savePass:'Simpan gambar pas'});
 Object.assign(T.en,{wl:'Gift Wishlist',wlSub:'If you would like to give a gift, reserve one so no two guests bring the same thing.',reserve:'Reserve',reserved:'Reserved',yours:'Your reservation',cancel:'Cancel',shop:'View shop',yourName:'Your name',confirm:'Confirm',
-  call:'Call',appleCal:'Apple / Outlook',live:'Watch the livestream',liveSub:'Can’t be there? Watch the ceremony live.',going:'Attending',notGoing:'Not attending',note:'Note (optional)',notePh:'E.g. wheelchair access, vegetarian',
+  call:'Call',appleCal:'Apple / Outlook',live:'Watch the livestream',liveSub:'Can’t be there? Watch the ceremony live.',going:'Attending',notGoing:'Not attending',note:'Note (optional)',notePh:'E.g. wheelchair access, vegetarian',side:'Which side are you from?',sidePick:'Please choose',sideGroom:'Groom’s side',sideBride:'Bride’s side',
   pass:'Guest Pass',passSub:'Show this code at the reception desk.',paxN:n=>`${n} ${n>1?'guests':'guest'}`,code:'Code',savePass:'Save pass image'});
 Object.assign(ICON,{
   callp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></svg>',

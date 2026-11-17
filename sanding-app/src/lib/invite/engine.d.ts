@@ -9,7 +9,7 @@ export type Theme = {
   c: Record<string, string>;
 };
 export type InviteWish = { id?: string; name: string; msg: string; at: number | string; hidden?: boolean };
-export type RsvpInput = { name: string; phone: string; attending: boolean; pax: number; note: string; guestLink: string; at: number };
+export type RsvpInput = { name: string; phone: string; attending: boolean; pax: number; note: string; side?: '' | 'bride' | 'groom'; guestLink: string; at: number };
 /** What onRsvp resolves with; the engine shows it as the guest's e-pass. */
 export type GuestPass = { name: string; pax: number; code: string; qr: string };
 export type Reserve = { id: string; name?: string };

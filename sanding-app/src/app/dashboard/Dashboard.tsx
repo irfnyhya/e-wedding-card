@@ -13,7 +13,7 @@ export type DashOrder = {
   /** True when a family member was given read access; the owner's controls are hidden. */
   shared: boolean;
 };
-type Rsvp = { id: string; name: string; phone: string; attending: boolean; pax: number; note: string; created_at: string; updated_at: string; guest_id: string | null };
+type Rsvp = { id: string; name: string; phone: string; attending: boolean; pax: number; note: string; side?: string; created_at: string; updated_at: string; guest_id: string | null };
 type Reserve = { item_key: string; name: string; item: string; at: string };
 type Tab = 'rsvp' | 'wishes' | 'wishlist' | 'checkin' | 'links' | 'family';
 type Member = { id: string; email: string; created_at: string; accepted_at: string | null };
@@ -59,7 +59,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
   const load = useCallback(async (id: string) => {
     const sb = supabaseBrowser();
     const [r, w, g, res, ci, v] = await Promise.all([
-      sb.from('rsvps').select('id, name, phone, attending, pax, note, created_at, updated_at, guest_id').eq('order_id', id).order('updated_at', { ascending: false }),
+      sb.from('rsvps').select('*').eq('order_id', id).order('updated_at', { ascending: false }),
       sb.from('wishes').select('id, name, msg, hidden, created_at').eq('order_id', id).order('created_at', { ascending: false }),
       sb.from('guests').select('id, token, name, sort').eq('order_id', id).order('sort'),
       sb.from('reserves').select('item_key, name, item, at').eq('order_id', id),
@@ -120,6 +120,9 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
   const yes = rsvps.filter((r) => r.attending), no = rsvps.filter((r) => !r.attending);
   const pax = yes.reduce((s, r) => s + (r.pax || 0), 0);
   const tot = rsvps.length || 1;
+  const sides = !!o?.content.x_side || rsvps.some((r) => r.side);
+  const sidePax = (s: string) => yes.filter((r) => r.side === s).reduce((n, r) => n + (r.pax || 0), 0);
+  const sideLabel = (s?: string) => (s === 'groom' ? 'Groom’s side' : s === 'bride' ? 'Bride’s side' : '—');
   const days = o ? Math.ceil((new Date(o.content.date + 'T00:00:00+08:00').getTime() - now) / 864e5) : 0;
   const diraja = o?.package === 'diraja';
   const guestLinks = rank(o?.package) >= 1; // Permata and up
@@ -250,7 +253,7 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
           <div className="meter" role="img" aria-label={`${yes.length} attending, ${no.length} not attending`}>
             <i style={{ width: `${rsvps.length ? (yes.length / tot) * 100 : 0}%`, background: 'var(--ok)' }} /><i style={{ width: `${rsvps.length ? (no.length / tot) * 100 : 0}%`, background: 'var(--danger)' }} />
           </div>
-          <p className="muted" style={{ fontSize: 12, marginTop: 6 }}>{rsvps.length} replies{o.content.deadline ? ` · RSVP closes ${fmtDate(o.content.deadline, 'en', false)}` : ''}{o.content.maxPax ? ` · up to ${o.content.maxPax} pax each` : ''}{o.valid_until ? ` · online until ${new Date(o.valid_until).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}</p>
+          <p className="muted" style={{ fontSize: 12, marginTop: 6 }}>{rsvps.length} replies{o.content.deadline ? ` · RSVP closes ${fmtDate(o.content.deadline, 'en', false)}` : ''}{o.content.maxPax ? ` · up to ${o.content.maxPax} pax each` : ''}{sides ? ` · groom’s side ${sidePax('groom')} pax, bride’s side ${sidePax('bride')} pax` : ''}{o.valid_until ? ` · online until ${new Date(o.valid_until).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}</p>
         </div>
 
         <div className="tabs" role="tablist">
@@ -269,8 +272,8 @@ export default function Dashboard({ orders: initial, initialId }: { orders: Dash
               {diraja && rsvps.length ? <a className="btn btn-ghost btn-sm" href={`/api/orders/${o.id}/rsvps.csv`} download>Export CSV</a> : <button className="btn btn-ghost btn-sm" disabled>Export CSV</button>}</span>
           </div>
           {rsvps.length ? <div className="tbl-wrap"><table>
-            <thead><tr><th>Name</th><th>Phone</th><th>Reply</th><th style={{ textAlign: 'right' }}>Pax</th><th>Note</th><th>Via link</th><th>Received</th><th /></tr></thead>
-            <tbody>{rsvps.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.phone}</td><td><span className={`pill ${r.attending ? 'yes' : 'no'}`}>{r.attending ? 'Attending' : 'Can’t attend'}</span></td><td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{r.attending ? r.pax : '—'}</td><td className="wrap-cell">{r.note || '—'}</td><td>{guestName(r.guest_id)}</td><td>{when(r.updated_at || r.created_at)}</td>
+            <thead><tr><th>Name</th><th>Phone</th><th>Reply</th><th style={{ textAlign: 'right' }}>Pax</th>{sides && <th>Side</th>}<th>Note</th><th>Via link</th><th>Received</th><th /></tr></thead>
+            <tbody>{rsvps.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.phone}</td><td><span className={`pill ${r.attending ? 'yes' : 'no'}`}>{r.attending ? 'Attending' : 'Can’t attend'}</span></td><td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{r.attending ? r.pax : '—'}</td>{sides && <td>{sideLabel(r.side)}</td>}<td className="wrap-cell">{r.note || '—'}</td><td>{guestName(r.guest_id)}</td><td>{when(r.updated_at || r.created_at)}</td>
               <td>{diraja && r.attending && o.slug ? <a className="btn btn-ghost btn-sm" href={remindUrl(o, r)} target="_blank" rel="noopener">Remind</a> : null}</td></tr>)}</tbody>
           </table></div> : <div className="empty"><b>No replies yet</b><p className="muted" style={{ maxWidth: '44ch' }}>{o.status === 'live' ? 'Replies appear here as soon as guests send them from the card. Open the card and send a test reply to see it.' : 'Publish the card to start collecting replies.'}</p></div>}
         </>}

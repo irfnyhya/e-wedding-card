@@ -20,10 +20,15 @@ export async function POST(req: NextRequest, ctx: RouteContext<'/api/i/[slug]/rs
   const name = String(b.name || '').trim(), phone = String(b.phone || '').trim();
   if (!name || name.length > 60) return fail('Please enter your name.');
   if (phone.length < 6 || phone.length > 20) return fail(MSG.phone[0]);
-  const { data, error } = await supabaseAdmin().rpc('submit_rsvp', {
+  const side = b.side === 'bride' || b.side === 'groom' ? b.side : '';
+  // p_side only when the guest picked one, so cards without the question keep using the older function signature
+  const args = {
     p_slug: slug, p_guest_token: String(b.guest || ''), p_name: name, p_phone: phone,
     p_attending: !!b.attending, p_pax: Number(b.pax) || 0, p_note: String(b.note || '').slice(0, 120), p_ip_hash: ipHash(req),
-  });
+  };
+  let { data, error } = await supabaseAdmin().rpc('submit_rsvp', side ? { ...args, p_side: side } : args);
+  // Before the rsvp_side migration runs there is no p_side overload: save the reply without the side.
+  if (error && side && error.code === 'PGRST202') ({ data, error } = await supabaseAdmin().rpc('submit_rsvp', args));
   if (error) { console.error(error); return fail('Could not save. Please try again.', 500); }
   if (data?.error) { const [m, s] = MSG[data.error] || ['Could not save.', 400]; return fail(m, s); }
   return json({ ok: true, pass: { name, pax: data.pax, code: rsvpCode(data.id), qr: `SANDING:${slug}:${data.id}` } });

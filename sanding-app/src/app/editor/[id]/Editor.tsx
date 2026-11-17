@@ -332,6 +332,7 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                   <div className="field"><label htmlFor="f-dl">RSVP closes on</label><input type="date" id="f-dl" value={c.deadline} onChange={(e) => set('deadline', e.target.value)} /></div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, ...dim(c.x_rsvp) }}>
+                  <label className="check"><input type="checkbox" checked={c.x_side} onChange={(e) => set('x_side', e.target.checked)} /> Ask guests which side they are from, groom’s or bride’s (for a combined majlis)</label>
                   <label className="check"><input type="checkbox" checked={c.x_counter} onChange={(e) => set('x_counter', e.target.checked)} /> Show the live count of guests attending on the card {tag('Permata')}</label>
                   <label className="check"><input type="checkbox" checked={c.x_epass} onChange={(e) => set('x_epass', e.target.checked)} /> Give each attending guest an e-pass with a QR code for check-in {tag('Diraja')}</label>
                 </div></div></div>
