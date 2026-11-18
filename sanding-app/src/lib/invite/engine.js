@@ -3555,7 +3555,7 @@ FAMILY({key:'gerbang',name:'Gerbang',meaning:'Carved gateway',
     const sc=$('.scroller',el);
     $$('[data-go]',el).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const s=$(`[data-s="${a.dataset.go}"]`,el);if(s&&sc)sc.scrollTo({top:s.offsetTop+s.offsetParent.offsetTop-10,behavior:'smooth'})}))},
   themes:[
-    gbT('gading','Gading','Golden teak gateway, gilt carving','#2e231a','#5a4130','#e6c98c'),
+    gbT('gading','Gading','Golden teak gateway, gilt carving','#2e231a','#5a4130','#efd6a0'),
     gbT('nila','Nila','Indigo-stained gateway, gilt carving','#141b2e','#253556','#e2c88e'),
     gbT('marun','Marun','Maroon lacquered gateway, gilt carving','#3a1018','#5e1b26','#e6c58a'),
     gbT('zamrud','Zamrud','Emerald lacquered gateway, gilt carving','#0c241c','#18402f','#e2c88c'),
