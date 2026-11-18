@@ -70,3 +70,5 @@
 .fam-tekan .count b{font-family:"Pinyon Script",cursive;font-size:36px}
 .fam-tekan .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .tekan-wrap,.inv .cv-tekan{transition:none}}
+/* the second event label: a hint of the accent over the ink, since hitam and lumut have pale accents on light paper */
+.inv.fam-tekan .sec .more-lb{color:color-mix(in srgb,var(--accent) 40%,var(--ink))!important;opacity:1!important}

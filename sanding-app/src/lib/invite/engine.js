@@ -1370,15 +1370,25 @@ const over=(f,b,a)=>[0,1,2].map(i=>f[i]*a+b[i]*(1-a));
 const bgLayers=im=>{const out=[];let d=0,st=0;for(let i=0;i<im.length;i++){const ch=im[i];if(ch==='(')d++;else if(ch===')')d--;else if(ch===','&&!d){out.push(im.slice(st,i).trim());st=i+1}}out.push(im.slice(st).trim());return out};
 function bgBehind(e,stop){const layers=[];
   const done=base=>{let v=base;for(let i=layers.length-1;i>=0;i--)v=over(layers[i],v,layers[i][3]);return v};
-  for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){const cs=getComputedStyle(p),im=cs.backgroundImage;
-    if(im!=='none')for(const l of bgLayers(im)){
-      if(/^url\(/.test(l)){if(/\/assets\//.test(l))continue;return null}
+  // one painted surface: its gradient/picture layers, then its colour; true when it is solid (the answer is found)
+  let found=null;
+  const surface=cs=>{const im=cs.backgroundImage;
+    if(im&&im!=='none')for(const l of bgLayers(im)){
+      if(/^url\(/.test(l)){if(/\/assets\//.test(l))continue;found='photo';return true}
       const st=(l.match(/(?:rgba?|color)\([^()]*\)/g)||[]).map(rgbaOf);if(!st.length)continue;
       const A=st.reduce((t,x)=>t+x[3],0),av=A?[0,1,2].map(i=>st.reduce((t,x)=>t+x[i]*x[3],0)/A).concat(A/st.length):[0,0,0,0];
-      if(av[3]>=.95)return done(av.slice(0,3));if(av[3]>.02)layers.push(av)}
-    const c=rgbaOf(cs.backgroundColor);if(c[3]>=.95)return done(c.slice(0,3));if(c[3]>.02)layers.push(c)}
+      if(av[3]>=.95){found=done(av.slice(0,3));return true}if(av[3]>.02)layers.push(av)}
+    const c=rgbaOf(cs.backgroundColor);if(c[3]>=.95){found=done(c.slice(0,3));return true}if(c[3]>.02)layers.push(c);return false};
+  for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){
+    // a full-size ::before/::after panel (how several designs draw their paper) is painted between the box and its text
+    if(p!==e)for(const ps of ['::after','::before']){const q=getComputedStyle(p,ps);
+      if(q.content==='none'||!/absolute|fixed/.test(q.position)||+q.opacity<.5||parseFloat(q.width)<p.clientWidth*.8)continue;
+      if(surface(q))return found==='photo'?null:found}
+    if(surface(getComputedStyle(p)))return found==='photo'?null:found}
   return null}
-const CG_PARTS=[['foot','.foot'],['wlp','.wl-t span'],['wlb','.wl-t b'],['lab','form label'],['mlb','.more-lb'],['sub','.submit'],['res','.wl-a .ibtn.solid']];
+const CG_PARTS=[['foot','.foot'],['wlp','.wl-t span'],['wlb','.wl-t b'],['lab','form label'],['mlb','.more-lb'],['sub','.submit'],['res','.wl-a .ibtn.solid'],['tog','.lang-tog button[aria-pressed="true"]'],['seg','.seg button[aria-pressed="true"]']];
+// buttons filled with the accent: when even white or black text cannot pass, the fill is deepened instead
+const CG_FILLED=new Set(['sub','res','tog','seg']);
 function contrastGuard(el){let tries=0;
   const check=()=>{for(const [k,sel] of CG_PARTS){
       // every copy of the part is measured (a reserved wishlist row has its own tint) and the worst one decides
@@ -1398,7 +1408,11 @@ function contrastGuard(el){let tries=0;
       const dark=lumOf(base)<lumOf(bg);let fix=ratioOf(base,bg)>=goal?base:null;
       for(let t=.05;!fix&&t<=1.0001;t+=.05){const c=dark?base.map(x=>x*(1-t)):base.map(x=>x+(255-x)*t);if(ratioOf(c,bg)>=goal)fix=c}
       if(!fix)fix=dark?[0,0,0]:[255,255,255];
-      el.style.setProperty('--fx-'+k,`rgb(${fix.map(Math.round).join(',')})`);el.classList.add('fx-'+k)}};
+      const css=c=>`rgb(${c.map(Math.round).join(',')})`;
+      el.style.setProperty('--fx-'+k,css(fix));el.classList.add('fx-'+k);
+      if(CG_FILLED.has(k)&&ratioOf(fix,bg)<goal){let f2=null;
+        for(let t=.05;!f2&&t<=1.0001;t+=.05){const c=dark?bg.map(x=>x+(255-x)*t):bg.map(x=>x*(1-t));if(ratioOf(fix,c)>=goal)f2=c}
+        if(f2){el.style.setProperty('--fx-'+k+'bg',css(f2));el.classList.add('fx-'+k+'bg')}}}};
   // the card is measured once it is on the page, and again when late parts (the wishlist) have been drawn
   const wait=()=>{if(el.isConnected){try{check();setTimeout(()=>{if(el.isConnected)try{check()}catch(e){}},1500)}catch(e){console.warn('contrast',e)}return}
     if(++tries<200)setTimeout(wait,50)};

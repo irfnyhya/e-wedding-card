@@ -28,13 +28,13 @@
 .inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
-.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:3px;gap:2px;border-radius:999px;
+.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:0;gap:0;border-radius:999px;
   background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.inv .lang-tog button{min-width:40px;height:30px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
-  font:600 11px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button{min-width:48px;height:44px;padding:0 12px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 12px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
 .inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
 .inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.inv.has-lang .music-btn{right:112px}
+.inv.has-lang .music-btn{right:120px}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
@@ -63,7 +63,7 @@
 .inv .wl-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dotted var(--line);text-align:left}
 .inv .wl-t{min-width:0;display:flex;flex-direction:column;gap:2px}
 .inv .wl-t b{font-weight:400;font-size:16px;line-height:1.25}
-.inv .wl-t span{font-size:12px;opacity:.7;letter-spacing:.06em}
+.inv .wl-t span{font-size:12px;opacity:.85;letter-spacing:.06em}
 .inv .wl-a{display:flex;gap:6px;align-items:center;flex:0 0 auto}
 .inv .wl-a .ibtn{padding:7px 11px;font-size:12px}
 .inv .wl-item.taken .wl-t b{text-decoration:line-through;text-decoration-thickness:1px;opacity:.55}

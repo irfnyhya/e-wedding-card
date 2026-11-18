@@ -160,7 +160,7 @@
 .inv .gallery img{width:100%;aspect-ratio:3/4;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .inv .gallery img:first-child:nth-last-child(odd){grid-column:1/-1;aspect-ratio:4/3}
 .inv form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;text-align:left}
-.inv form label{font-family:var(--d);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
+.inv form label{font-family:var(--d);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.9}
 .inv form input,.inv form select,.inv form textarea{width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-family:var(--b);font-size:16px;border-radius:0}
 .inv form textarea{border:1px solid var(--line);padding:10px}
 .inv form input:focus,.inv form select:focus,.inv form textarea:focus{outline:none;border-color:var(--accent)}
@@ -201,12 +201,23 @@
 .inv form label,.inv .more-lb,.inv .wl-st,.inv .wl-tag{font-size:12px!important}
 .inv .submit{font-size:13px!important}
 .inv .wl-t span{font-size:13px!important}
-.inv.fx-foot .foot{color:var(--fx-foot)!important;opacity:1!important}
+/* the "Kad digital oleh Sanding" line is a small tag in the design's own paper and ink, so it reads on any background
+   (photos, patterns, wood) the card puts behind it */
+.inv .foot{display:block!important;width:fit-content!important;max-width:calc(100% - 32px);margin:28px auto 34px!important;padding:8px 16px!important;
+  border-radius:999px;background:var(--sheet)!important;color:var(--ink)!important;border:1px solid var(--line);opacity:1!important;text-shadow:none!important;line-height:1.4}
+.inv.fx-foot .foot{color:var(--fx-foot)!important}
 .inv.fx-wlp .wl-t span{color:var(--fx-wlp)!important;opacity:1!important}
 .inv.fx-wlb .wl-t b{color:var(--fx-wlb)!important}
 .inv.fx-lab form label{color:var(--fx-lab)!important;opacity:1!important}
 .inv.fx-mlb .more-lb{color:var(--fx-mlb)!important;opacity:1!important}
 .inv.fx-sub .submit,.inv.fx-sub .seg button[aria-pressed="true"]{color:var(--fx-sub)!important}
+.inv.fx-subbg .submit,.inv.fx-subbg .seg button[aria-pressed="true"]{background:var(--fx-subbg)!important;border-color:var(--fx-subbg)!important}
+.inv.fx-resbg .wl-a .ibtn.solid{background:var(--fx-resbg)!important;border-color:var(--fx-resbg)!important}
+.inv.fx-tog .lang-tog button[aria-pressed="true"]{color:var(--fx-tog)!important}
+.inv.fx-togbg .lang-tog button[aria-pressed="true"]{background:var(--fx-togbg)!important}
+/* the chosen RSVP answer has its own fill on some designs, so it is checked on its own (after the Hantar rules, so it wins) */
+.inv.fx-seg .seg button[aria-pressed="true"]{color:var(--fx-seg)!important}
+.inv.fx-segbg .seg button[aria-pressed="true"]{background:var(--fx-segbg)!important;border-color:var(--fx-segbg)!important}
 .inv.fx-res .wl-a .ibtn.solid{color:var(--fx-res)!important}
 @media (prefers-reduced-motion: reduce){.inv .reveal{animation:none}.inv .env-flap,.inv .door,.inv .cv-ukiran,.inv .env-card{transition:none}.inv .music-btn.playing svg{animation:none}}
 </style>

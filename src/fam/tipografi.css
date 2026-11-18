@@ -77,3 +77,5 @@
 .fam-tipografi .foot{color:var(--ink)}
 @media (prefers-reduced-motion: reduce){.inv .ty-sheet{transition:none}}
 .fam-tipografi button.submit{font-size:12.5px;letter-spacing:.22em}
+/* wishlist prices at full strength: the reserved row tint left them just short on champagne */
+.inv.fam-tipografi .wl-t span{opacity:1!important}

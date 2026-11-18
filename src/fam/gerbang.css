@@ -75,3 +75,5 @@
 .fam-gerbang .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .gb-stage{transition:none}}
 .fam-gerbang .dock svg{color:var(--accent)}
+/* cream on the lighter woods (gading, terakota) fell just short: the small RSVP and wishlist text is white, at full strength */
+.fam-gerbang form label,.fam-gerbang .wl-t b,.fam-gerbang .wl-t span,.fam-gerbang .more-lb,.fam-gerbang .seg button:not([aria-pressed="true"]){color:#fff!important;opacity:1!important;text-shadow:0 1px 2px rgba(0,0,0,.45)}

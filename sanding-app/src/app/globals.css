@@ -525,7 +525,7 @@ tr:last-child td{border-bottom:0}
 .inv .gallery img{width:100%;aspect-ratio:3/4;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .inv .gallery img:first-child:nth-last-child(odd){grid-column:1/-1;aspect-ratio:4/3}
 .inv form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;text-align:left}
-.inv form label{font-family:var(--d);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
+.inv form label{font-family:var(--d);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.9}
 .inv form input,.inv form select,.inv form textarea{width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-family:var(--b);font-size:16px;border-radius:0}
 .inv form textarea{border:1px solid var(--line);padding:10px}
 .inv form input:focus,.inv form select:focus,.inv form textarea:focus{outline:none;border-color:var(--accent)}
@@ -566,12 +566,23 @@ tr:last-child td{border-bottom:0}
 .inv form label,.inv .more-lb,.inv .wl-st,.inv .wl-tag{font-size:12px!important}
 .inv .submit{font-size:13px!important}
 .inv .wl-t span{font-size:13px!important}
-.inv.fx-foot .foot{color:var(--fx-foot)!important;opacity:1!important}
+/* the "Kad digital oleh Sanding" line is a small tag in the design's own paper and ink, so it reads on any background
+   (photos, patterns, wood) the card puts behind it */
+.inv .foot{display:block!important;width:fit-content!important;max-width:calc(100% - 32px);margin:28px auto 34px!important;padding:8px 16px!important;
+  border-radius:999px;background:var(--sheet)!important;color:var(--ink)!important;border:1px solid var(--line);opacity:1!important;text-shadow:none!important;line-height:1.4}
+.inv.fx-foot .foot{color:var(--fx-foot)!important}
 .inv.fx-wlp .wl-t span{color:var(--fx-wlp)!important;opacity:1!important}
 .inv.fx-wlb .wl-t b{color:var(--fx-wlb)!important}
 .inv.fx-lab form label{color:var(--fx-lab)!important;opacity:1!important}
 .inv.fx-mlb .more-lb{color:var(--fx-mlb)!important;opacity:1!important}
 .inv.fx-sub .submit,.inv.fx-sub .seg button[aria-pressed="true"]{color:var(--fx-sub)!important}
+.inv.fx-subbg .submit,.inv.fx-subbg .seg button[aria-pressed="true"]{background:var(--fx-subbg)!important;border-color:var(--fx-subbg)!important}
+.inv.fx-resbg .wl-a .ibtn.solid{background:var(--fx-resbg)!important;border-color:var(--fx-resbg)!important}
+.inv.fx-tog .lang-tog button[aria-pressed="true"]{color:var(--fx-tog)!important}
+.inv.fx-togbg .lang-tog button[aria-pressed="true"]{background:var(--fx-togbg)!important}
+/* the chosen RSVP answer has its own fill on some designs, so it is checked on its own (after the Hantar rules, so it wins) */
+.inv.fx-seg .seg button[aria-pressed="true"]{color:var(--fx-seg)!important}
+.inv.fx-segbg .seg button[aria-pressed="true"]{background:var(--fx-segbg)!important;border-color:var(--fx-segbg)!important}
 .inv.fx-res .wl-a .ibtn.solid{color:var(--fx-res)!important}
 @media (prefers-reduced-motion: reduce){.inv .reveal{animation:none}.inv .env-flap,.inv .door,.inv .cv-ukiran,.inv .env-card{transition:none}.inv .music-btn.playing svg{animation:none}}
 
@@ -1329,6 +1340,7 @@ tr:last-child td{border-bottom:0}
 .fam-foto .info,.fam-foto .info>div{border-color:#3a3734}
 .fam-foto .ibtn,.fam-foto .seg button,.fam-foto form input,.fam-foto form select,.fam-foto form textarea{color:#efe9df;border-color:#4a4643}
 .fam-foto .submit{background:#efe9df;color:#141312}
+.inv.fam-foto .more-lb{color:#efe9df}
 .fam-foto .ibtns{justify-content:flex-start}
 .fam-foto .spread{width:100%;aspect-ratio:1.5;background-size:cover;background-position:center;filter:grayscale(.2)}
 
@@ -1499,6 +1511,8 @@ tr:last-child td{border-bottom:0}
 .fam-tekat .info b,.fam-tekat .count b{color:var(--gold)}
 .fam-tekat .ibtn,.fam-tekat .seg button,.fam-tekat form input,.fam-tekat form select,.fam-tekat form textarea{color:#efe6d4;border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
 .fam-tekat .submit{background:var(--gold);color:var(--ground)}
+.fam-tekat .seg button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--ground)}
+.inv.fam-tekat .more-lb{color:var(--gold)}
 
 /* label: apothecary labels on a dark ground */
 .fam-label .scroller{background:var(--ground)}
@@ -1806,13 +1820,13 @@ tr:last-child td{border-bottom:0}
 .inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
-.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:3px;gap:2px;border-radius:999px;
+.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:0;gap:0;border-radius:999px;
   background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.inv .lang-tog button{min-width:40px;height:30px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
-  font:600 11px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button{min-width:48px;height:44px;padding:0 12px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 12px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
 .inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
 .inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.inv.has-lang .music-btn{right:112px}
+.inv.has-lang .music-btn{right:120px}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1841,7 +1855,7 @@ tr:last-child td{border-bottom:0}
 .inv .wl-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dotted var(--line);text-align:left}
 .inv .wl-t{min-width:0;display:flex;flex-direction:column;gap:2px}
 .inv .wl-t b{font-weight:400;font-size:16px;line-height:1.25}
-.inv .wl-t span{font-size:12px;opacity:.7;letter-spacing:.06em}
+.inv .wl-t span{font-size:12px;opacity:.85;letter-spacing:.06em}
 .inv .wl-a{display:flex;gap:6px;align-items:center;flex:0 0 auto}
 .inv .wl-a .ibtn{padding:7px 11px;font-size:12px}
 .inv .wl-item.taken .wl-t b{text-decoration:line-through;text-decoration-thickness:1px;opacity:.55}
@@ -4387,6 +4401,8 @@ tr:last-child td{border-bottom:0}
 .fam-gerbang .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .gb-stage{transition:none}}
 .fam-gerbang .dock svg{color:var(--accent)}
+/* cream on the lighter woods (gading, terakota) fell just short: the small RSVP and wishlist text is white, at full strength */
+.fam-gerbang form label,.fam-gerbang .wl-t b,.fam-gerbang .wl-t span,.fam-gerbang .more-lb,.fam-gerbang .seg button:not([aria-pressed="true"]){color:#fff!important;opacity:1!important;text-shadow:0 1px 2px rgba(0,0,0,.45)}
 
 /* ===== herb (redesign) ===== */
 .inv .hb2-table{position:absolute;inset:0;background:radial-gradient(ellipse 85% 60% at 45% 35%,rgba(255,255,255,.18),transparent 70%),radial-gradient(ellipse 100% 60% at 50% 115%,rgba(0,0,0,.18),transparent 70%),var(--ground)}
@@ -12162,6 +12178,8 @@ tr:last-child td{border-bottom:0}
 .fam-tekan .count b{font-family:"Pinyon Script",cursive;font-size:36px}
 .fam-tekan .foot{color:var(--pagefg)}
 @media (prefers-reduced-motion: reduce){.inv .tekan-wrap,.inv .cv-tekan{transition:none}}
+/* the second event label: a hint of the accent over the ink, since hitam and lumut have pale accents on light paper */
+.inv.fam-tekan .sec .more-lb{color:color-mix(in srgb,var(--accent) 40%,var(--ink))!important;opacity:1!important}
 
 /* ===== telegram (redesign) ===== */
 /* linen desk cloth with a soft pool of light */
@@ -12956,6 +12974,8 @@ tr:last-child td{border-bottom:0}
 .fam-tipografi .foot{color:var(--ink)}
 @media (prefers-reduced-motion: reduce){.inv .ty-sheet{transition:none}}
 .fam-tipografi button.submit{font-size:12.5px;letter-spacing:.22em}
+/* wishlist prices at full strength: the reserved row tint left them just short on champagne */
+.inv.fam-tipografi .wl-t span{opacity:1!important}
 
 /* ===== tirai: painted folding screen ===== */
 .inv .tr-wall{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 25% 10%,rgba(255,250,235,.45),transparent 65%),linear-gradient(180deg,transparent 60%,rgba(0,0,0,.08)),var(--ground)}
