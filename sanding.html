@@ -2141,13 +2141,15 @@ tr:last-child td{border-bottom:0}
 .inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
-.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:0;gap:0;border-radius:999px;
+.inv .lang-tog{position:absolute;top:21px;right:14px;z-index:40;display:flex;padding:2px;gap:2px;border-radius:999px;
   background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.inv .lang-tog button{min-width:48px;height:44px;padding:0 12px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
-  font:600 12px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button{position:relative;min-width:32px;height:26px;padding:0 8px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 10.5px/1 "Jost",system-ui,sans-serif;letter-spacing:.1em}
+/* small to look at, 44px tall to tap */
+.inv .lang-tog button::after{content:"";position:absolute;inset:-9px -1px}
 .inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
 .inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.inv.has-lang .music-btn{right:120px}
+.inv.has-lang .music-btn{right:96px!important}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
@@ -25843,7 +25845,7 @@ if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.h
   const at=q.get('at')||'cover';
   const st=document.createElement('style');st.textContent='#inv-root .inv-overlay{right:auto!important;width:390px!important;max-width:390px!important}';document.head.appendChild(st);
   addEventListener('DOMContentLoaded',()=>setTimeout(async()=>{
-    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
+    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side,x_lang:q.get('xl')==='1'},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
     if(at==='cover')return;
     await new Promise(r=>setTimeout(r,300));document.querySelector('#inv-root [data-open]')?.click();
     const inv=document.querySelector('#inv-root .inv');

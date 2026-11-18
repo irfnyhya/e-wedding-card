@@ -18,7 +18,7 @@ if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.h
   const at=q.get('at')||'cover';
   const st=document.createElement('style');st.textContent='#inv-root .inv-overlay{right:auto!important;width:390px!important;max-width:390px!important}';document.head.appendChild(st);
   addEventListener('DOMContentLoaded',()=>setTimeout(async()=>{
-    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
+    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side,x_lang:q.get('xl')==='1'},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
     if(at==='cover')return;
     await new Promise(r=>setTimeout(r,300));document.querySelector('#inv-root [data-open]')?.click();
     const inv=document.querySelector('#inv-root .inv');
