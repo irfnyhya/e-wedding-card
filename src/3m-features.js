@@ -188,27 +188,45 @@ function rgbaOf(c){if(_rgbC.has(c))return _rgbC.get(c);let v=null;
 const lumOf=([r,g,b])=>{const f=x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4};return .2126*f(r)+.7152*f(g)+.0722*f(b)};
 const ratioOf=(a,b)=>{const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
 const over=(f,b,a)=>[0,1,2].map(i=>f[i]*a+b[i]*(1-a));
-// the colour behind e: its own background, or the nearest ancestor's; null when a picture is in the way
-function bgBehind(e,stop){for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){const cs=getComputedStyle(p),c=rgbaOf(cs.backgroundColor);
-    if(c[3]>=.5)return c.slice(0,3);if(cs.backgroundImage!=='none')return null}
+// the colour behind e: the nearest solid background, with any see-through colours and gradients on the way laid over it
+// (a gradient counts as the average of its colours, the site's own paper textures are ignored); null when a photo is in the way
+const bgLayers=im=>{const out=[];let d=0,st=0;for(let i=0;i<im.length;i++){const ch=im[i];if(ch==='(')d++;else if(ch===')')d--;else if(ch===','&&!d){out.push(im.slice(st,i).trim());st=i+1}}out.push(im.slice(st).trim());return out};
+function bgBehind(e,stop){const layers=[];
+  const done=base=>{let v=base;for(let i=layers.length-1;i>=0;i--)v=over(layers[i],v,layers[i][3]);return v};
+  for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){const cs=getComputedStyle(p),im=cs.backgroundImage;
+    if(im!=='none')for(const l of bgLayers(im)){
+      if(/^url\(/.test(l)){if(/\/assets\//.test(l))continue;return null}
+      const st=(l.match(/(?:rgba?|color)\([^()]*\)/g)||[]).map(rgbaOf);if(!st.length)continue;
+      const A=st.reduce((t,x)=>t+x[3],0),av=A?[0,1,2].map(i=>st.reduce((t,x)=>t+x[i]*x[3],0)/A).concat(A/st.length):[0,0,0,0];
+      if(av[3]>=.95)return done(av.slice(0,3));if(av[3]>.02)layers.push(av)}
+    const c=rgbaOf(cs.backgroundColor);if(c[3]>=.95)return done(c.slice(0,3));if(c[3]>.02)layers.push(c)}
   return null}
 const CG_PARTS=[['foot','.foot'],['wlp','.wl-t span'],['wlb','.wl-t b'],['lab','form label'],['mlb','.more-lb'],['sub','.submit'],['res','.wl-a .ibtn.solid']];
 function contrastGuard(el){let tries=0;
-  const check=()=>{for(const [k,sel] of CG_PARTS){const e=el.querySelector(sel);if(!e||!e.textContent.trim())continue;
-      const cs=getComputedStyle(e),bg=bgBehind(e,el);if(!bg)continue;
-      const fc=rgbaOf(cs.color),fs=parseFloat(cs.fontSize),big=fs>=24||(fs>=18.66&&+cs.fontWeight>=700),need=big?3:4.5;
-      // the part's own fade counts (the footer is drawn at 55%), but not a reveal animation that is still running
-      const op=e.getAnimations&&e.getAnimations().length?1:+cs.opacity,a=fc[3]*op;
-      if(ratioOf(over(fc,bg,a),bg)>=need)continue;
-      const base=fc.slice(0,3);let fix=ratioOf(base,bg)>=need?base:null;
-      for(let t=.05;!fix&&t<=1.0001;t+=.05){const dk=base.map(x=>x*(1-t)),lt=base.map(x=>x+(255-x)*t);
-        const rd=ratioOf(dk,bg),rl=ratioOf(lt,bg);if(rd>=need||rl>=need)fix=rd>=rl?dk:lt}
-      if(!fix)fix=lumOf(bg)>.18?[0,0,0]:[255,255,255];
+  const check=()=>{for(const [k,sel] of CG_PARTS){
+      // every copy of the part is measured (a reserved wishlist row has its own tint) and the worst one decides
+      let w=null;for(const e of el.querySelectorAll(sel)){if(!e.textContent.trim())continue;
+        const cs=getComputedStyle(e),bg=bgBehind(e,el);if(!bg)continue;
+        const fc=rgbaOf(cs.color),fs=parseFloat(cs.fontSize),big=fs>=24||(fs>=18.66&&+cs.fontWeight>=700),need=big?3:4.5;
+        // the part's own fade counts (the footer is drawn at 55%), but not a reveal animation that is still running
+        const op=e.getAnimations&&e.getAnimations().length?1:+cs.opacity,r=ratioOf(over(fc,bg,fc[3]*op),bg)-need;
+        if(!w||r<w.r)w={r,bg,fc,need}}
+      if(!w)continue;const {bg,fc,need}=w;
+      // well over the line, since the colour measured here is the box's and the paper textures darken it a little
+      if(w.r>=1)continue;
+      const base=fc.slice(0,3),goal=need+1.1;
+      // text and box almost the same colour means something else (a picture, an overlay) is really behind the text: leave it
+      if(ratioOf(base,bg)<1.5)continue;
+      // only ever push the text further the way it already stands out: dark text darker, light text lighter
+      const dark=lumOf(base)<lumOf(bg);let fix=ratioOf(base,bg)>=goal?base:null;
+      for(let t=.05;!fix&&t<=1.0001;t+=.05){const c=dark?base.map(x=>x*(1-t)):base.map(x=>x+(255-x)*t);if(ratioOf(c,bg)>=goal)fix=c}
+      if(!fix)fix=dark?[0,0,0]:[255,255,255];
       el.style.setProperty('--fx-'+k,`rgb(${fix.map(Math.round).join(',')})`);el.classList.add('fx-'+k)}};
   // the card is measured once it is on the page, and again when late parts (the wishlist) have been drawn
   const wait=()=>{if(el.isConnected){try{check();setTimeout(()=>{if(el.isConnected)try{check()}catch(e){}},1500)}catch(e){console.warn('contrast',e)}return}
-    if(++tries<240)requestAnimationFrame(wait)};
-  if(typeof requestAnimationFrame!=='undefined')requestAnimationFrame(wait)}
+    if(++tries<200)setTimeout(wait,50)};
+  // a timer, not an animation frame: frames do not run in a background tab, and the card must be right when it is shown
+  setTimeout(wait,30)}
 /* the .ics button works in every mode */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;const inv=b.closest('.inv');const o=inv&&inv.__order;if(!o)return;saveFile(`majlis-${o.slug||'sanding'}.ics`,icsText(o),'text/calendar')});
 
