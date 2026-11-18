@@ -128,7 +128,7 @@ function renderInvite(host,o,opts={}){
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
   const cu=fam.custom||{},nfo=coverOk(th.fam,'font')&&NAME_FONTS[o.nameFont];
   if(nfo){el.classList.add('nf','nf-'+nfo[2]);el.style.setProperty('--nf',nfo[1])}
-  const mfo=NAME_FONTS[o.monoFont];if(mfo){el.classList.add('mf','mf-'+mfo[2]);el.style.setProperty('--mf',mfo[1])}
+  const mfo=NAME_FONTS[o.monoFont];if(mfo){el.classList.add('mf','mf-'+mfo[2]);el.style.setProperty('--mf',mfo[1]);el.style.setProperty('--mf1',mfo[1].split(',')[0])}
   if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
   el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');else if(o.monoRing==='thin'||o.monoRing==='bold')el.classList.add('mono-'+o.monoRing);
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
