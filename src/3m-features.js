@@ -169,7 +169,46 @@ function FEATURES(el,o,th,L,mode,opts){
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
   if(mode!=='thumb'&&o.effect&&o.effect!=='none')requestAnimationFrame(()=>runEffect(el,o.effect,o.effect==='kelopak'?(th.c.accent||'#b5475d'):th.c.gold));
+  if(mode!=='thumb')contrastGuard(el);
 }
+
+/* ================= contrast guard =================
+   The shared parts (footer, wishlist, form labels, second event label, solid buttons) take each design's colours,
+   and on some colourways they came out too faint to read (UI/UX audit, Nov 2026). Once the card is on the page,
+   each part's text is checked against the colour behind it; one that fails WCAG (4.5:1, or 3:1 for large text)
+   gets its own colour pushed darker or lighter just until it passes, so it keeps the design's tone.
+   Parts sitting on a picture with no background colour are left alone: there is no colour to measure. */
+const _cvx=typeof document!=='undefined'?document.createElement('canvas').getContext('2d',{willReadFrequently:true}):null,_rgbC=new Map();
+function rgbaOf(c){if(_rgbC.has(c))return _rgbC.get(c);let v=null;
+  const m=/^rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)$/.exec(c);
+  if(m)v=[+m[1],+m[2],+m[3],m[4]==null?1:+m[4]];
+  else if(_cvx&&c&&c!=='transparent'){_cvx.clearRect(0,0,1,1);_cvx.fillStyle='#000';_cvx.fillStyle=c;_cvx.fillRect(0,0,1,1);const d=_cvx.getImageData(0,0,1,1).data;v=[d[0],d[1],d[2],d[3]/255]}
+  else v=[0,0,0,0];
+  _rgbC.set(c,v);return v}
+const lumOf=([r,g,b])=>{const f=x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4};return .2126*f(r)+.7152*f(g)+.0722*f(b)};
+const ratioOf=(a,b)=>{const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const over=(f,b,a)=>[0,1,2].map(i=>f[i]*a+b[i]*(1-a));
+// the colour behind e: its own background, or the nearest ancestor's; null when a picture is in the way
+function bgBehind(e,stop){for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){const cs=getComputedStyle(p),c=rgbaOf(cs.backgroundColor);
+    if(c[3]>=.5)return c.slice(0,3);if(cs.backgroundImage!=='none')return null}
+  return null}
+const CG_PARTS=[['foot','.foot'],['wlp','.wl-t span'],['wlb','.wl-t b'],['lab','form label'],['mlb','.more-lb'],['sub','.submit'],['res','.wl-a .ibtn.solid']];
+function contrastGuard(el){let tries=0;
+  const check=()=>{for(const [k,sel] of CG_PARTS){const e=el.querySelector(sel);if(!e||!e.textContent.trim())continue;
+      const cs=getComputedStyle(e),bg=bgBehind(e,el);if(!bg)continue;
+      const fc=rgbaOf(cs.color),fs=parseFloat(cs.fontSize),big=fs>=24||(fs>=18.66&&+cs.fontWeight>=700),need=big?3:4.5;
+      // the part's own fade counts (the footer is drawn at 55%), but not a reveal animation that is still running
+      const op=e.getAnimations&&e.getAnimations().length?1:+cs.opacity,a=fc[3]*op;
+      if(ratioOf(over(fc,bg,a),bg)>=need)continue;
+      const base=fc.slice(0,3);let fix=ratioOf(base,bg)>=need?base:null;
+      for(let t=.05;!fix&&t<=1.0001;t+=.05){const dk=base.map(x=>x*(1-t)),lt=base.map(x=>x+(255-x)*t);
+        const rd=ratioOf(dk,bg),rl=ratioOf(lt,bg);if(rd>=need||rl>=need)fix=rd>=rl?dk:lt}
+      if(!fix)fix=lumOf(bg)>.18?[0,0,0]:[255,255,255];
+      el.style.setProperty('--fx-'+k,`rgb(${fix.map(Math.round).join(',')})`);el.classList.add('fx-'+k)}};
+  // the card is measured once it is on the page, and again when late parts (the wishlist) have been drawn
+  const wait=()=>{if(el.isConnected){try{check();setTimeout(()=>{if(el.isConnected)try{check()}catch(e){}},1500)}catch(e){console.warn('contrast',e)}return}
+    if(++tries<240)requestAnimationFrame(wait)};
+  if(typeof requestAnimationFrame!=='undefined')requestAnimationFrame(wait)}
 /* the .ics button works in every mode */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;const inv=b.closest('.inv');const o=inv&&inv.__order;if(!o)return;saveFile(`majlis-${o.slug||'sanding'}.ics`,icsText(o),'text/calendar')});
 

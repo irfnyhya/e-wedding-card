@@ -75,17 +75,61 @@ function moreEvHTML(o,L){return moreEvents(o).map(e=>`<div class="more-ev" data-
 </div>`).join('')}
 const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-lb">${esc(label)}</p>`:''}<p><b style="font-weight:400;font-size:18px">${esc(e.venue)}</b><br><span class="small">${esc(e.address)}</span></p><div class="ibtns"><a class="ibtn solid" href="${mapsUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn solid" href="${wazeUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a></div></div>`;
 
+/* ================= cover options on any design =================
+   Finds the couple's names wherever the design drew them, so no family needs its own code:
+   the name font (each name resized to the width the design gave it), the monogram, and the wording centred. */
+function nameEls(root,o){const [a,b]=coverNames(o).map(s=>String(s||'').replace(/\s+/g,' ').trim());if(!a||!b)return[];
+  const out=[],w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){const t=n.nodeValue.replace(/\s+/g,' ').trim();if(!t)continue;
+    if(t===a||t===b||(t.length<=a.length+b.length+9&&t.startsWith(a)&&t.endsWith(b))){const p=n.parentElement;
+      if(p&&!out.includes(p)&&!p.closest('.cv-mono,button,[data-open],.to-line,title,desc'))out.push(p)}}
+  return out}
+const lca=(x,y)=>{for(let p=x;p;p=p.parentElement)if(p.contains(y))return p;return null};
+// the smallest box holding one pair of names (and the & between), or null
+function namesBlock(els,cover){if(!els.length)return null;const e0=els[0],other=els.find(e=>e!==e0&&!e0.contains(e)&&!e.contains(e0));
+  if(!other)return e0;const c=lca(e0,other);if(!c||c===cover||!cover.contains(c))return e0;
+  const rest=els.reduce((t,e)=>c.contains(e)?t.replace(e.textContent,''):t,c.textContent).replace(/\s+/g,'');
+  return rest.length<=5?c:e0}
+function fitFont(els){ // keep each name the width the design gave it, within reason
+  els.forEach(e=>{if(e.dataset.nfw)return;const r=document.createRange();r.selectNodeContents(e);e.dataset.nfw=r.getBoundingClientRect().width||0});
+  return els.map(e=>()=>{const w0=+e.dataset.nfw;if(!w0)return;const r=document.createRange();r.selectNodeContents(e);const w1=r.getBoundingClientRect().width;if(!w1)return;
+    const f=Math.max(.55,Math.min(1.7,w0/w1));if(Math.abs(f-1)<.04)return;const fs=parseFloat(getComputedStyle(e).fontSize);e.style.fontSize=(fs*f).toFixed(1)+'px'})}
+function applyCoverOpts(el,o,fam,key){const cu=fam.custom||{},cover=$('.cover',el),nf=coverOk(key,'font')&&NAME_FONTS[o.nameFont];
+  // name font: on the cover and the card's front page
+  if(nf){const els=[...(cover?nameEls(cover,o):[]),...nameEls($('.scroller > .page',el)||document.createElement('i'),o)];
+    const fits=()=>{fitFont(els);els.forEach(e=>e.classList.add('cv-n'));fitFont(els).forEach(f=>f())};
+    // measure in the design's own font first, then in the chosen one; both must be loaded for the widths to mean anything
+    const fam1=nf[1].split(',')[0];Promise.all([document.fonts.ready,document.fonts.load(`40px ${fam1}`)]).then(()=>requestAnimationFrame(()=>{
+      els.forEach(e=>e.classList.remove('cv-n'));fitFont(els);els.forEach(e=>e.classList.add('cv-n'));fitFont(els).forEach(f=>f())})).catch(()=>els.forEach(e=>e.classList.add('cv-n')))}
+  if(!cover)return;
+  const els=nameEls(cover,o),blk=namesBlock(els,cover);
+  // monogram
+  if(o.coverShow&&!cu.mono&&coverOk(key,'mono')&&blk){const has=[...cover.querySelectorAll('.mono,.monogram,[class*="mono"]')].some(e=>e.offsetWidth);
+    if(!has){const m=document.createElement('span');m.className='cv-mono'+(o.coverShow==='mono'?' solo':'');m.setAttribute('aria-hidden','true');m.innerHTML=monoHTML(o);
+      if(blk.closest('svg'))cover.appendChild(m),m.classList.add('float');else blk.before(m)}
+    if(o.coverShow==='mono'){const hide=blk.closest('svg')?els:[blk];hide.forEach(e=>e.classList.add('cv-gone'))}}
+  // wording in the middle: move the absolutely placed text box holding the names, unless that would sit on the open button
+  if(o.coverPos==='mid'&&!cu.mid&&coverOk(key,'mid')&&blk){let t=blk.closest('svg')?null:blk;
+    while(t&&t!==cover&&getComputedStyle(t).position!=='absolute')t=t.parentElement;
+    if(t&&t!==cover&&t.offsetHeight<cover.offsetHeight*.8){const before=t.getAttribute('style')||'';
+      t.style.top='50%';t.style.bottom='auto';t.style.translate='0 -50%';
+      const btn=$('[data-open]',cover)||$('.open,[class*="open"]',cover),a=t.getBoundingClientRect(),b=btn?.getBoundingClientRect();
+      if(b&&b.height&&!(t.contains(btn))&&a.bottom>b.top-6&&a.top<b.bottom)t.setAttribute('style',before)}}}
+
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
+  // a guest who switched language keeps it when they come back to the same card in this tab
+  if(o.x_lang&&opts.mode==='live'&&!opts.relang&&(o.slug||o.id)){try{const l=sessionStorage.getItem('sanding-lang-'+(o.slug||o.id));if(l==='en'||l==='ms')o={...o,lang:l}}catch(e){}}
   const mode=opts.mode||'preview',L=copyFor(o),th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
   if(o.useAccent&&o.accent){c.accent=o.accent}
-  const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
+  const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam}${o.x_lang&&mode!=='thumb'?' has-lang':''} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
-  const cu=fam.custom||{},nfo=cu.font&&NAME_FONTS[o.nameFont];
-  if(nfo){el.classList.add('nf');el.style.setProperty('--nf',nfo[1]);el.style.setProperty('--nfs',nfo[2])}
+  const cu=fam.custom||{},nfo=coverOk(th.fam,'font')&&NAME_FONTS[o.nameFont];
+  if(nfo){el.classList.add('nf','nf-'+nfo[2]);el.style.setProperty('--nf',nfo[1])}
   if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
+  el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 
@@ -133,11 +177,13 @@ function renderInvite(host,o,opts={}){
    <nav class="dock" style="grid-template-columns:repeat(${dock.length},1fr)">${dock.map(([k,ic,lb])=>`<button type="button" data-dock="${k}">${ic}<span>${lb}</span></button>`).join('')}</nav>
   </div>
   ${coverHTML(o,th,L,guest,mode)}
-  ${o.x_music&&(o.music||ytIdOf(o.ytMusic))?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}`;
+  ${o.x_music&&(o.music||ytIdOf(o.ytMusic))?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}
+  ${o.x_lang?`<div class="lang-tog" role="group" aria-label="${o.lang==='en'?'Language':'Bahasa'}"><button type="button" data-lang="ms" aria-pressed="${o.lang!=='en'}">BM</button><button type="button" data-lang="en" aria-pressed="${o.lang==='en'}">EN</button></div>`:''}`;
   host.replaceChildren(el);
   const scroller=$('.scroller',el);
   el.__order=o;try{typeof FEATURES!=='undefined'&&FEATURES(el,o,th,L,mode,opts)}catch(e){console.warn('features',e)}
   el.classList.add('skin');try{typeof SKINS!=='undefined'&&SKINS[th.fam]&&SKINS[th.fam](el,o,th,L,mode)}catch(e){console.warn('skin',th.fam,e)}
+  try{applyCoverOpts(el,o,fam,th.fam)}catch(e){console.warn('cover options',th.fam,e)}
   try{typeof IMMERSIVE!=='undefined'&&IMMERSIVE(el,o,th,mode)}catch(e){console.warn('immersive',e)}
   const musicBtn=$('[data-music]',el);
   const yt=o.x_music&&mode!=='thumb'?Tube.attach(el,ytIdOf(o.ytMusic),ytStartOf(o.ytStart)):null;
@@ -150,7 +196,13 @@ function renderInvite(host,o,opts={}){
     if(th.fam==='sampul'){timers.push(setTimeout(()=>el.classList.add('card-out'),950),setTimeout(()=>el.classList.add('opened'),2100))}
     else timers.push(setTimeout(()=>el.classList.add('opened'),FAM2[th.fam]?.ms||(th.fam==='mihrab'?1250:1000)));};
   $('[data-open]',el)?.addEventListener('click',()=>open(false));
-  if(mode==='preview'&&opts.opened)open(true);
+  if((mode==='preview'||opts.relang)&&opts.opened)open(true);
+  // guests switch BM / EN: the same card drawn again in the other language, still open and at the same place.
+  // The couple's own wording stays as they wrote it.
+  $$('[data-lang]',el).forEach(b=>b.addEventListener('click',()=>{const lang=b.dataset.lang;if(lang===(o.lang==='en'?'en':'ms'))return;
+    const wasOpen=el.classList.contains('opening'),top=scroller?scroller.scrollTop:0;if(o.slug||o.id)try{sessionStorage.setItem('sanding-lang-'+(o.slug||o.id),lang)}catch(e){}
+    timers.forEach(clearTimeout);const nu=renderInvite(host,{...o,lang},{...opts,opened:wasOpen,relang:true,autoplay:false});
+    const sc=nu&&$('.scroller',nu);if(sc&&top){let n=0;const put=()=>{sc.style.scrollBehavior='auto';sc.scrollTop=top;if(Math.abs(sc.scrollTop-top)>2&&++n<30)setTimeout(put,40);else{sc.style.scrollBehavior='';sc.dispatchEvent(new Event('scroll'))}};put()}}));
   musicBtn?.addEventListener('click',()=>{songOn()?stopSong():playSong();setMusicIcon()});
   el.reopen=()=>{timers.forEach(clearTimeout);el.classList.remove('opening','card-out','opened');scroller.scrollTop=0};
   // countdown

@@ -502,7 +502,8 @@ tr:last-child td{border-bottom:0}
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
-              <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
+              <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select>
+                <label class="check" style="margin-top:8px"><input type="checkbox" name="x_lang" id="x-lang"> Let guests switch between BM and English</label><span class="hint">Your own wording stays as you wrote it.</span></div>
               <div class="field"><label for="f-jawi">Monogram initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="Empty = default (first letters of your names)">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
@@ -519,6 +520,8 @@ tr:last-child td{border-bottom:0}
               <div class="fieldset">
                 <div class="field" data-cu="font"><label for="f-nameFont">Font for your names</label><select id="f-nameFont" name="nameFont"></select></div>
                 <div class="field" data-cu="mono"><label for="f-coverShow">On the cover</label><select id="f-coverShow" name="coverShow"><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>
+                <div class="field" data-mono-opt><label for="f-monoSize">Monogram size</label><select id="f-monoSize" name="monoSize"><option value="s">Small</option><option value="">Medium</option><option value="l">Large</option><option value="xl">Extra large</option></select></div>
+                <div class="field" data-mono-opt><label for="f-monoRing">Ring around the monogram</label><select id="f-monoRing" name="monoRing"><option value="">With ring</option><option value="none">No ring</option></select></div>
                 <div class="field" data-cu="mid"><label for="f-coverPos">Wording position</label><select id="f-coverPos" name="coverPos"><option value="">As designed</option><option value="mid">Centre</option></select></div>
               </div></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Use your own design</b><span class="tag brass">+RM10</span></div><p class="muted" style="font-size:13px">Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p><div class="uploads" id="own-upload"></div></div></div>
@@ -861,8 +864,8 @@ tr:last-child td{border-bottom:0}
 .inv .dock{position:sticky;bottom:0;z-index:20;display:grid;background:color-mix(in srgb,var(--sheet) 90%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .inv .dock button{background:none;border:0;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;letter-spacing:.08em;color:var(--ink);cursor:pointer;font-family:var(--b)}
 .inv .dock svg{width:18px;height:18px;color:var(--accent)}
-.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.inv .music-btn svg{width:17px;height:17px}
+.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.inv .music-btn svg{width:19px;height:19px}
 .inv .music-btn.playing svg{animation:spin 5s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .inv .sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;display:flex;align-items:flex-end}
@@ -872,6 +875,19 @@ tr:last-child td{border-bottom:0}
 .inv .reveal.d1{animation-delay:.15s}.inv .reveal.d2{animation-delay:.3s}.inv .reveal.d3{animation-delay:.45s}
 @keyframes rise{from{transform:translateY(12px);opacity:.001}to{transform:none;opacity:1}}
 .inv.thumb .reveal{animation:none}
+/* readable on every design (UI/UX audit, Nov 2026): the shared parts never go below 12px, whatever a family sets.
+   Colours that fail contrast on a design are corrected per card by contrastGuard() in 3m-features.js (the .fx-* rules). */
+.inv .dock button{font-size:12px!important;letter-spacing:.03em!important}
+.inv form label,.inv .more-lb,.inv .wl-st,.inv .wl-tag{font-size:12px!important}
+.inv .submit{font-size:13px!important}
+.inv .wl-t span{font-size:13px!important}
+.inv.fx-foot .foot{color:var(--fx-foot)!important;opacity:1!important}
+.inv.fx-wlp .wl-t span{color:var(--fx-wlp)!important;opacity:1!important}
+.inv.fx-wlb .wl-t b{color:var(--fx-wlb)!important}
+.inv.fx-lab form label{color:var(--fx-lab)!important;opacity:1!important}
+.inv.fx-mlb .more-lb{color:var(--fx-mlb)!important;opacity:1!important}
+.inv.fx-sub .submit,.inv.fx-sub .seg button[aria-pressed="true"]{color:var(--fx-sub)!important}
+.inv.fx-res .wl-a .ibtn.solid{color:var(--fx-res)!important}
 @media (prefers-reduced-motion: reduce){.inv .reveal{animation:none}.inv .env-flap,.inv .door,.inv .cv-ukiran,.inv .env-card{transition:none}.inv .music-btn.playing svg{animation:none}}
 </style>
 <style>
@@ -2100,6 +2116,24 @@ tr:last-child td{border-bottom:0}
 /* safety net: once a card has opened, no cover may stay on top of the page */
 .inv.opened > .cover{opacity:0!important;pointer-events:none!important;transition:opacity .5s!important}
 .inv .fx{position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none}
+.inv.nf .cv-n{font-family:var(--nf)!important}
+.inv.nf-s .cv-n{font-style:normal!important;font-weight:400!important;letter-spacing:normal!important;text-transform:none!important}
+.inv .cv-gone{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
+.inv .cv-mono{display:flex;align-items:center;justify-content:center;flex:none;width:calc(clamp(78px,24cqi,104px)*var(--ms,1));aspect-ratio:1;border-radius:50%;margin:0 auto 12px;
+  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 75%,transparent);box-shadow:0 0 0 4px transparent,0 0 0 5px color-mix(in srgb,currentColor 35%,transparent)}
+.inv .cv-mono i{font-family:var(--d,"Cormorant Garamond"),serif;font-style:italic;font-size:.42em;margin:0 .12em}
+.inv .cv-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,var(--s)),serif;font-size:.6em;white-space:nowrap}
+.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
+.inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
+.inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:3px;gap:2px;border-radius:999px;
+  background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.inv .lang-tog button{min-width:40px;height:30px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 11px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inv.has-lang .music-btn{right:112px}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
@@ -7296,15 +7330,13 @@ tr:last-child td{border-bottom:0}
 .fam-lanskap .seg button[aria-pressed="true"],.fam-lanskap button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
 .fam-lanskap .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lanskap .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
-/* per-card options: name font, monogram on the cover, wording centred */
-.inv.nf .ls-names{font-family:var(--nf);font-size:calc(clamp(58px,18cqi,74px)*var(--nfs))}
-.inv.nf .pg-lanskap .ls-names{font-size:calc(clamp(64px,20cqi,82px)*var(--nfs))}
-.inv .ls-mono{width:clamp(96px,30cqi,120px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
-  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--nfs,1));line-height:1;color:#fffdf8;
+/* per-card options: its own monogram and centring (the name font is generic) */
+.inv .ls-mono{width:calc(clamp(96px,30cqi,120px)*var(--ms,1));aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
+  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--ms,1));line-height:1;color:#fffdf8;
   border:1px solid rgba(255,253,248,.85);box-shadow:0 0 0 5px rgba(255,253,248,0),0 0 0 6px rgba(255,253,248,.5),0 4px 22px rgba(20,15,10,.25);background:rgba(20,15,10,.08)}
 .inv .ls-mono i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:0 .12em;align-self:center}
 .inv .ls-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,"Italianno"),serif;font-size:.62em;white-space:nowrap}
-.inv .ls-txt.mono-only .ls-mono{width:clamp(140px,44cqi,176px);font-size:calc(clamp(66px,20cqi,82px)*var(--nfs,1));margin:16px 0 20px}
+.inv .ls-txt.mono-only .ls-mono{width:calc(clamp(140px,44cqi,176px)*var(--ms,1));font-size:calc(clamp(66px,20cqi,82px)*var(--ms,1));margin:16px 0 20px}
 .inv .ls-txt.mono-only .ls-k{order:-1;margin-bottom:22px}
 .inv.cv-mid .ls-txt{top:10%;bottom:27%;justify-content:center}
 .inv.cv-mid .cv-lanskap .ls-hush.h-top{top:20%}
@@ -14111,12 +14143,24 @@ const mapsUrl=o=>`https://www.google.com/maps/search/?api=1&query=${encodeURICom
 const wazeUrl=o=>`https://waze.com/ul?q=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}&navigate=yes`;
 const groomFirst=o=>o.side==='couple'?o.nameOrder==='groom':o.side==='groom'; // nameOrder only applies to a combined majlis
 const coverNames=o=>groomFirst(o)?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
-/* per-card cover options, for families that opt in with FAMILY({custom:{font,mono,mid}}):
-   nameFont (a key below), coverShow ''|'mono'|'both', coverPos ''|'mid'. Every font here is already loaded by some family.
-   [label, css family, size relative to the design's own script] */
-const NAME_FONTS={greatvibes:['Great Vibes',"'Great Vibes',cursive",.74],pinyon:['Pinyon Script',"'Pinyon Script',cursive",.6],parisienne:['Parisienne',"'Parisienne',cursive",.7],
-  allura:['Allura',"'Allura',cursive",.84],alexbrush:['Alex Brush',"'Alex Brush',cursive",.78],playfair:['Playfair Display',"'Playfair Display',serif",.52],
-  cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",.6],cinzel:['Cinzel',"'Cinzel',serif",.42]};
+/* per-card cover options, on every design: nameFont (a key below), coverShow ''|'both'|'mono', coverPos ''|'mid'.
+   Applied after render by applyCoverOpts (3d-render.js); a family that draws its own monogram or centring opts out
+   with FAMILY({custom:{mono:1,mid:1}}). Every font here is already loaded by some family, so none costs a download.
+   [label, css family, kind: s = script, r = classic] */
+const NAME_FONTS={italianno:['Italianno',"'Italianno',cursive",'s'],greatvibes:['Great Vibes',"'Great Vibes',cursive",'s'],pinyon:['Pinyon Script',"'Pinyon Script',cursive",'s'],
+  parisienne:['Parisienne',"'Parisienne',cursive",'s'],allura:['Allura',"'Allura',cursive",'s'],alexbrush:['Alex Brush',"'Alex Brush',cursive",'s'],
+  sacramento:['Sacramento',"'Sacramento',cursive",'s'],monsieur:['Monsieur La Doulaise',"'Monsieur La Doulaise',cursive",'s'],
+  mrssaint:['Mrs Saint Delafield',"'Mrs Saint Delafield',cursive",'s'],homemade:['Homemade Apple',"'Homemade Apple',cursive",'s'],
+  playfair:['Playfair Display',"'Playfair Display',serif",'r'],cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",'r'],cinzel:['Cinzel',"'Cinzel',serif",'r'],
+  bodoni:['Bodoni Moda',"'Bodoni Moda',serif",'r'],marcellus:['Marcellus',"'Marcellus',serif",'r'],italiana:['Italiana',"'Italiana',serif",'r'],
+  instrument:['Instrument Serif',"'Instrument Serif',serif",'r'],fraunces:['Fraunces',"'Fraunces',serif",'r'],imfell:['IM Fell English',"'IM Fell English',serif",'r'],
+  poiret:['Poiret One',"'Poiret One',sans-serif",'r']};
+// Which designs take each cover option: checked on every design with tools/card-audit.mjs --cover-only --q "...":
+// the monogram fully visible and clear of other text, centring that actually moves the wording without
+// running into anything, and the names found and still clear in another font. Families with their own
+// (custom) monogram or centring are always in.
+const COVER_OK={font:new Set('akhbar akrilik akuarel alhambra anggur angsa anyaman azulejo bahagia baroque batik bauhaus bingkai buku bulan bungaraya bungatelur catur cermin chinoiserie debos deco dongeng editorial foto garis gerbang herb hibiskus hutan inai istana iznik jam jianzhi jubin kaca kalendar kaligrafi kalkir kampung kaset kerang kering kerongsang kertas kipas kolam komik konservatori kotak kraft kubah kunci label ladang lakaran lanskap lengkung lentera liar lili lilin lukisan majalah mancis marmar mawarhitam merak mihrab monogram monoline mughal muzium neon nouveau origami pasport pawagam payung pelamin peranakan pergola permaidani peta piksel pisang popup poskad pulau qandil quilling rama renda renda2 resit retro rimba riso rococo sakura sampul santorini satin sianotip silangkata sireh skrol songket sutera taman tasik teh tekan tekat tembikar tenun tezhip tiket timbul tingkap tipografi tirai tropika tulle ukiran vinyl warkah washi wau wayang'.split(' ')),mono:new Set('anyaman bulan bungatelur catur cermin chinoiserie dongeng herb hibiskus hutan inai jianzhi jubin kaca kaligrafi kampung kastil kerang kering kerongsang kertas kipas komik konservatori kubah kunci ladang lengkung lentera lukisan marmar mawarhitam merak mihrab monoline mughal muzium neon origami orkid pawagam payung pelamin peranakan pisang renda renda2 resit retro rimba riso sakura santorini satin sianotip sireh skrol tasik teh tekan telegram tembikar timbul tingkap tipografi tirai tulle ukiran washi wau wayang'.split(' ')),mid:new Set('anggur anyaman batik bungaraya catair catur cermin debos deco dongeng gerbang herb hutan jubin kaca kaligrafi kampung kastil kerang kerongsang kertas kolam komik konservatori kubah kunci ladang lakaran lanskap lengkung lili lilin lukisan marmar merak mihrab muzium nouveau orkid pawagam payung pelamin permaidani piksel pisang popup qandil renda renda2 resit riso rococo sakura satin sianotip songket taman tasik teh tekan tekat tembikar tezhip timbul tingkap tirai ukiran vinyl wau wayang'.split(' '))};
+const coverOk=(fam,opt)=>!!(FAMILIES[fam]?.custom?.[opt]||COVER_OK[opt].has(fam));
 // the couple's monogram as HTML: their own initials (o.jawi, any script) or the first letters of the cover names
 const monoHTML=o=>{const own=String(o.jawi||'').trim();if(own)return `<span class="mono-own" dir="auto">${esc(own)}</span>`;
   const [a,b]=coverNames(o);return `${esc(((a||'A').trim()[0]||'A').toUpperCase())}<i>&amp;</i>${esc(((b||'A').trim()[0]||'A').toUpperCase())}`};
@@ -14261,17 +14305,61 @@ function moreEvHTML(o,L){return moreEvents(o).map(e=>`<div class="more-ev" data-
 </div>`).join('')}
 const locItem=(e,L,label)=>`<div class="loc-item">${label?`<p class="caps more-lb">${esc(label)}</p>`:''}<p><b style="font-weight:400;font-size:18px">${esc(e.venue)}</b><br><span class="small">${esc(e.address)}</span></p><div class="ibtns"><a class="ibtn solid" href="${mapsUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.maps}</a><a class="ibtn solid" href="${wazeUrl(e)}" target="_blank" rel="noopener">${ICON.pin}${L.waze}</a></div></div>`;
 
+/* ================= cover options on any design =================
+   Finds the couple's names wherever the design drew them, so no family needs its own code:
+   the name font (each name resized to the width the design gave it), the monogram, and the wording centred. */
+function nameEls(root,o){const [a,b]=coverNames(o).map(s=>String(s||'').replace(/\s+/g,' ').trim());if(!a||!b)return[];
+  const out=[],w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){const t=n.nodeValue.replace(/\s+/g,' ').trim();if(!t)continue;
+    if(t===a||t===b||(t.length<=a.length+b.length+9&&t.startsWith(a)&&t.endsWith(b))){const p=n.parentElement;
+      if(p&&!out.includes(p)&&!p.closest('.cv-mono,button,[data-open],.to-line,title,desc'))out.push(p)}}
+  return out}
+const lca=(x,y)=>{for(let p=x;p;p=p.parentElement)if(p.contains(y))return p;return null};
+// the smallest box holding one pair of names (and the & between), or null
+function namesBlock(els,cover){if(!els.length)return null;const e0=els[0],other=els.find(e=>e!==e0&&!e0.contains(e)&&!e.contains(e0));
+  if(!other)return e0;const c=lca(e0,other);if(!c||c===cover||!cover.contains(c))return e0;
+  const rest=els.reduce((t,e)=>c.contains(e)?t.replace(e.textContent,''):t,c.textContent).replace(/\s+/g,'');
+  return rest.length<=5?c:e0}
+function fitFont(els){ // keep each name the width the design gave it, within reason
+  els.forEach(e=>{if(e.dataset.nfw)return;const r=document.createRange();r.selectNodeContents(e);e.dataset.nfw=r.getBoundingClientRect().width||0});
+  return els.map(e=>()=>{const w0=+e.dataset.nfw;if(!w0)return;const r=document.createRange();r.selectNodeContents(e);const w1=r.getBoundingClientRect().width;if(!w1)return;
+    const f=Math.max(.55,Math.min(1.7,w0/w1));if(Math.abs(f-1)<.04)return;const fs=parseFloat(getComputedStyle(e).fontSize);e.style.fontSize=(fs*f).toFixed(1)+'px'})}
+function applyCoverOpts(el,o,fam,key){const cu=fam.custom||{},cover=$('.cover',el),nf=coverOk(key,'font')&&NAME_FONTS[o.nameFont];
+  // name font: on the cover and the card's front page
+  if(nf){const els=[...(cover?nameEls(cover,o):[]),...nameEls($('.scroller > .page',el)||document.createElement('i'),o)];
+    const fits=()=>{fitFont(els);els.forEach(e=>e.classList.add('cv-n'));fitFont(els).forEach(f=>f())};
+    // measure in the design's own font first, then in the chosen one; both must be loaded for the widths to mean anything
+    const fam1=nf[1].split(',')[0];Promise.all([document.fonts.ready,document.fonts.load(`40px ${fam1}`)]).then(()=>requestAnimationFrame(()=>{
+      els.forEach(e=>e.classList.remove('cv-n'));fitFont(els);els.forEach(e=>e.classList.add('cv-n'));fitFont(els).forEach(f=>f())})).catch(()=>els.forEach(e=>e.classList.add('cv-n')))}
+  if(!cover)return;
+  const els=nameEls(cover,o),blk=namesBlock(els,cover);
+  // monogram
+  if(o.coverShow&&!cu.mono&&coverOk(key,'mono')&&blk){const has=[...cover.querySelectorAll('.mono,.monogram,[class*="mono"]')].some(e=>e.offsetWidth);
+    if(!has){const m=document.createElement('span');m.className='cv-mono'+(o.coverShow==='mono'?' solo':'');m.setAttribute('aria-hidden','true');m.innerHTML=monoHTML(o);
+      if(blk.closest('svg'))cover.appendChild(m),m.classList.add('float');else blk.before(m)}
+    if(o.coverShow==='mono'){const hide=blk.closest('svg')?els:[blk];hide.forEach(e=>e.classList.add('cv-gone'))}}
+  // wording in the middle: move the absolutely placed text box holding the names, unless that would sit on the open button
+  if(o.coverPos==='mid'&&!cu.mid&&coverOk(key,'mid')&&blk){let t=blk.closest('svg')?null:blk;
+    while(t&&t!==cover&&getComputedStyle(t).position!=='absolute')t=t.parentElement;
+    if(t&&t!==cover&&t.offsetHeight<cover.offsetHeight*.8){const before=t.getAttribute('style')||'';
+      t.style.top='50%';t.style.bottom='auto';t.style.translate='0 -50%';
+      const btn=$('[data-open]',cover)||$('.open,[class*="open"]',cover),a=t.getBoundingClientRect(),b=btn?.getBoundingClientRect();
+      if(b&&b.height&&!(t.contains(btn))&&a.bottom>b.top-6&&a.top<b.bottom)t.setAttribute('style',before)}}}
+
 /* ================= invitation renderer =================
    mode: 'thumb' (front only, static) | 'preview' (editor/gallery, nothing saved) | 'live' (guests, saves RSVP + wishes) */
 function renderInvite(host,o,opts={}){
+  // a guest who switched language keeps it when they come back to the same card in this tab
+  if(o.x_lang&&opts.mode==='live'&&!opts.relang&&(o.slug||o.id)){try{const l=sessionStorage.getItem('sanding-lang-'+(o.slug||o.id));if(l==='en'||l==='ms')o={...o,lang:l}}catch(e){}}
   const mode=opts.mode||'preview',L=copyFor(o),th=themeOf(o.template),fam=FAMILIES[th.fam],c={...th.c};
   if(o.useAccent&&o.accent){c.accent=o.accent}
-  const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
+  const el=document.createElement('div');el.className=`inv ${mode} fam-${th.fam}${o.x_lang&&mode!=='thumb'?' has-lang':''} ${['ukiran','catair','tipografi'].includes(th.fam)?'flush':''}`;
   const vars={'--ground':c.ground,'--sheet':c.sheet,'--ink':c.ink,'--accent':c.accent,'--gold':c.gold,'--line':c.line,'--env':c.env,'--envInk':c.envInk,'--liner':c.liner,'--door':c.door,'--pagefg':c.pagefg||c.sheet,'--pageInk':c.pageInk||c.ink,'--pageAccent':c.pageAccent||c.accent,'--cover':c.cover,'--ribbon':c.ribbon,'--wax':c.wax||c.gold,'--wood':c.wood,'--tape':c.tape,'--d':fam.f.d,'--s':fam.f.s,'--b':fam.f.b,'--archmask':archMask};
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
-  const cu=fam.custom||{},nfo=cu.font&&NAME_FONTS[o.nameFont];
-  if(nfo){el.classList.add('nf');el.style.setProperty('--nf',nfo[1]);el.style.setProperty('--nfs',nfo[2])}
+  const cu=fam.custom||{},nfo=coverOk(th.fam,'font')&&NAME_FONTS[o.nameFont];
+  if(nfo){el.classList.add('nf','nf-'+nfo[2]);el.style.setProperty('--nf',nfo[1])}
   if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
+  el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 
@@ -14319,11 +14407,13 @@ function renderInvite(host,o,opts={}){
    <nav class="dock" style="grid-template-columns:repeat(${dock.length},1fr)">${dock.map(([k,ic,lb])=>`<button type="button" data-dock="${k}">${ic}<span>${lb}</span></button>`).join('')}</nav>
   </div>
   ${coverHTML(o,th,L,guest,mode)}
-  ${o.x_music&&(o.music||ytIdOf(o.ytMusic))?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}`;
+  ${o.x_music&&(o.music||ytIdOf(o.ytMusic))?`<button type="button" class="music-btn" data-music hidden aria-label="Music">${ICON.music}</button>`:''}
+  ${o.x_lang?`<div class="lang-tog" role="group" aria-label="${o.lang==='en'?'Language':'Bahasa'}"><button type="button" data-lang="ms" aria-pressed="${o.lang!=='en'}">BM</button><button type="button" data-lang="en" aria-pressed="${o.lang==='en'}">EN</button></div>`:''}`;
   host.replaceChildren(el);
   const scroller=$('.scroller',el);
   el.__order=o;try{typeof FEATURES!=='undefined'&&FEATURES(el,o,th,L,mode,opts)}catch(e){console.warn('features',e)}
   el.classList.add('skin');try{typeof SKINS!=='undefined'&&SKINS[th.fam]&&SKINS[th.fam](el,o,th,L,mode)}catch(e){console.warn('skin',th.fam,e)}
+  try{applyCoverOpts(el,o,fam,th.fam)}catch(e){console.warn('cover options',th.fam,e)}
   try{typeof IMMERSIVE!=='undefined'&&IMMERSIVE(el,o,th,mode)}catch(e){console.warn('immersive',e)}
   const musicBtn=$('[data-music]',el);
   const yt=o.x_music&&mode!=='thumb'?Tube.attach(el,ytIdOf(o.ytMusic),ytStartOf(o.ytStart)):null;
@@ -14336,7 +14426,13 @@ function renderInvite(host,o,opts={}){
     if(th.fam==='sampul'){timers.push(setTimeout(()=>el.classList.add('card-out'),950),setTimeout(()=>el.classList.add('opened'),2100))}
     else timers.push(setTimeout(()=>el.classList.add('opened'),FAM2[th.fam]?.ms||(th.fam==='mihrab'?1250:1000)));};
   $('[data-open]',el)?.addEventListener('click',()=>open(false));
-  if(mode==='preview'&&opts.opened)open(true);
+  if((mode==='preview'||opts.relang)&&opts.opened)open(true);
+  // guests switch BM / EN: the same card drawn again in the other language, still open and at the same place.
+  // The couple's own wording stays as they wrote it.
+  $$('[data-lang]',el).forEach(b=>b.addEventListener('click',()=>{const lang=b.dataset.lang;if(lang===(o.lang==='en'?'en':'ms'))return;
+    const wasOpen=el.classList.contains('opening'),top=scroller?scroller.scrollTop:0;if(o.slug||o.id)try{sessionStorage.setItem('sanding-lang-'+(o.slug||o.id),lang)}catch(e){}
+    timers.forEach(clearTimeout);const nu=renderInvite(host,{...o,lang},{...opts,opened:wasOpen,relang:true,autoplay:false});
+    const sc=nu&&$('.scroller',nu);if(sc&&top){let n=0;const put=()=>{sc.style.scrollBehavior='auto';sc.scrollTop=top;if(Math.abs(sc.scrollTop-top)>2&&++n<30)setTimeout(put,40);else{sc.style.scrollBehavior='';sc.dispatchEvent(new Event('scroll'))}};put()}}));
   musicBtn?.addEventListener('click',()=>{songOn()?stopSong():playSong();setMusicIcon()});
   el.reopen=()=>{timers.forEach(clearTimeout);el.classList.remove('opening','card-out','opened');scroller.scrollTop=0};
   // countdown
@@ -15247,7 +15343,46 @@ function FEATURES(el,o,th,L,mode,opts){
   try{applyContent(el,o)}catch(e){console.warn('content',e)}
   // effects sit above the card but below the cover
   if(mode!=='thumb'&&o.effect&&o.effect!=='none')requestAnimationFrame(()=>runEffect(el,o.effect,o.effect==='kelopak'?(th.c.accent||'#b5475d'):th.c.gold));
+  if(mode!=='thumb')contrastGuard(el);
 }
+
+/* ================= contrast guard =================
+   The shared parts (footer, wishlist, form labels, second event label, solid buttons) take each design's colours,
+   and on some colourways they came out too faint to read (UI/UX audit, Nov 2026). Once the card is on the page,
+   each part's text is checked against the colour behind it; one that fails WCAG (4.5:1, or 3:1 for large text)
+   gets its own colour pushed darker or lighter just until it passes, so it keeps the design's tone.
+   Parts sitting on a picture with no background colour are left alone: there is no colour to measure. */
+const _cvx=typeof document!=='undefined'?document.createElement('canvas').getContext('2d',{willReadFrequently:true}):null,_rgbC=new Map();
+function rgbaOf(c){if(_rgbC.has(c))return _rgbC.get(c);let v=null;
+  const m=/^rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)$/.exec(c);
+  if(m)v=[+m[1],+m[2],+m[3],m[4]==null?1:+m[4]];
+  else if(_cvx&&c&&c!=='transparent'){_cvx.clearRect(0,0,1,1);_cvx.fillStyle='#000';_cvx.fillStyle=c;_cvx.fillRect(0,0,1,1);const d=_cvx.getImageData(0,0,1,1).data;v=[d[0],d[1],d[2],d[3]/255]}
+  else v=[0,0,0,0];
+  _rgbC.set(c,v);return v}
+const lumOf=([r,g,b])=>{const f=x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4};return .2126*f(r)+.7152*f(g)+.0722*f(b)};
+const ratioOf=(a,b)=>{const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const over=(f,b,a)=>[0,1,2].map(i=>f[i]*a+b[i]*(1-a));
+// the colour behind e: its own background, or the nearest ancestor's; null when a picture is in the way
+function bgBehind(e,stop){for(let p=e;p&&p!==stop.parentElement;p=p.parentElement){const cs=getComputedStyle(p),c=rgbaOf(cs.backgroundColor);
+    if(c[3]>=.5)return c.slice(0,3);if(cs.backgroundImage!=='none')return null}
+  return null}
+const CG_PARTS=[['foot','.foot'],['wlp','.wl-t span'],['wlb','.wl-t b'],['lab','form label'],['mlb','.more-lb'],['sub','.submit'],['res','.wl-a .ibtn.solid']];
+function contrastGuard(el){let tries=0;
+  const check=()=>{for(const [k,sel] of CG_PARTS){const e=el.querySelector(sel);if(!e||!e.textContent.trim())continue;
+      const cs=getComputedStyle(e),bg=bgBehind(e,el);if(!bg)continue;
+      const fc=rgbaOf(cs.color),fs=parseFloat(cs.fontSize),big=fs>=24||(fs>=18.66&&+cs.fontWeight>=700),need=big?3:4.5;
+      // the part's own fade counts (the footer is drawn at 55%), but not a reveal animation that is still running
+      const op=e.getAnimations&&e.getAnimations().length?1:+cs.opacity,a=fc[3]*op;
+      if(ratioOf(over(fc,bg,a),bg)>=need)continue;
+      const base=fc.slice(0,3);let fix=ratioOf(base,bg)>=need?base:null;
+      for(let t=.05;!fix&&t<=1.0001;t+=.05){const dk=base.map(x=>x*(1-t)),lt=base.map(x=>x+(255-x)*t);
+        const rd=ratioOf(dk,bg),rl=ratioOf(lt,bg);if(rd>=need||rl>=need)fix=rd>=rl?dk:lt}
+      if(!fix)fix=lumOf(bg)>.18?[0,0,0]:[255,255,255];
+      el.style.setProperty('--fx-'+k,`rgb(${fix.map(Math.round).join(',')})`);el.classList.add('fx-'+k)}};
+  // the card is measured once it is on the page, and again when late parts (the wishlist) have been drawn
+  const wait=()=>{if(el.isConnected){try{check();setTimeout(()=>{if(el.isConnected)try{check()}catch(e){}},1500)}catch(e){console.warn('contrast',e)}return}
+    if(++tries<240)requestAnimationFrame(wait)};
+  if(typeof requestAnimationFrame!=='undefined')requestAnimationFrame(wait)}
 /* the .ics button works in every mode */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;const inv=b.closest('.inv');const o=inv&&inv.__order;if(!o)return;saveFile(`majlis-${o.slug||'sanding'}.ics`,icsText(o),'text/calendar')});
 
@@ -15284,7 +15419,7 @@ function needFont(spec){FAM_FONTS.add(spec)}   // Google Fonts css2 "family=" va
 function FAMILY(f){
   // a redesign of an older family replaces it: same key, same colourway ids, so published cards keep working
   if(FAMILIES[f.key]){for(let i=THEMES.length-1;i>=0;i--)if(THEMES[i].fam===f.key)THEMES.splice(i,1);delete SKINS[f.key]}
-  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts,custom:f.custom||{}};
+  FAMILIES[f.key]={name:f.name,meaning:f.meaning,blurb:f.blurb,f:f.fonts,custom:f.custom||{}}; // custom: the family draws its own cover monogram / centring
   FAM2[f.key]={ms:f.ms||1200,page:f.page,cover:f.cover};
   if(f.skin)SKINS[f.key]=f.skin;
   f.themes.forEach(t=>{const th=T2(`${f.key}-${t.k}`,f.key,t.n,t.desc||`${t.n} ${f.meaning.toLowerCase()}`,{cover:t.c.accent,...t.c},t.extra||{});THEMES.push(th);THEME[th.id]=th});
@@ -19786,7 +19921,7 @@ const lsHush=(c,cls)=>`<div class="ls-hush ${cls}" style="--hb:${c.hb||2}px;--hd
 const lsPaint=c=>`<div class="ls-paint" style="background-image:url(${A}${c.paint});background-position:${c.pos||'center'};${c.tone?`filter:${c.tone}`:''}"></div>`;
 FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   blurb:'A landscape painting framed by cream lace paper with a die-cut scalloped edge, the names written over it in white script. The lace lifts away to open it.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{font:1,mono:1,mid:1},
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{mono:1,mid:1},
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
     return `<section class="page pg-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>${lsHush(c,'h-mid')}<i class="ls-inset"></i>
       <div class="ls-mid">
@@ -25654,7 +25789,7 @@ if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.h
   const at=q.get('at')||'cover';
   const st=document.createElement('style');st.textContent='#inv-root .inv-overlay{right:auto!important;width:390px!important;max-width:390px!important}';document.head.appendChild(st);
   addEventListener('DOMContentLoaded',()=>setTimeout(async()=>{
-    openInvite({...SAMPLE,template:id,x_gallery:false},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
+    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
     if(at==='cover')return;
     await new Promise(r=>setTimeout(r,300));document.querySelector('#inv-root [data-open]')?.click();
     const inv=document.querySelector('#inv-root .inv');
@@ -25804,7 +25939,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',nameOrder:'',nameFont:'',coverShow:'',coverPos:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -25818,7 +25953,7 @@ function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.nam
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
 function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
-$('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
+$('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='coverShow')renderCoverOpts();if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
 function paintPreview(){const host=$('#ed-preview');const old=$('.scroller',host);const st=old?old.scrollTop:0;const opened=$('.inv',host)?.classList.contains('opened');
@@ -25933,10 +26068,12 @@ function renderWl(){const box=$('#wl-rows');box.innerHTML=draft.wishlist.map((w,
   $$('input',box).forEach(x=>x.oninput=e=>{e.stopPropagation();draft.wishlist[x.dataset.i][x.dataset.k]=x.value;changed()});
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.wishlist.splice(+b.dataset.del,1);renderWl();changed()})}
 $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name:'',price:'',link:''});if(!draft.x_wishlist){draft.x_wishlist=true;$('#x-wishlist').checked=true}renderWl();changed();$$('#wl-rows input[data-k=name]').pop()?.focus()}};
-function renderCoverOpts(){const cu=FAMILIES[themeOf(draft.template).fam]?.custom||{},box=$('#cover-opts');box.hidden=!(cu.font||cu.mono||cu.mid);
-  $$('[data-cu]',box).forEach(f=>f.hidden=!cu[f.dataset.cu]);
-  const sel=$('#f-nameFont');if(!sel.options.length)sel.innerHTML=`<option value="">The design's own</option>`+Object.entries(NAME_FONTS).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('');
-  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||''}
+function renderCoverOpts(){const sel=$('#f-nameFont'),fam=themeOf(draft.template).fam,box=$('#cover-opts');
+  $$('[data-cu]',box).forEach(f=>f.hidden=!coverOk(fam,f.dataset.cu));box.hidden=!['font','mono','mid'].some(k=>coverOk(fam,k));
+  if(!sel.options.length){const grp=(kind,label)=>`<optgroup label="${label}">`+Object.entries(NAME_FONTS).filter(([,f])=>f[2]===kind).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('')+'</optgroup>';
+    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic')}
+  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||'';
+  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));

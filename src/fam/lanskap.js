@@ -59,7 +59,7 @@ const lsHush=(c,cls)=>`<div class="ls-hush ${cls}" style="--hb:${c.hb||2}px;--hd
 const lsPaint=c=>`<div class="ls-paint" style="background-image:url(${A}${c.paint});background-position:${c.pos||'center'};${c.tone?`filter:${c.tone}`:''}"></div>`;
 FAMILY({key:'lanskap',name:'Lanskap',meaning:'Painted landscape',
   blurb:'A landscape painting framed by cream lace paper with a die-cut scalloped edge, the names written over it in white script. The lace lifts away to open it.',
-  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{font:1,mono:1,mid:1},
+  fonts:{d:"'Cormorant Garamond', serif",s:"'Italianno', cursive",b:"'Cormorant Garamond', serif"},ms:1400,custom:{mono:1,mid:1},
   page(o,th,L){const [n1,n2]=coverNames(o),c=th.c,en=o.lang==='en';
     return `<section class="page pg-lanskap" style="--lace:${c.lace}">${lsPaint(c)}<div class="ls-veil"></div>${lsHush(c,'h-mid')}<i class="ls-inset"></i>
       <div class="ls-mid">

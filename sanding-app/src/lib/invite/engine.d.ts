@@ -68,8 +68,10 @@ export const mapsUrl: (o: Partial<Card>) => string;
 export const wazeUrl: (o: Partial<Card>) => string;
 export const coverNames: (o: Partial<Card>) => [string, string];
 export const groomFirst: (o: Partial<Card>) => boolean;
-/** key -> [label, css font-family, size relative to the design's script] */
-export const NAME_FONTS: Record<string, [string, string, number]>;
+/** Whether a design (family key) takes a cover option. */
+export const coverOk: (fam: string, opt: 'font' | 'mono' | 'mid') => boolean;
+/** key -> [label, css font-family, kind: 's' script | 'r' classic] */
+export const NAME_FONTS: Record<string, [string, string, 's' | 'r']>;
 export const waNum: (p: string) => string;
 export const Music: {
   tracks: Record<string, { label: string }>;

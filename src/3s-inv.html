@@ -184,8 +184,8 @@
 .inv .dock{position:sticky;bottom:0;z-index:20;display:grid;background:color-mix(in srgb,var(--sheet) 90%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .inv .dock button{background:none;border:0;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;letter-spacing:.08em;color:var(--ink);cursor:pointer;font-family:var(--b)}
 .inv .dock svg{width:18px;height:18px;color:var(--accent)}
-.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.inv .music-btn svg{width:17px;height:17px}
+.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.inv .music-btn svg{width:19px;height:19px}
 .inv .music-btn.playing svg{animation:spin 5s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .inv .sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;display:flex;align-items:flex-end}
@@ -195,5 +195,18 @@
 .inv .reveal.d1{animation-delay:.15s}.inv .reveal.d2{animation-delay:.3s}.inv .reveal.d3{animation-delay:.45s}
 @keyframes rise{from{transform:translateY(12px);opacity:.001}to{transform:none;opacity:1}}
 .inv.thumb .reveal{animation:none}
+/* readable on every design (UI/UX audit, Nov 2026): the shared parts never go below 12px, whatever a family sets.
+   Colours that fail contrast on a design are corrected per card by contrastGuard() in 3m-features.js (the .fx-* rules). */
+.inv .dock button{font-size:12px!important;letter-spacing:.03em!important}
+.inv form label,.inv .more-lb,.inv .wl-st,.inv .wl-tag{font-size:12px!important}
+.inv .submit{font-size:13px!important}
+.inv .wl-t span{font-size:13px!important}
+.inv.fx-foot .foot{color:var(--fx-foot)!important;opacity:1!important}
+.inv.fx-wlp .wl-t span{color:var(--fx-wlp)!important;opacity:1!important}
+.inv.fx-wlb .wl-t b{color:var(--fx-wlb)!important}
+.inv.fx-lab form label{color:var(--fx-lab)!important;opacity:1!important}
+.inv.fx-mlb .more-lb{color:var(--fx-mlb)!important;opacity:1!important}
+.inv.fx-sub .submit,.inv.fx-sub .seg button[aria-pressed="true"]{color:var(--fx-sub)!important}
+.inv.fx-res .wl-a .ibtn.solid{color:var(--fx-res)!important}
 @media (prefers-reduced-motion: reduce){.inv .reveal{animation:none}.inv .env-flap,.inv .door,.inv .cv-ukiran,.inv .env-card{transition:none}.inv .music-btn.playing svg{animation:none}}
 </style>

@@ -76,15 +76,13 @@
 .fam-lanskap .seg button[aria-pressed="true"],.fam-lanskap button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
 .fam-lanskap .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lanskap .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
-/* per-card options: name font, monogram on the cover, wording centred */
-.inv.nf .ls-names{font-family:var(--nf);font-size:calc(clamp(58px,18cqi,74px)*var(--nfs))}
-.inv.nf .pg-lanskap .ls-names{font-size:calc(clamp(64px,20cqi,82px)*var(--nfs))}
-.inv .ls-mono{width:clamp(96px,30cqi,120px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
-  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--nfs,1));line-height:1;color:#fffdf8;
+/* per-card options: its own monogram and centring (the name font is generic) */
+.inv .ls-mono{width:calc(clamp(96px,30cqi,120px)*var(--ms,1));aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
+  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--ms,1));line-height:1;color:#fffdf8;
   border:1px solid rgba(255,253,248,.85);box-shadow:0 0 0 5px rgba(255,253,248,0),0 0 0 6px rgba(255,253,248,.5),0 4px 22px rgba(20,15,10,.25);background:rgba(20,15,10,.08)}
 .inv .ls-mono i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:0 .12em;align-self:center}
 .inv .ls-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,"Italianno"),serif;font-size:.62em;white-space:nowrap}
-.inv .ls-txt.mono-only .ls-mono{width:clamp(140px,44cqi,176px);font-size:calc(clamp(66px,20cqi,82px)*var(--nfs,1));margin:16px 0 20px}
+.inv .ls-txt.mono-only .ls-mono{width:calc(clamp(140px,44cqi,176px)*var(--ms,1));font-size:calc(clamp(66px,20cqi,82px)*var(--ms,1));margin:16px 0 20px}
 .inv .ls-txt.mono-only .ls-k{order:-1;margin-bottom:22px}
 .inv.cv-mid .ls-txt{top:10%;bottom:27%;justify-content:center}
 .inv.cv-mid .cv-lanskap .ls-hush.h-top{top:20%}

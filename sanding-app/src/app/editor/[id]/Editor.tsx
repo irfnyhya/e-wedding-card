@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, NAME_FONTS, PHOTO_DESIGNS, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
+import { CARD_SECTIONS, copyFor, coverNames, defaultCopy, EFFECTS, FAMILIES, Music, NAME_FONTS, coverOk, PHOTO_DESIGNS, plainOf, renderInvite, T, THEMES, themeOf, fmtDate, fmtTime, ALL_EVENTS } from '@/lib/invite/engine';
 import Mini from '@/components/Mini';
 import JawiField from './JawiField';
 import { ADDON_OWN, BANKS, PKG, displayLink, missingField, needPkg, needsPayment, type Card, type GiftAccount, type PackageId, type WishItem } from '@/lib/card';
@@ -184,7 +184,8 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
             {tab === 0 && <div className="panel on">
               <div className="section-title"><h3>Design</h3><span className="muted">{themeOf(c.template).desc}</span></div>
               <div className="fieldset">
-                <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
+                <div className="field"><label htmlFor="f-lang">Card language</label><select id="f-lang" value={c.lang} onChange={(e) => set('lang', e.target.value as Card['lang'])}><option value="ms">Bahasa Melayu</option><option value="en">English</option></select>
+                  <label className="check" style={{ marginTop: 8 }}><input type="checkbox" checked={c.x_lang} onChange={(e) => set('x_lang', e.target.checked)} /> Let guests switch between BM and English</label><span className="hint">Your own wording stays as you wrote it.</span></div>
                 <JawiField value={c.jawi} onChange={(v) => set('jawi', v)} names={coverNames(c)} flash={flash} />
               </div>
               <p className="muted" style={{ fontSize: 13, margin: '-4px 0 14px' }}>Tap a design to see its colours. The phone on the right shows it exactly as guests will, so open it there to try the opening.</p>
@@ -222,12 +223,14 @@ export default function Editor({ orderId, userId, initial, status, paidPkg, addo
                 <input type="color" aria-label="Accent colour" value={c.accent} onChange={(e) => set('accent', e.target.value)} style={{ width: 64, height: 36, border: '1px solid var(--line)', borderRadius: 8, background: 'none', ...dim(c.useAccent) }} /></div></div>
               <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Effect</b>{tag('Asas')}</div><p className="muted" style={{ fontSize: 13 }}>A light layer that drifts over the card. Kept slow and sparse so it never fights the design.</p>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>{Object.entries(EFFECTS).map(([k, f]) => <button key={k} type="button" className="chip" aria-pressed={(c.effect || 'none') === k} onClick={() => set('effect', k)}>{f.label}</button>)}</div></div></div>
-              {(() => { const cu = FAMILIES[themeOf(c.template).fam]?.custom || {}; if (!cu.font && !cu.mono && !cu.mid) return null; return (
+              {(() => { const cf = themeOf(c.template).fam, ok = (k: 'font' | 'mono' | 'mid') => coverOk(cf, k); if (!ok('font') && !ok('mono') && !ok('mid')) return null; return (
               <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Cover</b>{tag('Asas')}</div><p className="muted" style={{ fontSize: 13 }}>Change the font of your names, put your monogram on the opening, or move the wording to the middle. The monogram uses the initials from the Couple step.</p>
                 <div className="fieldset">
-                  {!!cu.font && <div className="field"><label htmlFor="f-nf">Font for your names</label><select id="f-nf" value={c.nameFont} onChange={(e) => set('nameFont', e.target.value)}><option value="">The design&apos;s own</option>{Object.entries(NAME_FONTS).map(([k, [l, css]]) => <option key={k} value={k} style={{ fontFamily: css }}>{l}</option>)}</select></div>}
-                  {!!cu.mono && <div className="field"><label htmlFor="f-cs">On the cover</label><select id="f-cs" value={c.coverShow} onChange={(e) => set('coverShow', e.target.value as Card['coverShow'])}><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>}
-                  {!!cu.mid && <div className="field"><label htmlFor="f-cp">Wording position</label><select id="f-cp" value={c.coverPos} onChange={(e) => set('coverPos', e.target.value as Card['coverPos'])}><option value="">As designed</option><option value="mid">Centre</option></select></div>}
+                  {ok('font') && <div className="field"><label htmlFor="f-nf">Font for your names</label><select id="f-nf" value={c.nameFont} onChange={(e) => set('nameFont', e.target.value)}><option value="">The design&apos;s own</option><optgroup label="Script">{Object.entries(NAME_FONTS).filter(([, f]) => f[2] === 's').map(([k, [l, css]]) => <option key={k} value={k} style={{ fontFamily: css }}>{l}</option>)}</optgroup><optgroup label="Classic">{Object.entries(NAME_FONTS).filter(([, f]) => f[2] === 'r').map(([k, [l, css]]) => <option key={k} value={k} style={{ fontFamily: css }}>{l}</option>)}</optgroup></select></div>}
+                  {ok('mono') && <div className="field"><label htmlFor="f-cs">On the cover</label><select id="f-cs" value={c.coverShow} onChange={(e) => set('coverShow', e.target.value as Card['coverShow'])}><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>}
+                  {ok('mono') && !!c.coverShow && <div className="field"><label htmlFor="f-ms">Monogram size</label><select id="f-ms" value={c.monoSize} onChange={(e) => set('monoSize', e.target.value as Card['monoSize'])}><option value="s">Small</option><option value="">Medium</option><option value="l">Large</option><option value="xl">Extra large</option></select></div>}
+                  {ok('mono') && !!c.coverShow && <div className="field"><label htmlFor="f-mr">Ring around the monogram</label><select id="f-mr" value={c.monoRing} onChange={(e) => set('monoRing', e.target.value as Card['monoRing'])}><option value="">With ring</option><option value="none">No ring</option></select></div>}
+                  {ok('mid') && <div className="field"><label htmlFor="f-cp">Wording position</label><select id="f-cp" value={c.coverPos} onChange={(e) => set('coverPos', e.target.value as Card['coverPos'])}><option value="">As designed</option><option value="mid">Centre</option></select></div>}
                 </div></div></div>); })()}
               <div className="toggle-row"><span className="switch-sp" /><div className="body"><div className="top"><b>Use your own design</b><span className="tag brass">+RM{ADDON_OWN}</span></div><p className="muted" style={{ fontSize: 13 }}>Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p>
                 <div className="uploads">

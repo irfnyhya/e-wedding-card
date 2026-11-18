@@ -33,7 +33,8 @@
           <div class="panel on" data-panel="0">
             <div class="section-title"><h3>Design</h3><span class="muted" id="tpl-current"></span></div>
             <div class="fieldset">
-              <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select></div>
+              <div class="field"><label for="f-lang">Card language</label><select id="f-lang" name="lang"><option value="ms">Bahasa Melayu</option><option value="en">English</option></select>
+                <label class="check" style="margin-top:8px"><input type="checkbox" name="x_lang" id="x-lang"> Let guests switch between BM and English</label><span class="hint">Your own wording stays as you wrote it.</span></div>
               <div class="field"><label for="f-jawi">Monogram initials (optional)</label><input type="text" id="f-jawi" name="jawi" dir="auto" placeholder="Empty = default (first letters of your names)">
                 <div class="jawi-tools"><button type="button" class="btn btn-ghost btn-sm" id="jawi-auto">Fill from names</button><button type="button" class="btn btn-ghost btn-sm" id="jawi-toggle" aria-expanded="false" aria-controls="jawi-kb">Jawi keyboard</button></div>
                 <div class="jawi-kb" id="jawi-kb" hidden role="group" aria-label="Jawi letters"></div>
@@ -50,6 +51,8 @@
               <div class="fieldset">
                 <div class="field" data-cu="font"><label for="f-nameFont">Font for your names</label><select id="f-nameFont" name="nameFont"></select></div>
                 <div class="field" data-cu="mono"><label for="f-coverShow">On the cover</label><select id="f-coverShow" name="coverShow"><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>
+                <div class="field" data-mono-opt><label for="f-monoSize">Monogram size</label><select id="f-monoSize" name="monoSize"><option value="s">Small</option><option value="">Medium</option><option value="l">Large</option><option value="xl">Extra large</option></select></div>
+                <div class="field" data-mono-opt><label for="f-monoRing">Ring around the monogram</label><select id="f-monoRing" name="monoRing"><option value="">With ring</option><option value="none">No ring</option></select></div>
                 <div class="field" data-cu="mid"><label for="f-coverPos">Wording position</label><select id="f-coverPos" name="coverPos"><option value="">As designed</option><option value="mid">Centre</option></select></div>
               </div></div></div>
             <div class="toggle-row"><span class="switch-sp"></span><div class="body"><div class="top"><b>Use your own design</b><span class="tag brass">+RM10</span></div><p class="muted" style="font-size:13px">Upload your own artwork as the front of the card. The opening animation, RSVP and every other feature still work. Portrait image, at least 1080 px tall.</p><div class="uploads" id="own-upload"></div></div></div>

@@ -10,13 +10,17 @@ export type Contact = { name: string; role: string; phone: string };
 export type GiftAccount = { bank: string; accName: string; accNo: string };
 export type WishItem = { name: string; price: string; link: string };
 export type Card = {
-  template: string; lang: 'ms' | 'en'; jawi: string; bismillah: boolean; useAccent: boolean; accent: string;
+  template: string; lang: 'ms' | 'en'; jawi: string;
+  /** Guests can switch the card between BM and English (the couple's own wording stays as written). */
+  x_lang: boolean; bismillah: boolean; useAccent: boolean; accent: string;
   brideFull: string; brideShort: string; groomFull: string; groomShort: string;
   hosts: string; side: 'bride' | 'groom' | 'couple'; eventTitle: (typeof EVENT_TITLES)[number];
   /** Whose name comes first; only used when side is 'couple' (the family sides put their own child first). */
   nameOrder: 'bride' | 'groom';
   /** Cover options for designs that support them: name font key, monogram on the cover, wording centred. */
   nameFont: string; coverShow: '' | 'both' | 'mono'; coverPos: '' | 'mid';
+  /** Monogram size ('' = medium) and whether it sits in a ring ('' = with ring). */
+  monoSize: '' | 's' | 'l' | 'xl'; monoRing: '' | 'none';
   date: string; hijri: string; start: string; end: string; venue: string; address: string; dress: string; livestream: string;
   /** More sessions after the main one, each with its own date, time and venue (Maps/Waze). */
   events: EventItem[];
@@ -152,13 +156,15 @@ export function sanitizeCard(input: unknown): Card {
     nameFont: oneOf(o.nameFont, ['', ...Object.keys(NAME_FONTS)], ''),
     coverShow: oneOf(o.coverShow, ['', 'both', 'mono'] as const, ''),
     coverPos: oneOf(o.coverPos, ['', 'mid'] as const, ''),
+    monoSize: oneOf(o.monoSize, ['', 's', 'l', 'xl'] as const, ''),
+    monoRing: oneOf(o.monoRing, ['', 'none'] as const, ''),
     eventTitle: oneOf(o.eventTitle, EVENT_TITLES, 'walimah'),
     date: isoDate(o.date), hijri: str(o.hijri, 60), start: hhmm(o.start), end: hhmm(o.end),
     venue: str(o.venue, 120), address: str(o.address, 300), dress: str(o.dress, 80), livestream: linkUrl(o.livestream),
     events: sanitizeEvents(o.events),
     schedule: arr(o.schedule).slice(0, 12).map((s: Record<string, unknown>) => ({ time: hhmm(s?.time), label: str(s?.label, 80) })),
     x_rsvp: bool(o.x_rsvp), maxPax: Math.max(1, Math.min(20, Math.round(Number(o.maxPax) || 1))), deadline: isoDate(o.deadline),
-    x_counter: bool(o.x_counter), x_epass: bool(o.x_epass), x_side: bool(o.x_side),
+    x_counter: bool(o.x_counter), x_epass: bool(o.x_epass), x_side: bool(o.x_side), x_lang: bool(o.x_lang),
     x_wishes: bool(o.x_wishes), x_music: bool(o.x_music), music: oneOf(o.music, MUSIC_IDS, 'sax'), ytMusic: ytLink(o.ytMusic), ytStart: str(o.ytStart, 8).replace(/[^\d:ms]/g, ''),
     x_gallery: bool(o.x_gallery), photos: arr(o.photos).map(mediaUrl).filter(Boolean).slice(0, 6),
     x_gift: bool(o.x_gift), giftMsg: str(o.giftMsg, 300).trim(), gifts, bank: gifts[0]?.bank || 'Maybank', accName: gifts[0]?.accName || '', accNo: gifts[0]?.accNo || '', qr: mediaUrl(o.qr),

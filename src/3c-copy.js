@@ -70,12 +70,24 @@ const mapsUrl=o=>`https://www.google.com/maps/search/?api=1&query=${encodeURICom
 const wazeUrl=o=>`https://waze.com/ul?q=${encodeURIComponent((o.venue||'')+' '+(o.address||''))}&navigate=yes`;
 const groomFirst=o=>o.side==='couple'?o.nameOrder==='groom':o.side==='groom'; // nameOrder only applies to a combined majlis
 const coverNames=o=>groomFirst(o)?[o.groomShort,o.brideShort]:[o.brideShort,o.groomShort];
-/* per-card cover options, for families that opt in with FAMILY({custom:{font,mono,mid}}):
-   nameFont (a key below), coverShow ''|'mono'|'both', coverPos ''|'mid'. Every font here is already loaded by some family.
-   [label, css family, size relative to the design's own script] */
-const NAME_FONTS={greatvibes:['Great Vibes',"'Great Vibes',cursive",.74],pinyon:['Pinyon Script',"'Pinyon Script',cursive",.6],parisienne:['Parisienne',"'Parisienne',cursive",.7],
-  allura:['Allura',"'Allura',cursive",.84],alexbrush:['Alex Brush',"'Alex Brush',cursive",.78],playfair:['Playfair Display',"'Playfair Display',serif",.52],
-  cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",.6],cinzel:['Cinzel',"'Cinzel',serif",.42]};
+/* per-card cover options, on every design: nameFont (a key below), coverShow ''|'both'|'mono', coverPos ''|'mid'.
+   Applied after render by applyCoverOpts (3d-render.js); a family that draws its own monogram or centring opts out
+   with FAMILY({custom:{mono:1,mid:1}}). Every font here is already loaded by some family, so none costs a download.
+   [label, css family, kind: s = script, r = classic] */
+const NAME_FONTS={italianno:['Italianno',"'Italianno',cursive",'s'],greatvibes:['Great Vibes',"'Great Vibes',cursive",'s'],pinyon:['Pinyon Script',"'Pinyon Script',cursive",'s'],
+  parisienne:['Parisienne',"'Parisienne',cursive",'s'],allura:['Allura',"'Allura',cursive",'s'],alexbrush:['Alex Brush',"'Alex Brush',cursive",'s'],
+  sacramento:['Sacramento',"'Sacramento',cursive",'s'],monsieur:['Monsieur La Doulaise',"'Monsieur La Doulaise',cursive",'s'],
+  mrssaint:['Mrs Saint Delafield',"'Mrs Saint Delafield',cursive",'s'],homemade:['Homemade Apple',"'Homemade Apple',cursive",'s'],
+  playfair:['Playfair Display',"'Playfair Display',serif",'r'],cormorant:['Cormorant Garamond',"'Cormorant Garamond',serif",'r'],cinzel:['Cinzel',"'Cinzel',serif",'r'],
+  bodoni:['Bodoni Moda',"'Bodoni Moda',serif",'r'],marcellus:['Marcellus',"'Marcellus',serif",'r'],italiana:['Italiana',"'Italiana',serif",'r'],
+  instrument:['Instrument Serif',"'Instrument Serif',serif",'r'],fraunces:['Fraunces',"'Fraunces',serif",'r'],imfell:['IM Fell English',"'IM Fell English',serif",'r'],
+  poiret:['Poiret One',"'Poiret One',sans-serif",'r']};
+// Which designs take each cover option: checked on every design with tools/card-audit.mjs --cover-only --q "...":
+// the monogram fully visible and clear of other text, centring that actually moves the wording without
+// running into anything, and the names found and still clear in another font. Families with their own
+// (custom) monogram or centring are always in.
+const COVER_OK={font:new Set('akhbar akrilik akuarel alhambra anggur angsa anyaman azulejo bahagia baroque batik bauhaus bingkai buku bulan bungaraya bungatelur catur cermin chinoiserie debos deco dongeng editorial foto garis gerbang herb hibiskus hutan inai istana iznik jam jianzhi jubin kaca kalendar kaligrafi kalkir kampung kaset kerang kering kerongsang kertas kipas kolam komik konservatori kotak kraft kubah kunci label ladang lakaran lanskap lengkung lentera liar lili lilin lukisan majalah mancis marmar mawarhitam merak mihrab monogram monoline mughal muzium neon nouveau origami pasport pawagam payung pelamin peranakan pergola permaidani peta piksel pisang popup poskad pulau qandil quilling rama renda renda2 resit retro rimba riso rococo sakura sampul santorini satin sianotip silangkata sireh skrol songket sutera taman tasik teh tekan tekat tembikar tenun tezhip tiket timbul tingkap tipografi tirai tropika tulle ukiran vinyl warkah washi wau wayang'.split(' ')),mono:new Set('anyaman bulan bungatelur catur cermin chinoiserie dongeng herb hibiskus hutan inai jianzhi jubin kaca kaligrafi kampung kastil kerang kering kerongsang kertas kipas komik konservatori kubah kunci ladang lengkung lentera lukisan marmar mawarhitam merak mihrab monoline mughal muzium neon origami orkid pawagam payung pelamin peranakan pisang renda renda2 resit retro rimba riso sakura santorini satin sianotip sireh skrol tasik teh tekan telegram tembikar timbul tingkap tipografi tirai tulle ukiran washi wau wayang'.split(' ')),mid:new Set('anggur anyaman batik bungaraya catair catur cermin debos deco dongeng gerbang herb hutan jubin kaca kaligrafi kampung kastil kerang kerongsang kertas kolam komik konservatori kubah kunci ladang lakaran lanskap lengkung lili lilin lukisan marmar merak mihrab muzium nouveau orkid pawagam payung pelamin permaidani piksel pisang popup qandil renda renda2 resit riso rococo sakura satin sianotip songket taman tasik teh tekan tekat tembikar tezhip timbul tingkap tirai ukiran vinyl wau wayang'.split(' '))};
+const coverOk=(fam,opt)=>!!(FAMILIES[fam]?.custom?.[opt]||COVER_OK[opt].has(fam));
 // the couple's monogram as HTML: their own initials (o.jawi, any script) or the first letters of the cover names
 const monoHTML=o=>{const own=String(o.jawi||'').trim();if(own)return `<span class="mono-own" dir="auto">${esc(own)}</span>`;
   const [a,b]=coverNames(o);return `${esc(((a||'A').trim()[0]||'A').toUpperCase())}<i>&amp;</i>${esc(((b||'A').trim()[0]||'A').toUpperCase())}`};

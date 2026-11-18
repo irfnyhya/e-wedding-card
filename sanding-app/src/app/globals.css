@@ -549,8 +549,8 @@ tr:last-child td{border-bottom:0}
 .inv .dock{position:sticky;bottom:0;z-index:20;display:grid;background:color-mix(in srgb,var(--sheet) 90%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .inv .dock button{background:none;border:0;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;letter-spacing:.08em;color:var(--ink);cursor:pointer;font-family:var(--b)}
 .inv .dock svg{width:18px;height:18px;color:var(--accent)}
-.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.inv .music-btn svg{width:17px;height:17px}
+.inv .music-btn{position:absolute;top:14px;right:14px;z-index:25;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 85%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.inv .music-btn svg{width:19px;height:19px}
 .inv .music-btn.playing svg{animation:spin 5s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .inv .sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;display:flex;align-items:flex-end}
@@ -560,6 +560,19 @@ tr:last-child td{border-bottom:0}
 .inv .reveal.d1{animation-delay:.15s}.inv .reveal.d2{animation-delay:.3s}.inv .reveal.d3{animation-delay:.45s}
 @keyframes rise{from{transform:translateY(12px);opacity:.001}to{transform:none;opacity:1}}
 .inv.thumb .reveal{animation:none}
+/* readable on every design (UI/UX audit, Nov 2026): the shared parts never go below 12px, whatever a family sets.
+   Colours that fail contrast on a design are corrected per card by contrastGuard() in 3m-features.js (the .fx-* rules). */
+.inv .dock button{font-size:12px!important;letter-spacing:.03em!important}
+.inv form label,.inv .more-lb,.inv .wl-st,.inv .wl-tag{font-size:12px!important}
+.inv .submit{font-size:13px!important}
+.inv .wl-t span{font-size:13px!important}
+.inv.fx-foot .foot{color:var(--fx-foot)!important;opacity:1!important}
+.inv.fx-wlp .wl-t span{color:var(--fx-wlp)!important;opacity:1!important}
+.inv.fx-wlb .wl-t b{color:var(--fx-wlb)!important}
+.inv.fx-lab form label{color:var(--fx-lab)!important;opacity:1!important}
+.inv.fx-mlb .more-lb{color:var(--fx-mlb)!important;opacity:1!important}
+.inv.fx-sub .submit,.inv.fx-sub .seg button[aria-pressed="true"]{color:var(--fx-sub)!important}
+.inv.fx-res .wl-a .ibtn.solid{color:var(--fx-res)!important}
 @media (prefers-reduced-motion: reduce){.inv .reveal{animation:none}.inv .env-flap,.inv .door,.inv .cv-ukiran,.inv .env-card{transition:none}.inv .music-btn.playing svg{animation:none}}
 
 /* ===== Round-two families: songket, tiket, herbarium, tipografi, deco, baldu, bingkai, poskad ===== */
@@ -1782,6 +1795,24 @@ tr:last-child td{border-bottom:0}
 /* safety net: once a card has opened, no cover may stay on top of the page */
 .inv.opened > .cover{opacity:0!important;pointer-events:none!important;transition:opacity .5s!important}
 .inv .fx{position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none}
+.inv.nf .cv-n{font-family:var(--nf)!important}
+.inv.nf-s .cv-n{font-style:normal!important;font-weight:400!important;letter-spacing:normal!important;text-transform:none!important}
+.inv .cv-gone{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
+.inv .cv-mono{display:flex;align-items:center;justify-content:center;flex:none;width:calc(clamp(78px,24cqi,104px)*var(--ms,1));aspect-ratio:1;border-radius:50%;margin:0 auto 12px;
+  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 75%,transparent);box-shadow:0 0 0 4px transparent,0 0 0 5px color-mix(in srgb,currentColor 35%,transparent)}
+.inv .cv-mono i{font-family:var(--d,"Cormorant Garamond"),serif;font-style:italic;font-size:.42em;margin:0 .12em}
+.inv .cv-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,var(--s)),serif;font-size:.6em;white-space:nowrap}
+.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
+.inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
+.inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:3px;gap:2px;border-radius:999px;
+  background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.inv .lang-tog button{min-width:40px;height:30px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 11px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inv.has-lang .music-btn{right:112px}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}
@@ -7035,15 +7066,13 @@ tr:last-child td{border-bottom:0}
 .fam-lanskap .seg button[aria-pressed="true"],.fam-lanskap button.submit{background:var(--accent)!important;color:var(--sheet)!important;border-radius:999px}
 .fam-lanskap .dock{background:color-mix(in srgb,var(--sheet) 94%,transparent);color:var(--accent);backdrop-filter:blur(6px)}
 .fam-lanskap .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
-/* per-card options: name font, monogram on the cover, wording centred */
-.inv.nf .ls-names{font-family:var(--nf);font-size:calc(clamp(58px,18cqi,74px)*var(--nfs))}
-.inv.nf .pg-lanskap .ls-names{font-size:calc(clamp(64px,20cqi,82px)*var(--nfs))}
-.inv .ls-mono{width:clamp(96px,30cqi,120px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
-  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--nfs,1));line-height:1;color:#fffdf8;
+/* per-card options: its own monogram and centring (the name font is generic) */
+.inv .ls-mono{width:calc(clamp(96px,30cqi,120px)*var(--ms,1));aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
+  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--ms,1));line-height:1;color:#fffdf8;
   border:1px solid rgba(255,253,248,.85);box-shadow:0 0 0 5px rgba(255,253,248,0),0 0 0 6px rgba(255,253,248,.5),0 4px 22px rgba(20,15,10,.25);background:rgba(20,15,10,.08)}
 .inv .ls-mono i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:0 .12em;align-self:center}
 .inv .ls-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,"Italianno"),serif;font-size:.62em;white-space:nowrap}
-.inv .ls-txt.mono-only .ls-mono{width:clamp(140px,44cqi,176px);font-size:calc(clamp(66px,20cqi,82px)*var(--nfs,1));margin:16px 0 20px}
+.inv .ls-txt.mono-only .ls-mono{width:calc(clamp(140px,44cqi,176px)*var(--ms,1));font-size:calc(clamp(66px,20cqi,82px)*var(--ms,1));margin:16px 0 20px}
 .inv .ls-txt.mono-only .ls-k{order:-1;margin-bottom:22px}
 .inv.cv-mid .ls-txt{top:10%;bottom:27%;justify-content:center}
 .inv.cv-mid .cv-lanskap .ls-hush.h-top{top:20%}

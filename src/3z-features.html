@@ -17,6 +17,24 @@
 /* safety net: once a card has opened, no cover may stay on top of the page */
 .inv.opened > .cover{opacity:0!important;pointer-events:none!important;transition:opacity .5s!important}
 .inv .fx{position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none}
+.inv.nf .cv-n{font-family:var(--nf)!important}
+.inv.nf-s .cv-n{font-style:normal!important;font-weight:400!important;letter-spacing:normal!important;text-transform:none!important}
+.inv .cv-gone{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
+.inv .cv-mono{display:flex;align-items:center;justify-content:center;flex:none;width:calc(clamp(78px,24cqi,104px)*var(--ms,1));aspect-ratio:1;border-radius:50%;margin:0 auto 12px;
+  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 75%,transparent);box-shadow:0 0 0 4px transparent,0 0 0 5px color-mix(in srgb,currentColor 35%,transparent)}
+.inv .cv-mono i{font-family:var(--d,"Cormorant Garamond"),serif;font-style:italic;font-size:.42em;margin:0 .12em}
+.inv .cv-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,var(--s)),serif;font-size:.6em;white-space:nowrap}
+.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
+.inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
+.inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+.inv .lang-tog{position:absolute;top:14px;right:14px;z-index:40;display:flex;padding:3px;gap:2px;border-radius:999px;
+  background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.inv .lang-tog button{min-width:40px;height:30px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;
+  font:600 11px/1 "Jost",system-ui,sans-serif;letter-spacing:.12em}
+.inv .lang-tog button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.inv .lang-tog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inv.has-lang .music-btn{right:112px}
 .inv .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .inv .pg-own{padding:0;background:var(--ground)}
 .inv .pg-own img{width:100%;height:100%;object-fit:cover;display:block}

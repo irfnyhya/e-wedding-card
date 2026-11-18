@@ -138,7 +138,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',nameOrder:'',nameFont:'',coverShow:'',coverPos:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -152,7 +152,7 @@ function fillForm(){const f=$('#ed-form');for(const el of f.elements){if(!el.nam
 function syncDisabled(){[['x_rsvp','x-rsvp'],['x_music','x-music'],['x_gallery','x-gallery'],['x_gift','x-gift'],['x_contacts','x-contacts'],['x_wishlist','x-wishlist'],['useAccent','f-useAccent']].forEach(([k,id])=>{const body=$('#'+id).closest('.toggle-row').querySelector('.body');$$('.fieldset,.uploads,#music-pick,.rows,input[type=color]',body).forEach(x=>x.style.opacity=draft[k]?'1':'.45')})}
 let saveT=null,pvT=null;
 function changed(){renderFotoNote();clearTimeout(saveT);saveT=setTimeout(()=>{if(!editingId)ls.set('sanding-draft',draft)},400);clearTimeout(pvT);pvT=setTimeout(()=>paintPreview(),220);syncDisabled();if(tab===5)renderReview()}
-$('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
+$('#ed-form').addEventListener('input',e=>{const el=e.target;if(!el.name)return;draft[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?+el.value:el.value;if(el.name==='coverShow')renderCoverOpts();if(el.name==='x_music'&&!el.checked)Music.stop();changed()});
 $('#ed-form').addEventListener('submit',e=>e.preventDefault());
 $('#f-ytMusic').addEventListener('input',e=>{const v=e.target.value.trim();$('#yt-bad').hidden=!v||!!ytIdOf(v);if(ytIdOf(v)&&!draft.x_music){draft.x_music=true;$('#x-music').checked=true}});
 function paintPreview(){const host=$('#ed-preview');const old=$('.scroller',host);const st=old?old.scrollTop:0;const opened=$('.inv',host)?.classList.contains('opened');
@@ -267,10 +267,12 @@ function renderWl(){const box=$('#wl-rows');box.innerHTML=draft.wishlist.map((w,
   $$('input',box).forEach(x=>x.oninput=e=>{e.stopPropagation();draft.wishlist[x.dataset.i][x.dataset.k]=x.value;changed()});
   $$('[data-del]',box).forEach(b=>b.onclick=()=>{draft.wishlist.splice(+b.dataset.del,1);renderWl();changed()})}
 $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name:'',price:'',link:''});if(!draft.x_wishlist){draft.x_wishlist=true;$('#x-wishlist').checked=true}renderWl();changed();$$('#wl-rows input[data-k=name]').pop()?.focus()}};
-function renderCoverOpts(){const cu=FAMILIES[themeOf(draft.template).fam]?.custom||{},box=$('#cover-opts');box.hidden=!(cu.font||cu.mono||cu.mid);
-  $$('[data-cu]',box).forEach(f=>f.hidden=!cu[f.dataset.cu]);
-  const sel=$('#f-nameFont');if(!sel.options.length)sel.innerHTML=`<option value="">The design's own</option>`+Object.entries(NAME_FONTS).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('');
-  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||''}
+function renderCoverOpts(){const sel=$('#f-nameFont'),fam=themeOf(draft.template).fam,box=$('#cover-opts');
+  $$('[data-cu]',box).forEach(f=>f.hidden=!coverOk(fam,f.dataset.cu));box.hidden=!['font','mono','mid'].some(k=>coverOk(fam,k));
+  if(!sel.options.length){const grp=(kind,label)=>`<optgroup label="${label}">`+Object.entries(NAME_FONTS).filter(([,f])=>f[2]===kind).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('')+'</optgroup>';
+    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic')}
+  sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||'';
+  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
