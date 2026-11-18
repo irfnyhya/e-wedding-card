@@ -21,13 +21,16 @@
 .inv.nf-s .cv-n{font-style:normal!important;font-weight:400!important;letter-spacing:normal!important;text-transform:none!important}
 .inv .cv-gone{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
 .inv .cv-mono{display:flex;align-items:center;justify-content:center;flex:none;width:calc(clamp(78px,24cqi,104px)*var(--ms,1));aspect-ratio:1;border-radius:50%;margin:0 auto 12px;
-  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
+  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1)*var(--mfz,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
   border:1px solid color-mix(in srgb,currentColor 75%,transparent);box-shadow:0 0 0 4px transparent,0 0 0 5px color-mix(in srgb,currentColor 35%,transparent)}
 .inv .cv-mono i{font-family:var(--d,"Cormorant Garamond"),serif;font-style:italic;font-size:.42em;margin:0 .12em}
 .inv .cv-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,var(--s)),serif;font-size:.6em;white-space:nowrap}
-.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
+.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1)*var(--mfz,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+/* monogram font: its own pick, else the names' font; classic capitals are wider than script, so they sit a size smaller */
+.inv.mf .cv-mono,.inv.mf .ls-mono{font-family:var(--mf)!important;font-style:normal!important}
+.inv.mf-r .cv-mono,.inv.mf-r .ls-mono{--mfz:.72;letter-spacing:.02em}
 /* ring styles: double is each design's own; thin keeps only the inner line, bold is a heavier double */
 .inv.mono-thin .cv-mono,.inv.mono-thin .ls-mono{box-shadow:none!important;border:1px solid color-mix(in srgb,currentColor 85%,transparent)!important}
 .inv.mono-bold .cv-mono,.inv.mono-bold .ls-mono{border:3px solid currentColor!important;box-shadow:0 0 0 5px transparent,0 0 0 7px color-mix(in srgb,currentColor 70%,transparent)!important}

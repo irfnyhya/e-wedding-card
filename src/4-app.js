@@ -138,7 +138,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:'',monoFont:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -270,9 +270,9 @@ $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name
 function renderCoverOpts(){const sel=$('#f-nameFont'),fam=themeOf(draft.template).fam,box=$('#cover-opts');
   $$('[data-cu]',box).forEach(f=>f.hidden=!coverOk(fam,f.dataset.cu));box.hidden=!['font','mono','mid'].some(k=>coverOk(fam,k));
   if(!sel.options.length){const grp=(kind,label)=>`<optgroup label="${label}">`+Object.entries(NAME_FONTS).filter(([,f])=>f[2]===kind).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('')+'</optgroup>';
-    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic')}
+    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic');$('#f-monoFont').innerHTML=`<option value="">Same as your names</option>`+grp('s','Script')+grp('r','Classic')}
   sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||'';
-  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
+  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$('#f-monoFont').value=draft.monoFont||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));

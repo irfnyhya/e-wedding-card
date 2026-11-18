@@ -520,6 +520,7 @@ tr:last-child td{border-bottom:0}
               <div class="fieldset">
                 <div class="field" data-cu="font"><label for="f-nameFont">Font for your names</label><select id="f-nameFont" name="nameFont"></select></div>
                 <div class="field" data-cu="mono"><label for="f-coverShow">On the cover</label><select id="f-coverShow" name="coverShow"><option value="">Your names</option><option value="both">Monogram and names</option><option value="mono">Monogram only</option></select></div>
+                <div class="field" data-mono-opt><label for="f-monoFont">Monogram font</label><select id="f-monoFont" name="monoFont"></select></div>
                 <div class="field" data-mono-opt><label for="f-monoSize">Monogram size</label><select id="f-monoSize" name="monoSize"><option value="s">Small</option><option value="">Medium</option><option value="l">Large</option><option value="xl">Extra large</option></select></div>
                 <div class="field" data-mono-opt><label for="f-monoRing">Ring around the monogram</label><select id="f-monoRing" name="monoRing"><option value="">Double ring</option><option value="thin">Thin ring</option><option value="bold">Bold ring</option><option value="none">No ring</option></select></div>
                 <div class="field" data-cu="mid"><label for="f-coverPos">Wording position</label><select id="f-coverPos" name="coverPos"><option value="">As designed</option><option value="mid">Centre</option></select></div>
@@ -2134,13 +2135,16 @@ tr:last-child td{border-bottom:0}
 .inv.nf-s .cv-n{font-style:normal!important;font-weight:400!important;letter-spacing:normal!important;text-transform:none!important}
 .inv .cv-gone{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
 .inv .cv-mono{display:flex;align-items:center;justify-content:center;flex:none;width:calc(clamp(78px,24cqi,104px)*var(--ms,1));aspect-ratio:1;border-radius:50%;margin:0 auto 12px;
-  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
+  font-family:var(--nf,var(--s,"Italianno")),cursive;font-size:calc(clamp(34px,10.5cqi,46px)*var(--ms,1)*var(--mfz,1));font-weight:400;font-style:normal;line-height:1;letter-spacing:0;text-transform:none;color:inherit;
   border:1px solid color-mix(in srgb,currentColor 75%,transparent);box-shadow:0 0 0 4px transparent,0 0 0 5px color-mix(in srgb,currentColor 35%,transparent)}
 .inv .cv-mono i{font-family:var(--d,"Cormorant Garamond"),serif;font-style:italic;font-size:.42em;margin:0 .12em}
 .inv .cv-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,var(--s)),serif;font-size:.6em;white-space:nowrap}
-.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
+.inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1)*var(--mfz,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+/* monogram font: its own pick, else the names' font; classic capitals are wider than script, so they sit a size smaller */
+.inv.mf .cv-mono,.inv.mf .ls-mono{font-family:var(--mf)!important;font-style:normal!important}
+.inv.mf-r .cv-mono,.inv.mf-r .ls-mono{--mfz:.72;letter-spacing:.02em}
 /* ring styles: double is each design's own; thin keeps only the inner line, bold is a heavier double */
 .inv.mono-thin .cv-mono,.inv.mono-thin .ls-mono{box-shadow:none!important;border:1px solid color-mix(in srgb,currentColor 85%,transparent)!important}
 .inv.mono-bold .cv-mono,.inv.mono-bold .ls-mono{border:3px solid currentColor!important;box-shadow:0 0 0 5px transparent,0 0 0 7px color-mix(in srgb,currentColor 70%,transparent)!important}
@@ -7357,11 +7361,11 @@ tr:last-child td{border-bottom:0}
 .fam-lanskap .foot{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 /* per-card options: its own monogram and centring (the name font is generic) */
 .inv .ls-mono{width:calc(clamp(96px,30cqi,120px)*var(--ms,1));aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 18px;
-  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--ms,1));line-height:1;color:#fffdf8;
+  font-family:var(--nf,"Italianno"),cursive;font-size:calc(clamp(46px,14cqi,56px)*var(--ms,1)*var(--mfz,1));line-height:1;color:#fffdf8;
   border:1px solid rgba(255,253,248,.85);box-shadow:0 0 0 5px rgba(255,253,248,0),0 0 0 6px rgba(255,253,248,.5),0 4px 22px rgba(20,15,10,.25);background:rgba(20,15,10,.08)}
 .inv .ls-mono i{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:.42em;margin:0 .12em;align-self:center}
 .inv .ls-mono .mono-own{font-family:"Amiri","Aref Ruqaa",var(--nf,"Italianno"),serif;font-size:.62em;white-space:nowrap}
-.inv .ls-txt.mono-only .ls-mono{width:calc(clamp(140px,44cqi,176px)*var(--ms,1));font-size:calc(clamp(66px,20cqi,82px)*var(--ms,1));margin:16px 0 20px}
+.inv .ls-txt.mono-only .ls-mono{width:calc(clamp(140px,44cqi,176px)*var(--ms,1));font-size:calc(clamp(66px,20cqi,82px)*var(--ms,1)*var(--mfz,1));margin:16px 0 20px}
 .inv .ls-txt.mono-only .ls-k{order:-1;margin-bottom:22px}
 .inv.cv-mid .ls-txt{top:10%;bottom:27%;justify-content:center}
 .inv.cv-mid .cv-lanskap .ls-hush.h-top{top:20%}
@@ -14387,6 +14391,7 @@ function renderInvite(host,o,opts={}){
   Object.entries(vars).forEach(([k,v])=>v&&el.style.setProperty(k,v));
   const cu=fam.custom||{},nfo=coverOk(th.fam,'font')&&NAME_FONTS[o.nameFont];
   if(nfo){el.classList.add('nf','nf-'+nfo[2]);el.style.setProperty('--nf',nfo[1])}
+  const mfo=NAME_FONTS[o.monoFont];if(mfo){el.classList.add('mf','mf-'+mfo[2]);el.style.setProperty('--mf',mfo[1])}
   if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
   el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');else if(o.monoRing==='thin'||o.monoRing==='bold')el.classList.add('mono-'+o.monoRing);
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
@@ -25850,7 +25855,7 @@ if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.h
   const at=q.get('at')||'cover';
   const st=document.createElement('style');st.textContent='#inv-root .inv-overlay{right:auto!important;width:390px!important;max-width:390px!important}';document.head.appendChild(st);
   addEventListener('DOMContentLoaded',()=>setTimeout(async()=>{
-    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side,x_lang:q.get('xl')==='1'},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
+    openInvite({...SAMPLE,template:id,x_gallery:false,nameFont:q.get('nf')||'',coverShow:q.get('cs')||'',coverPos:q.get('cp')||'',monoSize:q.get('ms')||'',monoRing:q.get('mr')||'',monoFont:q.get('mf')||'',nameOrder:q.get('no')||'',side:q.get('no')?'couple':SAMPLE.side,x_lang:q.get('xl')==='1'},{guest:'Pak Long Hashim',autoplay:false,closeLabel:'←'});
     if(at==='cover')return;
     await new Promise(r=>setTimeout(r,300));document.querySelector('#inv-root [data-open]')?.click();
     const inv=document.querySelector('#inv-root .inv');
@@ -26000,7 +26005,7 @@ function initDesigns(){
 
 /* ================= editor ================= */
 let draft=null,editingId=null,tab=0,previewOpened=false;
-const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:''};
+const blankExtras={couplePhoto:'',hideSecs:[],secTitles:{},customSecs:[],tradition:'general',monoScript:'',txtSalam:'',txtIntro:'',txtDoaT:'',txtDoa:'',ytMusic:'',ytStart:'',photos:[],qr:'',contacts:[],schedule:[],wishlist:[],gifts:null,effect:'none',ownDesign:'',x_lang:false,nameOrder:'',nameFont:'',coverShow:'',coverPos:'',monoSize:'',monoRing:'',monoFont:''};
 function startNew(tpl){editingId=null;draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};if(tpl)draft.template=tpl;tab=0;go('create')}
 function initEditor(){
   if(!draft){draft=ls.get('sanding-draft',null)||{...clone(SAMPLE),id:null,slug:''};editingId=null}
@@ -26132,9 +26137,9 @@ $('#add-wl').onclick=()=>{if(draft.wishlist.length<12){draft.wishlist.push({name
 function renderCoverOpts(){const sel=$('#f-nameFont'),fam=themeOf(draft.template).fam,box=$('#cover-opts');
   $$('[data-cu]',box).forEach(f=>f.hidden=!coverOk(fam,f.dataset.cu));box.hidden=!['font','mono','mid'].some(k=>coverOk(fam,k));
   if(!sel.options.length){const grp=(kind,label)=>`<optgroup label="${label}">`+Object.entries(NAME_FONTS).filter(([,f])=>f[2]===kind).map(([k,[l,css]])=>`<option value="${k}" style="font-family:${css.replace(/"/g,'&quot;')}">${esc(l)}</option>`).join('')+'</optgroup>';
-    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic')}
+    sel.innerHTML=`<option value="">The design's own</option>`+grp('s','Script')+grp('r','Classic');$('#f-monoFont').innerHTML=`<option value="">Same as your names</option>`+grp('s','Script')+grp('r','Classic')}
   sel.value=draft.nameFont||'';$('#f-coverShow').value=draft.coverShow||'';$('#f-coverPos').value=draft.coverPos||'';
-  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
+  $('#f-monoSize').value=draft.monoSize||'';$('#f-monoRing').value=draft.monoRing||'';$('#f-monoFont').value=draft.monoFont||'';$$('[data-mono-opt]').forEach(f=>f.hidden=!draft.coverShow||!coverOk(fam,'mono'))}
 function renderFx(){const box=$('#fx-pick');box.innerHTML=Object.entries(EFFECTS).map(([k,f])=>`<button type="button" class="chip" data-fx="${k}" aria-pressed="${(draft.effect||'none')===k}">${esc(f.label)}</button>`).join('');
   $$('[data-fx]',box).forEach(b=>b.onclick=()=>{draft.effect=b.dataset.fx;renderFx();changed()})}
 function setTab(i){tab=i;$$('#ed-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.tab===i));$$('#ed-form .panel').forEach(p=>p.classList.toggle('on',+p.dataset.panel===i));
