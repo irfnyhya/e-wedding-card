@@ -129,7 +129,7 @@ function renderInvite(host,o,opts={}){
   const cu=fam.custom||{},nfo=coverOk(th.fam,'font')&&NAME_FONTS[o.nameFont];
   if(nfo){el.classList.add('nf','nf-'+nfo[2]);el.style.setProperty('--nf',nfo[1])}
   if(cu.mid&&o.coverPos==='mid')el.classList.add('cv-mid');
-  el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');
+  el.style.setProperty('--ms',({s:.75,l:1.3,xl:1.6})[o.monoSize]||1);if(o.monoRing==='none')el.classList.add('mono-noring');else if(o.monoRing==='thin'||o.monoRing==='bold')el.classList.add('mono-'+o.monoRing);
   const guest=opts.guest||(mode!=='live'&&o.x_guestlinks?(o.lang==='en'?'Mr Ahmad & family':'Encik Ahmad & keluarga'):'');
   if(mode==='thumb'){const face=opts.face||(th.fam==='sampul'?'cover':'page');el.innerHTML=face==='cover'?coverHTML(o,th,L,'', 'thumb'):`<div class="scroller" style="overflow:hidden">${frontPage(o,th,L)}</div>`;host.replaceChildren(el);return el}
 

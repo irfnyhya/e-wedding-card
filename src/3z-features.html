@@ -28,6 +28,9 @@
 .inv .cv-mono.solo{width:calc(clamp(110px,34cqi,150px)*var(--ms,1));font-size:calc(clamp(48px,15cqi,66px)*var(--ms,1));margin:6px auto 14px}
 .inv .cv-mono.float{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:5}
 .inv.mono-noring .cv-mono,.inv.mono-noring .ls-mono{border:0!important;box-shadow:none!important;background:none!important;aspect-ratio:auto;width:auto}
+/* ring styles: double is each design's own; thin keeps only the inner line, bold is a heavier double */
+.inv.mono-thin .cv-mono,.inv.mono-thin .ls-mono{box-shadow:none!important;border:1px solid color-mix(in srgb,currentColor 85%,transparent)!important}
+.inv.mono-bold .cv-mono,.inv.mono-bold .ls-mono{border:3px solid currentColor!important;box-shadow:0 0 0 5px transparent,0 0 0 7px color-mix(in srgb,currentColor 70%,transparent)!important}
 .inv .lang-tog{position:absolute;top:21px;right:14px;z-index:40;display:flex;padding:2px;gap:2px;border-radius:999px;
   background:color-mix(in srgb,var(--sheet) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .inv .lang-tog button{position:relative;min-width:32px;height:26px;padding:0 8px;border:0;border-radius:999px;background:none;color:var(--ink);cursor:pointer;

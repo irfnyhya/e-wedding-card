@@ -20,7 +20,7 @@ export type Card = {
   /** Cover options for designs that support them: name font key, monogram on the cover, wording centred. */
   nameFont: string; coverShow: '' | 'both' | 'mono'; coverPos: '' | 'mid';
   /** Monogram size ('' = medium) and whether it sits in a ring ('' = with ring). */
-  monoSize: '' | 's' | 'l' | 'xl'; monoRing: '' | 'none';
+  monoSize: '' | 's' | 'l' | 'xl'; monoRing: '' | 'thin' | 'bold' | 'none';
   date: string; hijri: string; start: string; end: string; venue: string; address: string; dress: string; livestream: string;
   /** More sessions after the main one, each with its own date, time and venue (Maps/Waze). */
   events: EventItem[];
@@ -157,7 +157,7 @@ export function sanitizeCard(input: unknown): Card {
     coverShow: oneOf(o.coverShow, ['', 'both', 'mono'] as const, ''),
     coverPos: oneOf(o.coverPos, ['', 'mid'] as const, ''),
     monoSize: oneOf(o.monoSize, ['', 's', 'l', 'xl'] as const, ''),
-    monoRing: oneOf(o.monoRing, ['', 'none'] as const, ''),
+    monoRing: oneOf(o.monoRing, ['', 'thin', 'bold', 'none'] as const, ''),
     eventTitle: oneOf(o.eventTitle, EVENT_TITLES, 'walimah'),
     date: isoDate(o.date), hijri: str(o.hijri, 60), start: hhmm(o.start), end: hhmm(o.end),
     venue: str(o.venue, 120), address: str(o.address, 300), dress: str(o.dress, 80), livestream: linkUrl(o.livestream),
