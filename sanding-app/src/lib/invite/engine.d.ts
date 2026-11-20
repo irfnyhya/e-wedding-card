@@ -44,7 +44,6 @@ export const swatchEl: (t: Theme) => string;
 export const dotColor: (t: Theme) => string;
 export function toneOf(t: Theme): string;
 export const TONES: [string, string][];
-export const CATS: [string, string][];
 export const swatchBg: (t: Theme) => string;
 export const T: Record<'ms' | 'en', any>;
 export const TRADITIONS: Record<string, string>;

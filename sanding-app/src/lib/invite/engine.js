@@ -72,7 +72,6 @@ const THEMES=[
 const THEME=Object.fromEntries(THEMES.map(t=>[t.id,t]));
 const LEGACY={songket:'sampul-merah',bungaraya:'catair-raya',moden:'ukiran-dakwat',sage:'sampul-sage',malam:'mihrab-biru',zamrud:'mihrab-zamrud',nyonya:'catair-taman',kraft:'ukiran-sepia',lavender:'catair-teratai',noir:'sampul-merah'};
 const themeOf=id=>THEME[id]||THEME[LEGACY[id]]||THEMES[0];
-let CATS=[];
 const swatchBg=t=>{const c=t.c;switch(t.fam){case'sampul':return `linear-gradient(135deg, ${c.env} 0 50%, ${c.ground} 50%)`;case'mihrab':return `radial-gradient(ellipse 34% 46% at 50% 58%, ${c.sheet} 98%, transparent 100%), ${c.ground}`;case'songket':case'deco':return `linear-gradient(90deg, ${c.gold} 0 9%, ${c.ground} 9% 91%, ${c.gold} 91%)`;case'baldu':return `linear-gradient(90deg, ${c.ground} 0 66%, ${c.ribbon} 66% 76%, ${c.ground} 76%)`;case'tiket':return `linear-gradient(90deg, ${c.cover} 0 42%, ${c.sheet} 42%)`;case'tipografi':return `linear-gradient(90deg, ${c.ground} 0 60%, ${c.pageAccent||c.accent} 60%)`;case'bingkai':case'poskad':case'herb':return c.ground;case'batik':case'bahagia':case'kaligrafi':return `linear-gradient(90deg, ${c.ground} 0 72%, ${c.gold} 72% 80%, ${c.ground} 80%)`;case'marmar':return `linear-gradient(120deg, ${c.ground} 0 46%, ${c.gold} 46% 48%, ${c.ground} 48%)`;case'tingkap':return `linear-gradient(90deg, ${c.ground} 0 25%, ${c.wood} 25% 75%, ${c.ground} 75%)`;case'foto':return 'linear-gradient(160deg,#5b5a55,#1f1e1c)';case'pawagam':return `repeating-conic-gradient(from 0deg at 50% 60%, rgba(255,255,255,.3) 0 8deg, transparent 8deg 18deg), ${c.ground}`;case'akhbar':case'telegram':return `repeating-linear-gradient(0deg, ${c.ink} 0 1px, transparent 1px 7px), ${c.sheet}`;case'vinyl':return `radial-gradient(circle at 50% 50%, ${c.accent} 0 14%, #111 15% 46%, ${c.ground} 47%)`;case'tekat':case'buku':case'mancis':case'label':case'skrol':case'gerbang':return `radial-gradient(circle at 50% 50%, ${c.gold} 0 12%, ${c.ground} 13%)`;case'renda':return `radial-gradient(circle at 50% 50%, ${c.sheet} 0 34%, ${c.lace} 35% 44%, ${c.ground} 45%)`;case'kertas':return `linear-gradient(180deg, ${c.sheet} 0 46%, ${t.layers[0]} 46% 62%, ${t.layers[1]} 62% 80%, ${t.layers[2]} 80%)`;case'akuarel':return `radial-gradient(circle at 90% 10%, ${c.wash1} 0 30%, transparent 55%), linear-gradient(0deg, ${c.wash2} 0 26%, ${c.sheet} 40%)`;case'peta':return `url(${A}map-${t.map}.jpg) center/cover, ${c.sheet}`;case'kaca':return `linear-gradient(90deg, ${t.glass.map((g,i)=>`${g} ${i*20}% ${(i+1)*20}%`).join(',')})`;default:return `linear-gradient(160deg, ${c.sheet} 60%, ${c.accent} 220%)`}};
 const dotColor=t=>t.fam==='kaca'?t.glass[0]:t.fam==='akuarel'?t.c.accent:t.fam==='renda'?t.c.ground:t.c.env||t.c.cover||(['songket','deco','baldu','mihrab','bingkai','batik','bahagia','marmar','kaligrafi'].includes(t.fam)?t.c.ground:t.fam==='tipografi'?(t.c.pageAccent||t.c.accent):t.c.accent);
 const swatchEl=t=>t.fam==='catair'?`<div class="sw" style="background:url(${A}flower-${t.fl[0]}.webp) right -8px bottom -14px/52% no-repeat,${t.c.sheet}"></div>`:t.fam==='ukiran'?`<div class="sw" style="background:${t.c.sheet}"><i style="display:block;height:100%;background:${t.c.ink};-webkit-mask:url(${A}eng-${t.eng[0]}.webp) right -8px bottom -14px/52% no-repeat;mask:url(${A}eng-${t.eng[0]}.webp) right -8px bottom -14px/52% no-repeat"></i></div>`:`<div class="sw" style="background:${swatchBg(t)}"></div>`;
@@ -624,7 +623,6 @@ THEMES.push(...[
   ['timah','Bukit Timah','A country road, hand-coloured','timah','Bukit Timah','#bfc6b0','#55654b','wild-rose'],
 ].map(([k,n,d,pc,cap,g,ac,st])=>T2('poskad-'+k,'poskad',n,d,{ground:g,sheet:'#f8f3e8',ink:'#3a3128',accent:ac,gold:ac},{pc,cap,stamp:st})));
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 
 /* ================= round three: six more families and colourways across the collection (162 designs) ================= */
 Object.assign(FAMILIES,{
@@ -742,7 +740,6 @@ function toneOf(t){const hex=dotColor(t).replace('#','');const [r,g,b]=[0,2,4].m
   let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}
   const s=d/(1-Math.abs(2*l-1)||1);if(l<.1||(l<.2&&s<.3))return'gelap';if(l>.82&&d<.18)return'cerah';if(s<.16)return l>.6?'cerah':'neutral';if(h<20||h>=330)return'merah';if(h<50)return'coklat';if(h<170)return'hijau';if(h<260)return'biru';return'ungu'}
 const TONES=[['all','All colours'],['merah','Red & pink'],['coklat','Earth & gold'],['hijau','Green'],['biru','Blue'],['ungu','Purple'],['gelap','Dark'],['cerah','Light'],['neutral','Neutral']];
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 
 /* ================= round four: five more families and palette colourways (262 designs) ================= */
 Object.assign(FAMILIES,{
@@ -843,7 +840,6 @@ const MAKE={
 };
 Object.values(MAKE).forEach(make=>PALS.forEach(P=>THEMES.push(make(P))));
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 
 /* ================= round five: fourteen unusual formats and four more palettes (462 designs) ================= */
 Object.assign(FAMILIES,{
@@ -1003,7 +999,6 @@ const MAKE2={...MAKE,
 Object.values(MAKE2).forEach(make=>PALS2.forEach(P=>THEMES.push(make(P))));
 (()=>{const seen=new Set();THEMES.forEach(t=>{if(seen.has(t.id))console.warn('duplicate design id',t.id);seen.add(t.id)})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 
 /* ================= openers, rebuilt, and per-family content hooks ================= */
 const SONGKET_H=svgUriSq(`<svg ${NS} width="48" height="28" viewBox="0 0 48 28"><path d="M0 2H48M0 26H48" stroke="#000" stroke-width="1.6"/><path d="M24 5L33 14L24 23L15 14Z" fill="none" stroke="#000" stroke-width="1.8"/><path d="M24 9.5L28.5 14L24 18.5L19.5 14Z"/><path d="M0 5L6 14L0 23ZM48 5L42 14L48 23Z"/></svg>`);
@@ -11944,8 +11939,7 @@ FAMILY({key:'wayang',name:'Wayang Kulit',meaning:'Shadow-play puppet',
   const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
   [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 /* needFont() fonts are loaded by src/app/fonts.ts */
 
 
-export {ALL_EVENTS,PHOTO_DESIGNS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,CATS,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,groomFirst,NAME_FONTS,coverOk,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};
+export {ALL_EVENTS,PHOTO_DESIGNS,CARD_SECTIONS,TRADITIONS,TRAD_EVENTS,TRAD_DEFAULT,MONO_SCRIPTS,copyFor,defaultCopy,plainOf,greetingFor,$,$$,esc,ICON,A,ASP,FAMILIES,THEMES,THEME,LEGACY,themeOf,TONES,toneOf,dotColor,swatchBg,swatchEl,T,DAYS,MONTHS,fmtDate,fmtShort,fmtTime,calUrl,mapsUrl,wazeUrl,coverNames,groomFirst,NAME_FONTS,coverOk,waNum,Music,SAMPLE,SAMPLE_WISHES,frontPage,coverHTML,renderInvite,copyText,EFFECTS,rsvpCode,giftList,safeUrl,icsText,saveFile,qrSvg};

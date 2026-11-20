@@ -6,7 +6,6 @@
   const all=Object.entries(FAMILIES);all.forEach(([k])=>delete FAMILIES[k]);
   [...all.filter(([k])=>FIRST.includes(k)).sort((a,b)=>rank(a[0])-rank(b[0])),...all.filter(([k])=>!FIRST.includes(k))].forEach(([k,v])=>{FAMILIES[k]=v})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 if(FAM_FONTS.size){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?'+[...FAM_FONTS].map(f=>'family='+f).join('&')+'&display=swap';document.head.appendChild(l)}
 /* live counts in the marketing copy */
 (()=>{const fams=new Set(THEMES.map(t=>t.fam)).size;const W=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'],T10=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];

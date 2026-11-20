@@ -4,13 +4,12 @@ import Link from 'next/link';
 import Mini from '@/components/Mini';
 import InviteOverlay from '@/components/InviteOverlay';
 import { families } from '@/components/HomeCards';
-import { CATS, SAMPLE, THEMES, TONES, toneOf, type Theme } from '@/lib/invite/engine';
+import { SAMPLE, THEMES, TONES, toneOf, type Theme } from '@/lib/invite/engine';
 import { NAMES_KEY, namesOverride, namesQuery, parseNames } from '@/lib/names';
 
 const TONE_DOT: Record<string, string> = { merah: '#a3263a', coklat: '#a8834a', hijau: '#3c6a4a', biru: '#2d4b78', ungu: '#5d3a6a', gelap: '#1b1b1b', cerah: '#f3eee5', neutral: '#9b948a' };
 
 export default function DesignGallery() {
-  const [filter, setFilter] = useState('all');
   const [tone, setTone] = useState('all');
   const [open, setOpen] = useState<string | null>(null);
   // "Personalise preview": typed once, shown on every design, remembered on this device
@@ -33,7 +32,7 @@ export default function DesignGallery() {
   }, [namesText]);
   const names = useMemo(() => parseNames(applied), [applied]);
   const extra = useMemo(() => namesOverride(names), [names]);
-  const pick = (t: Theme) => (filter === 'all' || t.fam === filter) && (tone === 'all' || toneOf(t) === tone);
+  const pick = (t: Theme) => tone === 'all' || toneOf(t) === tone;
   const shown = THEMES.filter(pick).length;
   return (
     <>
@@ -45,10 +44,7 @@ export default function DesignGallery() {
         </div>
         <span className="hint">Every design below shows your names. Saved on this device only.</span>
       </div>
-      <div className="filters" role="group" aria-label="Filter designs">
-        {CATS.map(([k, l]) => <button key={k} type="button" className="chip" aria-pressed={k === filter} onClick={() => setFilter(k)}>{l}</button>)}
-      </div>
-      <div className="filters" role="group" aria-label="Filter by colour" style={{ marginTop: 10 }}>
+      <div className="filters" role="group" aria-label="Filter by colour">
         {TONES.map(([k, l]) => <button key={k} type="button" className="chip" aria-pressed={k === tone} onClick={() => setTone(k)}>
           {k !== 'all' && <i style={{ width: 10, height: 10, borderRadius: '50%', display: 'inline-block', background: TONE_DOT[k], border: '1px solid var(--line)' }} />}{l}</button>)}
       </div>

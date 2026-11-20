@@ -157,5 +157,4 @@ const MAKE2={...MAKE,
 Object.values(MAKE2).forEach(make=>PALS2.forEach(P=>THEMES.push(make(P))));
 (()=>{const seen=new Set();THEMES.forEach(t=>{if(seen.has(t.id))console.warn('duplicate design id',t.id);seen.add(t.id)})})();
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 </script>

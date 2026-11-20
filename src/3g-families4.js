@@ -98,5 +98,4 @@ const MAKE={
 };
 Object.values(MAKE).forEach(make=>PALS.forEach(P=>THEMES.push(make(P))));
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 </script>

@@ -20,7 +20,7 @@ const famDir = join(proto, 'src/fam');
 const famKeys = existsSync(famDir) ? readdirSync(famDir).filter((f) => f.endsWith('.js') && !f.startsWith('_')).map((f) => f.slice(0, -3)).sort() : [];
 const famRead = (f) => read(join(famDir, f));
 function famEnd() {
-  // _end.js: keep the THEME/CATS refresh. Drop the parts that touch document/location at load time (they break SSR):
+  // _end.js: keep the THEME refresh. Drop the parts that touch document/location at load time (they break SSR):
   // the needFont <link> (fonts.ts loads those), the live counts in marketing copy (pages read counts from the engine)
   // and the ?qa= screenshot hook.
   let e = famRead('_end.js');
@@ -75,7 +75,7 @@ js = js.replace(/\b(src|href)="assets\//g, '$1="/assets/');
 const literalAssets = js.match(/["'`(]assets\//g);
 if (literalAssets) throw new Error(`asset paths not using A: ${literalAssets.length}`);
 
-const EXPORTS = ['ALL_EVENTS', 'PHOTO_DESIGNS', 'CARD_SECTIONS', 'TRADITIONS', 'TRAD_EVENTS', 'TRAD_DEFAULT', 'MONO_SCRIPTS', 'copyFor', 'defaultCopy', 'plainOf', 'greetingFor', '$', '$$', 'esc', 'ICON', 'A', 'ASP', 'FAMILIES', 'THEMES', 'THEME', 'LEGACY', 'themeOf', 'CATS', 'TONES', 'toneOf', 'dotColor',
+const EXPORTS = ['ALL_EVENTS', 'PHOTO_DESIGNS', 'CARD_SECTIONS', 'TRADITIONS', 'TRAD_EVENTS', 'TRAD_DEFAULT', 'MONO_SCRIPTS', 'copyFor', 'defaultCopy', 'plainOf', 'greetingFor', '$', '$$', 'esc', 'ICON', 'A', 'ASP', 'FAMILIES', 'THEMES', 'THEME', 'LEGACY', 'themeOf', 'TONES', 'toneOf', 'dotColor',
   'swatchBg', 'swatchEl', 'T', 'DAYS', 'MONTHS', 'fmtDate', 'fmtShort', 'fmtTime', 'calUrl', 'mapsUrl', 'wazeUrl', 'coverNames', 'groomFirst', 'NAME_FONTS', 'coverOk', 'waNum',
   'Music', 'SAMPLE', 'SAMPLE_WISHES', 'frontPage', 'coverHTML', 'renderInvite', 'copyText',
   'EFFECTS', 'rsvpCode', 'giftList', 'safeUrl', 'icsText', 'saveFile', 'qrSvg'];

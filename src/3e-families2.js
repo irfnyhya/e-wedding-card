@@ -132,5 +132,4 @@ THEMES.push(...[
   ['timah','Bukit Timah','A country road, hand-coloured','timah','Bukit Timah','#bfc6b0','#55654b','wild-rose'],
 ].map(([k,n,d,pc,cap,g,ac,st])=>T2('poskad-'+k,'poskad',n,d,{ground:g,sheet:'#f8f3e8',ink:'#3a3128',accent:ac,gold:ac},{pc,cap,stamp:st})));
 THEMES.forEach(t=>{THEME[t.id]=t});
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 </script>

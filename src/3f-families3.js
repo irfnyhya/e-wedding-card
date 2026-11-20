@@ -115,5 +115,4 @@ function toneOf(t){const hex=dotColor(t).replace('#','');const [r,g,b]=[0,2,4].m
   let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}
   const s=d/(1-Math.abs(2*l-1)||1);if(l<.1||(l<.2&&s<.3))return'gelap';if(l>.82&&d<.18)return'cerah';if(s<.16)return l>.6?'cerah':'neutral';if(h<20||h>=330)return'merah';if(h<50)return'coklat';if(h<170)return'hijau';if(h<260)return'biru';return'ungu'}
 const TONES=[['all','All colours'],['merah','Red & pink'],['coklat','Earth & gold'],['hijau','Green'],['biru','Blue'],['ungu','Purple'],['gelap','Dark'],['cerah','Light'],['neutral','Neutral']];
-CATS=[['all','All'],...Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k)).map(([k,f])=>[k,f.name])];
 </script>

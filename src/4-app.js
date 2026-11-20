@@ -116,13 +116,11 @@ function initHome(){
 }
 
 /* ================= designs ================= */
-let dFilter='all',dTone='all';
+let dTone='all';
 function initDesigns(){
-  $('#filters').innerHTML=CATS.map(([k,l])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${k===dFilter}">${l}</button>`).join('');
-  $$('#filters [data-f]').forEach(b=>b.onclick=()=>{dFilter=b.dataset.f;initDesigns()});
   $('#tones').innerHTML=TONES.map(([k,l])=>`<button type="button" class="chip" data-tone="${k}" aria-pressed="${k===dTone}">${k==='all'?'':`<i style="width:10px;height:10px;border-radius:50%;display:inline-block;background:${{merah:'#a3263a',coklat:'#a8834a',hijau:'#3c6a4a',biru:'#2d4b78',ungu:'#5d3a6a',gelap:'#1b1b1b',cerah:'#f3eee5',neutral:'#9b948a'}[k]};border:1px solid var(--line)"></i>`}${l}</button>`).join('');
   $$('#tones [data-tone]').forEach(b=>b.onclick=()=>{dTone=b.dataset.tone;initDesigns()});
-  const pick=t=>(dFilter==='all'||t.fam===dFilter)&&(dTone==='all'||toneOf(t)===dTone);
+  const pick=t=>dTone==='all'||toneOf(t)===dTone;
   $('#d-count').textContent=`${THEMES.filter(pick).length} of ${THEMES.length} designs`;
   const grid=$('#design-grid');grid.innerHTML='';
   Object.entries(FAMILIES).filter(([k])=>THEMES.some(t=>t.fam===k&&pick(t))).forEach(([k,f])=>{
